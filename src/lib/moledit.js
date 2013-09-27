@@ -1328,7 +1328,6 @@ Chemical.prototype.makeMacroCycle = function(l) {
         b = veadd(b, j);
     }
     this.processChemical();
-    console.log(this.atoms.length);
     return this;
 };
 
@@ -2023,6 +2022,7 @@ Chemical.prototype.connectTo = function(q, K, c, w) {
     }
     return[];
 };
+
 function ChemicalView(w, y, H, F) {
     var v = this;
     pm_eraser = "data:image/gif;base64,R0lGODlhEAAQAPAAAAAAAAAAACH5BAEAAAEALAAAAAAQABAAAAIjjI+pywkPG3BsorfsmXpTfH1dMHKl6EARGF5su42xKjf2jRQAOw==";
@@ -3617,7 +3617,7 @@ ChemicalView.prototype.atomLabel = function(b) {
     var e = "";
     var d = this.chem.get_qfm(b);
     var c = ((this.atomDislayMask & ATOM_DISPLAY_RS) && b.eo);
-    if (b.cd !== 6 || b.bo.length === 0 || d || c || (b.hasOwnProperty("atts") && b.atts.count())) {
+    if (b.cd > 0 || b.bo.length === 0 || d || c || (b.hasOwnProperty("atts") && b.atts.count())) {
         e = ElementNames[b.cd];
         if (d) {
             e += (Math.abs(d) === 1 ? "" : d.toString()) + ((d < 0) ? ("-") : ("+"));
@@ -3668,13 +3668,6 @@ ChemicalView.prototype.drawMol = function() {
         this.updateKfc(this.chem, 16);
     }
     this.ctx.font = "bold " + d + "px Arial";
-    if (this.mode === MODE_CHAIN && this.chem.atoms[this.connectToAtom] !== null && this.chem.atoms[this.connectToAtom].bo[0] >= 0) {
-        var q = this.chem.atoms.length - this.newCount;
-        var f = 0.25 * (vector(this.wtos(this.chem.atoms[this.chem.atoms[this.connectToAtom].bo[0]]), this.wtos(this.chem.atoms[this.connectToAtom])).x);
-        var e = 0.25 * (vector(this.wtos(this.chem.atoms[this.chem.atoms[this.connectToAtom].bo[0]]), this.wtos(this.chem.atoms[this.connectToAtom])).y);
-        this.ctx.fillStyle = "#000000";
-        this.ctx.fillText(this.chem.atoms.length - q, this.wtos(this.chem.atoms[this.connectToAtom]).x + f, this.wtos(this.chem.atoms[this.connectToAtom]).y + e);
-    }
     for (var z = 0; z < this.chem.atoms.length; z++) {
         var s = this.chem.atoms[z];
         var a = this.wtos(s);
