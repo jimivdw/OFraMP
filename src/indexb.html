@@ -22,6 +22,10 @@
     </canvas>
 
     <script>
+      var request_url = "http://127.0.0.1:8000/";
+      if(document.URL.match(/vps955\.directvps\.nl/))
+        request_url = "http://vps955.directvps.nl:12345/OAPoC/";
+
       var c = document.getElementById("myCanvas");
       var ctx = c.getContext("2d");
 
@@ -31,7 +35,7 @@
       ctx.strokeStyle = '#000';
 
       var xh = new XMLHttpRequest();
-      xh.open("POST", "http://127.0.0.1:8000/", false);
+      xh.open("POST", request_url, false);
       xh.setRequestHeader("Content-type", "application/json");
       xh.send("fmt=smiles&data=CCC=O");
 
