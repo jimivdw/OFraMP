@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html>
-<body>
+  <head>
+    <title>OFraMP</title>
+    <meta charset="utf-8" />
+  </head>
+  
+  <body>
+    <canvas id="myCanvas" width="600" height="420" style="border:1px solid #d3d3d3;">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
 
-<canvas id="myCanvas" width="600" height="420" style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML5 canvas tag.</canvas>
+    <script>
+      function drawLine(ctx, x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.closePath();
+        ctx.stroke();
+      }
 
-<script>
-    
-function drawLine(ctx, x1, y1, x2, y2) {
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.closePath();
-    ctx.stroke();
-}
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
 
-var c=document.getElementById("myCanvas");
-var ctx=c.getContext("2d");
+      ctx.font = "12px Arial";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = '#000';
 
-ctx.font="12px Arial";
-ctx.textAlign = 'center';
-ctx.textBaseline = 'middle';
-ctx.strokeStyle = '#000';
+      var xh = new XMLHttpRequest();
+      xh.open("POST", "http://127.0.0.1:8000/", false);
+      xh.setRequestHeader("Content-type", "application/json");
+      xh.send("fmt=smiles&data=C1CCCCC1");
 
-var xh = new XMLHttpRequest();
-xh.open("POST", "http://127.0.0.1:8000/", false);
-xh.setRequestHeader("Content-type","application/json");
-xh.send("fmt=smiles&data=C1CCCCC1");
+      var md = JSON.parse(xh.response);
+      console.log(md);
 
-var md = JSON.parse(xh.response);
-console.log(md);
+      var atoms = md.pos;
+      for (var i = 0; i < atoms.length; i++) {
+        ctx.fillText(atoms[i][0], atoms[i][1] * 400, atoms[i][2] * 400);
+      }
 
-var atoms = md.pos;
-for(var i = 0; i < atoms.length; i++) {
-  ctx.fillText(atoms[i][0], atoms[i][1]*400, atoms[i][2]*400);
-}
-
-var bonds = md.bonds;
-for(var i = 0; i < bonds.length; i++) {
-    a1 = bonds[i][0];
-    a2 = bonds[i][1];
-    drawLine(ctx, atoms[a1][1]*400, atoms[a1][2]*400, atoms[a2][1]*400, atoms[a2][2]*400);
-}
-
-
-</script> 
-
-</body>
+      var bonds = md.bonds;
+      for (var i = 0; i < bonds.length; i++) {
+        a1 = bonds[i][0];
+        a2 = bonds[i][1];
+        drawLine(ctx, atoms[a1][1] * 400, atoms[a1][2] * 400, atoms[a2][1] * 400, atoms[a2][2] * 400);
+      }
+    </script>
+  </body>
 </html>
