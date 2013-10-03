@@ -3,8 +3,9 @@
   <head>
     <title>OFraMP</title>
     <meta charset="utf-8" />
+    <script type="text/javascript" src="OFraMP.js"></script>
   </head>
-  
+
   <body>
     <canvas id="myCanvas" width="600" height="420" style="border:1px solid #d3d3d3;">
       Your browser does not support the HTML5 canvas tag.
@@ -30,21 +31,24 @@
       var xh = new XMLHttpRequest();
       xh.open("POST", "http://127.0.0.1:8000/", false);
       xh.setRequestHeader("Content-type", "application/json");
-      xh.send("fmt=smiles&data=C1CCCCC1");
+      xh.send("fmt=smiles&data=CCC=O");
 
       var md = JSON.parse(xh.response);
       console.log(md);
+      var m = new Molecule();
+      m.init(md.atoms, md.bonds);
+      m.atoms.bestFit(600, 420);
 
-      var atoms = md.pos;
+      var atoms = m.atoms.atoms;
       for (var i = 0; i < atoms.length; i++) {
-        ctx.fillText(atoms[i][0], atoms[i][1] * 400, atoms[i][2] * 400);
+        ctx.fillText(atoms[i].element, atoms[i].x, atoms[i].y);
       }
 
-      var bonds = md.bonds;
+      var bonds = m.bonds.bonds;
       for (var i = 0; i < bonds.length; i++) {
-        a1 = bonds[i][0];
-        a2 = bonds[i][1];
-        drawLine(ctx, atoms[a1][1] * 400, atoms[a1][2] * 400, atoms[a2][1] * 400, atoms[a2][2] * 400);
+        a1 = bonds[i].a1;
+        a2 = bonds[i].a2;
+        drawLine(ctx, atoms[a1].x, atoms[a1].y, atoms[a2].x, atoms[a2].y);
       }
     </script>
   </body>
