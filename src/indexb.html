@@ -12,14 +12,6 @@
     </canvas>
 
     <script>
-      function drawLine(ctx, x1, y1, x2, y2) {
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.closePath();
-        ctx.stroke();
-      }
-
       var c = document.getElementById("myCanvas");
       var ctx = c.getContext("2d");
 
@@ -38,18 +30,7 @@
       var m = new Molecule();
       m.init(md.atoms, md.bonds);
       m.atoms.bestFit(600, 420);
-
-      var atoms = m.atoms.atoms;
-      for (var i = 0; i < atoms.length; i++) {
-        ctx.fillText(atoms[i].element, atoms[i].x, atoms[i].y);
-      }
-
-      var bonds = m.bonds.bonds;
-      for (var i = 0; i < bonds.length; i++) {
-        a1 = bonds[i].a1;
-        a2 = bonds[i].a2;
-        drawLine(ctx, atoms[a1].x, atoms[a1].y, atoms[a2].x, atoms[a2].y);
-      }
+      m.draw(ctx);
     </script>
   </body>
 </html>
