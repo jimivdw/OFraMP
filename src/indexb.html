@@ -7,7 +7,17 @@
   </head>
 
   <body>
-    <canvas id="myCanvas" width="600" height="420" style="border:1px solid #d3d3d3;">
+    <fieldset style="width: 760px; padding: 5px 20px;">
+      <legend>Graph controls</legend>
+      <button id="zoomin">Zoom +</button>
+      <button id="zoomout">Zoom -</button>
+      <button id="movel">Move &lt;</button>
+      <button id="mover">Move &gt;</button>
+      <button id="moveu">Move ^</button>
+      <button id="moved">Move v</button>
+    </fieldset>
+
+    <canvas id="myCanvas" width="800" height="420" style="border:1px solid #d3d3d3;">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
 
@@ -29,8 +39,39 @@
       console.log(md);
       var m = new Molecule();
       m.init(md.atoms, md.bonds);
-      m.atoms.bestFit(600, 420);
+      m.atoms.bestFit(ctx.canvas.width, ctx.canvas.height);
       m.draw(ctx);
+
+      var zi = document.getElementById("zoomin");
+      zi.onclick = function() {
+        m.atoms.scale(1.1);
+        m.draw(ctx);
+      };
+      var zo = document.getElementById("zoomout");
+      zo.onclick = function() {
+        m.atoms.scale(.9);
+        m.draw(ctx);
+      };
+      var ml = document.getElementById("movel");
+      ml.onclick = function() {
+        m.atoms.move(-10, 0);
+        m.draw(ctx);
+      };
+      var mr = document.getElementById("mover");
+      mr.onclick = function() {
+        m.atoms.move(10, 0);
+        m.draw(ctx);
+      };
+      var mu = document.getElementById("moveu");
+      mu.onclick = function() {
+        m.atoms.move(0, -10);
+        m.draw(ctx);
+      };
+      var md = document.getElementById("moved");
+      md.onclick = function() {
+        m.atoms.move(0, 10);
+        m.draw(ctx);
+      };
     </script>
   </body>
 </html>
