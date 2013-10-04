@@ -3,15 +3,28 @@ var ATOM_RADIUS = 10;
 var ATOM_RADIUS_CHARGED = 20;
 var BOND_SPACING = 4;
 var DASH_COUNT = 5;
+var MIN_BOND_LENGTH = 50;
+var IDEAL_BOND_LENGTH = 70;
+var MAX_BOND_LENGTH = 150;
 var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl:12345/OAPoC/"
     : "http://127.0.0.1:8000/OAPoC/";
 
 
+// Based on: http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
 Object.prototype.extract = function(tgt) {
   for(var k in this) {
     tgt[k] = this[k];
   }
 }
+
+// From: http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
+Array.prototype.max = function() {
+  return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function() {
+  return Math.min.apply(null, this);
+};
 
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -136,6 +149,24 @@ Molecule.prototype.zoom = function(f) {
 
 Molecule.prototype.bestFit = function(w, h) {
   return this.atoms.bestFit(w, h);
+}
+
+Molecule.prototype.minimize = function() {
+  var sd = this.bonds.shortestDistance();
+  var f = MIN_BOND_LENGTH / sd;
+  this.zoom(f);
+}
+
+Molecule.prototype.idealize = function() {
+  var sd = this.bonds.shortestDistance();
+  var f = IDEAL_BOND_LENGTH / sd;
+  this.zoom(f);
+}
+
+Molecule.prototype.maximize = function() {
+  var ld = this.bonds.longestDistance();
+  var f = MAX_BOND_LENGTH / ld;
+  this.zoom(f);
 }
 
 Molecule.prototype.draw = function(ctx) {
@@ -337,6 +368,24 @@ BondList.prototype.init = function(bonds, atoms) {
 
 BondList.prototype.get = function(i) {
   return this.bonds[i];
+}
+
+BondList.prototype.shortestLength = function() {
+  return this.bonds.map(function(b) {
+    return b.length();
+  }).min();
+}
+
+BondList.prototype.shortestDistance = function() {
+  return this.bonds.map(function(b) {
+    return b.a1.distance(b.a2);
+  }).min();
+}
+
+BondList.prototype.longestDistance = function() {
+  return this.bonds.map(function(b) {
+    return b.a1.distance(b.a2);
+  }).max();
 }
 
 BondList.prototype.draw = function(ctx) {
