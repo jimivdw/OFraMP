@@ -1,5 +1,6 @@
-var CANVAS_PADDING = 20;
+var CANVAS_PADDING = 40;
 var ATOM_RADIUS = 10;
+var ATOM_RADIUS_CHARGED = 20;
 var BOND_SPACING = 4;
 var DASH_COUNT = 5;
 var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ?
@@ -267,7 +268,7 @@ function Atom() {
   this.element_id = 0;
   this.x = 0.;
   this.y = 0.;
-  this.charge = 0.;
+  this.charge = undefined;
 }
 
 Atom.prototype.init = function(id, element, element_id, x, y, charge) {
@@ -287,8 +288,19 @@ Atom.prototype.dy = function(a) {
   return a.y - this.y;
 }
 
+Atom.prototype.isCharged = function() {
+  return this.charge !== undefined;
+}
+
 Atom.prototype.draw = function(ctx) {
-  ctx.fillText(this.element, this.x, this.y);
+  if(this.isCharged()) {
+    ctx.fillText(this.element, this.x, this.y - 6);
+    ctx.font = "9px Arial";
+    ctx.fillText(this.charge, this.x, this.y + 6);
+    ctx.font = "12px Arial";
+  } else {
+    ctx.fillText(this.element, this.x, this.y);
+  }
 }
 
 
@@ -337,13 +349,26 @@ Bond.prototype.draw = function(ctx) {
   var dy = this.a1.dy(this.a2);
   var dz = Math.sqrt(dx * dx + dy * dy);
 
-  var ddx = dx * ATOM_RADIUS / dz;
-  var ddy = dy * ATOM_RADIUS / dz;
+  if(this.a1.isCharged())
+    var ar = ATOM_RADIUS_CHARGED;
+  else
+    var ar = ATOM_RADIUS;
+  
+  var ddx1 = dx * ar / dz;
+  var ddy1 = dy * ar / dz;
 
-  var x1 = this.a1.x + ddx;
-  var y1 = this.a1.y + ddy;
-  var x2 = this.a2.x - ddx;
-  var y2 = this.a2.y - ddy;
+  if(this.a2.isCharged())
+    ar = ATOM_RADIUS_CHARGED;
+  else
+    ar = ATOM_RADIUS;
+  
+  var ddx2 = dx * ar / dz;
+  var ddy2 = dy * ar / dz;
+
+  var x1 = this.a1.x + ddx1;
+  var y1 = this.a1.y + ddy1;
+  var x2 = this.a2.x - ddx2;
+  var y2 = this.a2.y - ddy2;
 
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
