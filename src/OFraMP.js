@@ -201,6 +201,15 @@ AtomList.prototype.leftTop = function() {
   };
 }
 
+AtomList.prototype.center = function() {
+  var lt = this.leftTop();
+  var s = this.size();
+  return {
+    x: lt.x + s.w / 2,
+    y: lt.y + s.h / 2
+  }
+}
+
 AtomList.prototype.size = function() {
   return {
     w: this.width(),
@@ -225,18 +234,14 @@ AtomList.prototype.scale = function(f) {
 }
 
 AtomList.prototype.zoom = function(f) {
-  var lt = this.leftTop();
-  this.move(-lt.x, -lt.y);
+  var c = this.center();
+  this.zoomOn(c.x, c.y, f);
+}
 
-  var ow = this.width();
-  var oh = this.height();
+AtomList.prototype.zoomOn = function(x, y, f) {
+  this.move(-x, -y);
   this.scale(f);
-
-  var nw = this.width();
-  var nh = this.height();
-  var dw = nw - ow;
-  var dh = nh - oh;
-  this.move(lt.x - dw / 2, lt.y - dh / 2)
+  this.move(x, y);
 }
 
 AtomList.prototype.bestFit = function(w, h) {
