@@ -22,7 +22,7 @@
     </canvas>
 
     <script>
-      var request_url = "http://127.0.0.1:8000/";
+      var request_url = "http://127.0.0.1:8000/OAPoC/";
       if(document.URL.match(/vps955\.directvps\.nl/))
         request_url = "http://vps955.directvps.nl:12345/OAPoC/";
 
@@ -37,43 +37,43 @@
       var xh = new XMLHttpRequest();
       xh.open("POST", request_url, false);
       xh.setRequestHeader("Content-type", "application/json");
-      xh.send("fmt=smiles&data=CCC=O");
+      xh.send("fmt=smiles&data=CC(NC)CC1=CC=C(OCO2)C2=C1");
 
       var md = JSON.parse(xh.response);
       console.log(md);
       var m = new Molecule();
       m.init(md.atoms, md.bonds);
-      m.atoms.bestFit(ctx.canvas.width, ctx.canvas.height);
+      m.bestFit(ctx.canvas.width, ctx.canvas.height);
       m.draw(ctx);
 
       var zi = document.getElementById("zoomin");
       zi.onclick = function() {
-        m.atoms.scale(1.1);
+        m.scale(1.1);
         m.draw(ctx);
       };
       var zo = document.getElementById("zoomout");
       zo.onclick = function() {
-        m.atoms.scale(.9);
+        m.scale(.9);
         m.draw(ctx);
       };
       var ml = document.getElementById("movel");
       ml.onclick = function() {
-        m.atoms.move(-10, 0);
+        m.move(-10, 0);
         m.draw(ctx);
       };
       var mr = document.getElementById("mover");
       mr.onclick = function() {
-        m.atoms.move(10, 0);
+        m.move(10, 0);
         m.draw(ctx);
       };
       var mu = document.getElementById("moveu");
       mu.onclick = function() {
-        m.atoms.move(0, -10);
+        m.move(0, -10);
         m.draw(ctx);
       };
       var md = document.getElementById("moved");
       md.onclick = function() {
-        m.atoms.move(0, 10);
+        m.move(0, 10);
         m.draw(ctx);
       };
     </script>
