@@ -7,8 +7,8 @@
   </head>
 
   <body>
-    <fieldset style="width: 760px; padding: 5px 20px;">
-      <legend>Graph controls</legend>
+    <fieldset style="width: 758px; margin: 0; padding: 5px 20px; border: 2px solid #333;">
+      <legend>OFraMP - The Online tool for Fragment-based Molecule Parameterisation</legend>
       <button id="zoomin">Zoom +</button>
       <button id="zoomout">Zoom -</button>
       <button id="movel">Move &lt;</button>
@@ -20,13 +20,13 @@
       <button id="show">Show</button>
     </fieldset>
 
-    <canvas id="myCanvas" width="800" height="420" style="border:1px solid #d3d3d3;">
+    <canvas id="mainMolecule" width="800" height="420" style="border: 1px solid #333; border-top: 0;">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
 
     <script>
       var mv = new MoleculeViewer();
-      mv.init("myCanvas", true);
+      mv.init("mainMolecule", true);
       mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
       var zi = document.getElementById("zoomin");
