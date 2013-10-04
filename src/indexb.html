@@ -37,7 +37,7 @@
       var xh = new XMLHttpRequest();
       xh.open("POST", request_url, false);
       xh.setRequestHeader("Content-type", "application/json");
-      xh.send("fmt=smiles&data=CC(NC)CC1=CC=C(OCO2)C2=C1");
+      xh.send("fmt=smiles&data=c1c2c(cccc2)ccc1");
 
       var md = JSON.parse(xh.response);
       console.log(md);
@@ -48,12 +48,12 @@
 
       var zi = document.getElementById("zoomin");
       zi.onclick = function() {
-        m.scale(1.1);
+        m.atoms.zoom(1.1);
         m.draw(ctx);
       };
       var zo = document.getElementById("zoomout");
       zo.onclick = function() {
-        m.scale(.9);
+        m.atoms.zoom(.9);
         m.draw(ctx);
       };
       var ml = document.getElementById("movel");

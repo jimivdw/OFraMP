@@ -1,6 +1,7 @@
 var CANVAS_PADDING = 20;
 var ATOM_RADIUS = 10;
 var BOND_SPACING = 4;
+var DASH_COUNT = 5;
 
 
 CanvasRenderingContext2D.prototype.clear = function() {
@@ -13,6 +14,26 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.lineTo(x2, y2);
   this.closePath();
   this.stroke();
+}
+
+CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
+  dx = x2 - x1;
+  dy = y2 - y1;
+  dz = Math.sqrt(dx * dx + dy * dy);
+  
+  n = n || DASH_COUNT;
+  l = dz / (n * 2 - 1);
+
+  ddx = dx * l / dz;
+  ddy = dy * l / dz;
+  for(var i = 0; i < n; i++) {
+    this.drawLine(
+      x1 + 2 * i * ddx,
+      y1 + 2 * i * ddy,
+      x1 + (2 * i + 1) * ddx,
+      y1 + (2 * i + 1) * ddy
+    );
+  }
 }
 
 /**
@@ -82,7 +103,7 @@ AtomList.prototype.propMin = function(p) {
     if(a[p] < min)
       min = a[p];
   });
-  
+
   return min;
 }
 
@@ -92,7 +113,7 @@ AtomList.prototype.propMax = function(p) {
     if(a[p] > max)
       max = a[p];
   });
-  
+
   return max;
 }
 
@@ -110,6 +131,14 @@ AtomList.prototype.height = function() {
   return this.propWidth('y');
 }
 
+AtomList.prototype.leftTop = function() {
+  return {x: this.propMin('x'), y: this.propMin('y')};
+}
+
+AtomList.prototype.size = function() {
+  return {w: this.width(), h: this.height()};
+}
+
 AtomList.prototype.move = function(dx, dy) {
   this.atoms.map(function(a) {
     a.x += dx;
@@ -124,6 +153,21 @@ AtomList.prototype.scale = function(f) {
     a.y *= f;
     return a;
   });
+}
+
+AtomList.prototype.zoom = function(f) {
+  var lt = this.leftTop();
+  this.move(-lt.x, -lt.y);
+  
+  var ow = this.width();
+  var oh = this.height();
+  this.scale(f);
+  
+  var nw = this.width();
+  var nh = this.height();
+  var dw = nw - ow;
+  var dh = nh - oh;
+  this.move(lt.x - dw / 2, lt.y - dh / 2)
 }
 
 AtomList.prototype.bestFit = function(w, h) {
@@ -224,28 +268,31 @@ Bond.prototype.draw = function(ctx) {
   var dx = this.a1.dx(this.a2);
   var dy = this.a1.dy(this.a2);
   var dz = Math.sqrt(dx * dx + dy * dy);
-  
+
   var ddx = dx * ATOM_RADIUS / dz;
   var ddy = dy * ATOM_RADIUS / dz;
-  
+
   var x1 = this.a1.x + ddx;
   var y1 = this.a1.y + ddy;
   var x2 = this.a2.x - ddx;
   var y2 = this.a2.y - ddy;
-  
+
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
-  
+
   if(this.type > 1) {
     dx = x2 - x1;
     dy = y2 - y1;
     dz = Math.sqrt(dx * dx + dy * dy);
-    
+
     ddx = dy * BOND_SPACING / dz;
     ddy = dx * BOND_SPACING / dz;
 
-    // TODO: aromatic bonds
-    ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
+    
+    if(this.type == 4)
+      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+    else
+      ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
   }
 }
