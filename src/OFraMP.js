@@ -66,7 +66,6 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
   var md = JSON.parse(xhr.response);
   this.molecule.init(md.atoms, md.bonds);
   this.bestFit();
-  this.redraw();
 }
 
 MoleculeViewer.prototype.redraw = function() {
@@ -92,6 +91,7 @@ MoleculeViewer.prototype.zoom = function(f) {
 
 MoleculeViewer.prototype.bestFit = function() {
   this.molecule.bestFit(this.canvas.width, this.canvas.height);
+  this.redraw();
 }
 
 

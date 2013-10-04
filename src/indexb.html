@@ -15,6 +15,9 @@
       <button id="mover">Move &gt;</button>
       <button id="moveu">Move ^</button>
       <button id="moved">Move v</button>
+      <button id="centr">Center</button>
+      <input type="text" id="data" placeholder="SMILES" />
+      <button id="show">Show</button>
     </fieldset>
 
     <canvas id="myCanvas" width="800" height="420" style="border:1px solid #d3d3d3;">
@@ -49,6 +52,15 @@
       var md = document.getElementById("moved");
       md.onclick = function() {
         mv.move(0, 10);
+      };
+      var cr = document.getElementById("centr");
+      cr.onclick = function() {
+        mv.bestFit();
+      };
+      var sm = document.getElementById("show");
+      sm.onclick = function() {
+        var data = document.getElementById("data");
+        mv.showMolecule(data.value);
       };
     </script>
   </body>
