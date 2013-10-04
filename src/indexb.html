@@ -18,6 +18,7 @@
       <button id="centr">Center</button>
       <input type="text" id="data" placeholder="SMILES" />
       <button id="show">Show</button>
+      <a id="download" href="">Download</a>
     </fieldset>
 
     <canvas id="mainMolecule" width="800" height="420" style="border: 1px solid #333; border-top: 0;">
@@ -61,6 +62,12 @@
       sm.onclick = function() {
         var data = document.getElementById("data");
         mv.showMolecule(data.value);
+      };
+      var dl = document.getElementById("download");
+      dl.onclick = function() {
+        var data = mv.canvas.toDataURL('image/png');
+        this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+        this.download = "OFraMP-Bla.png";
       };
     </script>
   </body>
