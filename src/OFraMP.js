@@ -65,8 +65,33 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
 
   var md = JSON.parse(xhr.response);
   this.molecule.init(md.atoms, md.bonds);
-  this.molecule.bestFit(this.canvas.width, this.canvas.height);
+  this.bestFit();
+  this.redraw();
+}
+
+MoleculeViewer.prototype.redraw = function() {
+  this.ctx.clear();
   this.molecule.draw(this.ctx);
+}
+
+MoleculeViewer.prototype.move = function(dx, dy) {
+  if(!this.interactive)
+    return;
+
+  this.molecule.move(dx, dy);
+  this.redraw();
+}
+
+MoleculeViewer.prototype.zoom = function(f) {
+  if(!this.interactive)
+    return;
+
+  this.molecule.zoom(f);
+  this.redraw();
+}
+
+MoleculeViewer.prototype.bestFit = function() {
+  this.molecule.bestFit(this.canvas.width, this.canvas.height);
 }
 
 
@@ -99,12 +124,15 @@ Molecule.prototype.scale = function(f) {
   return this.atoms.scale(f);
 }
 
+Molecule.prototype.zoom = function(f) {
+  return this.atoms.zoom(f);
+}
+
 Molecule.prototype.bestFit = function(w, h) {
   return this.atoms.bestFit(w, h);
 }
 
 Molecule.prototype.draw = function(ctx) {
-  ctx.clear();
   this.atoms.draw(ctx);
   this.bonds.draw(ctx);
 }
