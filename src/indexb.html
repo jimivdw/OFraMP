@@ -22,29 +22,12 @@
     </canvas>
 
     <script>
-      var request_url = "http://127.0.0.1:8000/OAPoC/";
-      if(document.URL.match(/vps955\.directvps\.nl/))
-        request_url = "http://vps955.directvps.nl:12345/OAPoC/";
+      var mv = new MoleculeViewer();
+      mv.init("myCanvas", true);
+      mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
-      var c = document.getElementById("myCanvas");
-      var ctx = c.getContext("2d");
-
-      ctx.font = "12px Arial";
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.strokeStyle = '#000';
-
-      var xh = new XMLHttpRequest();
-      xh.open("POST", request_url, false);
-      xh.setRequestHeader("Content-type", "application/json");
-      xh.send("fmt=smiles&data=c1c2c(cccc2)ccc1");
-
-      var md = JSON.parse(xh.response);
-      console.log(md);
-      var m = new Molecule();
-      m.init(md.atoms, md.bonds);
-      m.bestFit(ctx.canvas.width, ctx.canvas.height);
-      m.draw(ctx);
+      var m = mv.molecule;
+      var ctx = mv.ctx;
 
       var zi = document.getElementById("zoomin");
       zi.onclick = function() {

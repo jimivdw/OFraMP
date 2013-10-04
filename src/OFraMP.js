@@ -2,6 +2,8 @@ var CANVAS_PADDING = 20;
 var ATOM_RADIUS = 10;
 var BOND_SPACING = 4;
 var DASH_COUNT = 5;
+var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ?
+  "http://vps955.directvps.nl:12345/OAPoC/" : "http://127.0.0.1:8000/OAPoC/";
 
 
 CanvasRenderingContext2D.prototype.clear = function() {
@@ -16,25 +18,57 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.stroke();
 }
 
-CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
+CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2,
+    n) {
   dx = x2 - x1;
   dy = y2 - y1;
   dz = Math.sqrt(dx * dx + dy * dy);
-  
+
   n = n || DASH_COUNT;
   l = dz / (n * 2 - 1);
 
   ddx = dx * l / dz;
   ddy = dy * l / dz;
-  for(var i = 0; i < n; i++) {
-    this.drawLine(
-      x1 + 2 * i * ddx,
-      y1 + 2 * i * ddy,
-      x1 + (2 * i + 1) * ddx,
-      y1 + (2 * i + 1) * ddy
-    );
+  for( var i = 0; i < n; i++) {
+    this.drawLine(x1 + 2 * i * ddx, y1 + 2 * i * ddy, x1 + (2 * i + 1) * ddx,
+        y1 + (2 * i + 1) * ddy);
   }
 }
+
+
+function MoleculeViewer() {
+  this.molecule = new Molecule();
+  this.canvas = undefined;
+  this.ctx = undefined;
+  this.interactive = false;
+}
+
+MoleculeViewer.prototype.init = function(canvas_id, interactive) {
+  this.canvas = document.getElementById(canvas_id);
+
+  var ctx = this.canvas.getContext("2d");
+  ctx.font = "12px Arial";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.strokeStyle = '#000';
+  this.ctx = ctx;
+
+  if(interactive !== undefined)
+    this.interactive = interactive;
+}
+
+MoleculeViewer.prototype.showMolecule = function(data_str) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", OAPoC_URL, false);
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.send("fmt=smiles&data=" + data_str);
+
+  var md = JSON.parse(xhr.response);
+  this.molecule.init(md.atoms, md.bonds);
+  this.molecule.bestFit(this.canvas.width, this.canvas.height);
+  this.molecule.draw(this.ctx);
+}
+
 
 /**
  * Molecule data structure
@@ -132,11 +166,17 @@ AtomList.prototype.height = function() {
 }
 
 AtomList.prototype.leftTop = function() {
-  return {x: this.propMin('x'), y: this.propMin('y')};
+  return {
+    x: this.propMin('x'),
+    y: this.propMin('y')
+  };
 }
 
 AtomList.prototype.size = function() {
-  return {w: this.width(), h: this.height()};
+  return {
+    w: this.width(),
+    h: this.height()
+  };
 }
 
 AtomList.prototype.move = function(dx, dy) {
@@ -158,11 +198,11 @@ AtomList.prototype.scale = function(f) {
 AtomList.prototype.zoom = function(f) {
   var lt = this.leftTop();
   this.move(-lt.x, -lt.y);
-  
+
   var ow = this.width();
   var oh = this.height();
   this.scale(f);
-  
+
   var nw = this.width();
   var nh = this.height();
   var dw = nw - ow;
@@ -280,6 +320,7 @@ Bond.prototype.draw = function(ctx) {
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
 
+  // Draw double/triple/aromatic bonds
   if(this.type > 1) {
     dx = x2 - x1;
     dy = y2 - y1;
@@ -289,7 +330,7 @@ Bond.prototype.draw = function(ctx) {
     ddy = dx * BOND_SPACING / dz;
 
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
-    
+
     if(this.type == 4)
       ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
     else
