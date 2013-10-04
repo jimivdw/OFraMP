@@ -3,9 +3,15 @@ var ATOM_RADIUS = 10;
 var ATOM_RADIUS_CHARGED = 20;
 var BOND_SPACING = 4;
 var DASH_COUNT = 5;
-var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ?
-  "http://vps955.directvps.nl:12345/OAPoC/" : "http://127.0.0.1:8000/OAPoC/";
+var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl:12345/OAPoC/"
+    : "http://127.0.0.1:8000/OAPoC/";
 
+
+Object.prototype.extract = function(tgt) {
+  for(var k in this) {
+    tgt[k] = this[k];
+  }
+}
 
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -19,8 +25,7 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.stroke();
 }
 
-CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2,
-    n) {
+CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
   dx = x2 - x1;
   dy = y2 - y1;
   dz = Math.sqrt(dx * dx + dy * dy);
@@ -293,6 +298,10 @@ Atom.prototype.dy = function(a) {
   return a.y - this.y;
 }
 
+Atom.prototype.distance = function(a) {
+  return Math.sqrt(Math.pow(this.dx(a), 2) + Math.pow(this.dy(a), 2));
+}
+
 Atom.prototype.isCharged = function() {
   return this.charge !== undefined;
 }
@@ -326,6 +335,10 @@ BondList.prototype.init = function(bonds, atoms) {
   this.bonds = obonds;
 }
 
+BondList.prototype.get = function(i) {
+  return this.bonds[i];
+}
+
 BondList.prototype.draw = function(ctx) {
   this.bonds.forEach(function(b) {
     b.draw(ctx);
@@ -348,33 +361,46 @@ Bond.prototype.init = function(a1, a2, type) {
   this.type = type;
 }
 
-Bond.prototype.draw = function(ctx) {
+Bond.prototype.coords = function() {
   // Leave some space around the atom
   var dx = this.a1.dx(this.a2);
   var dy = this.a1.dy(this.a2);
-  var dz = Math.sqrt(dx * dx + dy * dy);
+  var dist = this.a1.distance(this.a2);
 
   if(this.a1.isCharged())
     var ar = ATOM_RADIUS_CHARGED;
   else
     var ar = ATOM_RADIUS;
-  
-  var ddx1 = dx * ar / dz;
-  var ddy1 = dy * ar / dz;
+
+  var ddx1 = dx * ar / dist;
+  var ddy1 = dy * ar / dist;
 
   if(this.a2.isCharged())
     ar = ATOM_RADIUS_CHARGED;
   else
     ar = ATOM_RADIUS;
+
+  var ddx2 = dx * ar / dist;
+  var ddy2 = dy * ar / dist;
+
+  return {
+    x1: this.a1.x + ddx1,
+    y1: this.a1.y + ddy1,
+    x2: this.a2.x - ddx2,
+    y2: this.a2.y - ddy2
+  }
+}
+
+Bond.prototype.length = function() {
+  this.coords().extract(window);
+  dx = x2 - x1;
+  dy = y2 - y1;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+Bond.prototype.draw = function(ctx) {
+  this.coords().extract(window);
   
-  var ddx2 = dx * ar / dz;
-  var ddy2 = dy * ar / dz;
-
-  var x1 = this.a1.x + ddx1;
-  var y1 = this.a1.y + ddy1;
-  var x2 = this.a2.x - ddx2;
-  var y2 = this.a2.y - ddy2;
-
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
 
@@ -382,10 +408,10 @@ Bond.prototype.draw = function(ctx) {
   if(this.type > 1) {
     dx = x2 - x1;
     dy = y2 - y1;
-    dz = Math.sqrt(dx * dx + dy * dy);
+    dist = Math.sqrt(dx * dx + dy * dy);
 
-    ddx = dy * BOND_SPACING / dz;
-    ddy = dx * BOND_SPACING / dz;
+    ddx = dy * BOND_SPACING / dist;
+    ddy = dx * BOND_SPACING / dist;
 
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
 
