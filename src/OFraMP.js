@@ -6,8 +6,8 @@ var DASH_COUNT = 5;
 var MIN_BOND_LENGTH = 50;
 var IDEAL_BOND_LENGTH = 70;
 var MAX_BOND_LENGTH = 150;
-var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl:12345/OAPoC/"
-    : "http://127.0.0.1:8000/OAPoC/";
+var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/"
+    : "http://127.0.0.1:8000/";
 
 
 // Based on: http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
