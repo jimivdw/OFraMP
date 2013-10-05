@@ -1,20 +1,74 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="lib/moledit.js"></script>
-        <script type="text/javascript">
-            window.onload = function() {
-                document.moledit = new ChemicalView("", 'chem1', 500, 400 );
-            };
-        </script>
-    </head>
-    <body>
-        <div id="chem1"></div>
-    </body>
+  <head>
+    <title>OFraMP</title>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="OFraMP.js"></script>
+  </head>
+
+  <body>
+    <fieldset style="width: 758px; margin: 0; padding: 5px 20px; border: 2px solid #333;">
+      <legend>OFraMP - The Online tool for Fragment-based Molecule Parameterisation</legend>
+      <button id="zoomin">Zoom +</button>
+      <button id="zoomout">Zoom -</button>
+      <button id="movel">Move &lt;</button>
+      <button id="mover">Move &gt;</button>
+      <button id="moveu">Move ^</button>
+      <button id="moved">Move v</button>
+      <button id="centr">Center</button>
+      <input type="text" id="data" placeholder="SMILES" />
+      <button id="show">Show</button>
+      <a id="download" href="">Download</a>
+    </fieldset>
+
+    <canvas id="mainMolecule" width="800" height="420" style="border: 1px solid #333; border-top: 0;">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <script>
+      var mv = new MoleculeViewer();
+      mv.init("mainMolecule", true);
+      mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
+
+      var zi = document.getElementById("zoomin");
+      zi.onclick = function() {
+        mv.zoom(1.1);
+      };
+      var zo = document.getElementById("zoomout");
+      zo.onclick = function() {
+        mv.zoom(.9);
+      };
+      var ml = document.getElementById("movel");
+      ml.onclick = function() {
+        mv.move(-10, 0);
+      };
+      var mr = document.getElementById("mover");
+      mr.onclick = function() {
+        mv.move(10, 0);
+      };
+      var mu = document.getElementById("moveu");
+      mu.onclick = function() {
+        mv.move(0, -10);
+      };
+      var md = document.getElementById("moved");
+      md.onclick = function() {
+        mv.move(0, 10);
+      };
+      var cr = document.getElementById("centr");
+      cr.onclick = function() {
+        mv.bestFit();
+      };
+      var sm = document.getElementById("show");
+      sm.onclick = function() {
+        var data = document.getElementById("data");
+        mv.showMolecule(data.value);
+      };
+      var dl = document.getElementById("download");
+      dl.onclick = function() {
+        var data = mv.canvas.toDataURL('image/png');
+        this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+        this.download = "OFraMP-Bla.png";
+      };
+    </script>
+  </body>
 </html>
