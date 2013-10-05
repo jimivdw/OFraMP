@@ -339,11 +339,19 @@ Atom.prototype.isCharged = function() {
 
 Atom.prototype.draw = function(ctx) {
   if(this.isCharged()) {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, ATOM_RADIUS_CHARGED, 0, 2 * Math.PI);
+    ctx.stroke();
+    
     ctx.fillText(this.element, this.x, this.y - 6);
     ctx.font = "9px Arial";
     ctx.fillText(this.charge, this.x, this.y + 6);
     ctx.font = "12px Arial";
   } else {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, ATOM_RADIUS, 0, 2 * Math.PI);
+    ctx.stroke();
+    
     ctx.fillText(this.element, this.x, this.y);
   }
 }
