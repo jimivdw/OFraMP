@@ -182,6 +182,7 @@ function MoleculeViewer() {
 }
 
 MoleculeViewer.prototype.init = function(canvas_id, interactive) {
+  var mv = this;
   this.canvas = document.getElementById(canvas_id);
 
   var ctx = this.canvas.getContext("2d");
@@ -193,6 +194,35 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
 
   if(interactive !== undefined)
     this.interactive = interactive;
+
+  if(this.interactive) {
+    this.canvas.onmousewheel = function(e) {
+      if(e.wheelDelta > 0) {
+        var f = 1.1;
+      } else {
+        var f = 0.9;
+      }
+      mv.zoomOn(e.offsetX, e.offsetY, f);
+    };
+    
+    this.canvas.onmousedown = function(e) {
+      mv.lastDX = e.offsetX;
+      mv.lastDY = e.offsetY;
+    }
+
+    this.canvas.onmousemove = function(e) {
+      if(e.which !== 1)
+        return;
+
+      var dx = e.offsetX - mv.lastDX;
+      var dy = e.offsetY - mv.lastDY;
+      mv.move(dx, dy);
+      
+      mv.lastDX = e.offsetX;
+      mv.lastDY = e.offsetY;
+      //mv.move(e.webkitMovementX, e.webkitMovementY);
+    }
+  }
 }
 
 MoleculeViewer.prototype.showMolecule = function(data_str) {
@@ -281,6 +311,14 @@ MoleculeViewer.prototype.move = function(dx, dy) {
   this.redraw();
 }
 
+MoleculeViewer.prototype.zoomOn = function(x, y, f) {
+  if(!this.interactive)
+    return;
+
+  this.molecule.zoomOn(x, y, f);
+  this.redraw();
+}
+
 MoleculeViewer.prototype.zoom = function(f) {
   if(!this.interactive)
     return;
@@ -322,6 +360,10 @@ Molecule.prototype.move = function(dx, dy) {
 
 Molecule.prototype.scale = function(f) {
   return this.atoms.scale(f);
+}
+
+Molecule.prototype.zoomOn = function(x, y, f) {
+  return this.atoms.zoomOn(x, y, f);
 }
 
 Molecule.prototype.zoom = function(f) {
