@@ -158,7 +158,7 @@ CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
 
     default:
       break;
-  };
+  }
 
   lines.forEach(function(line) {
     if(y <= max_y) {
@@ -166,7 +166,7 @@ CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
     }
     y += lineHeight;
   });
-}
+};
 
 
 function MoleculeViewer() {
@@ -196,28 +196,43 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
 }
 
 MoleculeViewer.prototype.showMolecule = function(data_str) {
+  var mv = this;
+
   this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", OAPoC_URL, false);
+
+  xhr.onreadystatechange = function() {
+    if(xhr.readyState == 1) {
+      mv.showOverlay("Loading molecule data...\nConnection established.");
+    } else if(xhr.readyState == 2) {
+      mv.showOverlay("Loading molecule data...\nRequest received.");
+    } else if(xhr.readyState == 3) {
+      mv.showOverlay("Loading molecule data...\nProcessing request...");
+    } else if(xhr.readyState == 4 && xhr.status == 200) {
+      var md = JSON.parse(xhr.response);
+      console.log("md", md);
+
+      if(md.error) {
+        mv.showOverlay(md.error, MESSAGE_TYPES.error);
+      } else if(md.atoms && md.bonds) {
+        mv.showOverlay("Initializing molecule...");
+        mv.molecule.init(md.atoms, md.bonds);
+        mv.hideOverlay();
+
+        mv.bestFit();
+      } else {
+        mv.showOverlay("Missing data, received: " + md.show(),
+            MESSAGE_TYPES.critical);
+      }
+    } else if(xhr.status != 200) {
+      mv.showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
+    }
+  }
+
+  xhr.open("POST", OAPoC_URL, true);
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.send("fmt=smiles&data=" + data_str);
-
-  var md = JSON.parse(xhr.response);
-  console.log("md", md);
-
-  if(md.error) {
-    this.showOverlay(md.error, MESSAGE_TYPES.error);
-  } else if(md.atoms && md.bonds) {
-    this.showOverlay("Initializing molecule...", MESSAGE_TYPES.info);
-    this.molecule.init(md.atoms, md.bonds);
-    this.hideOverlay();
-
-    this.bestFit();
-  } else {
-    this.showOverlay("Missing data, received: " + md.show(),
-        MESSAGE_TYPES.critical);
-  }
 }
 
 MoleculeViewer.prototype.showOverlay = function(msg, status) {
