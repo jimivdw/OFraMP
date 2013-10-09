@@ -6,18 +6,48 @@ var DASH_COUNT = 5;
 var MIN_BOND_LENGTH = 50;
 var IDEAL_BOND_LENGTH = 70;
 var MAX_BOND_LENGTH = 150;
+var MESSAGE_TYPES = {
+  info: 1,
+  warning: 2,
+  error: 3,
+  critical: 4,
+  debug: 5
+}
+var MESSAGE_COLORS = {
+  1: "rgba(255, 255, 255, .5)",
+  2: "rgba(253, 198, 137, .5)",
+  3: "rgba(246, 150, 121, .5)",
+  4: "rgba(189, 140, 191, .5)",
+  5: "rgba(131, 147, 202, .5)"
+}
 var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/"
     : "http://127.0.0.1:8000/";
 
 
-// Based on: http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
+// Based on:
+// http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
 Object.prototype.extract = function(tgt) {
-  for(var k in this) {
+  for( var k in this) {
     tgt[k] = this[k];
   }
 }
 
-// From: http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
+Object.prototype.show = function() {
+  var s = "{";
+  for( var k in this) {
+    if(typeof this[k] != "function") {
+      if(typeof this[k] == "object")
+        d = "object";
+      else
+        d = this[k];
+      s += k + ": " + d + ", ";
+    }
+  }
+  return s.substr(0, s.length - 2) + "}";
+}
+
+// From:
+// http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
 Array.prototype.max = function() {
   return Math.max.apply(null, this);
 };
@@ -54,12 +84,100 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
   }
 }
 
+// Based on:
+// http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial
+CanvasRenderingContext2D.prototype.textLines = function(x, y, w, h, text,
+    hard_wrap) {
+  var ctx = this;
+
+  var lines = Array();
+  var hard_lines = text.trim().split("\n");
+  hard_lines.forEach(function(hard_line) {
+    if(ctx.measureText(hard_line).width > w) {
+      var line = "";
+      var words = hard_line.split(" ");
+      words.forEach(function(word) {
+        var nline = line + word + " ";
+        if(ctx.measureText(nline).width > w) {
+          lines.push(line);
+
+          if(ctx.measureText(word).width > w && hard_wrap) {
+            line = "";
+            var chars = word.split("");
+            chars.forEach(function(char) {
+              var nline = line + char;
+              if(ctx.measureText(nline).width > w) {
+                lines.push(line);
+                line = char;
+              } else {
+                line = nline;
+              }
+            });
+            line += " ";
+          } else {
+            line = word + " ";
+          }
+        } else {
+          line = nline;
+        }
+      });
+      lines.push(line);
+    } else {
+      lines.push(hard_line);
+    }
+  });
+  return lines;
+};
+
+CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
+    hard_wrap) {
+  var ctx = this;
+
+  var lines = ctx.textLines(x, y, w, h, text, hard_wrap);
+  var lineHeight = parseInt(ctx.font.split("px")[0]) * 1.2;
+
+  var min_y = y;
+  var max_y = y + h;
+  var ll = lines.length - 1;
+  switch(ctx.textBaseline.toLowerCase()) {
+    case "bottom":
+      min_y = y - h + lineHeight;
+      max_y = y;
+      y -= ll * lineHeight;
+      if(y < min_y)
+        y = min_y;
+      break;
+
+    case "middle":
+      min_y = y - h / 2 + lineHeight / 2;
+      max_y = y + h / 2 - lineHeight / 2;
+      y -= (ll / 2) * lineHeight;
+      if(y < min_y)
+        y = min_y;
+      break;
+
+    default:
+      break;
+  };
+
+  lines.forEach(function(line) {
+    if(y <= max_y) {
+      ctx.fillText(line, x, y);
+    }
+    y += lineHeight;
+  });
+}
+
 
 function MoleculeViewer() {
   this.molecule = new Molecule();
   this.canvas = undefined;
   this.ctx = undefined;
-  this.overlay = undefined;
+
+  this.overlay_showing = false;
+  this.overlay_msg = "";
+  this.overlay_status = 1;
+
   this.interactive = false;
 }
 
@@ -72,50 +190,14 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
   ctx.textBaseline = 'middle';
   ctx.strokeStyle = '#000';
   this.ctx = ctx;
-  
-  this.createOverlay();
 
   if(interactive !== undefined)
     this.interactive = interactive;
 }
 
-MoleculeViewer.prototype.createOverlay = function() {
-  this.overlay = document.createElement("div");
-  
-  var bg = this.overlay;
-  bg.className = "overlay-bg";
-  bg.style.width = (this.canvas.width - 2 * CANVAS_PADDING) + "px";
-  bg.style.height = (this.canvas.height - 2 * CANVAS_PADDING) + "px";
-  
-  var box = document.createElement("div");
-  box.className = "overlay-box";
-  bg.appendChild(box);
-  
-  var header = document.createElement("div");
-  header.className = "overlay-header";
-  box.appendChild(header);
-  
-  var htb = document.createElement("span");
-  header.appendChild(htb);
-  
-  var ht = document.createTextNode("Success");
-  htb.appendChild(ht);
-  
-  var body = document.createElement("div");
-  body.className = "overlay-body";
-  box.appendChild(body);
-  
-  var btb = document.createElement("span");
-  body.appendChild(btb);
-  
-  var bt = document.createTextNode("Lorem ipsum dolor samet it amet...");
-  btb.appendChild(bt);
-  
-  var p = this.canvas.parentNode;
-  p.insertBefore(bg, this.canvas);
-}
-
 MoleculeViewer.prototype.showMolecule = function(data_str) {
+  this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
+
   var xhr = new XMLHttpRequest();
   xhr.open("POST", OAPoC_URL, false);
   xhr.setRequestHeader("Content-type", "application/json");
@@ -123,25 +205,57 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
 
   var md = JSON.parse(xhr.response);
   console.log("md", md);
-  this.molecule.init(md.atoms, md.bonds);
-  this.bestFit();
+
+  if(md.error) {
+    this.showOverlay(md.error, MESSAGE_TYPES.error);
+  } else if(md.atoms && md.bonds) {
+    this.showOverlay("Initializing molecule...", MESSAGE_TYPES.info);
+    this.molecule.init(md.atoms, md.bonds);
+    this.hideOverlay();
+
+    this.bestFit();
+  } else {
+    this.showOverlay("Missing data, received: " + md.show(),
+        MESSAGE_TYPES.critical);
+  }
 }
 
-MoleculeViewer.prototype.showOverlay = function() {
-  this.overlay.style.display = "block";
-  /*
+MoleculeViewer.prototype.showOverlay = function(msg, status) {
+  if(this.overlay_showing) {
+    this.hideOverlay();
+  }
+
+  msg = msg || this.overlay_msg;
+  status = status || this.overlay_status;
+
   var ctx = this.ctx;
   ctx.fillStyle = "rgba(0, 0, 0, .8)";
   ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  ctx.fillStyle = "rgba(255, 255, 255, .5)";
+  ctx.fillStyle = MESSAGE_COLORS[status];
   ctx.fillRect(40, 40, this.canvas.width - 80, this.canvas.height - 80);
-  ctx.fillStyle = '#000';
-  */
+
+  ctx.fillStyle = "#000000";
+  ctx.font = "40px Arial";
+  ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
+      this.canvas.width - 100, this.canvas.height - 100, msg, true);
+  ctx.font = "12px Arial";
+
+  this.overlay_showing = true;
+  this.overlay_msg = msg;
+  this.overlay_status = status;
+}
+
+MoleculeViewer.prototype.hideOverlay = function() {
+  this.overlay_showing = false;
+  this.redraw();
 }
 
 MoleculeViewer.prototype.redraw = function() {
   this.ctx.clear();
   this.molecule.draw(this.ctx);
+  if(this.overlay_showing) {
+    this.showOverlay();
+  }
 }
 
 MoleculeViewer.prototype.move = function(dx, dy) {
@@ -394,7 +508,7 @@ Atom.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, ATOM_RADIUS_CHARGED, 0, 2 * Math.PI);
     ctx.stroke();
-    
+
     ctx.fillText(this.element, this.x, this.y - 6);
     ctx.font = "9px Arial";
     ctx.fillText(this.charge, this.x, this.y + 6);
@@ -403,7 +517,7 @@ Atom.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, ATOM_RADIUS, 0, 2 * Math.PI);
     ctx.stroke();
-    
+
     ctx.fillText(this.element, this.x, this.y);
   }
 }
@@ -509,7 +623,7 @@ Bond.prototype.length = function() {
 
 Bond.prototype.draw = function(ctx) {
   this.coords().extract(window);
-  
+
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
 
