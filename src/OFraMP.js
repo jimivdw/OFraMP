@@ -220,7 +220,6 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
       
       mv.lastDX = e.offsetX;
       mv.lastDY = e.offsetY;
-      //mv.move(e.webkitMovementX, e.webkitMovementY);
     }
   }
 }
