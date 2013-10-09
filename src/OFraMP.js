@@ -59,6 +59,7 @@ function MoleculeViewer() {
   this.molecule = new Molecule();
   this.canvas = undefined;
   this.ctx = undefined;
+  this.overlay = undefined;
   this.interactive = false;
 }
 
@@ -71,9 +72,47 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
   ctx.textBaseline = 'middle';
   ctx.strokeStyle = '#000';
   this.ctx = ctx;
+  
+  this.createOverlay();
 
   if(interactive !== undefined)
     this.interactive = interactive;
+}
+
+MoleculeViewer.prototype.createOverlay = function() {
+  this.overlay = document.createElement("div");
+  
+  var bg = this.overlay;
+  bg.className = "overlay-bg";
+  bg.style.width = (this.canvas.width - 2 * CANVAS_PADDING) + "px";
+  bg.style.height = (this.canvas.height - 2 * CANVAS_PADDING) + "px";
+  
+  var box = document.createElement("div");
+  box.className = "overlay-box";
+  bg.appendChild(box);
+  
+  var header = document.createElement("div");
+  header.className = "overlay-header";
+  box.appendChild(header);
+  
+  var htb = document.createElement("span");
+  header.appendChild(htb);
+  
+  var ht = document.createTextNode("Success");
+  htb.appendChild(ht);
+  
+  var body = document.createElement("div");
+  body.className = "overlay-body";
+  box.appendChild(body);
+  
+  var btb = document.createElement("span");
+  body.appendChild(btb);
+  
+  var bt = document.createTextNode("Lorem ipsum dolor samet it amet...");
+  btb.appendChild(bt);
+  
+  var p = this.canvas.parentNode;
+  p.insertBefore(bg, this.canvas);
 }
 
 MoleculeViewer.prototype.showMolecule = function(data_str) {
@@ -83,8 +122,21 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
   xhr.send("fmt=smiles&data=" + data_str);
 
   var md = JSON.parse(xhr.response);
+  console.log("md", md);
   this.molecule.init(md.atoms, md.bonds);
   this.bestFit();
+}
+
+MoleculeViewer.prototype.showOverlay = function() {
+  this.overlay.style.display = "block";
+  /*
+  var ctx = this.ctx;
+  ctx.fillStyle = "rgba(0, 0, 0, .8)";
+  ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  ctx.fillStyle = "rgba(255, 255, 255, .5)";
+  ctx.fillRect(40, 40, this.canvas.width - 80, this.canvas.height - 80);
+  ctx.fillStyle = '#000';
+  */
 }
 
 MoleculeViewer.prototype.redraw = function() {
