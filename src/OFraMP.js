@@ -451,6 +451,7 @@ function AtomList() {
 AtomList.prototype.init = function(molecule, atoms) {
   this.molecule = molecule;
   var al = this;
+  al.atoms = [];
   atoms.forEach(function(a) {
     var o = new Atom();
     o.init(al, a.id, a.element, a.element_id, a.x, a.y);
@@ -641,6 +642,7 @@ BondList.prototype.init = function(molecule, bonds) {
   var atoms = molecule.atoms;
 
   var bl = this;
+  bl.bonds = [];
   bonds.forEach(function(b) {
     var o = new Bond();
     o.init(bl, atoms.get(b.a1), atoms.get(b.a2), b.bond_type);
@@ -753,7 +755,7 @@ Bond.prototype.draw = function() {
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
 
     if(this.type == 4)
-      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy, s.dash_count);
     else
       ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
   }
