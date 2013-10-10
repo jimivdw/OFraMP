@@ -1,6 +1,9 @@
 var DEFAULT_SETTINGS = {
   interactive: false,
 
+  draw_atom_circ: true,
+  draw_h_atoms: true,
+
   canvas_padding: 40,
   atom_radius: 10,
   atom_radius_charged: 20,
@@ -579,6 +582,7 @@ function Atom() {
   this.x = 0.;
   this.y = 0.;
   this.charge = undefined;
+  this.show = true;
 }
 
 Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
@@ -589,6 +593,8 @@ Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
   this.x = x;
   this.y = y;
   this.charge = charge;
+  if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
+    this.show = false;
 }
 
 Atom.prototype.dx = function(a) {
@@ -608,21 +614,29 @@ Atom.prototype.isCharged = function() {
 }
 
 Atom.prototype.draw = function() {
+  if(!this.show)
+    return;
+
   var ctx = this.list.molecule.mv.ctx;
   var s = this.list.molecule.mv.settings;
+
   if(this.isCharged()) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s.atom_radius_charged, 0, 2 * Math.PI);
-    ctx.stroke();
+    if(s.draw_atom_circ) {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, s.atom_radius_charged, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
 
     ctx.fillText(this.element, this.x, this.y - 6);
     ctx.font = "9px Arial";
     ctx.fillText(this.charge, this.x, this.y + 6);
     ctx.font = "12px Arial";
   } else {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, s.atom_radius, 0, 2 * Math.PI);
-    ctx.stroke();
+    if(s.draw_atom_circ) {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, s.atom_radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
 
     ctx.fillText(this.element, this.x, this.y);
   }
@@ -687,6 +701,7 @@ function Bond() {
   this.a1 = undefined;
   this.a2 = undefined;
   this.type = 0;
+  this.show = true;
 }
 
 Bond.prototype.init = function(list, a1, a2, type) {
@@ -694,11 +709,13 @@ Bond.prototype.init = function(list, a1, a2, type) {
   this.a1 = a1;
   this.a2 = a2;
   this.type = type;
+  if(!a1.show || !a2.show)
+    this.show = false;
 }
 
 Bond.prototype.coords = function() {
   var s = this.list.molecule.mv.settings;
-  
+
   // Leave some space around the atom
   var dx = this.a1.dx(this.a2);
   var dy = this.a1.dy(this.a2);
@@ -736,6 +753,9 @@ Bond.prototype.length = function() {
 }
 
 Bond.prototype.draw = function() {
+  if(!this.show)
+    return;
+
   var ctx = this.list.molecule.mv.ctx;
   var s = this.list.molecule.mv.settings;
   this.coords().extract(window);
