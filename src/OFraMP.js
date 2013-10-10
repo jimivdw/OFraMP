@@ -1,11 +1,25 @@
-var CANVAS_PADDING = 40;
-var ATOM_RADIUS = 10;
-var ATOM_RADIUS_CHARGED = 20;
-var BOND_SPACING = 4;
-var DASH_COUNT = 5;
-var MIN_BOND_LENGTH = 50;
-var IDEAL_BOND_LENGTH = 70;
-var MAX_BOND_LENGTH = 150;
+var DEFAULT_SETTINGS = {
+  interactive: false,
+
+  canvas_padding: 40,
+  atom_radius: 10,
+  atom_radius_charged: 20,
+  bond_spacing: 4,
+  dash_count: 5,
+
+  min_bond_length: 50,
+  ideal_bond_length: 70,
+  max_bond_length: 150,
+
+  message_colors: {
+    1: "rgba(255, 255, 255, .5)",
+    2: "rgba(253, 198, 137, .5)",
+    3: "rgba(246, 150, 121, .5)",
+    4: "rgba(189, 140, 191, .5)",
+    5: "rgba(131, 147, 202, .5)"
+  }
+};
+
 var MESSAGE_TYPES = {
   info: 1,
   warning: 2,
@@ -13,16 +27,26 @@ var MESSAGE_TYPES = {
   critical: 4,
   debug: 5
 }
-var MESSAGE_COLORS = {
-  1: "rgba(255, 255, 255, .5)",
-  2: "rgba(253, 198, 137, .5)",
-  3: "rgba(246, 150, 121, .5)",
-  4: "rgba(189, 140, 191, .5)",
-  5: "rgba(131, 147, 202, .5)"
-}
 var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/"
     : "http://127.0.0.1:8000/";
 
+
+Object.prototype.merge = function(other, nondestructive) {
+  if(nondestructive) {
+    var r = {};
+    for( var k in this)
+      r[k] = this[k];
+  } else {
+    var r = this;
+  }
+  for( var k in other)
+    r[k] = other[k];
+  return r;
+}
+
+Object.prototype.copy = function() {
+  return this.merge({}, true);
+}
 
 // Based on:
 // http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
@@ -83,7 +107,7 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
   dy = y2 - y1;
   dz = Math.sqrt(dx * dx + dy * dy);
 
-  n = n || DASH_COUNT;
+  n = n || DEFAULT_SETTINGS.dash_count;
   l = dz / (n * 2 - 1);
 
   ddx = dx * l / dz;
@@ -188,10 +212,10 @@ function MoleculeViewer() {
   this.overlay_msg = "";
   this.overlay_status = 1;
 
-  this.interactive = false;
+  this.settings = DEFAULT_SETTINGS.copy();
 }
 
-MoleculeViewer.prototype.init = function(canvas_id, interactive) {
+MoleculeViewer.prototype.init = function(canvas_id, settings) {
   var mv = this;
   this.canvas = document.getElementById(canvas_id);
 
@@ -202,10 +226,9 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
   ctx.strokeStyle = '#000';
   this.ctx = ctx;
 
-  if(interactive !== undefined)
-    this.interactive = interactive;
+  this.settings.merge(settings);
 
-  if(this.interactive) {
+  if(this.settings.interactive) {
     // TODO: Not supported in Firefox!
     this.canvas.onmousewheel = function(e) {
       if(e.wheelDelta > 0) {
@@ -293,7 +316,7 @@ MoleculeViewer.prototype.showOverlay = function(msg, status) {
   var ctx = this.ctx;
   ctx.fillStyle = "rgba(0, 0, 0, .8)";
   ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  ctx.fillStyle = MESSAGE_COLORS[status];
+  ctx.fillStyle = this.settings.message_colors[status];
   ctx.fillRect(40, 40, this.canvas.width - 80, this.canvas.height - 80);
 
   ctx.fillStyle = "#000000";
@@ -314,14 +337,14 @@ MoleculeViewer.prototype.hideOverlay = function() {
 
 MoleculeViewer.prototype.redraw = function() {
   this.ctx.clear();
-  this.molecule.draw(this.ctx);
+  this.molecule.draw();
   if(this.overlay_showing) {
     this.showOverlay();
   }
 }
 
 MoleculeViewer.prototype.move = function(dx, dy) {
-  if(!this.interactive)
+  if(!this.settings.interactive)
     return;
 
   this.molecule.move(dx, dy);
@@ -329,7 +352,7 @@ MoleculeViewer.prototype.move = function(dx, dy) {
 }
 
 MoleculeViewer.prototype.zoomOn = function(x, y, f) {
-  if(!this.interactive)
+  if(!this.settings.interactive)
     return;
 
   this.molecule.zoomOn(x, y, f);
@@ -337,7 +360,7 @@ MoleculeViewer.prototype.zoomOn = function(x, y, f) {
 }
 
 MoleculeViewer.prototype.zoom = function(f) {
-  if(!this.interactive)
+  if(!this.settings.interactive)
     return;
 
   this.molecule.zoom(f);
@@ -395,25 +418,25 @@ Molecule.prototype.bestFit = function(w, h) {
 
 Molecule.prototype.minimize = function() {
   var sd = this.bonds.shortestDistance();
-  var f = MIN_BOND_LENGTH / sd;
+  var f = this.mv.settings.min_bond_length / sd;
   this.zoom(f);
 }
 
 Molecule.prototype.idealize = function() {
   var sd = this.bonds.shortestDistance();
-  var f = IDEAL_BOND_LENGTH / sd;
+  var f = this.mv.settings.ideal_bond_length / sd;
   this.zoom(f);
 }
 
 Molecule.prototype.maximize = function() {
   var ld = this.bonds.longestDistance();
-  var f = MAX_BOND_LENGTH / ld;
+  var f = this.mv.settings.max_bond_length / ld;
   this.zoom(f);
 }
 
-Molecule.prototype.draw = function(ctx) {
-  this.atoms.draw(ctx);
-  this.bonds.draw(ctx);
+Molecule.prototype.draw = function() {
+  this.atoms.draw();
+  this.bonds.draw();
 }
 
 
@@ -524,8 +547,9 @@ AtomList.prototype.zoomOn = function(x, y, f) {
 }
 
 AtomList.prototype.bestFit = function(w, h) {
-  var wf = (w - CANVAS_PADDING) / this.width();
-  var hf = (h - CANVAS_PADDING) / this.height();
+  var s = this.molecule.mv.settings;
+  var wf = (w - s.canvas_padding) / this.width();
+  var hf = (h - s.canvas_padding) / this.height();
   var f = wf < hf ? wf : hf;
   this.scale(f);
 
@@ -536,9 +560,9 @@ AtomList.prototype.bestFit = function(w, h) {
   this.move(dx, dy);
 }
 
-AtomList.prototype.draw = function(ctx) {
+AtomList.prototype.draw = function() {
   this.atoms.forEach(function(a) {
-    a.draw(ctx);
+    a.draw();
   });
 }
 
@@ -582,10 +606,12 @@ Atom.prototype.isCharged = function() {
   return this.charge !== undefined;
 }
 
-Atom.prototype.draw = function(ctx) {
+Atom.prototype.draw = function() {
+  var ctx = this.list.molecule.mv.ctx;
+  var s = this.list.molecule.mv.settings;
   if(this.isCharged()) {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, ATOM_RADIUS_CHARGED, 0, 2 * Math.PI);
+    ctx.arc(this.x, this.y, s.atom_radius_charged, 0, 2 * Math.PI);
     ctx.stroke();
 
     ctx.fillText(this.element, this.x, this.y - 6);
@@ -594,7 +620,7 @@ Atom.prototype.draw = function(ctx) {
     ctx.font = "12px Arial";
   } else {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, ATOM_RADIUS, 0, 2 * Math.PI);
+    ctx.arc(this.x, this.y, s.atom_radius, 0, 2 * Math.PI);
     ctx.stroke();
 
     ctx.fillText(this.element, this.x, this.y);
@@ -612,15 +638,14 @@ function BondList() {
 
 BondList.prototype.init = function(molecule, bonds) {
   this.molecule = molecule;
+  var atoms = molecule.atoms;
 
   var bl = this;
-  bonds
-      .forEach(function(b) {
-        var o = new Bond();
-        o.init(bl, molecule.atoms.get(b.a1), molecule.atoms.get(b.a2),
-            b.bond_type);
-        bl.bonds.push(o);
-      });
+  bonds.forEach(function(b) {
+    var o = new Bond();
+    o.init(bl, atoms.get(b.a1), atoms.get(b.a2), b.bond_type);
+    bl.bonds.push(o);
+  });
 }
 
 BondList.prototype.get = function(i) {
@@ -645,9 +670,9 @@ BondList.prototype.longestDistance = function() {
   }).max();
 }
 
-BondList.prototype.draw = function(ctx) {
+BondList.prototype.draw = function() {
   this.bonds.forEach(function(b) {
-    b.draw(ctx);
+    b.draw();
   });
 }
 
@@ -670,23 +695,25 @@ Bond.prototype.init = function(list, a1, a2, type) {
 }
 
 Bond.prototype.coords = function() {
+  var s = this.list.molecule.mv.settings;
+  
   // Leave some space around the atom
   var dx = this.a1.dx(this.a2);
   var dy = this.a1.dy(this.a2);
   var dist = this.a1.distance(this.a2);
 
   if(this.a1.isCharged())
-    var ar = ATOM_RADIUS_CHARGED;
+    var ar = s.atom_radius_charged;
   else
-    var ar = ATOM_RADIUS;
+    var ar = s.atom_radius;
 
   var ddx1 = dx * ar / dist;
   var ddy1 = dy * ar / dist;
 
   if(this.a2.isCharged())
-    ar = ATOM_RADIUS_CHARGED;
+    ar = s.atom_radius_charged;
   else
-    ar = ATOM_RADIUS;
+    ar = s.atom_radius;
 
   var ddx2 = dx * ar / dist;
   var ddy2 = dy * ar / dist;
@@ -706,7 +733,9 @@ Bond.prototype.length = function() {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-Bond.prototype.draw = function(ctx) {
+Bond.prototype.draw = function() {
+  var ctx = this.list.molecule.mv.ctx;
+  var s = this.list.molecule.mv.settings;
   this.coords().extract(window);
 
   if(this.type == 1 || this.type == 3)
@@ -718,8 +747,8 @@ Bond.prototype.draw = function(ctx) {
     dy = y2 - y1;
     dist = Math.sqrt(dx * dx + dy * dy);
 
-    ddx = dy * BOND_SPACING / dist;
-    ddy = dx * BOND_SPACING / dist;
+    ddx = dy * s.bond_spacing / dist;
+    ddy = dx * s.bond_spacing / dist;
 
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
 

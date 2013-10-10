@@ -9,7 +9,7 @@
       var mv = new MoleculeViewer();
 
       window.onload = function() {
-        mv.init("mainMolecule", true);
+        mv.init("mainMolecule", {interactive: true});
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
         var zi = document.getElementById("zoomin");
