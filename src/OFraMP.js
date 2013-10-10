@@ -20,8 +20,26 @@ var DEFAULT_SETTINGS = {
     3: "rgba(246, 150, 121, .5)",
     4: "rgba(189, 140, 191, .5)",
     5: "rgba(131, 147, 202, .5)"
+  },
+
+  atom_bg_colors: {
+    1: "rgb(255, 255, 255)",
+    2: "rgb(204, 166,  40)",
+    3: "rgb(203,  83,  73)"
+  },
+
+  atom_border_widths: {
+    1: 1,
+    2: 4,
+    3: 4
   }
 };
+
+/*
+ * Nice colors: Gray: rgb(148, 148, 148) Green: rgb( 80, 169, 75) Blue: rgb( 76,
+ * 81, 178) Red: rgb(203, 83, 73) Yellow: rgb(204, 166, 40) Brown: rgb(127, 79,
+ * 66) Purple: rgb(227, 119, 219)
+ */
 
 var MESSAGE_TYPES = {
   info: 1,
@@ -29,7 +47,14 @@ var MESSAGE_TYPES = {
   error: 3,
   critical: 4,
   debug: 5
+};
+
+var ATOM_STATUSES = {
+  normal: 1,
+  hover: 2,
+  selected: 3
 }
+
 var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/"
     : "http://127.0.0.1:8000/";
 
@@ -85,11 +110,11 @@ Array.prototype.min = function() {
 
 
 MouseEvent.prototype.getX = function() {
-  return this.clientX - this.target.offsetLeft;
+  return this.clientX - this.target.offsetLeft + document.body.scrollLeft;
 }
 
 MouseEvent.prototype.getY = function() {
-  return this.clientY - this.target.offsetTop;
+  return this.clientY - this.target.offsetTop + document.body.scrollTop;
 }
 
 
@@ -251,15 +276,19 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
     }
 
     this.canvas.onmousemove = function(e) {
-      if(!mv.mouseDown)
-        return;
+      if(mv.mouseDown) {
+        var dx = e.getX() - mv.lastDX;
+        var dy = e.getY() - mv.lastDY;
+        mv.move(dx, dy);
 
-      var dx = e.getX() - mv.lastDX;
-      var dy = e.getY() - mv.lastDY;
-      mv.move(dx, dy);
-
-      mv.lastDX = e.getX();
-      mv.lastDY = e.getY();
+        mv.lastDX = e.getX();
+        mv.lastDY = e.getY();
+      } else {
+        console.log(e.screenY, e.offsetY, e.pageY, e.layerY, e.getY(), document.body.scrollTop);
+        var a = mv.molecule.atomAt(e.getX(), e.getY());
+        mv.molecule.atoms.setHover(a);
+        mv.redraw();
+      }
     }
 
     document.onmouseup = function(e) {
@@ -399,6 +428,10 @@ Molecule.prototype.height = function() {
   return this.atoms.height();
 }
 
+Molecule.prototype.atomAt = function(x, y) {
+  return this.atoms.atomAt(x, y);
+}
+
 Molecule.prototype.move = function(dx, dy) {
   return this.atoms.move(dx, dy);
 }
@@ -523,6 +556,27 @@ AtomList.prototype.size = function() {
   };
 }
 
+AtomList.prototype.atomAt = function(x, y) {
+  for( var i = 0; i < this.atoms.length; i++) {
+    if(this.atoms[i].touches(x, y))
+      return this.atoms[i];
+  }
+}
+
+AtomList.prototype.setHover = function(h) {
+  this.atoms.forEach(function(a) {
+    if(a.status === ATOM_STATUSES.hover)
+      a.status = ATOM_STATUSES.normal;
+  });
+
+  if(h && h.status === ATOM_STATUSES.normal){
+    h.status = ATOM_STATUSES.hover;
+    document.body.style.cursor = "pointer";
+  } else {
+    document.body.style.cursor = "move";
+  }
+}
+
 AtomList.prototype.move = function(dx, dy) {
   this.atoms.map(function(a) {
     a.x += dx;
@@ -583,6 +637,7 @@ function Atom() {
   this.y = 0.;
   this.charge = undefined;
   this.show = true;
+  this.status = ATOM_STATUSES.normal;
 }
 
 Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
@@ -613,6 +668,18 @@ Atom.prototype.isCharged = function() {
   return this.charge !== undefined;
 }
 
+Atom.prototype.touches = function(x, y) {
+  var s = this.list.molecule.mv.settings;
+  if(this.isCharged())
+    var r = s.atom_radius_charged;
+  else
+    var r = s.atom_radius;
+
+  var dx = this.x - x;
+  var dy = this.y - y;
+  return Math.sqrt(dx * dx + dy * dy) <= r;
+}
+
 Atom.prototype.draw = function() {
   if(!this.show)
     return;
@@ -633,9 +700,14 @@ Atom.prototype.draw = function() {
     ctx.font = "12px Arial";
   } else {
     if(s.draw_atom_circ) {
+      ctx.lineWidth = s.atom_border_widths[this.status];
+      ctx.fillStyle = s.atom_bg_colors[this.status];
       ctx.beginPath();
       ctx.arc(this.x, this.y, s.atom_radius, 0, 2 * Math.PI);
+      ctx.fill();
       ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#000";
     }
 
     ctx.fillText(this.element, this.x, this.y);
