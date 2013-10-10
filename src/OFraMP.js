@@ -56,6 +56,16 @@ Array.prototype.min = function() {
   return Math.min.apply(null, this);
 };
 
+
+MouseEvent.prototype.getX = function() {
+  return this.clientX - this.target.offsetLeft;
+}
+
+MouseEvent.prototype.getY = function() {
+  return this.clientY - this.target.offsetTop;
+}
+
+
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
 }
@@ -196,6 +206,7 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
     this.interactive = interactive;
 
   if(this.interactive) {
+    // TODO: Not supported in Firefox!
     this.canvas.onmousewheel = function(e) {
       if(e.wheelDelta > 0) {
         var f = 1.1;
@@ -203,23 +214,30 @@ MoleculeViewer.prototype.init = function(canvas_id, interactive) {
         var f = 0.9;
       }
       mv.zoomOn(e.offsetX, e.offsetY, f);
+      
+      return false;
     };
     
     this.canvas.onmousedown = function(e) {
-      mv.lastDX = e.offsetX;
-      mv.lastDY = e.offsetY;
+      mv.lastDX = e.getX();
+      mv.lastDY = e.getY();
+      mv.mouseDown = true;
     }
 
     this.canvas.onmousemove = function(e) {
-      if(e.which !== 1)
+      if(!mv.mouseDown)
         return;
 
-      var dx = e.offsetX - mv.lastDX;
-      var dy = e.offsetY - mv.lastDY;
+      var dx = e.getX() - mv.lastDX;
+      var dy = e.getY() - mv.lastDY;
       mv.move(dx, dy);
       
-      mv.lastDX = e.offsetX;
-      mv.lastDY = e.offsetY;
+      mv.lastDX = e.getX();
+      mv.lastDY = e.getY();
+    }
+    
+    document.onmouseup = function(e) {
+      mv.mouseDown = false;
     }
   }
 }
