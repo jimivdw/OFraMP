@@ -270,29 +270,42 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
     };
 
     this.canvas.onmousedown = function(e) {
-      mv.lastDX = e.getX();
-      mv.lastDY = e.getY();
-      mv.mouseDown = true;
+      var a = mv.molecule.atomAt(e.getX(), e.getY());
+      if(a) {
+        if(mv.molecule.setSelected(a))
+          mv.redraw();
+      } else {
+        mv.lastX = e.getX();
+        mv.lastY = e.getY();
+        mv.mouseDown = true;
+      }
     }
 
     this.canvas.onmousemove = function(e) {
       if(mv.mouseDown) {
-        var dx = e.getX() - mv.lastDX;
-        var dy = e.getY() - mv.lastDY;
+        var dx = e.getX() - mv.lastX;
+        var dy = e.getY() - mv.lastY;
         mv.move(dx, dy);
 
-        mv.lastDX = e.getX();
-        mv.lastDY = e.getY();
+        mv.lastX = e.getX();
+        mv.lastY = e.getY();
+        mv.mouseDragged = true;
       } else {
-        console.log(e.screenY, e.offsetY, e.pageY, e.layerY, e.getY(), document.body.scrollTop);
         var a = mv.molecule.atomAt(e.getX(), e.getY());
-        mv.molecule.atoms.setHover(a);
-        mv.redraw();
+        if(mv.molecule.setHover(a))
+          mv.redraw();
       }
     }
 
     document.onmouseup = function(e) {
+      if(!mv.mouseDragged) {
+        if(!mv.molecule.atomAt(e.getX(), e.getY())) {
+          if(mv.molecule.setSelected())
+            mv.redraw();
+        }
+      }
       mv.mouseDown = false;
+      mv.mouseDragged = false;
     }
   }
 }
@@ -432,6 +445,14 @@ Molecule.prototype.atomAt = function(x, y) {
   return this.atoms.atomAt(x, y);
 }
 
+Molecule.prototype.setHover = function(a) {
+  return this.atoms.setHover(a);
+}
+
+Molecule.prototype.setSelected = function(a) {
+  return this.atoms.setSelected(a);
+}
+
 Molecule.prototype.move = function(dx, dy) {
   return this.atoms.move(dx, dy);
 }
@@ -564,17 +585,47 @@ AtomList.prototype.atomAt = function(x, y) {
 }
 
 AtomList.prototype.setHover = function(h) {
+  var changed = false;
   this.atoms.forEach(function(a) {
-    if(a.status === ATOM_STATUSES.hover)
+    if(a.status === ATOM_STATUSES.hover && a !== h) {
       a.status = ATOM_STATUSES.normal;
+      changed = true;
+    }
   });
 
-  if(h && h.status === ATOM_STATUSES.normal){
-    h.status = ATOM_STATUSES.hover;
-    document.body.style.cursor = "pointer";
+  if(h) {
+    if(h.status === ATOM_STATUSES.normal) {
+      h.status = ATOM_STATUSES.hover;
+      changed = true;
+    }
+    if(h.status === ATOM_STATUSES.hover) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "default";
+    }
   } else {
     document.body.style.cursor = "move";
   }
+
+  return changed;
+}
+
+AtomList.prototype.setSelected = function(s) {
+  var changed = false;
+  this.atoms.forEach(function(a) {
+    if(a.status === ATOM_STATUSES.selected && a !== s) {
+      a.status = ATOM_STATUSES.normal;
+      changed = true;
+    }
+  });
+
+  if(s && s.status !== ATOM_STATUSES.selected) {
+    s.status = ATOM_STATUSES.selected;
+    document.body.style.cursor = "default";
+    changed = true;
+  }
+
+  return changed;
 }
 
 AtomList.prototype.move = function(dx, dy) {
