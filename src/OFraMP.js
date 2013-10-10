@@ -298,7 +298,7 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
     }
 
     document.onmouseup = function(e) {
-      if(!mv.mouseDragged) {
+      if(e.target === mv.canvas && !mv.mouseDragged) {
         if(!mv.molecule.atomAt(e.getX(), e.getY())) {
           if(mv.molecule.setSelected())
             mv.redraw();
