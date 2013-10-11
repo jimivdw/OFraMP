@@ -1,5 +1,7 @@
 var DEFAULT_SETTINGS = {
   interactive: false,
+  
+  oapoc_url: "http://vps955.directvps.nl/OAPoC/",
 
   draw_atom_circ: true,
   draw_h_atoms: true,
@@ -345,7 +347,7 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
     }
   }
 
-  xhr.open("POST", OAPoC_URL, true);
+  xhr.open("POST", this.settings.oapoc_url, true);
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.send("fmt=smiles&data=" + data_str);
 }

@@ -9,7 +9,12 @@
       var mv = new MoleculeViewer();
 
       window.onload = function() {
-        mv.init("mainMolecule", {interactive: true});
+        var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
+
+        mv.init("mainMolecule", {
+          interactive : true,
+          oapoc_url: OAPoC_URL
+        });
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
         var zi = document.getElementById("zoomin");
@@ -50,12 +55,7 @@
           var data = mv.canvas.toDataURL('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
           var d = new Date();
-          var date = "" +
-            d.getFullYear() +
-            d.getMonth() +
-            d.getDay() +
-            d.getHours() +
-            d.getMinutes();
+          var date = "" + d.getFullYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes();
           this.download = "OFraMP-" + date + ".png";
         };
       };
@@ -64,16 +64,34 @@
 
   <body>
     <fieldset style="width: 758px; margin: 0; padding: 5px 20px; border: 2px solid #333;">
-      <legend>OFraMP - The Online tool for Fragment-based Molecule Parameterisation</legend>
-      <button id="zoomin">Zoom +</button>
-      <button id="zoomout">Zoom -</button>
-      <button id="movel">Move &lt;</button>
-      <button id="mover">Move &gt;</button>
-      <button id="moveu">Move ^</button>
-      <button id="moved">Move v</button>
-      <button id="centr">Center</button>
+      <legend>
+        OFraMP - The Online tool for Fragment-based Molecule Parameterisation
+      </legend>
+      <button id="zoomin">
+        Zoom +
+      </button>
+      <button id="zoomout">
+        Zoom -
+      </button>
+      <button id="movel">
+        Move &lt;
+      </button>
+      <button id="mover">
+        Move &gt;
+      </button>
+      <button id="moveu">
+        Move ^
+      </button>
+      <button id="moved">
+        Move v
+      </button>
+      <button id="centr">
+        Center
+      </button>
       <input type="text" id="data" placeholder="SMILES" />
-      <button id="show">Show</button>
+      <button id="show">
+        Show
+      </button>
       <a id="download" href="">Download</a>
     </fieldset>
 
