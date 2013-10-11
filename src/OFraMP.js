@@ -1,22 +1,26 @@
 var DEFAULT_SETTINGS = {
   interactive: false,
-  
+
   oapoc_url: "http://vps955.directvps.nl/OAPoC/",
-
-  draw_atom_circ: true,
-  draw_h_atoms: true,
-
-  canvas_padding: 40,
-  atom_radius: 10,
-  atom_radius_charged: 20,
-  bond_spacing: 4,
-  dash_count: 5,
 
   min_bond_length: 50,
   ideal_bond_length: 70,
   max_bond_length: 150,
 
-  message_colors: {
+  draw_atom_circ: true,
+  draw_h_atoms: true,
+
+  canvas_padding: 40,
+  canvas_cursor_normal: "default",
+  canvas_cursor_drag: "move",
+  canvas_cursor_click: "pointer",
+
+  message_border_width: 40,
+  message_border_color: "rgba(0, 0, 0, .8)",
+  message_padding: 10,
+  message_font: "40px Arial",
+  message_color: "rgb(0, 0, 0)",
+  message_bg_colors: {
     1: "rgba(255, 255, 255, .5)",
     2: "rgba(253, 198, 137, .5)",
     3: "rgba(246, 150, 121, .5)",
@@ -24,17 +28,28 @@ var DEFAULT_SETTINGS = {
     5: "rgba(131, 147, 202, .5)"
   },
 
+  atom_font: "12px Arial",
+  atom_charge_font: "9px Arial",
+  atom_color: "rgb(0, 0, 0)",
+  atom_charge_color: "rgb(0, 0, 0)",
+  atom_radius: 10,
+  atom_radius_charged: 20,
+  atom_border_widths: {
+    1: 1,
+    2: 3,
+    3: 3
+  },
+  atom_border_color: "rgb(0, 0, 0)",
   atom_bg_colors: {
     1: "rgb(255, 255, 255)",
     2: "rgb(204, 166,  40)",
     3: "rgb(203,  83,  73)"
   },
 
-  atom_border_widths: {
-    1: 1,
-    2: 4,
-    3: 4
-  }
+  bond_width: 1,
+  bond_color: "rgb(0, 0, 0)",
+  bond_spacing: 4,
+  bond_dash_count: 5
 };
 
 /*
@@ -134,7 +149,7 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
   dy = y2 - y1;
   dz = Math.sqrt(dx * dx + dy * dy);
 
-  n = n || DEFAULT_SETTINGS.dash_count;
+  n = n || 2;
   l = dz / (n * 2 - 1);
 
   ddx = dx * l / dz;
@@ -247,10 +262,8 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
   this.canvas = document.getElementById(canvas_id);
 
   var ctx = this.canvas.getContext("2d");
-  ctx.font = "12px Arial";
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.strokeStyle = '#000';
   this.ctx = ctx;
 
   this.settings.merge(settings);
@@ -358,16 +371,18 @@ MoleculeViewer.prototype.showOverlay = function(msg, status) {
   status = status || this.overlay_status;
 
   var ctx = this.ctx;
-  ctx.fillStyle = "rgba(0, 0, 0, .8)";
+  ctx.fillStyle = this.settings.message_border_color;
   ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  ctx.fillStyle = this.settings.message_colors[status];
-  ctx.fillRect(40, 40, this.canvas.width - 80, this.canvas.height - 80);
 
-  ctx.fillStyle = "#000000";
-  ctx.font = "40px Arial";
+  ctx.fillStyle = this.settings.message_bg_colors[status];
+  var bw = this.settings.message_border_width;
+  ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2 * bw);
+
+  ctx.font = this.settings.message_font;
+  ctx.fillStyle = this.settings.message_color;
+  var p = this.settings.message_padding + bw;
   ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
-      this.canvas.width - 100, this.canvas.height - 100, msg, true);
-  ctx.font = "12px Arial";
+      this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
 
   this.overlay_showing = true;
   this.overlay_msg = msg;
@@ -592,18 +607,19 @@ AtomList.prototype.setHover = function(h) {
     }
   });
 
+  var s = this.molecule.mv.settings;
   if(h) {
     if(h.status === ATOM_STATUSES.normal) {
       h.status = ATOM_STATUSES.hover;
       changed = true;
     }
     if(h.status === ATOM_STATUSES.hover) {
-      document.body.style.cursor = "pointer";
+      document.body.style.cursor = s.canvas_cursor_click;
     } else {
-      document.body.style.cursor = "default";
+      document.body.style.cursor = s.canvas_cursor_normal;
     }
   } else {
-    document.body.style.cursor = "move";
+    document.body.style.cursor = s.canvas_cursor_drag;
   }
 
   return changed;
@@ -618,9 +634,10 @@ AtomList.prototype.setSelected = function(s) {
     }
   });
 
+  var t = this.molecule.mv.settings;
   if(s && s.status !== ATOM_STATUSES.selected) {
     s.status = ATOM_STATUSES.selected;
-    document.body.style.cursor = "default";
+    document.body.style.cursor = t.canvas_cursor_normal;
     changed = true;
   }
 
@@ -697,7 +714,7 @@ Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
   this.element_id = element_id;
   this.x = x;
   this.y = y;
-  this.charge = charge;
+  this.charge = charge || 0.231;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
 }
@@ -739,27 +756,34 @@ Atom.prototype.draw = function() {
 
   if(this.isCharged()) {
     if(s.draw_atom_circ) {
+      ctx.lineWidth = s.atom_border_widths[this.status];
+      ctx.strokeStyle = s.atom_border_color;
+      ctx.fillStyle = s.atom_bg_colors[this.status];
       ctx.beginPath();
       ctx.arc(this.x, this.y, s.atom_radius_charged, 0, 2 * Math.PI);
+      ctx.fill();
       ctx.stroke();
     }
 
+    ctx.font = s.atom_font;
+    ctx.fillStyle = s.atom_color;
     ctx.fillText(this.element, this.x, this.y - 6);
-    ctx.font = "9px Arial";
+    ctx.font = s.atom_charge_font;
+    ctx.fillStyle = s.atom_charge_color;
     ctx.fillText(this.charge, this.x, this.y + 6);
-    ctx.font = "12px Arial";
   } else {
     if(s.draw_atom_circ) {
       ctx.lineWidth = s.atom_border_widths[this.status];
+      ctx.strokeStyle = s.atom_border_color;
       ctx.fillStyle = s.atom_bg_colors[this.status];
       ctx.beginPath();
       ctx.arc(this.x, this.y, s.atom_radius, 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
-      ctx.lineWidth = 1;
-      ctx.fillStyle = "#000";
     }
 
+    ctx.font = s.atom_font;
+    ctx.fillStyle = s.atom_color;
     ctx.fillText(this.element, this.x, this.y);
   }
 }
@@ -882,6 +906,9 @@ Bond.prototype.draw = function() {
   var s = this.list.molecule.mv.settings;
   this.coords().extract(window);
 
+  ctx.lineWidth = s.bond_width;
+  ctx.strokeStyle = s.bond_color;
+
   if(this.type == 1 || this.type == 3)
     ctx.drawLine(x1, y1, x2, y2);
 
@@ -897,7 +924,8 @@ Bond.prototype.draw = function() {
     ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
 
     if(this.type == 4)
-      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy, s.dash_count);
+      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy,
+          s.bond_dash_count);
     else
       ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
   }
