@@ -54,8 +54,7 @@
         dl.onclick = function() {
           var data = mv.canvas.toDataURL('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-          var d = new Date();
-          var date = "" + d.getFullYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes();
+          var date = new Date().format("%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";
         };
       };
