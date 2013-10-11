@@ -122,6 +122,14 @@ Array.prototype.min = function() {
   return Math.min.apply(null, this);
 };
 
+Array.prototype.toBack = function(i) {
+  var e = this.splice(i, 1)[0];
+  if(e === undefined)
+    return this.length;
+  else
+    return this.push(e);
+}
+
 
 MouseEvent.prototype.getX = function() {
   return this.clientX - this.target.offsetLeft + document.body.scrollLeft;
@@ -530,8 +538,17 @@ AtomList.prototype.init = function(molecule, atoms) {
   });
 }
 
-AtomList.prototype.get = function(i) {
-  return this.atoms[i];
+AtomList.prototype.get = function(id) {
+  // TODO: modify OAPoC so that it does not modify ids
+  id += 1;
+  return this.atoms[this.indexOf(id)];
+}
+
+AtomList.prototype.indexOf = function(id) {
+  for(var i = 0; i < this.atoms.length; i++) {
+    if(this.atoms[i].id == id)
+      return i;
+  }
 }
 
 AtomList.prototype.propMin = function(p) {
@@ -611,6 +628,7 @@ AtomList.prototype.setHover = function(h) {
   if(h) {
     if(h.status === ATOM_STATUSES.normal) {
       h.status = ATOM_STATUSES.hover;
+      this.atoms.toBack(this.indexOf(h.id));
       changed = true;
     }
     if(h.status === ATOM_STATUSES.hover) {
@@ -637,6 +655,7 @@ AtomList.prototype.setSelected = function(s) {
   var t = this.molecule.mv.settings;
   if(s && s.status !== ATOM_STATUSES.selected) {
     s.status = ATOM_STATUSES.selected;
+    this.atoms.toBack(this.indexOf(s.id));
     document.body.style.cursor = t.canvas_cursor_normal;
     changed = true;
   }
