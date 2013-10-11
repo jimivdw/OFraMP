@@ -57,9 +57,6 @@ var ATOM_STATUSES = {
   selected: 3
 }
 
-var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/"
-    : "http://127.0.0.1:8000/";
-
 
 Object.prototype.merge = function(other, nondestructive) {
   if(nondestructive) {
