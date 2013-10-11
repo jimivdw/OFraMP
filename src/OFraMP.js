@@ -28,7 +28,7 @@ var DEFAULT_SETTINGS = {
     5: "rgba(131, 147, 202, .5)"
   },
 
-  atom_font: "12px Arial",
+  atom_font: "bold 12px Arial",
   atom_charge_font: "9px Arial",
   atom_color: "rgb(0, 0, 0)",
   atom_charge_color: "rgb(0, 0, 0)",
@@ -279,53 +279,61 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
   if(this.settings.interactive) {
     // TODO: Not supported in Firefox!
     this.canvas.onmousewheel = function(e) {
-      if(e.wheelDelta > 0) {
-        var f = 1.1;
-      } else {
-        var f = 0.9;
-      }
-      mv.zoomOn(e.offsetX, e.offsetY, f);
+      if(!mv.overlay_showing) {
+        if(e.wheelDelta > 0) {
+          var f = 1.1;
+        } else {
+          var f = 0.9;
+        }
+        mv.zoomOn(e.offsetX, e.offsetY, f);
 
-      return false;
+        return false;
+      }
     };
 
     this.canvas.onmousedown = function(e) {
-      var a = mv.molecule.atomAt(e.getX(), e.getY());
-      if(a) {
-        if(mv.molecule.setSelected(a))
-          mv.redraw();
-      } else {
-        mv.lastX = e.getX();
-        mv.lastY = e.getY();
-        mv.mouseDown = true;
+      if(!mv.overlay_showing) {
+        var a = mv.molecule.atomAt(e.getX(), e.getY());
+        if(a) {
+          if(mv.molecule.setSelected(a))
+            mv.redraw();
+        } else {
+          mv.lastX = e.getX();
+          mv.lastY = e.getY();
+          mv.mouseDown = true;
+        }
       }
     };
 
     this.canvas.onmousemove = function(e) {
-      if(mv.mouseDown) {
-        var dx = e.getX() - mv.lastX;
-        var dy = e.getY() - mv.lastY;
-        mv.move(dx, dy);
+      if(!mv.overlay_showing) {
+        if(mv.mouseDown) {
+          var dx = e.getX() - mv.lastX;
+          var dy = e.getY() - mv.lastY;
+          mv.move(dx, dy);
 
-        mv.lastX = e.getX();
-        mv.lastY = e.getY();
-        mv.mouseDragged = true;
-      } else {
-        var a = mv.molecule.atomAt(e.getX(), e.getY());
-        if(mv.molecule.setHover(a))
-          mv.redraw();
+          mv.lastX = e.getX();
+          mv.lastY = e.getY();
+          mv.mouseDragged = true;
+        } else {
+          var a = mv.molecule.atomAt(e.getX(), e.getY());
+          if(mv.molecule.setHover(a))
+            mv.redraw();
+        }
       }
     };
 
     document.onmouseup = function(e) {
-      if(e.target === mv.canvas && !mv.mouseDragged) {
-        if(!mv.molecule.atomAt(e.getX(), e.getY())) {
-          if(mv.molecule.setSelected())
-            mv.redraw();
+      if(!mv.overlay_showing) {
+        if(e.target === mv.canvas && !mv.mouseDragged) {
+          if(!mv.molecule.atomAt(e.getX(), e.getY())) {
+            if(mv.molecule.setSelected())
+              mv.redraw();
+          }
         }
+        mv.mouseDown = false;
+        mv.mouseDragged = false;
       }
-      mv.mouseDown = false;
-      mv.mouseDragged = false;
     };
   }
 };
@@ -545,7 +553,7 @@ AtomList.prototype.get = function(id) {
 };
 
 AtomList.prototype.indexOf = function(id) {
-  for(var i = 0; i < this.atoms.length; i++) {
+  for( var i = 0; i < this.atoms.length; i++) {
     if(this.atoms[i].id == id)
       return i;
   }
