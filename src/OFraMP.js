@@ -70,7 +70,7 @@ var ATOM_STATUSES = {
   normal: 1,
   hover: 2,
   selected: 3
-}
+};
 
 
 Object.prototype.merge = function(other, nondestructive) {
@@ -84,11 +84,11 @@ Object.prototype.merge = function(other, nondestructive) {
   for( var k in other)
     r[k] = other[k];
   return r;
-}
+};
 
 Object.prototype.copy = function() {
   return this.merge({}, true);
-}
+};
 
 // Based on:
 // http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
@@ -96,7 +96,7 @@ Object.prototype.extract = function(tgt) {
   for( var k in this) {
     tgt[k] = this[k];
   }
-}
+};
 
 Object.prototype.show = function() {
   var s = "{";
@@ -110,7 +110,7 @@ Object.prototype.show = function() {
     }
   }
   return s.substr(0, s.length - 2) + "}";
-}
+};
 
 // From:
 // http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
@@ -128,21 +128,21 @@ Array.prototype.toBack = function(i) {
     return this.length;
   else
     return this.push(e);
-}
+};
 
 
 MouseEvent.prototype.getX = function() {
   return this.clientX - this.target.offsetLeft + document.body.scrollLeft;
-}
+};
 
 MouseEvent.prototype.getY = function() {
   return this.clientY - this.target.offsetTop + document.body.scrollTop;
-}
+};
 
 
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
-}
+};
 
 CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.beginPath();
@@ -150,7 +150,7 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.lineTo(x2, y2);
   this.closePath();
   this.stroke();
-}
+};
 
 CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
   dx = x2 - x1;
@@ -166,7 +166,7 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
     this.drawLine(x1 + 2 * i * ddx, y1 + 2 * i * ddy, x1 + (2 * i + 1) * ddx,
         y1 + (2 * i + 1) * ddy);
   }
-}
+};
 
 // Based on:
 // http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial
@@ -299,7 +299,7 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
         mv.lastY = e.getY();
         mv.mouseDown = true;
       }
-    }
+    };
 
     this.canvas.onmousemove = function(e) {
       if(mv.mouseDown) {
@@ -315,7 +315,7 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
         if(mv.molecule.setHover(a))
           mv.redraw();
       }
-    }
+    };
 
     document.onmouseup = function(e) {
       if(e.target === mv.canvas && !mv.mouseDragged) {
@@ -326,9 +326,9 @@ MoleculeViewer.prototype.init = function(canvas_id, settings) {
       }
       mv.mouseDown = false;
       mv.mouseDragged = false;
-    }
+    };
   }
-}
+};
 
 MoleculeViewer.prototype.showMolecule = function(data_str) {
   var mv = this;
@@ -363,12 +363,12 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
     } else if(xhr.status != 200) {
       mv.showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
     }
-  }
+  };
 
   xhr.open("POST", this.settings.oapoc_url, true);
   xhr.setRequestHeader("Content-type", "application/json");
   xhr.send("fmt=smiles&data=" + data_str);
-}
+};
 
 MoleculeViewer.prototype.showOverlay = function(msg, status) {
   if(this.overlay_showing) {
@@ -395,12 +395,12 @@ MoleculeViewer.prototype.showOverlay = function(msg, status) {
   this.overlay_showing = true;
   this.overlay_msg = msg;
   this.overlay_status = status;
-}
+};
 
 MoleculeViewer.prototype.hideOverlay = function() {
   this.overlay_showing = false;
   this.redraw();
-}
+};
 
 MoleculeViewer.prototype.redraw = function() {
   this.ctx.clear();
@@ -408,7 +408,7 @@ MoleculeViewer.prototype.redraw = function() {
   if(this.overlay_showing) {
     this.showOverlay();
   }
-}
+};
 
 MoleculeViewer.prototype.move = function(dx, dy) {
   if(!this.settings.interactive)
@@ -416,7 +416,7 @@ MoleculeViewer.prototype.move = function(dx, dy) {
 
   this.molecule.move(dx, dy);
   this.redraw();
-}
+};
 
 MoleculeViewer.prototype.zoomOn = function(x, y, f) {
   if(!this.settings.interactive)
@@ -424,7 +424,7 @@ MoleculeViewer.prototype.zoomOn = function(x, y, f) {
 
   this.molecule.zoomOn(x, y, f);
   this.redraw();
-}
+};
 
 MoleculeViewer.prototype.zoom = function(f) {
   if(!this.settings.interactive)
@@ -432,12 +432,12 @@ MoleculeViewer.prototype.zoom = function(f) {
 
   this.molecule.zoom(f);
   this.redraw();
-}
+};
 
 MoleculeViewer.prototype.bestFit = function() {
   this.molecule.bestFit(this.canvas.width, this.canvas.height);
   this.redraw();
-}
+};
 
 
 /**
@@ -453,70 +453,70 @@ Molecule.prototype.init = function(mv, atoms, bonds) {
   this.mv = mv;
   this.atoms.init(this, atoms);
   this.bonds.init(this, bonds);
-}
+};
 
 Molecule.prototype.width = function() {
   return this.atoms.width();
-}
+};
 
 Molecule.prototype.height = function() {
   return this.atoms.height();
-}
+};
 
 Molecule.prototype.atomAt = function(x, y) {
   return this.atoms.atomAt(x, y);
-}
+};
 
 Molecule.prototype.setHover = function(a) {
   return this.atoms.setHover(a);
-}
+};
 
 Molecule.prototype.setSelected = function(a) {
   return this.atoms.setSelected(a);
-}
+};
 
 Molecule.prototype.move = function(dx, dy) {
   return this.atoms.move(dx, dy);
-}
+};
 
 Molecule.prototype.scale = function(f) {
   return this.atoms.scale(f);
-}
+};
 
 Molecule.prototype.zoomOn = function(x, y, f) {
   return this.atoms.zoomOn(x, y, f);
-}
+};
 
 Molecule.prototype.zoom = function(f) {
   return this.atoms.zoom(f);
-}
+};
 
 Molecule.prototype.bestFit = function(w, h) {
   return this.atoms.bestFit(w, h);
-}
+};
 
 Molecule.prototype.minimize = function() {
   var sd = this.bonds.shortestDistance();
   var f = this.mv.settings.min_bond_length / sd;
   this.zoom(f);
-}
+};
 
 Molecule.prototype.idealize = function() {
   var sd = this.bonds.shortestDistance();
   var f = this.mv.settings.ideal_bond_length / sd;
   this.zoom(f);
-}
+};
 
 Molecule.prototype.maximize = function() {
   var ld = this.bonds.longestDistance();
   var f = this.mv.settings.max_bond_length / ld;
   this.zoom(f);
-}
+};
 
 Molecule.prototype.draw = function() {
   this.atoms.draw();
   this.bonds.draw();
-}
+};
 
 
 /**
@@ -536,20 +536,20 @@ AtomList.prototype.init = function(molecule, atoms) {
     o.init(al, a.id, a.element, a.element_id, a.x, a.y);
     al.atoms.push(o);
   });
-}
+};
 
 AtomList.prototype.get = function(id) {
   // TODO: modify OAPoC so that it does not modify ids
   id += 1;
   return this.atoms[this.indexOf(id)];
-}
+};
 
 AtomList.prototype.indexOf = function(id) {
   for(var i = 0; i < this.atoms.length; i++) {
     if(this.atoms[i].id == id)
       return i;
   }
-}
+};
 
 AtomList.prototype.propMin = function(p) {
   var min = this.atoms[0][p];
@@ -559,7 +559,7 @@ AtomList.prototype.propMin = function(p) {
   });
 
   return min;
-}
+};
 
 AtomList.prototype.propMax = function(p) {
   var max = this.atoms[0][p];
@@ -569,28 +569,28 @@ AtomList.prototype.propMax = function(p) {
   });
 
   return max;
-}
+};
 
 AtomList.prototype.propWidth = function(p) {
   var min = this.propMin(p);
   var max = this.propMax(p);
   return max - min;
-}
+};
 
 AtomList.prototype.width = function() {
   return this.propWidth('x');
-}
+};
 
 AtomList.prototype.height = function() {
   return this.propWidth('y');
-}
+};
 
 AtomList.prototype.leftTop = function() {
   return {
     x: this.propMin('x'),
     y: this.propMin('y')
   };
-}
+};
 
 AtomList.prototype.center = function() {
   var lt = this.leftTop();
@@ -598,22 +598,22 @@ AtomList.prototype.center = function() {
   return {
     x: lt.x + s.w / 2,
     y: lt.y + s.h / 2
-  }
-}
+  };
+};
 
 AtomList.prototype.size = function() {
   return {
     w: this.width(),
     h: this.height()
   };
-}
+};
 
 AtomList.prototype.atomAt = function(x, y) {
   for( var i = 0; i < this.atoms.length; i++) {
     if(this.atoms[i].touches(x, y))
       return this.atoms[i];
   }
-}
+};
 
 AtomList.prototype.setHover = function(h) {
   var changed = false;
@@ -641,7 +641,7 @@ AtomList.prototype.setHover = function(h) {
   }
 
   return changed;
-}
+};
 
 AtomList.prototype.setSelected = function(s) {
   var changed = false;
@@ -661,7 +661,7 @@ AtomList.prototype.setSelected = function(s) {
   }
 
   return changed;
-}
+};
 
 AtomList.prototype.move = function(dx, dy) {
   this.atoms.map(function(a) {
@@ -669,7 +669,7 @@ AtomList.prototype.move = function(dx, dy) {
     a.y += dy;
     return a;
   });
-}
+};
 
 AtomList.prototype.scale = function(f) {
   this.atoms.map(function(a) {
@@ -677,18 +677,18 @@ AtomList.prototype.scale = function(f) {
     a.y *= f;
     return a;
   });
-}
+};
 
 AtomList.prototype.zoom = function(f) {
   var c = this.center();
   this.zoomOn(c.x, c.y, f);
-}
+};
 
 AtomList.prototype.zoomOn = function(x, y, f) {
   this.move(-x, -y);
   this.scale(f);
   this.move(x, y);
-}
+};
 
 AtomList.prototype.bestFit = function(w, h) {
   var s = this.molecule.mv.settings;
@@ -702,13 +702,13 @@ AtomList.prototype.bestFit = function(w, h) {
   var dx = tx - this.propMin('x');
   var dy = ty - this.propMin('y');
   this.move(dx, dy);
-}
+};
 
 AtomList.prototype.draw = function() {
   this.atoms.forEach(function(a) {
     a.draw();
   });
-}
+};
 
 
 /**
@@ -736,23 +736,23 @@ Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
   this.charge = charge || 0.231;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
-}
+};
 
 Atom.prototype.dx = function(a) {
   return a.x - this.x;
-}
+};
 
 Atom.prototype.dy = function(a) {
   return a.y - this.y;
-}
+};
 
 Atom.prototype.distance = function(a) {
   return Math.sqrt(Math.pow(this.dx(a), 2) + Math.pow(this.dy(a), 2));
-}
+};
 
 Atom.prototype.isCharged = function() {
   return this.charge !== undefined;
-}
+};
 
 Atom.prototype.touches = function(x, y) {
   var s = this.list.molecule.mv.settings;
@@ -764,7 +764,7 @@ Atom.prototype.touches = function(x, y) {
   var dx = this.x - x;
   var dy = this.y - y;
   return Math.sqrt(dx * dx + dy * dy) <= r;
-}
+};
 
 Atom.prototype.draw = function() {
   if(!this.show)
@@ -805,7 +805,7 @@ Atom.prototype.draw = function() {
     ctx.fillStyle = s.atom_color;
     ctx.fillText(this.element, this.x, this.y);
   }
-}
+};
 
 
 /**
@@ -827,35 +827,35 @@ BondList.prototype.init = function(molecule, bonds) {
     o.init(bl, atoms.get(b.a1), atoms.get(b.a2), b.bond_type);
     bl.bonds.push(o);
   });
-}
+};
 
 BondList.prototype.get = function(i) {
   return this.bonds[i];
-}
+};
 
 BondList.prototype.shortestLength = function() {
   return this.bonds.map(function(b) {
     return b.length();
   }).min();
-}
+};
 
 BondList.prototype.shortestDistance = function() {
   return this.bonds.map(function(b) {
     return b.a1.distance(b.a2);
   }).min();
-}
+};
 
 BondList.prototype.longestDistance = function() {
   return this.bonds.map(function(b) {
     return b.a1.distance(b.a2);
   }).max();
-}
+};
 
 BondList.prototype.draw = function() {
   this.bonds.forEach(function(b) {
     b.draw();
   });
-}
+};
 
 
 /**
@@ -876,7 +876,7 @@ Bond.prototype.init = function(list, a1, a2, type) {
   this.type = type;
   if(!a1.show || !a2.show)
     this.show = false;
-}
+};
 
 Bond.prototype.coords = function() {
   var s = this.list.molecule.mv.settings;
@@ -907,15 +907,15 @@ Bond.prototype.coords = function() {
     y1: this.a1.y + ddy1,
     x2: this.a2.x - ddx2,
     y2: this.a2.y - ddy2
-  }
-}
+  };
+};
 
 Bond.prototype.length = function() {
   this.coords().extract(window);
   dx = x2 - x1;
   dy = y2 - y1;
   return Math.sqrt(dx * dx + dy * dy);
-}
+};
 
 Bond.prototype.draw = function() {
   if(!this.show)
@@ -948,4 +948,4 @@ Bond.prototype.draw = function() {
     else
       ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
   }
-}
+};
