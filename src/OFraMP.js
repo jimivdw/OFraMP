@@ -399,6 +399,8 @@ MoleculeViewer.prototype.showOverlay = function(msg, status) {
   var p = this.settings.message_padding + bw;
   ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
       this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
+  
+  this.canvas.style.cursor = this.settings.canvas_cursor_normal;
 
   this.overlay_showing = true;
   this.overlay_msg = msg;
@@ -633,6 +635,7 @@ AtomList.prototype.setHover = function(h) {
   });
 
   var s = this.molecule.mv.settings;
+  var c = this.molecule.mv.canvas;
   if(h) {
     if(h.status === ATOM_STATUSES.normal) {
       h.status = ATOM_STATUSES.hover;
@@ -640,12 +643,12 @@ AtomList.prototype.setHover = function(h) {
       changed = true;
     }
     if(h.status === ATOM_STATUSES.hover) {
-      document.body.style.cursor = s.canvas_cursor_click;
+      c.style.cursor = s.canvas_cursor_click;
     } else {
-      document.body.style.cursor = s.canvas_cursor_normal;
+      c.style.cursor = s.canvas_cursor_normal;
     }
   } else {
-    document.body.style.cursor = s.canvas_cursor_drag;
+    c.style.cursor = s.canvas_cursor_drag;
   }
 
   return changed;
@@ -661,10 +664,11 @@ AtomList.prototype.setSelected = function(s) {
   });
 
   var t = this.molecule.mv.settings;
+  var c = this.molecule.mv.canvas;
   if(s && s.status !== ATOM_STATUSES.selected) {
     s.status = ATOM_STATUSES.selected;
     this.atoms.toBack(this.indexOf(s.id));
-    document.body.style.cursor = t.canvas_cursor_normal;
+    c.style.cursor = t.canvas_cursor_normal;
     changed = true;
   }
 
