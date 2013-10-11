@@ -30,7 +30,17 @@ var DEFAULT_SETTINGS = {
 
   atom_font: "bold 12px Arial",
   atom_charge_font: "9px Arial",
-  atom_color: "rgb(0, 0, 0)",
+  atom_colors: {
+    S: "#b2b200",
+    O: "#ff0000",
+    N: "#004dff",
+    H: "#707070",
+    F: "#66cd00",
+    Cl: "#66cd00",
+    Br: "#66cd00",
+    I: "#66cd00",
+    other: "#000000"
+  },
   atom_charge_color: "rgb(0, 0, 0)",
   atom_radius: 10,
   atom_radius_charged: 20,
@@ -399,7 +409,7 @@ MoleculeViewer.prototype.showOverlay = function(msg, status) {
   var p = this.settings.message_padding + bw;
   ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
       this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
-  
+
   this.canvas.style.cursor = this.settings.canvas_cursor_normal;
 
   this.overlay_showing = true;
@@ -778,6 +788,11 @@ Atom.prototype.touches = function(x, y) {
   return Math.sqrt(dx * dx + dy * dy) <= r;
 };
 
+Atom.prototype.getColor = function() {
+  var c = this.list.molecule.mv.settings.atom_colors[this.element];
+  return c || this.list.molecule.mv.settings.atom_colors["other"];
+};
+
 Atom.prototype.draw = function() {
   if(!this.show)
     return;
@@ -797,7 +812,7 @@ Atom.prototype.draw = function() {
     }
 
     ctx.font = s.atom_font;
-    ctx.fillStyle = s.atom_color;
+    ctx.fillStyle = this.getColor();
     ctx.fillText(this.element, this.x, this.y - 6);
     ctx.font = s.atom_charge_font;
     ctx.fillStyle = s.atom_charge_color;
@@ -814,7 +829,7 @@ Atom.prototype.draw = function() {
     }
 
     ctx.font = s.atom_font;
-    ctx.fillStyle = s.atom_color;
+    ctx.fillStyle = this.getColor();
     ctx.fillText(this.element, this.x, this.y);
   }
 };
