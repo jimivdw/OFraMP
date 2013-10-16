@@ -1,5 +1,6 @@
 var DEFAULT_SETTINGS = {
   interactive: false,
+  zoom_factor: 1.1,
 
   oapoc_url: "http://vps955.directvps.nl/OAPoC/",
 
@@ -363,9 +364,9 @@ MoleculeViewer.prototype.init_interaction = function() {
   this.canvas.onmousewheel = function(e) {
     if(!mv.overlay_showing) {
       if(e.wheelDelta > 0) {
-        var f = 1.1;
+        var f = mv.settings.zoom_factor;
       } else {
-        var f = 0.9;
+        var f = 1 / mv.settings.zoom_factor;
       }
       mv.zoomOn(e.offsetX, e.offsetY, f);
 
@@ -803,7 +804,7 @@ function Atom(list, id, element, element_id, x, y, charge) {
   this.element_id = element_id;
   this.x = x;
   this.y = y;
-  this.charge = charge || 0.231;
+  this.charge = charge;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
   else
