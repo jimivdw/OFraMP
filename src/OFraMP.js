@@ -1,3 +1,8 @@
+/** OFraMP - The Online tool for Fragment-based Molecule Parameterisation
+ *
+ * Author: Jimi van der Woning
+ */
+
 var DEFAULT_SETTINGS = {
   interactive: false,
   zoom_factor: 1.1,
