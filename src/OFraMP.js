@@ -831,6 +831,14 @@ Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
     this.show = false;
 };
 
+Atom.prototype.radius = function() {
+  var s = this.list.molecule.mv.settings;
+  if(this.isCharged())
+    return s.atom_radius_charged;
+  else
+    return s.atom_radius;
+}
+
 Atom.prototype.dx = function(a) {
   return a.x - this.x;
 };
@@ -984,21 +992,13 @@ Bond.prototype.coords = function() {
   var dy = this.a1.dy(this.a2);
   var dist = this.a1.distance(this.a2);
 
-  if(this.a1.isCharged())
-    var ar = s.atom_radius_charged;
-  else
-    var ar = s.atom_radius;
+  var ar1 = this.a1.radius();
+  var ddx1 = dx * ar1 / dist;
+  var ddy1 = dy * ar1 / dist;
 
-  var ddx1 = dx * ar / dist;
-  var ddy1 = dy * ar / dist;
-
-  if(this.a2.isCharged())
-    ar = s.atom_radius_charged;
-  else
-    ar = s.atom_radius;
-
-  var ddx2 = dx * ar / dist;
-  var ddy2 = dy * ar / dist;
+  var ar2 = this.a2.radius();
+  var ddx2 = dx * ar2 / dist;
+  var ddy2 = dy * ar2 / dist;
 
   return {
     x1: this.a1.x + ddx1,
@@ -1010,13 +1010,14 @@ Bond.prototype.coords = function() {
 
 Bond.prototype.length = function() {
   this.coords().extract(window);
-  dx = x2 - x1;
-  dy = y2 - y1;
+  var dx = x2 - x1;
+  var dy = y2 - y1;
   return Math.sqrt(dx * dx + dy * dy);
 };
 
 Bond.prototype.draw = function() {
-  if(!this.show)
+  if(!this.show
+      || this.a1.distance(this.a2) < this.a1.radius() + this.a2.radius())
     return;
 
   var ctx = this.list.molecule.mv.ctx;
