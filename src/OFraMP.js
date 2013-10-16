@@ -334,89 +334,89 @@ CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
 };
 
 
-function MoleculeViewer() {
-  this.molecule = new Molecule();
-  this.canvas = undefined;
-  this.ctx = undefined;
+function MoleculeViewer(canvas_id, settings) {
+  this.molecule = undefined;
+  this.canvas = document.getElementById(canvas_id);
+  this.ctx = this.canvas.getContext("2d");
+  this.init_context();
 
   this.overlay_showing = false;
   this.overlay_msg = "";
   this.overlay_status = 1;
 
-  this.settings = DEFAULT_SETTINGS.copy();
-}
-
-MoleculeViewer.prototype.init = function(canvas_id, settings) {
-  var mv = this;
-  this.canvas = document.getElementById(canvas_id);
-
-  var ctx = this.canvas.getContext("2d");
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  this.ctx = ctx;
-
-  this.settings.merge(settings);
+  this.settings = DEFAULT_SETTINGS.copy().merge(settings);
 
   if(this.settings.interactive) {
-    // TODO: Not supported in Firefox!
-    this.canvas.onmousewheel = function(e) {
-      if(!mv.overlay_showing) {
-        if(e.wheelDelta > 0) {
-          var f = 1.1;
-        } else {
-          var f = 0.9;
-        }
-        mv.zoomOn(e.offsetX, e.offsetY, f);
-
-        return false;
-      }
-    };
-
-    this.canvas.onmousedown = function(e) {
-      if(!mv.overlay_showing) {
-        var a = mv.molecule.atomAt(e.getX(), e.getY());
-        if(a) {
-          if(mv.molecule.setSelected(a))
-            mv.redraw();
-        } else {
-          mv.lastX = e.getX();
-          mv.lastY = e.getY();
-          mv.mouseDown = true;
-        }
-      }
-    };
-
-    this.canvas.onmousemove = function(e) {
-      if(!mv.overlay_showing) {
-        if(mv.mouseDown) {
-          var dx = e.getX() - mv.lastX;
-          var dy = e.getY() - mv.lastY;
-          mv.move(dx, dy);
-
-          mv.lastX = e.getX();
-          mv.lastY = e.getY();
-          mv.mouseDragged = true;
-        } else {
-          var a = mv.molecule.atomAt(e.getX(), e.getY());
-          if(mv.molecule.setHover(a))
-            mv.redraw();
-        }
-      }
-    };
-
-    document.onmouseup = function(e) {
-      if(!mv.overlay_showing) {
-        if(e.target === mv.canvas && !mv.mouseDragged) {
-          if(!mv.molecule.atomAt(e.getX(), e.getY())) {
-            if(mv.molecule.setSelected())
-              mv.redraw();
-          }
-        }
-        mv.mouseDown = false;
-        mv.mouseDragged = false;
-      }
-    };
+    this.init_interaction();
   }
+}
+
+MoleculeViewer.prototype.init_context = function() {
+  this.ctx.textAlign = 'center';
+  this.ctx.textBaseline = 'middle';
+};
+
+MoleculeViewer.prototype.init_interaction = function() {
+  var mv = this;
+
+  // TODO: Not supported in Firefox!
+  this.canvas.onmousewheel = function(e) {
+    if(!mv.overlay_showing) {
+      if(e.wheelDelta > 0) {
+        var f = 1.1;
+      } else {
+        var f = 0.9;
+      }
+      mv.zoomOn(e.offsetX, e.offsetY, f);
+
+      return false;
+    }
+  };
+
+  this.canvas.onmousedown = function(e) {
+    if(!mv.overlay_showing) {
+      var a = mv.molecule.atomAt(e.getX(), e.getY());
+      if(a) {
+        if(mv.molecule.setSelected(a))
+          mv.redraw();
+      } else {
+        mv.lastX = e.getX();
+        mv.lastY = e.getY();
+        mv.mouseDown = true;
+      }
+    }
+  };
+
+  this.canvas.onmousemove = function(e) {
+    if(!mv.overlay_showing) {
+      if(mv.mouseDown) {
+        var dx = e.getX() - mv.lastX;
+        var dy = e.getY() - mv.lastY;
+        mv.move(dx, dy);
+
+        mv.lastX = e.getX();
+        mv.lastY = e.getY();
+        mv.mouseDragged = true;
+      } else {
+        var a = mv.molecule.atomAt(e.getX(), e.getY());
+        if(mv.molecule.setHover(a))
+          mv.redraw();
+      }
+    }
+  };
+
+  document.onmouseup = function(e) {
+    if(!mv.overlay_showing) {
+      if(e.target === mv.canvas && !mv.mouseDragged) {
+        if(!mv.molecule.atomAt(e.getX(), e.getY())) {
+          if(mv.molecule.setSelected())
+            mv.redraw();
+        }
+      }
+      mv.mouseDown = false;
+      mv.mouseDragged = false;
+    }
+  };
 };
 
 MoleculeViewer.prototype.showMolecule = function(data_str) {
@@ -441,7 +441,7 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
         mv.showOverlay(md.error, MESSAGE_TYPES.error);
       } else if(md.atoms && md.bonds) {
         mv.showOverlay("Initializing molecule...");
-        mv.molecule.init(mv, md.atoms, md.bonds);
+        mv.molecule = new Molecule(mv, md.atoms, md.bonds);
         mv.hideOverlay();
 
         mv.bestFit();
@@ -495,10 +495,10 @@ MoleculeViewer.prototype.hideOverlay = function() {
 
 MoleculeViewer.prototype.redraw = function() {
   this.ctx.clear();
-  this.molecule.draw();
-  if(this.overlay_showing) {
+  if(this.molecule)
+    this.molecule.draw();
+  if(this.overlay_showing)
     this.showOverlay();
-  }
 };
 
 MoleculeViewer.prototype.move = function(dx, dy) {
@@ -534,17 +534,11 @@ MoleculeViewer.prototype.bestFit = function() {
 /**
  * Molecule data structure
  */
-function Molecule() {
-  this.mv = undefined;
-  this.atoms = new AtomList();
-  this.bonds = new BondList();
-}
-
-Molecule.prototype.init = function(mv, atoms, bonds) {
+function Molecule(mv, atoms, bonds) {
   this.mv = mv;
-  this.atoms.init(this, atoms);
-  this.bonds.init(this, bonds);
-};
+  this.atoms = new AtomList(this, atoms);
+  this.bonds = new BondList(this, bonds);
+}
 
 Molecule.prototype.width = function() {
   return this.atoms.width();
@@ -613,21 +607,16 @@ Molecule.prototype.draw = function() {
 /**
  * Data structure for a list of atoms
  */
-function AtomList() {
-  this.molecule = undefined;
-  this.atoms = [];
-}
-
-AtomList.prototype.init = function(molecule, atoms) {
+function AtomList(molecule, atoms) {
   this.molecule = molecule;
-  var al = this;
-  al.atoms = [];
-  atoms.forEach(function(a) {
-    var o = new Atom();
-    o.init(al, a.id, a.element, a.element_id, a.x, a.y);
-    al.atoms.push(o);
-  });
-};
+  this.atoms = new Array();
+  for( var i = 0; i < atoms.length; i++) {
+    var atom = atoms[i];
+    var a = new Atom(this, atom.id, atom.element, atom.element_id, atom.x,
+        atom.y);
+    this.atoms.push(a);
+  }
+}
 
 AtomList.prototype.get = function(id) {
   // TODO: modify OAPoC so that it does not modify ids
@@ -807,19 +796,7 @@ AtomList.prototype.draw = function() {
 /**
  * Data structure for an atom
  */
-function Atom() {
-  this.list = undefined;
-  this.id = 0;
-  this.element = "";
-  this.element_id = 0;
-  this.x = 0.;
-  this.y = 0.;
-  this.charge = undefined;
-  this.show = true;
-  this.status = ATOM_STATUSES.normal;
-}
-
-Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
+function Atom(list, id, element, element_id, x, y, charge) {
   this.list = list;
   this.id = id;
   this.element = element;
@@ -829,7 +806,10 @@ Atom.prototype.init = function(list, id, element, element_id, x, y, charge) {
   this.charge = charge || 0.231;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
-};
+  else
+    this.show = true;
+  this.status = ATOM_STATUSES.normal;
+}
 
 Atom.prototype.radius = function() {
   var s = this.list.molecule.mv.settings;
@@ -917,23 +897,17 @@ Atom.prototype.draw = function() {
 /**
  * Data structure for a list of bonds
  */
-function BondList() {
-  this.molecule = undefined;
-  this.bonds = [];
-}
-
-BondList.prototype.init = function(molecule, bonds) {
+function BondList(molecule, bonds) {
   this.molecule = molecule;
+  this.bonds = new Array();
   var atoms = molecule.atoms;
-
-  var bl = this;
-  bl.bonds = [];
-  bonds.forEach(function(b) {
-    var o = new Bond();
-    o.init(bl, atoms.get(b.a1), atoms.get(b.a2), b.bond_type);
-    bl.bonds.push(o);
-  });
-};
+  for( var i = 0; i < bonds.length; i++) {
+    var bond = bonds[i];
+    var b = new Bond(this, atoms.get(bond.a1), atoms.get(bond.a2),
+        bond.bond_type);
+    this.bonds.push(b);
+  }
+}
 
 BondList.prototype.get = function(i) {
   return this.bonds[i];
@@ -967,22 +941,16 @@ BondList.prototype.draw = function() {
 /**
  * Data structure for a bond
  */
-function Bond() {
-  this.list = undefined;
-  this.a1 = undefined;
-  this.a2 = undefined;
-  this.type = 0;
-  this.show = true;
-}
-
-Bond.prototype.init = function(list, a1, a2, type) {
+function Bond(list, a1, a2, type) {
   this.list = list;
   this.a1 = a1;
   this.a2 = a2;
   this.type = type;
   if(!a1.show || !a2.show)
     this.show = false;
-};
+  else
+    this.show = true;
+}
 
 Bond.prototype.coords = function() {
   var s = this.list.molecule.mv.settings;

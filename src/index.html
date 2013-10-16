@@ -6,12 +6,12 @@
     <script type="text/javascript" src="OFraMP.js"></script>
 
     <script>
-      var mv = new MoleculeViewer();
+      var mv;
 
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
-        mv.init("mainMolecule", {
+        mv = new MoleculeViewer("mainMolecule", {
           interactive : true,
           oapoc_url: OAPoC_URL
         });
