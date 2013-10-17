@@ -1,5 +1,6 @@
-/** OFraMP - The Online tool for Fragment-based Molecule Parameterisation
- *
+/**
+ * OFraMP - The Online tool for Fragment-based Molecule Parameterisation
+ * 
  * Author: Jimi van der Woning
  */
 
@@ -144,6 +145,12 @@ Array.prototype.toBack = function(i) {
     return this.length;
   else
     return this.push(e);
+};
+
+Array.prototype.each = function(f, that) {
+  for( var i = 0; i < this.length; i++) {
+    f(this[i], that);
+  }
 };
 
 
@@ -753,9 +760,7 @@ AtomList.prototype.setSelected = function(s) {
 
 AtomList.prototype.move = function(dx, dy) {
   this.atoms.map(function(a) {
-    a.x += dx;
-    a.y += dy;
-    return a;
+    a.move(dx, dy);
   });
 };
 
@@ -765,6 +770,9 @@ AtomList.prototype.scale = function(f) {
     a.y *= f;
     return a;
   });
+  // TODO: maybe not infinitely...
+  while(this.deoverlap())
+    continue;
 };
 
 AtomList.prototype.zoom = function(f) {
@@ -792,6 +800,26 @@ AtomList.prototype.bestFit = function(w, h) {
   this.move(dx, dy);
 };
 
+AtomList.prototype.deoverlap = function() {
+  var changed = false;
+  this.atoms.each(function(a1, list) {
+    list.atoms.each(function(a2) {
+      if(a1 !== a2) {
+        var rd = a1.radiusDistance(a2);
+        if(rd < -1e-6) {
+          var f = rd / a1.distance(a2) / 2;
+          var dx = a1.dx(a2) * f;
+          var dy = a1.dy(a2) * f;
+          a1.move(dx, dy);
+          a2.move(-dx, -dy);
+          changed = true;
+        }
+      }
+    });
+  }, this);
+  return changed;
+};
+
 AtomList.prototype.draw = function() {
   this.atoms.forEach(function(a) {
     a.draw();
@@ -809,7 +837,7 @@ function Atom(list, id, element, element_id, x, y, charge) {
   this.element_id = element_id;
   this.x = x;
   this.y = y;
-  this.charge = charge;
+  this.charge = charge || 0.123;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
   else
@@ -837,6 +865,10 @@ Atom.prototype.distance = function(a) {
   return Math.sqrt(Math.pow(this.dx(a), 2) + Math.pow(this.dy(a), 2));
 };
 
+Atom.prototype.radiusDistance = function(a) {
+  return this.distance(a) - this.radius() - a.radius();
+};
+
 Atom.prototype.isCharged = function() {
   return this.charge !== undefined;
 };
@@ -856,6 +888,12 @@ Atom.prototype.touches = function(x, y) {
 Atom.prototype.getColor = function() {
   var c = this.list.molecule.mv.settings.atom_colors[this.element];
   return c || this.list.molecule.mv.settings.atom_colors["other"];
+};
+
+Atom.prototype.move = function(dx, dy) {
+  this.x += dx;
+  this.y += dy;
+  return this;
 };
 
 Atom.prototype.draw = function() {
