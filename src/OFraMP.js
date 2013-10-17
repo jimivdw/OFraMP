@@ -65,6 +65,8 @@ var DEFAULT_SETTINGS = {
 
   bond_width: 1,
   bond_color: "rgb(0, 0, 0)",
+  bond_connector_width: 3,
+  bond_connector_color: "rgb(0, 0, 0)",
   bond_spacing: 4,
   bond_dash_count: 5
 };
@@ -876,7 +878,7 @@ function Atom(list, id, element, element_id, x, y, charge) {
   this.element_id = element_id;
   this.x = x;
   this.y = y;
-  this.charge = charge || 0.123;
+  this.charge = charge || Math.random() > .5 ? 0.123 : undefined;
   if(element == "H" && !list.molecule.mv.settings.draw_h_atoms)
     this.show = false;
   else
@@ -1073,8 +1075,10 @@ Bond.prototype.length = function() {
 };
 
 Bond.prototype.draw = function() {
-  if(!this.show
-      || this.a1.distance(this.a2) < this.a1.radius() + this.a2.radius())
+  this.drawConnectors();
+  var a1 = this.a1;
+  var a2 = this.a2;
+  if(!this.show || a1.distance(a2) < a1.radius() + a2.radius())
     return;
 
   var ctx = this.list.molecule.mv.ctx;
@@ -1084,8 +1088,9 @@ Bond.prototype.draw = function() {
   ctx.lineWidth = s.bond_width;
   ctx.strokeStyle = s.bond_color;
 
-  if(this.type == 1 || this.type == 3)
+  if(this.type == 1 || this.type == 3) {
     ctx.drawLine(x1, y1, x2, y2);
+  }
 
   // Draw double/triple/aromatic bonds
   if(this.type > 1) {
@@ -1103,5 +1108,99 @@ Bond.prototype.draw = function() {
           s.bond_dash_count);
     else
       ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+  }
+};
+
+Bond.prototype.drawConnectors = function() {
+  var a1 = this.a1;
+  var a2 = this.a2;
+  if(!this.show)
+    return;
+
+  var ctx = this.list.molecule.mv.ctx;
+  var s = this.list.molecule.mv.settings;
+  this.coords().extract(window);
+
+  ctx.lineWidth = s.bond_connector_width;
+  ctx.strokeStyle = s.bond_connector_color;
+  var d1 = s.bond_connector_width / a1.radius() / 2;
+  var d2 = s.bond_connector_width / a2.radius() / 2;
+
+  if(this.type == 1 || this.type == 3) {
+    var dx1 = a1.radius() + a1.x - x1;
+    var dy1 = a1.y - y1;
+    var p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
+    if(dy1 > 0)
+      p1 = -p1;
+
+    var dx2 = a2.radius() + a2.x - x2;
+    var dy2 = a2.y - y2;
+    var p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
+    if(dy2 > 0)
+      p2 = -p2;
+
+    ctx.beginPath();
+    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
+    ctx.stroke();
+  }
+
+  // Draw double/triple/aromatic bonds
+  if(this.type > 1) {
+    dx = x2 - x1;
+    dy = y2 - y1;
+    dist = Math.sqrt(dx * dx + dy * dy);
+
+    ddx = dy * s.bond_spacing / dist;
+    ddy = dx * s.bond_spacing / dist;
+
+    dx1 = a1.radius() + a1.x - x1 + ddx;
+    dy1 = a1.y - y1 - ddy;
+    p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
+    if(dy1 > 0)
+      p1 = -p1;
+
+    dx2 = a2.radius() + a2.x - x2 + ddx;
+    dy2 = a2.y - y2 - ddy;
+    p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
+    if(dy2 > 0)
+      p2 = -p2;
+
+    ctx.beginPath();
+    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
+    ctx.stroke();
+    dx = x2 - x1;
+    dy = y2 - y1;
+    dist = Math.sqrt(dx * dx + dy * dy);
+
+    ddx = dy * s.bond_spacing / dist;
+    ddy = dx * s.bond_spacing / dist;
+
+    dx1 = a1.radius() + a1.x - x1 - ddx;
+    dy1 = a1.y - y1 + ddy;
+    p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
+    if(dy1 > 0)
+      p1 = -p1;
+
+    dx2 = a2.radius() + a2.x - x2 - ddx;
+    dy2 = a2.y - y2 + ddy;
+    p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
+    if(dy2 > 0)
+      p2 = -p2;
+
+    ctx.beginPath();
+    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
+    ctx.stroke();
   }
 };
