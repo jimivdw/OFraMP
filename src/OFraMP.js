@@ -812,7 +812,6 @@ AtomList.prototype.center = function() {
   var mc = this.centerPoint();
   var dx = cc.x - mc.x;
   var dy = cc.y - mc.y;
-  console.log("CM", dx, dy, cc, mc)
   this.move(dx, dy);
 };
 
