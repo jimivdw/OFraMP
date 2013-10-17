@@ -139,6 +139,14 @@ Array.prototype.min = function() {
   return Math.min.apply(null, this);
 };
 
+Array.prototype.avg = function() {
+  var sum = 0;
+  this.each(function(e) {
+    sum += e;
+  });
+  return sum / this.length;
+};
+
 Array.prototype.toBack = function(i) {
   var e = this.splice(i, 1)[0];
   if(e === undefined)
@@ -233,6 +241,13 @@ MouseEvent.prototype.getY = function() {
   return this.clientY - this.target.offsetTop + document.body.scrollTop;
 };
 
+
+CanvasRenderingContext2D.prototype.centerPoint = function() {
+  return {
+    x: this.canvas.width / 2,
+    y: this.canvas.height / 2
+  };
+};
 
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -457,7 +472,7 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
         mv.molecule = new Molecule(mv, md.atoms, md.bonds);
         mv.hideOverlay();
 
-        mv.bestFit();
+        mv.idealize();// bestFit();
       } else {
         mv.showOverlay("Missing data, received: " + md.show(),
             MESSAGE_TYPES.critical);
@@ -543,6 +558,11 @@ MoleculeViewer.prototype.bestFit = function() {
   this.redraw();
 };
 
+MoleculeViewer.prototype.idealize = function() {
+  this.molecule.idealize();
+  this.redraw();
+}
+
 
 /**
  * Molecule data structure
@@ -589,23 +609,30 @@ Molecule.prototype.zoom = function(f) {
   return this.atoms.zoom(f);
 };
 
+Molecule.prototype.center = function() {
+  return this.atoms.center();
+};
+
 Molecule.prototype.bestFit = function(w, h) {
   return this.atoms.bestFit(w, h);
 };
 
 Molecule.prototype.minimize = function() {
+  this.center();
   var sd = this.bonds.shortestDistance();
   var f = this.mv.settings.min_bond_length / sd;
   this.zoom(f);
 };
 
 Molecule.prototype.idealize = function() {
-  var sd = this.bonds.shortestDistance();
+  this.center();
+  var sd = this.bonds.averageDistance();
   var f = this.mv.settings.ideal_bond_length / sd;
   this.zoom(f);
 };
 
 Molecule.prototype.maximize = function() {
+  this.center();
   var ld = this.bonds.longestDistance();
   var f = this.mv.settings.max_bond_length / ld;
   this.zoom(f);
@@ -685,7 +712,7 @@ AtomList.prototype.leftTop = function() {
   };
 };
 
-AtomList.prototype.center = function() {
+AtomList.prototype.centerPoint = function() {
   var lt = this.leftTop();
   var s = this.size();
   return {
@@ -709,6 +736,9 @@ AtomList.prototype.atomAt = function(x, y) {
 };
 
 AtomList.prototype.setHover = function(h) {
+  if(h && !h.show)
+    return;
+
   var changed = false;
   this.atoms.forEach(function(a) {
     if(a.status === ATOM_STATUSES.hover && a !== h) {
@@ -748,7 +778,7 @@ AtomList.prototype.setSelected = function(s) {
 
   var t = this.molecule.mv.settings;
   var c = this.molecule.mv.canvas;
-  if(s && s.status !== ATOM_STATUSES.selected) {
+  if(s && s.show && s.status !== ATOM_STATUSES.selected) {
     s.status = ATOM_STATUSES.selected;
     this.atoms.toBack(this.indexOf(s.id));
     c.style.cursor = t.canvas_cursor_normal;
@@ -775,8 +805,17 @@ AtomList.prototype.scale = function(f) {
     continue;
 };
 
+AtomList.prototype.center = function() {
+  var cc = this.molecule.mv.ctx.centerPoint();
+  var mc = this.centerPoint();
+  var dx = cc.x - mc.x;
+  var dy = cc.y - mc.y;
+  console.log("CM", dx, dy, cc, mc)
+  this.move(dx, dy);
+};
+
 AtomList.prototype.zoom = function(f) {
-  var c = this.center();
+  var c = this.centerPoint();
   this.zoomOn(c.x, c.y, f);
 };
 
@@ -804,7 +843,7 @@ AtomList.prototype.deoverlap = function() {
   var changed = false;
   this.atoms.each(function(a1, list) {
     list.atoms.each(function(a2) {
-      if(a1 !== a2) {
+      if(a1 !== a2 && a1.show && a2.show) {
         var rd = a1.radiusDistance(a2);
         if(rd < -1e-6) {
           var f = rd / a1.distance(a2) / 2;
@@ -967,6 +1006,12 @@ BondList.prototype.shortestDistance = function() {
   return this.bonds.map(function(b) {
     return b.a1.distance(b.a2);
   }).min();
+};
+
+BondList.prototype.averageDistance = function() {
+  return this.bonds.map(function(b) {
+    return b.a1.distance(b.a2);
+  }).avg();
 };
 
 BondList.prototype.longestDistance = function() {
