@@ -884,6 +884,30 @@ AtomList.prototype.deoverlap = function() {
       }
     });
   }, this);
+  
+  /* Not yet working
+  // Solve bonds intersecting
+  this.molecule.bonds.bonds.each(function(b1, list) {
+    list.molecule.bonds.bonds.each(function(b2) {
+      var i = b1.intersection(b2);
+      if(i) {
+        var dx = i.x - b1.a1.x;
+        var dy = i.y - b1.a1.y;
+        if(dx > 0)
+          dx += 20;
+        else
+          dx -= 20;
+        if(dy > 0)
+          dy += 20;
+        else
+          dy -= 20;
+        console.log("mpving", dx, dy)
+        b1.a1.move(dx, dy);
+        changed = true;
+      }
+    });
+  }, this);
+  */
   return changed;
 };
 
@@ -1148,7 +1172,10 @@ Bond.prototype.touches = function(x, y) {
 
 // With help from:
 // http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-Bond.prototype.intersects = function(b) {
+Bond.prototype.intersection = function(b) {
+  if(this.length() < 10)
+    return;
+
   var p = this.a1;
   var q = b.a1;
   var r = {
@@ -1161,7 +1188,12 @@ Bond.prototype.intersects = function(b) {
   };
   var t = ((q.x - p.x) * s.y - (q.y - p.y) * s.x) / (r.x * s.y - r.y * s.x);
   var u = ((q.x - p.x) * r.y - (q.y - p.y) * r.x) / (r.x * s.y - r.y * s.x);
-  return t > 0 && t < 1 && u > 0 && u < 1;
+  if(t > 0 && t < 1 && u > 0 && u < 1) {
+    return {
+      x: p.x + t * r.x,
+      y: p.y + t * r.y
+    };
+  }
 };
 
 Bond.prototype.draw = function() {
@@ -1180,7 +1212,8 @@ Bond.prototype.draw = function() {
 
   if(this.type == 1 || this.type == 3) {
     ctx.drawLine(x1, y1, x2, y2);
-    //ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) / 2);
+    // ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) /
+    // 2);
   }
 
   // Draw double/triple/aromatic bonds
