@@ -97,6 +97,11 @@ Number.prototype.between = function(a, b) {
   return a > b ? this <= a && this >= b : this >= a && this <= b;
 };
 
+// Determine if a number is approximately equal to another number n
+Number.prototype.approx = function(n) {
+  return this.between(n - 1e-3, n + 1e-3);
+};
+
 
 Object.prototype.merge = function(other, nondestructive) {
   if(nondestructive) {
@@ -809,8 +814,9 @@ AtomList.prototype.scale = function(f) {
     return a;
   });
   // TODO: maybe not infinitely...
-  while(this.deoverlap())
-    continue;
+  var i = 0;
+  while(this.deoverlap() && i < 10)
+    i++;
 };
 
 AtomList.prototype.center = function() {
@@ -945,7 +951,7 @@ Atom.prototype.bondAnchor = function(bond) {
   var dy = bond.a1.dy(bond.a2) * c1 / c;
   var x = bond.a1.x + dx;
   var y = bond.a1.y + dy;
-  if(bond.inBB(x, y))
+  if(bond.touches(x, y))
     return {
       x: x,
       y: y
@@ -1127,8 +1133,35 @@ Bond.prototype.length = function() {
 };
 
 Bond.prototype.inBB = function(x, y) {
+  return x.between(this.a1.x, this.a2.x) && y.between(this.a1.y, this.a2.y);
+};
+
+Bond.prototype.touches = function(x, y) {
+  if(!this.inBB(x, y))
+    return false;
+
   this.coords().extract(window);
-  return x.between(x1, x2) && y.between(y1, y2);
+  var br = Math.abs(x1 - x2) / Math.abs(y1 - y2);
+  var tr = Math.abs(x1 - x) / Math.abs(y1 - y);
+  return br.approx(tr);
+};
+
+// With help from:
+// http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+Bond.prototype.intersects = function(b) {
+  var p = this.a1;
+  var q = b.a1;
+  var r = {
+    x: p.dx(this.a2),
+    y: p.dy(this.a2)
+  };
+  var s = {
+    x: q.dx(b.a2),
+    y: q.dy(b.a2)
+  };
+  var t = ((q.x - p.x) * s.y - (q.y - p.y) * s.x) / (r.x * s.y - r.y * s.x);
+  var u = ((q.x - p.x) * r.y - (q.y - p.y) * r.x) / (r.x * s.y - r.y * s.x);
+  return t > 0 && t < 1 && u > 0 && u < 1;
 };
 
 Bond.prototype.draw = function() {
