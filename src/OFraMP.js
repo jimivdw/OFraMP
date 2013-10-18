@@ -92,6 +92,12 @@ var ATOM_STATUSES = {
 };
 
 
+// Determine if a number is inbetween two other numbers.
+Number.prototype.between = function(a, b) {
+  return a > b ? this <= a && this >= b : this >= a && this <= b;
+};
+
+
 Object.prototype.merge = function(other, nondestructive) {
   if(nondestructive) {
     var r = {};
@@ -841,8 +847,10 @@ AtomList.prototype.bestFit = function(w, h) {
 };
 
 AtomList.prototype.deoverlap = function() {
+  var s = this.molecule.mv.settings;
   var changed = false;
   this.atoms.each(function(a1, list) {
+    // Solve overlapping atoms
     list.atoms.each(function(a2) {
       if(a1 !== a2 && a1.show && a2.show) {
         var rd = a1.radiusDistance(a2);
@@ -854,6 +862,19 @@ AtomList.prototype.deoverlap = function() {
           a2.move(-dx, -dy);
           changed = true;
         }
+      }
+    });
+
+    // Solve atoms overlapping bonds
+    list.molecule.bonds.bonds.each(function(b) {
+      var bd = a1.bondDistance(b);
+      if(bd < a1.radius() + s.bond_spacing - 1e-6) {
+        var f = a1.radius() / bd;
+        var ba = a1.bondAnchor(b);
+        var dx = (a1.x - ba.x) * f;
+        var dy = (a1.y - ba.y) * f;
+        a1.move(dx, dy);
+        changed = true;
       }
     });
   }, this);
@@ -907,6 +928,38 @@ Atom.prototype.distance = function(a) {
 
 Atom.prototype.radiusDistance = function(a) {
   return this.distance(a) - this.radius() - a.radius();
+};
+
+Atom.prototype.bondAnchor = function(bond) {
+  if(bond.a1 === this || bond.a2 === this)
+    return;
+
+  var a = this.distance(bond.a2);
+  var b = this.distance(bond.a1);
+  var c = bond.a1.distance(bond.a2);
+  var cosp = (b * b + c * c - a * a) / (2 * b * c);
+  var p = Math.acos(cosp);
+  var d = Math.sin(p) * b;
+  var c1 = cosp * b;
+  var dx = bond.a1.dx(bond.a2) * c1 / c;
+  var dy = bond.a1.dy(bond.a2) * c1 / c;
+  var x = bond.a1.x + dx;
+  var y = bond.a1.y + dy;
+  if(bond.inBB(x, y))
+    return {
+      x: x,
+      y: y
+    };
+};
+
+Atom.prototype.bondDistance = function(bond) {
+  var a = this.bondAnchor(bond);
+  if(!a)
+    return Infinity;
+
+  var dx = this.x - a.x;
+  var dy = this.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
 };
 
 Atom.prototype.isCharged = function() {
@@ -1073,6 +1126,11 @@ Bond.prototype.length = function() {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
+Bond.prototype.inBB = function(x, y) {
+  this.coords().extract(window);
+  return x.between(x1, x2) && y.between(y1, y2);
+};
+
 Bond.prototype.draw = function() {
   this.drawConnectors();
   var a1 = this.a1;
@@ -1089,6 +1147,7 @@ Bond.prototype.draw = function() {
 
   if(this.type == 1 || this.type == 3) {
     ctx.drawLine(x1, y1, x2, y2);
+    //ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) / 2);
   }
 
   // Draw double/triple/aromatic bonds
