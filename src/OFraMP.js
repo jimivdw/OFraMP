@@ -170,7 +170,10 @@ Array.prototype.toBack = function(i) {
 
 Array.prototype.each = function(f, that) {
   for( var i = 0; i < this.length; i++) {
-    f(this[i], that);
+    var r = f(this[i], that);
+    if(r !== undefined) {
+      return r;
+    }
   }
 };
 
@@ -684,6 +687,10 @@ AtomList.prototype.indexOf = function(id) {
   }
 };
 
+AtomList.prototype.count = function() {
+  return this.atoms.length;
+};
+
 AtomList.prototype.propMin = function(p) {
   var min = this.atoms[0][p];
   this.atoms.forEach(function(a) {
@@ -815,7 +822,7 @@ AtomList.prototype.scale = function(f) {
   });
   // TODO: maybe not infinitely...
   var i = 0;
-  while(this.deoverlap() && i < 10)
+  while(i < 1000 && this.deoverlap())
     i++;
 };
 
@@ -853,62 +860,121 @@ AtomList.prototype.bestFit = function(w, h) {
 };
 
 AtomList.prototype.deoverlap = function() {
+  var da = this.deoverlapAtoms();
+  var db = this.deoverlapBonds();
+  var dc = false;//this.decrossBonds();
+  return da || db || dc;
+};
+
+AtomList.prototype.deoverlapb = function() {
+  var da = this.deoverlapAtoms();
+  var db = this.deoverlapBonds();
+  var dc = this.decrossBonds();
+  return da || db || dc;
+};
+
+AtomList.prototype.deoverlapAtoms = function() {
+  var changed = false;
+  
+  for(var i = 0; i < this.count(); i++) {
+    var a1 = this.atoms[i];
+    if(!a1.show) {
+      continue;
+    }
+    
+    for(var j = i + 1; j < this.count(); j++) {
+      var a2 = this.atoms[j];
+      if(!a2.show) {
+        continue;
+      }
+      
+      var d = a1.distance(a2);
+      var rd = a1.radiusDistance(a2);
+      
+      // Prevent problems with atoms at the exact same position by slightly
+      // moving one of them.
+      if(d.approx(0)) {
+        a1.move(1e-3, 1e-3);
+        d = a1.distance(a2);
+        rd = a1.radiusDistance(a2);
+      }
+
+      if(rd < -1e-6) {
+        var f = rd / d;
+        var dx = a1.dx(a2) * f / 2;
+        var dy = a1.dy(a2) * f / 2;
+        a1.move(dx, dy);
+        a2.move(-dx, -dy);
+        changed = true;
+      }
+    }
+  }
+  
+  return changed;
+};
+
+AtomList.prototype.deoverlapBonds = function() {
   var s = this.molecule.mv.settings;
   var changed = false;
-  this.atoms.each(function(a1, list) {
-    // Solve overlapping atoms
-    list.atoms.each(function(a2) {
-      if(a1 !== a2 && a1.show && a2.show) {
-        var rd = a1.radiusDistance(a2);
-        if(rd < -1e-6) {
-          var f = rd / a1.distance(a2) / 2;
-          var dx = a1.dx(a2) * f;
-          var dy = a1.dy(a2) * f;
-          a1.move(dx, dy);
-          a2.move(-dx, -dy);
-          changed = true;
+  
+  for(var i = 0; i < this.count(); i++) {
+    var a = this.atoms[i];
+    if(!a.show) {
+      continue;
+    }
+    
+    for(var j = 0; j < this.molecule.bonds.count(); j++) {
+      var b = this.molecule.bonds.get(j);
+      if(!b.show) {
+        continue;
+      }
+      
+      var bd = a.bondDistance(b);
+      
+      // Prevent problems with atoms that are exactly on a bond by slightly
+      // moving them.
+      if(bd.approx(0)) {
+        a.move(1e-3, 1e-3);
+        bd = a.bondDistance(b);
+      }
+
+      if(bd < a.radius() + s.bond_spacing - 1e-6) {
+        var f = (a.radius() - bd + s.bond_spacing) / bd;
+        var ba = a.bondAnchor(b);
+        var dx = (a.x - ba.x) * f;
+        var dy = (a.y - ba.y) * f;
+        a.move(dx, dy);
+        changed = true;
+      }
+    }
+  }
+  
+  return changed;
+};
+
+AtomList.prototype.decrossBonds = function() {
+  // Solve bonds intersecting
+  return this.molecule.bonds.bonds.each(function(b1, list) {
+    var c = list.molecule.bonds.bonds.each(function(b2) {
+      if(b1 !== b2) {
+        var i = b1.intersection(b2);
+        if(i) {
+          var ctx = list.molecule.mv.ctx;
+          ctx.fillRect(i.x - 5, i.y - 5, 10, 10);
+
+          var dx = i.x - b1.a1.x;
+          var dy = i.y - b1.a1.y;
+          //console.log("moving", dx, dy)
+          b1.a1.move(dx, dy);
+          return true;
         }
       }
     });
-
-    // Solve atoms overlapping bonds
-    list.molecule.bonds.bonds.each(function(b) {
-      var bd = a1.bondDistance(b);
-      if(bd < a1.radius() + s.bond_spacing - 1e-6) {
-        var f = a1.radius() / bd;
-        var ba = a1.bondAnchor(b);
-        var dx = (a1.x - ba.x) * f;
-        var dy = (a1.y - ba.y) * f;
-        a1.move(dx, dy);
-        changed = true;
-      }
-    });
+    
+    if(c) {
+      return true;
+    }
   }, this);
-  
-  /* Not yet working
-  // Solve bonds intersecting
-  this.molecule.bonds.bonds.each(function(b1, list) {
-    list.molecule.bonds.bonds.each(function(b2) {
-      var i = b1.intersection(b2);
-      if(i) {
-        var dx = i.x - b1.a1.x;
-        var dy = i.y - b1.a1.y;
-        if(dx > 0)
-          dx += 20;
-        else
-          dx -= 20;
-        if(dy > 0)
-          dy += 20;
-        else
-          dy -= 20;
-        console.log("mpving", dx, dy)
-        b1.a1.move(dx, dy);
-        changed = true;
-      }
-    });
-  }, this);
-  */
-  return changed;
 };
 
 AtomList.prototype.draw = function() {
@@ -1080,6 +1146,10 @@ BondList.prototype.get = function(i) {
   return this.bonds[i];
 };
 
+BondList.prototype.count = function() {
+  return this.bonds.length;
+};
+
 BondList.prototype.shortestLength = function() {
   return this.bonds.map(function(b) {
     return b.length();
@@ -1176,15 +1246,17 @@ Bond.prototype.intersection = function(b) {
   if(this.length() < 10)
     return;
 
+  var c = this.coords();
+  var d = b.coords();
   var p = this.a1;
   var q = b.a1;
   var r = {
-    x: p.dx(this.a2),
-    y: p.dy(this.a2)
+    x: c.x2 - c.x1,
+    y: c.y2 - c.y1
   };
   var s = {
-    x: q.dx(b.a2),
-    y: q.dy(b.a2)
+    x: d.x2 - d.x1,
+    y: d.y2 - d.y1
   };
   var t = ((q.x - p.x) * s.y - (q.y - p.y) * s.x) / (r.x * s.y - r.y * s.x);
   var u = ((q.x - p.x) * r.y - (q.y - p.y) * r.x) / (r.x * s.y - r.y * s.x);
