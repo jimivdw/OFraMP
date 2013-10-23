@@ -557,12 +557,20 @@ MoleculeViewer.prototype.zoomOn = function(x, y, f) {
   if(!this.settings.interactive)
     return;
 
+  // Restrict minimum zoom
+  if(f < 1 && this.molecule.bonds.averageDistance() < 40)
+    return;
+
   this.molecule.zoomOn(x, y, f);
   this.redraw();
 };
 
 MoleculeViewer.prototype.zoom = function(f) {
   if(!this.settings.interactive)
+    return;
+
+  // Restrict minimum zoom
+  if(f < 1 && this.molecule.bonds.averageDistance() < 40)
     return;
 
   this.molecule.zoom(f);
@@ -862,35 +870,28 @@ AtomList.prototype.bestFit = function(w, h) {
 AtomList.prototype.deoverlap = function() {
   var da = this.deoverlapAtoms();
   var db = this.deoverlapBonds();
-  var dc = false;//this.decrossBonds();
-  return da || db || dc;
-};
-
-AtomList.prototype.deoverlapb = function() {
-  var da = this.deoverlapAtoms();
-  var db = this.deoverlapBonds();
   var dc = this.decrossBonds();
   return da || db || dc;
 };
 
 AtomList.prototype.deoverlapAtoms = function() {
   var changed = false;
-  
-  for(var i = 0; i < this.count(); i++) {
+
+  for( var i = 0; i < this.count(); i++) {
     var a1 = this.atoms[i];
     if(!a1.show) {
       continue;
     }
-    
-    for(var j = i + 1; j < this.count(); j++) {
+
+    for( var j = i + 1; j < this.count(); j++) {
       var a2 = this.atoms[j];
       if(!a2.show) {
         continue;
       }
-      
+
       var d = a1.distance(a2);
       var rd = a1.radiusDistance(a2);
-      
+
       // Prevent problems with atoms at the exact same position by slightly
       // moving one of them.
       if(d.approx(0)) {
@@ -909,28 +910,28 @@ AtomList.prototype.deoverlapAtoms = function() {
       }
     }
   }
-  
+
   return changed;
 };
 
 AtomList.prototype.deoverlapBonds = function() {
   var s = this.molecule.mv.settings;
   var changed = false;
-  
-  for(var i = 0; i < this.count(); i++) {
+
+  for( var i = 0; i < this.count(); i++) {
     var a = this.atoms[i];
     if(!a.show) {
       continue;
     }
-    
-    for(var j = 0; j < this.molecule.bonds.count(); j++) {
+
+    for( var j = 0; j < this.molecule.bonds.count(); j++) {
       var b = this.molecule.bonds.get(j);
       if(!b.show) {
         continue;
       }
-      
+
       var bd = a.bondDistance(b);
-      
+
       // Prevent problems with atoms that are exactly on a bond by slightly
       // moving them.
       if(bd.approx(0)) {
@@ -948,33 +949,39 @@ AtomList.prototype.deoverlapBonds = function() {
       }
     }
   }
-  
+
   return changed;
 };
 
 AtomList.prototype.decrossBonds = function() {
-  // Solve bonds intersecting
-  return this.molecule.bonds.bonds.each(function(b1, list) {
-    var c = list.molecule.bonds.bonds.each(function(b2) {
-      if(b1 !== b2) {
-        var i = b1.intersection(b2);
-        if(i) {
-          var ctx = list.molecule.mv.ctx;
-          ctx.fillRect(i.x - 5, i.y - 5, 10, 10);
+  var changed = false;
 
-          var dx = i.x - b1.a1.x;
-          var dy = i.y - b1.a1.y;
-          //console.log("moving", dx, dy)
-          b1.a1.move(dx, dy);
-          return true;
-        }
-      }
-    });
-    
-    if(c) {
-      return true;
+  for( var i = 0; i < this.molecule.bonds.count(); i++) {
+    var b1 = this.molecule.bonds.get(i);
+    if(!b1.show) {
+      continue;
     }
-  }, this);
+
+    for( var j = i + 1; j < this.molecule.bonds.count(); j++) {
+      var b2 = this.molecule.bonds.get(j);
+      if(!b2.show) {
+        continue;
+      }
+
+      var c = b1.intersection(b2);
+      if(c) {
+        var ctx = this.molecule.mv.ctx;
+        ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
+
+        var dx = c.x - b1.a1.x;
+        var dy = c.y - b1.a1.y;
+        b1.a1.move(dx, dy);
+        changed = true;
+      }
+    }
+  }
+
+  return changed;
 };
 
 AtomList.prototype.draw = function() {
@@ -1248,8 +1255,14 @@ Bond.prototype.intersection = function(b) {
 
   var c = this.coords();
   var d = b.coords();
-  var p = this.a1;
-  var q = b.a1;
+  var p = {
+    x: c.x1,
+    y: c.y1
+  };
+  var q = {
+    x: d.x1,
+    y: d.y1
+  };
   var r = {
     x: c.x2 - c.x1,
     y: c.y2 - c.y1
@@ -1284,8 +1297,14 @@ Bond.prototype.draw = function() {
 
   if(this.type == 1 || this.type == 3) {
     ctx.drawLine(x1, y1, x2, y2);
-    // ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) /
-    // 2);
+  }
+
+  if(false) {
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect((x1 + x2) / 2 - 8, (y1 + y2) / 2 - 8, 16, 16);
+    ctx.fillStyle = "#000000";
+    ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) / 2);
+    ctx.strokeStyle = s.bond_color;
   }
 
   // Draw double/triple/aromatic bonds
