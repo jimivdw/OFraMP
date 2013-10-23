@@ -834,11 +834,18 @@ AtomList.prototype.scale = function(f) {
     a.y *= f;
     return a;
   });
-  // TODO: maybe not infinitely...
-  var i = 0;
-  var max = 1000 - 5 * this.count();
-  while(i < max && this.deoverlap())
-    i++;
+  
+  window.molecule = this.molecule;
+  window.fixcount = 0;
+  window.fixmax = 1000 - 4.8 * this.count();
+  (function drawLoop() {
+    console.log("looping", fixcount, fixmax, molecule);
+    if(fixcount < fixmax && molecule.atoms.deoverlap()) {
+      fixcount++;
+      molecule.mv.redraw();
+      requestAnimationFrame(drawLoop);
+    }
+  })();
 };
 
 AtomList.prototype.center = function() {
