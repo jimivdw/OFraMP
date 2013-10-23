@@ -836,7 +836,8 @@ AtomList.prototype.scale = function(f) {
   });
   // TODO: maybe not infinitely...
   var i = 0;
-  while(i < 1000 && this.deoverlap())
+  var max = 1000 - 5 * this.count();
+  while(i < max && this.deoverlap())
     i++;
 };
 
