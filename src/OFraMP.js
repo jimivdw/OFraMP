@@ -979,10 +979,20 @@ AtomList.prototype.decrossBonds = function() {
       if(c) {
         var ctx = this.molecule.mv.ctx;
         ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
+        
+        var candidates = [b1.a1, b1.a2, b2.a1, b2.a2];
+        var min = Infinity, ma = undefined;
+        candidates.each(function(a) {
+          var bc = a.bondCount();
+          if(bc < min) {
+            min = bc;
+            ma = a;
+          }
+        });
 
-        var dx = c.x - b1.a1.x;
-        var dy = c.y - b1.a1.y;
-        b1.a1.move(dx, dy);
+        var dx = c.x - ma.x;
+        var dy = c.y - ma.y;
+        ma.move(dx, dy);
         changed = true;
       }
     }
@@ -1015,6 +1025,21 @@ function Atom(list, id, element, element_id, x, y, charge) {
     this.show = true;
   this.status = ATOM_STATUSES.normal;
 }
+
+Atom.prototype.bonds = function() {
+  var bonds = [];
+  for(var i = 0; i < this.list.molecule.bonds.count(); i++) {
+    var bond = this.list.molecule.bonds.get(i);
+    if(this === bond.a1 || this === bond.a2) {
+      bonds.push(bond);
+    }
+  }
+  return bonds;
+};
+
+Atom.prototype.bondCount = function() {
+  return this.bonds().length;
+};
 
 Atom.prototype.radius = function() {
   var s = this.list.molecule.mv.settings;
