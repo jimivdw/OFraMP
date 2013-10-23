@@ -10,6 +10,8 @@ var DEFAULT_SETTINGS = {
 
   oapoc_url: "http://vps955.directvps.nl/OAPoC/",
 
+  min_zoom: 40,
+  max_zoom: 300,
   min_bond_length: 50,
   ideal_bond_length: 70,
   max_bond_length: 150,
@@ -557,8 +559,10 @@ MoleculeViewer.prototype.zoomOn = function(x, y, f) {
   if(!this.settings.interactive)
     return;
 
-  // Restrict minimum zoom
-  if(f < 1 && this.molecule.bonds.averageDistance() < 40)
+  // Restrict minimum and maximum zoom
+  var ad = this.molecule.bonds.averageDistance()
+  if(f < 1 && ad < this.settings.min_zoom ||
+      f > 1 && ad > this.settings.max_zoom)
     return;
 
   this.molecule.zoomOn(x, y, f);
@@ -569,8 +573,10 @@ MoleculeViewer.prototype.zoom = function(f) {
   if(!this.settings.interactive)
     return;
 
-  // Restrict minimum zoom
-  if(f < 1 && this.molecule.bonds.averageDistance() < 40)
+  // Restrict minimum and maximum zoom
+  var ad = this.molecule.bonds.averageDistance()
+  if(f < 1 && ad < this.settings.min_zoom ||
+      f > 1 && ad > this.settings.max_zoom)
     return;
 
   this.molecule.zoom(f);
