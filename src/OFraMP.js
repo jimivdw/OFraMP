@@ -561,8 +561,8 @@ MoleculeViewer.prototype.zoomOn = function(x, y, f) {
 
   // Restrict minimum and maximum zoom
   var ad = this.molecule.bonds.averageDistance()
-  if(f < 1 && ad < this.settings.min_zoom ||
-      f > 1 && ad > this.settings.max_zoom)
+  if(f < 1 && ad < this.settings.min_zoom || f > 1
+      && ad > this.settings.max_zoom)
     return;
 
   this.molecule.zoomOn(x, y, f);
@@ -575,8 +575,8 @@ MoleculeViewer.prototype.zoom = function(f) {
 
   // Restrict minimum and maximum zoom
   var ad = this.molecule.bonds.averageDistance()
-  if(f < 1 && ad < this.settings.min_zoom ||
-      f > 1 && ad > this.settings.max_zoom)
+  if(f < 1 && ad < this.settings.min_zoom || f > 1
+      && ad > this.settings.max_zoom)
     return;
 
   this.molecule.zoom(f);
@@ -834,18 +834,17 @@ AtomList.prototype.scale = function(f) {
     a.y *= f;
     return a;
   });
-  
+
   window.molecule = this.molecule;
   window.fixcount = 0;
   window.fixmax = 1000 - 4.8 * this.count();
-  (function drawLoop() {
-    console.log("looping", fixcount, fixmax, molecule);
+  window.requestAnimationFrame(function drawLoop() {
     if(fixcount < fixmax && molecule.atoms.deoverlap()) {
       fixcount++;
       molecule.mv.redraw();
       requestAnimationFrame(drawLoop);
     }
-  })();
+  });
 };
 
 AtomList.prototype.center = function() {
@@ -914,7 +913,7 @@ AtomList.prototype.deoverlapAtoms = function() {
         rd = a1.radiusDistance(a2);
       }
 
-      if(rd < -1e-6) {
+      if(rd < -1) {
         var f = rd / d;
         var dx = a1.dx(a2) * f / 2;
         var dy = a1.dy(a2) * f / 2;
@@ -953,7 +952,7 @@ AtomList.prototype.deoverlapBonds = function() {
         bd = a.bondDistance(b);
       }
 
-      if(bd < a.radius() + s.bond_spacing - 1e-6) {
+      if(bd < a.radius() + s.bond_spacing + 1) {
         var f = (a.radius() - bd + s.bond_spacing) / bd;
         var ba = a.bondAnchor(b);
         var dx = (a.x - ba.x) * f;
@@ -986,20 +985,16 @@ AtomList.prototype.decrossBonds = function() {
       if(c) {
         var ctx = this.molecule.mv.ctx;
         ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
-        
-        var candidates = [b1.a1, b1.a2, b2.a1, b2.a2];
-        var min = Infinity, ma = undefined;
-        candidates.each(function(a) {
-          var bc = a.bondCount();
-          if(bc < min) {
-            min = bc;
-            ma = a;
-          }
-        });
 
-        var dx = c.x - ma.x;
-        var dy = c.y - ma.y;
-        ma.move(dx, dy);
+        var atoms = [b1.a1, b1.a2, b2.a1, b2.a2];
+        var bcs = atoms.map(function(a) {
+          return a.bondCount();
+        });
+        var a = atoms[atoms.indexOf(bcs.min())];
+
+        var dx = c.x - a.x;
+        var dy = c.y - a.y;
+        a.move(dx, dy);
         changed = true;
       }
     }
@@ -1035,7 +1030,7 @@ function Atom(list, id, element, element_id, x, y, charge) {
 
 Atom.prototype.bonds = function() {
   var bonds = [];
-  for(var i = 0; i < this.list.molecule.bonds.count(); i++) {
+  for( var i = 0; i < this.list.molecule.bonds.count(); i++) {
     var bond = this.list.molecule.bonds.get(i);
     if(this === bond.a1 || this === bond.a2) {
       bonds.push(bond);
