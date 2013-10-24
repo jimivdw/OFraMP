@@ -1360,96 +1360,62 @@ Bond.prototype.draw = function() {
   }
 };
 
-Bond.prototype.drawConnectors = function() {
-  var a1 = this.a1;
-  var a2 = this.a2;
-  if(!this.show)
-    return;
+Bond.prototype.drawAtomConnector = function(a) {
+  var ep = {
+    x: a.x + a.radius(),
+    y: a.y
+  };
+
+  var c = this.coords();
+  if(this.a1 === a) {
+    var sp = {
+      x: c.x1,
+      y: c.y1
+    }
+  } else {
+    var sp = {
+      x: c.x2,
+      y: c.y2
+    }
+  }
+
+  var d = Math.sqrt(Math.pow(ep.x - sp.x, 2) + Math.pow(ep.y - sp.y, 2));
+  var r2 = Math.pow(a.radius(), 2);
+  var alpha = Math.acos((2 * r2 - Math.pow(d, 2)) / (2 * r2));
+  if(sp.y < a.y) {
+    alpha = -alpha;
+  }
 
   var ctx = this.list.molecule.mv.ctx;
   var s = this.list.molecule.mv.settings;
-  this.coords().extract(window);
-
   ctx.lineWidth = s.bond_connector_width;
   ctx.strokeStyle = s.bond_connector_color;
-  var d1 = s.bond_connector_width / a1.radius() / 2;
-  var d2 = s.bond_connector_width / a2.radius() / 2;
+  var delta = s.bond_connector_width / a.radius() / 2;
 
   if(this.type == 1 || this.type == 3) {
-    var dx1 = a1.radius() + a1.x - x1;
-    var dy1 = a1.y - y1;
-    var p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
-    if(dy1 > 0)
-      p1 = -p1;
-
-    var dx2 = a2.radius() + a2.x - x2;
-    var dy2 = a2.y - y2;
-    var p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
-    if(dy2 > 0)
-      p2 = -p2;
-
     ctx.beginPath();
-    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
+    ctx.arc(a.x, a.y, a.radius(), alpha - delta, alpha + delta);
     ctx.stroke();
   }
 
-  // Draw double/triple/aromatic bonds
+  // For double/triple/aromatic bonds
   if(this.type > 1) {
-    dx = x2 - x1;
-    dy = y2 - y1;
-    dist = Math.sqrt(dx * dx + dy * dy);
-
-    ddx = dy * s.bond_spacing / dist;
-    ddy = dx * s.bond_spacing / dist;
-
-    dx1 = a1.radius() + a1.x - x1 + ddx;
-    dy1 = a1.y - y1 - ddy;
-    p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
-    if(dy1 > 0)
-      p1 = -p1;
-
-    dx2 = a2.radius() + a2.x - x2 + ddx;
-    dy2 = a2.y - y2 - ddy;
-    p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
-    if(dy2 > 0)
-      p2 = -p2;
+    var beta = Math.acos((2 * r2 - Math.pow(s.bond_spacing, 2)) / (2 * r2));
 
     ctx.beginPath();
-    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
+    ctx.arc(a.x, a.y, a.radius(), alpha + beta - delta, alpha + beta + delta);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
-    ctx.stroke();
-    dx = x2 - x1;
-    dy = y2 - y1;
-    dist = Math.sqrt(dx * dx + dy * dy);
-
-    ddx = dy * s.bond_spacing / dist;
-    ddy = dx * s.bond_spacing / dist;
-
-    dx1 = a1.radius() + a1.x - x1 - ddx;
-    dy1 = a1.y - y1 + ddy;
-    p1 = 2 * Math.asin(Math.sqrt(dx1 * dx1 + dy1 * dy1) / 2 / a1.radius());
-    if(dy1 > 0)
-      p1 = -p1;
-
-    dx2 = a2.radius() + a2.x - x2 - ddx;
-    dy2 = a2.y - y2 + ddy;
-    p2 = 2 * Math.asin(Math.sqrt(dx2 * dx2 + dy2 * dy2) / 2 / a2.radius());
-    if(dy2 > 0)
-      p2 = -p2;
-
-    ctx.beginPath();
-    ctx.arc(a1.x, a1.y, a1.radius(), p1 - d1, p1 + d1);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(a2.x, a2.y, a2.radius(), p2 - d2, p2 + d2);
+    ctx.arc(a.x, a.y, a.radius(), alpha - beta - delta, alpha - beta + delta);
     ctx.stroke();
   }
+};
+
+Bond.prototype.drawConnectors = function() {
+  if(!this.show)
+    return;
+
+  this.drawAtomConnector(this.a1);
+  this.drawAtomConnector(this.a2);
 };
