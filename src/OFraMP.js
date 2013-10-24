@@ -990,7 +990,7 @@ AtomList.prototype.decrossBonds = function() {
         var bcs = atoms.map(function(a) {
           return a.bondCount();
         });
-        var a = atoms[atoms.indexOf(bcs.min())];
+        var a = atoms[bcs.indexOf(bcs.min())];
 
         var dx = c.x - a.x;
         var dy = c.y - a.y;
