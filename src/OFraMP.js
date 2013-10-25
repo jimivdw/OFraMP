@@ -1028,15 +1028,22 @@ function Atom(list, id, element, element_id, x, y, charge) {
   this.status = ATOM_STATUSES.normal;
 }
 
-Atom.prototype.bonds = function() {
+Atom.prototype.bonds = function(aromatic) {
   var bonds = [];
   for( var i = 0; i < this.list.molecule.bonds.count(); i++) {
     var bond = this.list.molecule.bonds.get(i);
-    if(this === bond.a1 || this === bond.a2) {
+    if(this === bond.a1 || this === bond.a2 && (!aromatic || bond.type == 4)) {
       bonds.push(bond);
     }
   }
   return bonds;
+};
+
+Atom.prototype.bondedAtoms = function(aromatic) {
+  var that = this;
+  return this.bonds(aromatic).map(function(b) {
+    return b.a1 === that ? b.a2 : b.a1;
+  });
 };
 
 Atom.prototype.bondCount = function() {
@@ -1124,6 +1131,33 @@ Atom.prototype.move = function(dx, dy) {
   this.x += dx;
   this.y += dy;
   return this;
+};
+
+Atom.prototype.findCycle = function(aromatic) {
+  var q = [this];
+  var pq = [[this]];
+  while(q.length > 0) {
+    var c = q.shift();
+    var p = pq.shift();
+
+    var bas = c.bondedAtoms(aromatic);
+
+    var path = bas.each(function(ba, needle) {
+      if(ba === needle && p.length > 2) {
+        return p;
+      }
+
+      if(p.indexOf(ba) == -1) {
+        q.push(ba);
+        pq.push(p.concat(ba));
+      }
+    }, this);
+
+    if(path) {
+      return path;
+    }
+  }
+  return pq;
 };
 
 Atom.prototype.draw = function() {
@@ -1350,13 +1384,29 @@ Bond.prototype.draw = function() {
     ddx = dy * s.bond_spacing / dist;
     ddy = dx * s.bond_spacing / dist;
 
-    ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
+    if(this.type == 4) {
+      var cycle = this.a2.findCycle();
+      var center = new AtomList(null, cycle).centerPoint();
+      var cdx1 = center.x - (x1 + ddx);
+      var cdy1 = center.y - (y1 - ddy);
+      var cdx2 = center.x - (x1 - ddx);
+      var cdy2 = center.y - (y1 + ddy);
+      var cdist1 = Math.sqrt(cdx1 * cdx1 + cdy1 * cdy1);
+      var cdist2 = Math.sqrt(cdx2 * cdx2 + cdy2 * cdy2);
 
-    if(this.type == 4)
-      ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy,
-          s.bond_dash_count);
-    else
+      if(cdist1 > cdist2) {
+        ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
+        ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy,
+            s.bond_dash_count);
+      } else {
+        ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+        ctx.drawDashedLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy,
+            s.bond_dash_count);
+      }
+    } else {
+      ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
       ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+    }
   }
 };
 
