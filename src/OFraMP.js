@@ -501,7 +501,7 @@ MoleculeViewer.prototype.showMolecule = function(data_str) {
   };
 
   xhr.open("POST", this.settings.oapoc_url, true);
-  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhr.send("fmt=smiles&data=" + data_str);
 };
 
