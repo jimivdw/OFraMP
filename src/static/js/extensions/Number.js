@@ -7,3 +7,41 @@ Number.prototype.between = function(a, b) {
 Number.prototype.approx = function(n) {
   return this.between(n - 1e-3, n + 1e-3);
 };
+
+Number.prototype.format = function(bl, fl) {
+  var o_str = "" + this;
+  var parts = o_str.split(".");
+  var base = parts[0] || "";
+  var frac = parts[1] || "";
+  var exp = 0;
+  
+  var bd = bl - base.length;
+  if(bd > 0) {
+    base = "0".repeat(bd) + base;
+  } else {
+    frac = base.slice(base.length + bd) + frac;
+    base = base.rslice(base.length + bd);
+    exp = -bd;
+  }
+  
+  var fd = fl - frac.length;
+  if(fd > 0) {
+    frac = frac + "0".repeat(fd);
+  } else {
+    var s = frac.slice(frac.length + fd).charAt(0);
+    frac = frac.rslice(frac.length + fd);
+    if(s >= 5) {
+      frac = "" + (Number(frac) + 1);
+    }
+  }
+  
+  var f_str = base;
+  if(frac.length > 0) {
+    f_str += "." + frac;
+  }
+  if(exp != 0) {
+    f_str += "e" + exp;
+  }
+  
+  return f_str;
+};

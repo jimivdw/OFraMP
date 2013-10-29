@@ -9,11 +9,15 @@ Array.prototype.min = function() {
 };
 
 Array.prototype.avg = function() {
+  return this.sum() / this.length;
+};
+
+Array.prototype.sum = function() {
   var sum = 0;
   this.each(function(e) {
     sum += e;
   });
-  return sum / this.length;
+  return sum;
 };
 
 Array.prototype.toBack = function(i) {
@@ -31,4 +35,12 @@ Array.prototype.each = function(f, that) {
       return r;
     }
   }
+};
+
+Array.prototype.rslice = function(i) {
+  var r = Array();
+  for(var j = 0; j < i; j++) {
+    r.push(this[j]);
+  }
+  return r;
 };
