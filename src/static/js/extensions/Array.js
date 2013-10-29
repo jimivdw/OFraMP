@@ -1,17 +1,26 @@
-// From:
-// http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
+/*
+ * Get the maximum value of an Array.
+ * 
+ * From:
+ * http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
+ */
 Array.prototype.max = function() {
   return Math.max.apply(null, this);
 };
 
+/*
+ * Get the minimum value of an Array.
+ * 
+ * From:
+ * http://stackoverflow.com/questions/1669190/javascript-min-max-array-values
+ */
 Array.prototype.min = function() {
   return Math.min.apply(null, this);
 };
 
-Array.prototype.avg = function() {
-  return this.sum() / this.length;
-};
-
+/*
+ * Get the sum of all values of an Array.
+ */
 Array.prototype.sum = function() {
   var sum = 0;
   this.each(function(e) {
@@ -20,6 +29,16 @@ Array.prototype.sum = function() {
   return sum;
 };
 
+/*
+ * Get the average value in an Array.
+ */
+Array.prototype.avg = function() {
+  return this.sum() / this.length;
+};
+
+/*
+ * Move the element at position i to the back of the Array.
+ */
 Array.prototype.toBack = function(i) {
   var e = this.splice(i, 1)[0];
   if(e === undefined)
@@ -28,6 +47,13 @@ Array.prototype.toBack = function(i) {
     return this.push(e);
 };
 
+/*
+ * Apply a function f to each entry of an Array, as long as that function does
+ * not return anyting.
+ * 
+ * The parameter that will be provided to the function and can be used for
+ * 'this' scoping.
+ */
 Array.prototype.each = function(f, that) {
   for( var i = 0; i < this.length; i++) {
     var r = f(this[i], that);
@@ -37,6 +63,9 @@ Array.prototype.each = function(f, that) {
   }
 };
 
+/*
+ * Reverse slice, returns the opposite of what slice returns.
+ */
 Array.prototype.rslice = function(i) {
   var r = Array();
   for(var j = 0; j < i; j++) {

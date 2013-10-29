@@ -1,13 +1,22 @@
-// Determine if a number is inbetween two other numbers.
+EPSILON = 1e-3;
+
+/* 
+ * Determine if a number is inbetween two other numbers.
+ */
 Number.prototype.between = function(a, b) {
   return a > b ? this <= a && this >= b : this >= a && this <= b;
 };
 
-// Determine if a number is approximately equal to another number n
+/* 
+ * Determine if a number is approximately equal to another number n
+ */
 Number.prototype.approx = function(n) {
-  return this.between(n - 1e-3, n + 1e-3);
+  return this.between(n - EPSILON, n + EPSILON);
 };
 
+/* 
+ * Format a number to have bl characters berfore the comma, and fl after it.
+ */
 Number.prototype.format = function(bl, fl) {
   var o_str = "" + this;
   var parts = o_str.split(".");

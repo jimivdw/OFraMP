@@ -85,17 +85,64 @@ LOCALE = {
 
 MONTH_LENGTHS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+/*
+ * Return whether this Date is in a leap year.
+ */
 Date.prototype.isLeapYear = function() {
   var y = this.getFullYear();
   return y % 400 == 0 || (y % 100 != 0 && y % 4 == 0);
 };
 
+/*
+ * Get the day number in the year this Date represents.
+ */
 Date.prototype.getDayOfYear = function() {
   var d = MONTH_LENGTHS.rslice(this.getMonth()).sum() + this.getDate();
   if(this.isLeapYear() && this.getMonth() > 1) {
     d += 1;
   }
   return d;
+};
+
+/*
+ * Get the day of the week, with weeks starting on Monday.
+ */
+Date.prototype.getDayM = function() {
+  return (this.getDay() + 6) % 7;
+};
+
+/*
+ * Get the week number, with weeks starting on Sunday.
+ */
+Date.prototype.getWeek = function() {
+  var doy = this.getDayOfYear();
+  var fd = new Date(this.getFullYear(), 0, 1).getDay();
+  if(fd > 0) {
+    doy -= (7 - fd);
+  }
+  
+  if(doy < 1) {
+    return 0;
+  } else {
+    return Math.ceil(doy / 7);
+  }
+};
+
+/*
+ * Get the week number, with weeks starting on Monday.
+ */
+Date.prototype.getWeekM = function() {
+  var doy = this.getDayOfYear();
+  var fd = new Date(this.getFullYear(), 0, 1).getDayM();
+  if(fd > 0) {
+    doy -= (7 - fd);
+  }
+  
+  if(doy < 1) {
+    return 0;
+  } else {
+    return Math.ceil(doy / 7);
+  }
 };
 
 /*
@@ -198,32 +245,11 @@ Date.prototype.format = function(fmt) {
           break;
 
         case "U": // Week number of the year (Sunday as the first day).
-          var doy = this.getDayOfYear();
-          var fd = new Date(this.getFullYear(), 0, 1).getDay();
-          if(fd > 0) {
-            doy -= (7 - fd);
-          }
-          
-          if(doy < 1) {
-            d_str += "00";
-          } else {
-            d_str += Math.ceil(doy / 7).format(2);
-          }
+          d_str += this.getWeek().format(2);
           break;
         
         case "W": // Week number of the year (Monday as the first day).
-          var doy = this.getDayOfYear();
-          var fd = new Date(this.getFullYear(), 0, 1).getDay() - 1;
-          if(fd == -1) { fd = 6; } // Make Monday day 0
-          if(fd > 0) {
-            doy -= (7 - fd);
-          }
-          
-          if(doy < 1) {
-            d_str += "00";
-          } else {
-            d_str += Math.ceil(doy / 7).format(2);
-          }
+          d_str += this.getWeekM().format(2);
           break;
         
         case "c": // Locale's appropriate date and time representation.

@@ -1,5 +1,8 @@
 DEFAULT_DASH_COUNT = 2;
 
+/*
+ * Get the coordinates of the center point of the canvas.
+ */
 CanvasRenderingContext2D.prototype.centerPoint = function() {
   return {
     x: this.canvas.width / 2,
@@ -7,10 +10,16 @@ CanvasRenderingContext2D.prototype.centerPoint = function() {
   };
 };
 
+/*
+ * Clear the canvas.
+ */
 CanvasRenderingContext2D.prototype.clear = function() {
   this.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
+/*
+ * Draw a line from (x1, y1) to (x2, y2).
+ */
 CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.beginPath();
   this.moveTo(x1, y1);
@@ -19,6 +28,9 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
   this.stroke();
 };
 
+/*
+ * Draw a dashed line of n dashes from (x1, y1) to (x2, y2).
+ */
 CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
   dx = x2 - x1;
   dy = y2 - y1;
@@ -35,12 +47,14 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
   }
 };
 
-// Based on:
-// http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial
-CanvasRenderingContext2D.prototype.textLines = function(x, y, w, h, text,
-    hard_wrap) {
-  //var ctx = this;
-
+/*
+ * Get the lines of a given text, provided that is has to fit in a box of size
+ * w * h. It will split inside words if hard_wrap is set to true.
+ * 
+ * Based on the original implementation of:
+ * http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial
+ */
+CanvasRenderingContext2D.prototype.textLines = function(w, h, text, hard_wrap) {
   var lines = Array();
   var hard_lines = text.trim().split("\n");
   hard_lines.each(function(hard_line, ctx) {
@@ -80,10 +94,14 @@ CanvasRenderingContext2D.prototype.textLines = function(x, y, w, h, text,
   return lines;
 };
 
+/*
+ * Show a given text at the position (x, y), while making sure it fits in the
+ * box of size w * h.
+ */
 CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
     hard_wrap) {
 
-  var lines = this.textLines(x, y, w, h, text, hard_wrap);
+  var lines = this.textLines(w, h, text, hard_wrap);
   var lineHeight = parseInt(this.font.split("px")[0]) * 1.2;
 
   var min_y = y;

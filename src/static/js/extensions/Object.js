@@ -1,3 +1,7 @@
+/*
+ * Merge two objects, either destructive (modify the current object) or
+ * nondestructive (return a new object that is the merge result).
+ */
 Object.prototype.merge = function(other, nondestructive) {
   if(nondestructive) {
     var r = {};
@@ -11,18 +15,25 @@ Object.prototype.merge = function(other, nondestructive) {
   return r;
 };
 
+/*
+ * Create a copy of an object.
+ */
 Object.prototype.copy = function() {
   return this.merge({}, true);
 };
 
-// Based on:
-// http://stackoverflow.com/questions/8730262/extract-keys-from-javascript-object-and-use-as-variables
+/*
+ * Extract all key-value pairs of an object into another tgt object.
+ */
 Object.prototype.extract = function(tgt) {
   for( var k in this) {
     tgt[k] = this[k];
   }
 };
 
+/*
+ * Show one level of an object.
+ */
 Object.prototype.show = function() {
   var s = "{";
   for( var k in this) {
