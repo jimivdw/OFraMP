@@ -952,7 +952,7 @@ AtomList.prototype.deoverlapBonds = function() {
         bd = a.bondDistance(b);
       }
 
-      if(bd < a.radius() + s.bond_spacing + 1) {
+      if(bd < a.radius() + s.bond_spacing - 1) {
         var f = (a.radius() - bd + s.bond_spacing) / bd;
         var ba = a.bondAnchor(b);
         var dx = (a.x - ba.x) * f;
