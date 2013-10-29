@@ -64,6 +64,21 @@ Array.prototype.each = function(f, that) {
 };
 
 /*
+ * Return an array, consisting of the results of applying a function f to each
+ * entry of the current Array.
+ * 
+ * The parameter that will be provided to the function and can be used for
+ * 'this' scoping.
+ */
+Array.prototype.mapF = function(f, that) {
+  var r = Array();
+  for(var i = 0; i < this.length; i++) {
+    r.push(f(this[i], that));
+  }
+  return r;
+};
+
+/*
  * Reverse slice, returns the opposite of what slice returns.
  */
 Array.prototype.rslice = function(i) {

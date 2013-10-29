@@ -61,6 +61,7 @@ var DEFAULT_SETTINGS = {
   atom_charge_color: "rgb(0, 0, 0)",
   atom_radius: 10,
   atom_radius_charged: 20,
+  atom_charge_offset: 6,
   atom_border_widths: {
     1: 1,
     2: 3,
