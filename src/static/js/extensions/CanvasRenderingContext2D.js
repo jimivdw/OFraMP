@@ -32,15 +32,15 @@ CanvasRenderingContext2D.prototype.drawLine = function(x1, y1, x2, y2) {
  * Draw a dashed line of n dashes from (x1, y1) to (x2, y2).
  */
 CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) {
-  dx = x2 - x1;
-  dy = y2 - y1;
-  dz = Math.sqrt(dx * dx + dy * dy);
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var dz = Math.sqrt(dx * dx + dy * dy);
 
-  n = n || DEFAULT_DASH_COUNT;
-  l = dz / (n * 2 - 1);
+  var n = n || DEFAULT_DASH_COUNT;
+  var l = dz / (n * 2 - 1);
 
-  ddx = dx * l / dz;
-  ddy = dy * l / dz;
+  var ddx = dx * l / dz;
+  var ddy = dy * l / dz;
   for( var i = 0; i < n; i++) {
     this.drawLine(x1 + 2 * i * ddx, y1 + 2 * i * ddy, x1 + (2 * i + 1) * ddx,
         y1 + (2 * i + 1) * ddy);
