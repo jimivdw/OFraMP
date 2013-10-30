@@ -34,13 +34,25 @@ Atom.prototype = {
    * Get all bonds that are connected to this atom, or just the aromatic ones
    * when arom is set to true.
    */
-  bonds: function(arom) {
-    var bonds = [];
+  getBonds: function(arom) {
+    if(arom && this.arom_bonds) {
+      return this.arom_bonds;
+    } else if(!arom && this.bonds) {
+      return this.bonds;
+    }
+
+    var bonds = Array();
     this.list.molecule.bonds.each(function(bond, atom) {
       if(atom === bond.a1 || atom === bond.a2 && (!arom || bond.type == 4)) {
         bonds.push(bond);
       }
     }, this);
+
+    if(arom) {
+      this.arom_bonds = bonds;
+    } else {
+      this.bonds = bonds;
+    }
     return bonds;
   },
 
@@ -49,27 +61,58 @@ Atom.prototype = {
    * atom has an aromatic bond when arom is set to true.
    */
   bondedAtoms: function(arom) {
-    return this.bonds(arom).mapF(function(b, atom) {
+    if(arom && this.arom_bonded_atoms) {
+      return this.arom_bonded_atoms;
+    } else if(!arom && this.bonded_atoms) {
+      return this.bonded_atoms;
+    }
+    
+    var bonded_atoms = this.getBonds(arom).mapF(function(b, atom) {
       return b.a1 === atom ? b.a2 : b.a1;
     }, this);
+    
+    if(arom) {
+      this.arom_bonded_atoms = bonded_atoms;
+    } else {
+      this.bonded_atoms = bonded_atoms;
+    }
+    return bonded_atoms;
   },
 
   /*
    * Get the number of bonds this atom has, or just the aromatic ones.
    */
   bondCount: function(arom) {
-    return this.bonds(arom).length;
+    if(arom && this.arom_bond_count) {
+      return this.arom_bond_count;
+    } else if(!arom && this.bond_count) {
+      return this.bond_count;
+    }
+
+    var bond_count = this.getBonds(arom).length;
+    if(arom) {
+      this.arom_bond_count = bond_count;
+    } else {
+      this.bond_count = bond_count;
+    }
+    return bond_count;
   },
 
   /*
    * Get the radius of this atom.
    */
-  radius: function() {
+  getRadius: function() {
+    if(this.radius) {
+      return this.radius;
+    }
+
     var s = this.list.molecule.mv.settings;
-    if(this.isCharged())
-      return s.atom_radius_charged;
-    else
-      return s.atom_radius;
+    if(this.isCharged()) {
+      this.radius = s.atom_radius_charged;
+    } else {
+      this.radius = s.atom_radius;
+    }
+    return this.radius;
   },
 
   /*
@@ -98,7 +141,7 @@ Atom.prototype = {
    * radiuses.
    */
   radiusDistance: function(a) {
-    return this.distance(a) - this.radius() - a.radius();
+    return this.distance(a) - this.getRadius() - a.getRadius();
   },
 
   /*
@@ -158,15 +201,19 @@ Atom.prototype = {
   touches: function(x, y) {
     var dx = this.x - x;
     var dy = this.y - y;
-    return Math.sqrt(dx * dx + dy * dy) <= this.radius();
+    return Math.sqrt(dx * dx + dy * dy) <= this.getRadius();
   },
 
   /*
    * Get the color of this atom.
    */
-  color: function() {
+  getColor: function() {
+    if(this.color) {
+      return this.color;
+    }
     var c = this.list.molecule.mv.settings.atom_colors[this.element];
-    return c || this.list.molecule.mv.settings.atom_colors["other"];
+    this.color = c || this.list.molecule.mv.settings.atom_colors["other"];
+    return this.color;
   },
 
   /*
@@ -175,7 +222,7 @@ Atom.prototype = {
   move: function(dx, dy) {
     this.x += dx;
     this.y += dy;
-    this.bonds().each(function(bond) {
+    this.getBonds().each(function(bond) {
       bond.cache = {};
     });
     return this;
@@ -187,6 +234,12 @@ Atom.prototype = {
    * If arom is set to true, only aromatic cycles will be considered.
    */
   findCycle: function(arom) {
+    if(arom && this.arom_cycle) {
+      return this.arom_cycle;
+    } else if(!arom && this.cycle) {
+      return this.cycle;
+    }
+
     var q = [this];
     var pq = [[this]];
     while(q.length > 0) {
@@ -207,6 +260,11 @@ Atom.prototype = {
       }, this);
 
       if(path) {
+        if(arom) {
+          this.arom_cycle = path;
+        } else {
+          this.cycle = path;
+        }
         return path;
       }
     }
@@ -228,13 +286,13 @@ Atom.prototype = {
       ctx.strokeStyle = s.atom_border_color;
       ctx.fillStyle = s.atom_bg_colors[this.status];
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius(), 0, 2 * Math.PI);
+      ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
       ctx.fill();
       ctx.stroke();
     }
 
     ctx.font = s.atom_font;
-    ctx.fillStyle = this.color();
+    ctx.fillStyle = this.getColor();
     if(this.isCharged()) {
       ctx.fillText(this.element, this.x, this.y - s.atom_charge_offset);
       ctx.font = s.atom_charge_font;

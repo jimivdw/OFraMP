@@ -38,11 +38,11 @@ Bond.prototype = {
     var dy = this.a1.dy(this.a2);
     var dist = this.a1.distance(this.a2);
 
-    var ar1 = this.a1.radius();
+    var ar1 = this.a1.getRadius();
     var ddx1 = dx * ar1 / dist;
     var ddy1 = dy * ar1 / dist;
 
-    var ar2 = this.a2.radius();
+    var ar2 = this.a2.getRadius();
     var ddx2 = dx * ar2 / dist;
     var ddy2 = dy * ar2 / dist;
 
@@ -143,7 +143,7 @@ Bond.prototype = {
     this.cache.lines = Array();
     var a1 = this.a1;
     var a2 = this.a2;
-    if(!this.show || a1.distance(a2) < a1.radius() + a2.radius()) {
+    if(!this.show || a1.distance(a2) < a1.getRadius() + a2.getRadius()) {
       return;
     }
 
@@ -235,7 +235,7 @@ Bond.prototype = {
     }
 
     var ep = {
-      x: a.x + a.radius(),
+      x: a.x + a.getRadius(),
       y: a.y
     };
 
@@ -253,20 +253,20 @@ Bond.prototype = {
     }
 
     var d = Math.sqrt(Math.pow(ep.x - sp.x, 2) + Math.pow(ep.y - sp.y, 2));
-    var r2 = Math.pow(a.radius(), 2);
+    var r2 = Math.pow(a.getRadius(), 2);
     var alpha = Math.acos((2 * r2 - Math.pow(d, 2)) / (2 * r2));
     if(sp.y < a.y) {
       alpha = -alpha;
     }
 
     var s = this.list.molecule.mv.settings;
-    var delta = s.bond_connector_width / a.radius() / 2;
+    var delta = s.bond_connector_width / a.getRadius() / 2;
 
     if(this.type == 1 || this.type == 3) {
       this.cache.connectors.push({
         x: a.x,
         y: a.y,
-        r: a.radius(),
+        r: a.getRadius(),
         s: alpha - delta,
         e: alpha + delta
       });
@@ -279,14 +279,14 @@ Bond.prototype = {
       this.cache.connectors.push({
         x: a.x,
         y: a.y,
-        r: a.radius(),
+        r: a.getRadius(),
         s: alpha + beta - delta,
         e: alpha + beta + delta
       });
       this.cache.connectors.push({
         x: a.x,
         y: a.y,
-        r: a.radius(),
+        r: a.getRadius(),
         s: alpha - beta - delta,
         e: alpha - beta + delta
       });

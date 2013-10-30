@@ -208,8 +208,8 @@ Molecule.prototype = {
           bd = a.bondDistance(b);
         }
 
-        if(bd < a.radius() + s.bond_spacing - 1) {
-          var f = (a.radius() - bd + s.bond_spacing) / bd;
+        if(bd < a.getRadius() + s.bond_spacing - 1) {
+          var f = (a.getRadius() - bd + s.bond_spacing) / bd;
           var ba = a.bondAnchor(b);
           var dx = (a.x - ba.x) * f;
           var dy = (a.y - ba.y) * f;
