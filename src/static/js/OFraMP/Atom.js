@@ -15,7 +15,7 @@ Atom.prototype = {
   charge: undefined,
   status: undefined,
   show: true,
-  
+
   init: function(list, id, element, element_id, x, y, charge) {
     this.list = list;
     this.id = id;
@@ -29,7 +29,7 @@ Atom.prototype = {
       this.show = false;
     }
   },
-  
+
   /*
    * Get all bonds that are connected to this atom, or just the aromatic ones
    * when arom is set to true.
@@ -44,24 +44,24 @@ Atom.prototype = {
     }
     return bonds;
   },
-  
+
   /*
-   * Get the atoms with which this atom is bonded, or just those with which
-   * this atom has an aromatic bond when arom is set to true.
+   * Get the atoms with which this atom is bonded, or just those with which this
+   * atom has an aromatic bond when arom is set to true.
    */
   bondedAtoms: function(arom) {
     return this.bonds(arom).mapF(function(b, atom) {
       return b.a1 === atom ? b.a2 : b.a1;
     }, this);
   },
-  
+
   /*
    * Get the number of bonds this atom has, or just the aromatic ones.
    */
   bondCount: function(arom) {
     return this.bonds(arom).length;
   },
-  
+
   /*
    * Get the radius of this atom.
    */
@@ -72,7 +72,7 @@ Atom.prototype = {
     else
       return s.atom_radius;
   },
-  
+
   /*
    * Get the x distance of this atom to another atom a.
    */
@@ -103,14 +103,14 @@ Atom.prototype = {
   },
 
   /*
-   * Get the anchor of this atom on a bond b, i.e. the closest point on the
-   * bond from which a perpendicular line to the atom can be drawn.
+   * Get the anchor of this atom on a bond b, i.e. the closest point on the bond
+   * from which a perpendicular line to the atom can be drawn.
    */
   bondAnchor: function(bond) {
     if(bond.a1 === this || bond.a2 === this) {
       return;
     }
-  
+
     var a = this.distance(bond.a2);
     var b = this.distance(bond.a1);
     var c = bond.a1.distance(bond.a2);
@@ -129,7 +129,7 @@ Atom.prototype = {
       };
     }
   },
-  
+
   /*
    * Get the perpendicular distance from this atom to a bond.
    * 
@@ -140,19 +140,19 @@ Atom.prototype = {
     if(!a) {
       return Infinity;
     }
-  
+
     var dx = this.x - a.x;
     var dy = this.y - a.y;
     return Math.sqrt(dx * dx + dy * dy);
   },
-  
+
   /*
    * Returns whether the charge of this atom is set or not.
    */
   isCharged: function() {
     return this.charge !== undefined;
   },
-  
+
   /*
    * Determine if a point (x, y) is within this atom's radius.
    */
@@ -161,7 +161,7 @@ Atom.prototype = {
     var dy = this.y - y;
     return Math.sqrt(dx * dx + dy * dy) <= this.radius();
   },
-  
+
   /*
    * Get the color of this atom.
    */
@@ -169,7 +169,7 @@ Atom.prototype = {
     var c = this.list.molecule.mv.settings.atom_colors[this.element];
     return c || this.list.molecule.mv.settings.atom_colors["other"];
   },
-  
+
   /*
    * Move this atom dx in the x direction and dy on the y axis.
    */
@@ -178,7 +178,7 @@ Atom.prototype = {
     this.y += dy;
     return this;
   },
-  
+
   /*
    * Find the cycle this atom is a part of (if any).
    * 
@@ -190,26 +190,26 @@ Atom.prototype = {
     while(q.length > 0) {
       var c = q.shift();
       var p = pq.shift();
-  
+
       var bas = c.bondedAtoms(arom);
-  
+
       var path = bas.each(function(ba, needle) {
         if(ba === needle && p.length > 2) {
           return p;
         }
-  
+
         if(p.indexOf(ba) == -1) {
           q.push(ba);
           pq.push(p.concat(ba));
         }
       }, this);
-  
+
       if(path) {
         return path;
       }
     }
   },
-  
+
   /*
    * Draw this atom.
    */
@@ -217,10 +217,10 @@ Atom.prototype = {
     if(!this.show) {
       return;
     }
-  
+
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
-    
+
     if(s.draw_atom_circ) {
       ctx.lineWidth = s.atom_border_widths[this.status];
       ctx.strokeStyle = s.atom_border_color;
@@ -230,7 +230,7 @@ Atom.prototype = {
       ctx.fill();
       ctx.stroke();
     }
-  
+
     ctx.font = s.atom_font;
     ctx.fillStyle = this.color();
     if(this.isCharged()) {

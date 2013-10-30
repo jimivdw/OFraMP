@@ -23,16 +23,16 @@ MoleculeViewer.prototype = {
       this.init_interaction();
     }
   },
-  
+
   init_context: function() {
     this.ctx = this.canvas.getContext('2d');
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
   },
-  
+
   init_interaction: function() {
     var mv = this;
-  
+
     // TODO: Not supported in Firefox!
     this.canvas.onmousewheel = function(e) {
       if(!mv.overlay_showing) {
@@ -42,11 +42,11 @@ MoleculeViewer.prototype = {
           var f = 1 / mv.settings.zoom_factor;
         }
         mv.zoomOn(e.offsetX, e.offsetY, f);
-  
+
         return false;
       }
     };
-  
+
     this.canvas.onmousedown = function(e) {
       if(!mv.overlay_showing) {
         var a = mv.molecule.atomAt(e.getX(), e.getY());
@@ -60,14 +60,14 @@ MoleculeViewer.prototype = {
         }
       }
     };
-  
+
     this.canvas.onmousemove = function(e) {
       if(!mv.overlay_showing) {
         if(mv.mouseDown) {
           var dx = e.getX() - mv.lastX;
           var dy = e.getY() - mv.lastY;
           mv.move(dx, dy);
-  
+
           mv.lastX = e.getX();
           mv.lastY = e.getY();
           mv.mouseDragged = true;
@@ -78,7 +78,7 @@ MoleculeViewer.prototype = {
         }
       }
     };
-  
+
     document.onmouseup = function(e) {
       if(!mv.overlay_showing) {
         if(e.target === mv.canvas && !mv.mouseDragged) {
@@ -92,17 +92,17 @@ MoleculeViewer.prototype = {
       }
     };
   },
-  
+
   /*
    * Load and show a molecule, represented by data_str (currently SMILES).
    */
   showMolecule: function(data_str) {
     var mv = this;
-  
+
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
-  
+
     var xhr = new XMLHttpRequest();
-  
+
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 1) {
         mv.showOverlay("Loading molecule data...\nConnection established.");
@@ -113,14 +113,14 @@ MoleculeViewer.prototype = {
       } else if(xhr.readyState == 4 && xhr.status == 200) {
         var md = JSON.parse(xhr.response);
         console.log("md", md);
-  
+
         if(md.error) {
           mv.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
           mv.showOverlay("Initializing molecule...");
           mv.molecule = new Molecule(mv, md.atoms, md.bonds);
           mv.hideOverlay();
-  
+
           mv.idealize();
         } else {
           mv.showOverlay("Missing data, received: " + md.show(),
@@ -130,12 +130,12 @@ MoleculeViewer.prototype = {
         mv.showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
       }
     };
-  
+
     xhr.open("POST", this.settings.oapoc_url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send("fmt=smiles&data=" + data_str);
   },
-  
+
   /*
    * Show an overlay with a given message msg of status status.
    * 
@@ -145,31 +145,32 @@ MoleculeViewer.prototype = {
     if(this.overlay_showing) {
       this.hideOverlay();
     }
-  
+
     msg = msg || this.overlay_msg;
     status = status || this.overlay_status;
-  
+
     var ctx = this.ctx;
     ctx.fillStyle = this.settings.message_border_color;
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  
+
     ctx.fillStyle = this.settings.message_bg_colors[status];
     var bw = this.settings.message_border_width;
-    ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2 * bw);
-  
+    ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2
+        * bw);
+
     ctx.font = this.settings.message_font;
     ctx.fillStyle = this.settings.message_color;
     var p = this.settings.message_padding + bw;
     ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
         this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
-  
+
     this.canvas.style.cursor = this.settings.canvas_cursor_normal;
-  
+
     this.overlay_showing = true;
     this.overlay_msg = msg;
     this.overlay_status = status;
   },
-  
+
   /*
    * Hide the overlay.
    */
@@ -177,22 +178,22 @@ MoleculeViewer.prototype = {
     this.overlay_showing = false;
     this.redraw();
   },
-  
+
   /*
    * Redraw the canvas.
    */
   redraw: function() {
     this.ctx.clear();
-    
+
     if(this.molecule) {
       this.molecule.draw();
     }
-    
+
     if(this.overlay_showing) {
       this.showOverlay();
     }
   },
-  
+
   /*
    * Move the molecule dx in the x direction and dy on the y axis.
    */
@@ -200,11 +201,11 @@ MoleculeViewer.prototype = {
     if(!this.settings.interactive || !this.molecule) {
       return;
     }
-  
+
     this.molecule.move(dx, dy);
     this.redraw();
   },
-  
+
   /*
    * Zoom on the center of the molecule with a factor f.
    */
@@ -212,18 +213,18 @@ MoleculeViewer.prototype = {
     if(!this.settings.interactive || !this.molecule) {
       return;
     }
-  
+
     // Restrict minimum and maximum zoom
     var ad = this.molecule.bonds.averageDistance();
     if(f < 1 && ad < this.settings.min_zoom || f > 1
         && ad > this.settings.max_zoom) {
       return;
     }
-  
+
     this.molecule.zoom(f);
     this.redraw();
   },
-  
+
   /*
    * Zoom on the position (x, y) with a factor f.
    */
@@ -231,18 +232,18 @@ MoleculeViewer.prototype = {
     if(!this.settings.interactive || !this.molecule) {
       return;
     }
-  
+
     // Restrict minimum and maximum zoom
     var ad = this.molecule.bonds.averageDistance()
     if(f < 1 && ad < this.settings.min_zoom || f > 1
         && ad > this.settings.max_zoom) {
       return;
     }
-  
+
     this.molecule.zoomOn(x, y, f);
     this.redraw();
   },
-  
+
   /*
    * Fit the molecule on the canvas.
    */
@@ -250,11 +251,11 @@ MoleculeViewer.prototype = {
     if(!this.molecule) {
       return;
     }
-    
+
     this.molecule.bestFit(this.canvas.width, this.canvas.height);
     this.redraw();
   },
-  
+
   /*
    * Show the molecule in ideal size on the canvas.
    */
@@ -262,7 +263,7 @@ MoleculeViewer.prototype = {
     if(!this.molecule) {
       return;
     }
-    
+
     this.molecule.idealize();
     this.redraw();
   }

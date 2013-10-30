@@ -72,7 +72,7 @@ Array.prototype.each = function(f, that) {
  */
 Array.prototype.mapF = function(f, that) {
   var r = Array();
-  for(var i = 0; i < this.length; i++) {
+  for( var i = 0; i < this.length; i++) {
     r.push(f(this[i], that));
   }
   return r;
@@ -83,7 +83,7 @@ Array.prototype.mapF = function(f, that) {
  */
 Array.prototype.rslice = function(i) {
   var r = Array();
-  for(var j = 0; j < i; j++) {
+  for( var j = 0; j < i; j++) {
     r.push(this[j]);
   }
   return r;

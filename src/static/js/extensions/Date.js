@@ -120,7 +120,7 @@ Date.prototype.getWeek = function() {
   if(fd > 0) {
     doy -= (7 - fd);
   }
-  
+
   if(doy < 1) {
     return 0;
   } else {
@@ -137,7 +137,7 @@ Date.prototype.getWeekM = function() {
   if(fd > 0) {
     doy -= (7 - fd);
   }
-  
+
   if(doy < 1) {
     return 0;
   } else {
@@ -161,119 +161,119 @@ Date.prototype.format = function(fmt) {
         case "a": // Weekday as locale's abbreviated name (Sun, Mon).
           d_str += LOCALE.weekdays[this.getDay()].abbr;
           break;
-        
+
         case "A": // Weekday as locale's full name (Sunday, Monday).
           d_str += LOCALE.weekdays[this.getDay()].name;
           break;
-        
+
         case "w": // Weekday as a decimal number.
           d_str += this.getDay();
           break;
-          break;
-  
-        case "d": // Day of the month as a zero-padded decimal number.
-          d_str += this.getDate().format(2);
-          break;
-        
-        case "b": // Month as locale's abbreviated name (Jan, Feb).
-          d_str += LOCALE.months[this.getMonth() + 1].abbr;
-          break;
-        
-        case "B": // Month as locale's full name (January, February).
-          d_str += LOCALE.months[this.getMonth() + 1].name;
-          break;
-        
-        case "m": // Month as a zero-padded decimal number.
-          d_str += (this.getMonth() + 1).format(2);
-          break;
-        
-        case "y": // Year without century as a zero-padded decimal number.
-          d_str += ("" + this.getFullYear()).slice(2);
-          break;
-        
-        case "Y": // Year with century as a decimal number.
-          d_str += this.getFullYear();
-  
-        case "H": // Hour (24-hour clock) as a zero-padded decimal number.
-          d_str += this.getHours().format(2);
-          break;
-        
-        case "I": // Hour (12-hour clock) as a zero-padded decimal number.
-          var h = this.getHours();
-          if(h > 12) {
-            d_str += (h % 12).format(2);
-          } else {
-            d_str += h.format(2);
-          }
-          break;
-        
-        case "p": // Locale's equivalent of either AM or PM.
-          if(this.getHours() < 12) {
-            d_str += LOCALE.am;
-          } else {
-            d_str += LOCALE.pm;
-          }
-          break;
-  
-        case "M": // Minute as a zero-padded decimal number.
-          d_str += this.getMinutes().format(2);
-          break;
-  
-        case "S": // Second as a zero-padded decimal number.
-          d_str += this.getSeconds().format(2);
-          break;
-        
-        case "f": // Microsecond as a decimal number, zero-padded on the left.
-          d_str += (this.getMilliseconds() * 1000).format(6);
-          break;
-        
-        case "z": // UTC offset in the form +HHMM or -HHMM.
-          var tzo = this.getTimezoneOffset();
-          if(tzo > 0) {
-            var p = "-";
-          } else {
-            var p = "+";
-            tzo *= -1;
-          }
-          var oh = tzo / 60;
-          var om = tzo % 60;
-          d_str += p + oh.format(2) + om.format(2);
-          break;
+        break;
 
-        case "j": // Day of the year as a zero-padded decimal number.
-          d_str += this.getDayOfYear().format(3);
-          break;
+      case "d": // Day of the month as a zero-padded decimal number.
+        d_str += this.getDate().format(2);
+        break;
 
-        case "U": // Week number of the year (Sunday as the first day).
-          d_str += this.getWeek().format(2);
-          break;
-        
-        case "W": // Week number of the year (Monday as the first day).
-          d_str += this.getWeekM().format(2);
-          break;
-        
-        case "c": // Locale's appropriate date and time representation.
-          d_str += this.toString();
-          break;
-        
-        case "x": // Locale's appropriate date representation.
-          d_str += this.toDateString();
-          break;
-        
-        case "X": // Locale's appropriate time representation.
-          d_str += this.toTimeString();
-          break;
-        
-        case "%": // A literal '%' character.
-          d_str += "%";
-          break;
-  
-        default:
-          console.warn("Encountered unknown directive:", f_pts[i]);
-      }
-    } else {
-      d_str += f_pts[i];
+      case "b": // Month as locale's abbreviated name (Jan, Feb).
+        d_str += LOCALE.months[this.getMonth() + 1].abbr;
+        break;
+
+      case "B": // Month as locale's full name (January, February).
+        d_str += LOCALE.months[this.getMonth() + 1].name;
+        break;
+
+      case "m": // Month as a zero-padded decimal number.
+        d_str += (this.getMonth() + 1).format(2);
+        break;
+
+      case "y": // Year without century as a zero-padded decimal number.
+        d_str += ("" + this.getFullYear()).slice(2);
+        break;
+
+      case "Y": // Year with century as a decimal number.
+        d_str += this.getFullYear();
+
+      case "H": // Hour (24-hour clock) as a zero-padded decimal number.
+        d_str += this.getHours().format(2);
+        break;
+
+      case "I": // Hour (12-hour clock) as a zero-padded decimal number.
+        var h = this.getHours();
+        if(h > 12) {
+          d_str += (h % 12).format(2);
+        } else {
+          d_str += h.format(2);
+        }
+        break;
+
+      case "p": // Locale's equivalent of either AM or PM.
+        if(this.getHours() < 12) {
+          d_str += LOCALE.am;
+        } else {
+          d_str += LOCALE.pm;
+        }
+        break;
+
+      case "M": // Minute as a zero-padded decimal number.
+        d_str += this.getMinutes().format(2);
+        break;
+
+      case "S": // Second as a zero-padded decimal number.
+        d_str += this.getSeconds().format(2);
+        break;
+
+      case "f": // Microsecond as a decimal number, zero-padded on the left.
+        d_str += (this.getMilliseconds() * 1000).format(6);
+        break;
+
+      case "z": // UTC offset in the form +HHMM or -HHMM.
+        var tzo = this.getTimezoneOffset();
+        if(tzo > 0) {
+          var p = "-";
+        } else {
+          var p = "+";
+          tzo *= -1;
+        }
+        var oh = tzo / 60;
+        var om = tzo % 60;
+        d_str += p + oh.format(2) + om.format(2);
+        break;
+
+      case "j": // Day of the year as a zero-padded decimal number.
+        d_str += this.getDayOfYear().format(3);
+        break;
+
+      case "U": // Week number of the year (Sunday as the first day).
+        d_str += this.getWeek().format(2);
+        break;
+
+      case "W": // Week number of the year (Monday as the first day).
+        d_str += this.getWeekM().format(2);
+        break;
+
+      case "c": // Locale's appropriate date and time representation.
+        d_str += this.toString();
+        break;
+
+      case "x": // Locale's appropriate date representation.
+        d_str += this.toDateString();
+        break;
+
+      case "X": // Locale's appropriate time representation.
+        d_str += this.toTimeString();
+        break;
+
+      case "%": // A literal '%' character.
+        d_str += "%";
+        break;
+
+      default:
+        console.warn("Encountered unknown directive:", f_pts[i]);
     }
+  } else {
+    d_str += f_pts[i];
   }
-  return d_str;
+}
+return d_str;
 };

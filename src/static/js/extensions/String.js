@@ -3,7 +3,7 @@
  */
 String.prototype.repeat = function(n) {
   var r = "";
-  for(var i = 0; i < n; i++) {
+  for( var i = 0; i < n; i++) {
     r += this;
   }
   return r;

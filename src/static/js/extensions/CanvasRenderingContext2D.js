@@ -48,8 +48,8 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
 };
 
 /*
- * Get the lines of a given text, provided that is has to fit in a box of size
- * w * h. It will split inside words if hard_wrap is set to true.
+ * Get the lines of a given text, provided that is has to fit in a box of size w *
+ * h. It will split inside words if hard_wrap is set to true.
  * 
  * Based on the original implementation of:
  * http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial
