@@ -8,7 +8,7 @@ function AtomList(molecule, atoms) {
 AtomList.prototype = {
   molecule: undefined,
   atoms: undefined,
-  
+
   init: function(molecule, atoms) {
     this.molecule = molecule;
     this.atoms = new Array();
@@ -17,16 +17,14 @@ AtomList.prototype = {
           atom.x, atom.y));
     }, this);
   },
-  
+
   /*
    * Get the atom with the given id.
    */
   get: function(id) {
-    // TODO: modify OAPoC so that it does not modify ids
-    id += 1;
     return this.atoms[this.indexOf(id)];
   },
-  
+
   /*
    * Get the index of the atom with the given id.
    */
@@ -44,7 +42,7 @@ AtomList.prototype = {
   count: function() {
     return this.atoms.length;
   },
-  
+
   /*
    * Apply a function f to each atom in this list.
    */
@@ -82,8 +80,12 @@ AtomList.prototype = {
    */
   leftTop: function() {
     return {
-      x: this.map(function(atom) { return atom.x; }).min(),
-      y: this.map(function(atom) { return atom.y; }).min()
+      x: this.map(function(atom) {
+        return atom.x;
+      }).min(),
+      y: this.map(function(atom) {
+        return atom.y;
+      }).min()
     };
   },
 
@@ -92,8 +94,12 @@ AtomList.prototype = {
    */
   rightBottom: function() {
     return {
-      x: this.map(function(atom) { return atom.x; }).max(),
-      y: this.map(function(atom) { return atom.y; }).max()
+      x: this.map(function(atom) {
+        return atom.x;
+      }).max(),
+      y: this.map(function(atom) {
+        return atom.y;
+      }).max()
     };
   },
 
@@ -129,7 +135,7 @@ AtomList.prototype = {
       }
     });
   },
-  
+
   /*
    * Set the atom that is hovered to h. If h is undefined, no atom is hovered.
    * 
@@ -139,9 +145,9 @@ AtomList.prototype = {
     if(h && !h.show) {
       return;
     }
-  
+
     var changed = false;
-    
+
     // Unset hover from the currently hovered atom
     this.each(function(a) {
       if(a.status === ATOM_STATUSES.hover && a !== h) {
@@ -150,13 +156,13 @@ AtomList.prototype = {
         return;
       }
     });
-  
+
     var s = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     if(h) {
       if(h.status === ATOM_STATUSES.normal) {
         h.status = ATOM_STATUSES.hover;
-        
+
         // Bring to back of list to be drawn last (on top).
         this.atoms.toBack(this.indexOf(h.id));
         changed = true;
@@ -169,7 +175,7 @@ AtomList.prototype = {
     } else {
       c.style.cursor = s.canvas_cursor_drag;
     }
-  
+
     return changed;
   },
 
@@ -187,21 +193,21 @@ AtomList.prototype = {
         return;
       }
     });
-  
+
     var t = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     if(s && s.show && s.status !== ATOM_STATUSES.selected) {
       s.status = ATOM_STATUSES.selected;
-      
+
       // Bring to back of list to be drawn last (on top).
       this.atoms.toBack(this.indexOf(s.id));
       c.style.cursor = t.canvas_cursor_normal;
       changed = true;
     }
-  
+
     return changed;
   },
-  
+
   /*
    * Move all atoms in this list dx in the x direction and dy on the y axis.
    */
@@ -210,7 +216,7 @@ AtomList.prototype = {
       a.move(dx, dy);
     });
   },
-  
+
   /*
    * Scale the atoms with a factor f.
    */
@@ -220,7 +226,7 @@ AtomList.prototype = {
       a.y *= f;
       return a;
     });
-  
+
     window.molecule = this.molecule;
     window.fixcount = 0;
     window.fixmax = 1000 - 4.8 * this.count();
@@ -232,7 +238,7 @@ AtomList.prototype = {
       }
     });
   },
-  
+
   /*
    * Center the list of atoms.
    */
@@ -243,7 +249,7 @@ AtomList.prototype = {
     var dy = cc.y - mc.y;
     this.move(dx, dy);
   },
-  
+
   /*
    * Zoom on the center of the molecule with a factor f.
    */
@@ -251,7 +257,7 @@ AtomList.prototype = {
     var c = this.centerPoint();
     this.zoomOn(c.x, c.y, f);
   },
-  
+
   /*
    * Zoom on a specific point (x, y) with a factor f.
    */
@@ -260,7 +266,7 @@ AtomList.prototype = {
     this.scale(f);
     this.move(x, y);
   },
-  
+
   /*
    * Fit the molecule in a box of size w * h.
    */
@@ -270,7 +276,7 @@ AtomList.prototype = {
     var hf = (h - s.canvas_padding) / this.height();
     var f = wf < hf ? wf : hf;
     this.scale(f);
-  
+
     var tx = w / 2 - this.width() / 2;
     var ty = h / 2 - this.height() / 2;
     var lt = this.leftTop();
@@ -278,7 +284,7 @@ AtomList.prototype = {
     var dy = ty - lt.y;
     this.move(dx, dy);
   },
-  
+
   /*
    * Fix atoms overlapping each other, atoms overlapping bonds and bonds
    * crossing each other.
@@ -299,22 +305,22 @@ AtomList.prototype = {
    */
   deoverlapAtoms: function() {
     var changed = false;
-  
+
     for( var i = 0; i < this.count(); i++) {
       var a1 = this.atoms[i];
       if(!a1.show) {
         continue;
       }
-  
+
       for( var j = i + 1; j < this.count(); j++) {
         var a2 = this.atoms[j];
         if(!a2.show) {
           continue;
         }
-  
+
         var d = a1.distance(a2);
         var rd = a1.radiusDistance(a2);
-  
+
         // Prevent problems with atoms at the exact same position by slightly
         // moving one of them.
         if(d.approx(0)) {
@@ -322,7 +328,7 @@ AtomList.prototype = {
           d = a1.distance(a2);
           rd = a1.radiusDistance(a2);
         }
-  
+
         if(rd < -1) {
           var f = rd / d;
           var dx = a1.dx(a2) * f / 2;
@@ -333,7 +339,7 @@ AtomList.prototype = {
         }
       }
     }
-  
+
     return changed;
   },
 
@@ -345,39 +351,36 @@ AtomList.prototype = {
   deoverlapBonds: function() {
     var s = this.molecule.mv.settings;
     var changed = false;
-  
+
     for( var i = 0; i < this.count(); i++) {
       var a = this.atoms[i];
       if(!a.show) {
         continue;
       }
-  
-      for( var j = 0; j < this.molecule.bonds.count(); j++) {
-        var b = this.molecule.bonds.get(j);
-        if(!b.show) {
-          continue;
+
+      this.molecule.bonds.each(function(b) {
+        if(b.show) {
+          var bd = a.bondDistance(b);
+
+          // Prevent problems with atoms that are exactly on a bond by slightly
+          // moving them.
+          if(bd.approx(0)) {
+            a.move(1e-3, 1e-3);
+            bd = a.bondDistance(b);
+          }
+
+          if(bd < a.radius() + s.bond_spacing - 1) {
+            var f = (a.radius() - bd + s.bond_spacing) / bd;
+            var ba = a.bondAnchor(b);
+            var dx = (a.x - ba.x) * f;
+            var dy = (a.y - ba.y) * f;
+            a.move(dx, dy);
+            changed = true;
+          }
         }
-  
-        var bd = a.bondDistance(b);
-  
-        // Prevent problems with atoms that are exactly on a bond by slightly
-        // moving them.
-        if(bd.approx(0)) {
-          a.move(1e-3, 1e-3);
-          bd = a.bondDistance(b);
-        }
-  
-        if(bd < a.radius() + s.bond_spacing - 1) {
-          var f = (a.radius() - bd + s.bond_spacing) / bd;
-          var ba = a.bondAnchor(b);
-          var dx = (a.x - ba.x) * f;
-          var dy = (a.y - ba.y) * f;
-          a.move(dx, dy);
-          changed = true;
-        }
-      }
+      });
     }
-  
+
     return changed;
   },
 
@@ -388,30 +391,27 @@ AtomList.prototype = {
    */
   decrossBonds: function() {
     var changed = false;
-  
+
     for( var i = 0; i < this.molecule.bonds.count(); i++) {
-      var b1 = this.molecule.bonds.get(i);
+      var b1 = this.molecule.bonds.bonds[i];
       if(!b1.show) {
         continue;
       }
-  
+
       for( var j = i + 1; j < this.molecule.bonds.count(); j++) {
-        var b2 = this.molecule.bonds.get(j);
+        var b2 = this.molecule.bonds.bonds[j];
         if(!b2.show) {
           continue;
         }
-  
+
         var c = b1.intersection(b2);
         if(c) {
-          var ctx = this.molecule.mv.ctx;
-          ctx.fillRect(c.x - 5, c.y - 5, 10, 10);
-  
           var atoms = [b1.a1, b1.a2, b2.a1, b2.a2];
           var bcs = atoms.map(function(a) {
             return a.bondCount();
           });
           var a = atoms[bcs.indexOf(bcs.min())];
-  
+
           var dx = c.x - a.x;
           var dy = c.y - a.y;
           a.move(dx, dy);
@@ -419,10 +419,10 @@ AtomList.prototype = {
         }
       }
     }
-  
+
     return changed;
   },
-  
+
   /*
    * Draw all atoms in this list.
    */

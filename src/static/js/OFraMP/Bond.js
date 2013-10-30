@@ -1,19 +1,21 @@
 /**
  * Data structure for a bond
  */
-function Bond(list, a1, a2, type) {
-  this.init(list, a1, a2, type);
+function Bond(list, id, a1, a2, type) {
+  this.init(list, id, a1, a2, type);
 }
 
 Bond.prototype = {
   list: undefined,
+  id: undefined,
   a1: undefined,
   a2: undefined,
   type: undefined,
   show: true,
 
-  init: function(list, a1, a2, type) {
+  init: function(list, id, a1, a2, type) {
     this.list = list;
+    this.id = id;
     this.a1 = a1;
     this.a2 = a2;
     this.type = type;
@@ -143,7 +145,7 @@ Bond.prototype = {
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect((x1 + x2) / 2 - 8, (y1 + y2) / 2 - 8, 16, 16);
       ctx.fillStyle = "#000000";
-      ctx.fillText(this.list.bonds.indexOf(this), (x1 + x2) / 2, (y1 + y2) / 2);
+      ctx.fillText(this.id, (x1 + x2) / 2, (y1 + y2) / 2);
       ctx.strokeStyle = s.bond_color;
     }
 

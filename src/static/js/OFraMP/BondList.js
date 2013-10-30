@@ -2,51 +2,103 @@
  * Data structure for a list of bonds
  */
 function BondList(molecule, bonds) {
-  this.molecule = molecule;
-  this.bonds = new Array();
-  var atoms = molecule.atoms;
-  for( var i = 0; i < bonds.length; i++) {
-    var bond = bonds[i];
-    var b = new Bond(this, atoms.get(bond.a1), atoms.get(bond.a2),
-        bond.bond_type);
-    this.bonds.push(b);
-  }
+  this.init(molecule, bonds);
 }
 
-BondList.prototype.get = function(i) {
-  return this.bonds[i];
-};
+BondList.prototype = {
+  molecule: undefined,
+  bonds: undefined,
 
-BondList.prototype.count = function() {
-  return this.bonds.length;
-};
+  init: function(molecule, bonds) {
+    this.molecule = molecule;
+    this.bonds = new Array();
+    bonds.each(function(bond, list) {
+      list.bonds.push(new Bond(list, bond.id, molecule.atoms.get(bond.a1),
+          molecule.atoms.get(bond.a2), bond.bond_type));
+    }, this);
+  },
 
-BondList.prototype.shortestLength = function() {
-  return this.bonds.map(function(b) {
-    return b.length();
-  }).min();
-};
+  /*
+   * Get the bond with the given ID.
+   */
+  get: function(id) {
+    return this.bonds[this.indexOf(id)];
+  },
 
-BondList.prototype.shortestDistance = function() {
-  return this.bonds.map(function(b) {
-    return b.a1.distance(b.a2);
-  }).min();
-};
+  /*
+   * Get the index in the list of the bond with the given ID.
+   */
+  indexOf: function(id) {
+    for( var i = 0; i < this.count(); i++) {
+      if(this.bonds[i].id === id) {
+        return i;
+      }
+    }
+  },
 
-BondList.prototype.averageDistance = function() {
-  return this.bonds.map(function(b) {
-    return b.a1.distance(b.a2);
-  }).avg();
-};
+  /*
+   * Get the number of bonds in the list.
+   */
+  count: function() {
+    return this.bonds.length;
+  },
 
-BondList.prototype.longestDistance = function() {
-  return this.bonds.map(function(b) {
-    return b.a1.distance(b.a2);
-  }).max();
-};
+  /*
+   * Apply a function to each bond in this list.
+   */
+  each: function(f, that) {
+    return this.bonds.each(f, that);
+  },
 
-BondList.prototype.draw = function() {
-  this.bonds.forEach(function(b) {
-    b.draw();
-  });
+  /*
+   * Mapping function for the list of bonds.
+   */
+  map: function(f, that) {
+    return this.bonds.mapF(f, that);
+  },
+
+  /*
+   * Get the shortest bond length.
+   */
+  shortestLength: function() {
+    return this.map(function(b) {
+      return b.length();
+    }).min();
+  },
+
+  /*
+   * Get the shortest distance between two atoms over all bonds in this list.
+   */
+  shortestDistance: function() {
+    return this.map(function(b) {
+      return b.a1.distance(b.a2);
+    }).min();
+  },
+
+  /*
+   * Get the average distance between two atoms over all bonds in this list.
+   */
+  averageDistance: function() {
+    return this.map(function(b) {
+      return b.a1.distance(b.a2);
+    }).avg();
+  },
+
+  /*
+   * Get the longest distance between two atoms over all bonds in this list.
+   */
+  longestDistance: function() {
+    return this.map(function(b) {
+      return b.a1.distance(b.a2);
+    }).max();
+  },
+
+  /*
+   * Draw all bonds in this list.
+   */
+  draw: function() {
+    this.each(function(b) {
+      b.draw();
+    });
+  }
 };
