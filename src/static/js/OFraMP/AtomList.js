@@ -221,10 +221,10 @@ AtomList.prototype = {
    * Scale the atoms with a factor f.
    */
   scale: function(f) {
-    this.map(function(a) {
-      a.x *= f;
-      a.y *= f;
-      return a;
+    this.each(function(a) {
+      var dx = a.x * f - a.x;
+      var dy = a.y * f - a.y;
+      a.move(dx, dy);
     });
 
     window.molecule = this.molecule;

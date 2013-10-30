@@ -13,6 +13,8 @@ Bond.prototype = {
   type: undefined,
   show: true,
 
+  cache: {},
+
   init: function(list, id, a1, a2, type) {
     this.list = list;
     this.id = id;
@@ -28,6 +30,10 @@ Bond.prototype = {
    * Get the coordinates of the starting and end points of this bond.
    */
   coords: function() {
+    if(this.cache.coords) {
+      return this.cache.coords;
+    }
+
     var dx = this.a1.dx(this.a2);
     var dy = this.a1.dy(this.a2);
     var dist = this.a1.distance(this.a2);
@@ -40,22 +46,30 @@ Bond.prototype = {
     var ddx2 = dx * ar2 / dist;
     var ddy2 = dy * ar2 / dist;
 
-    return {
+    var coords = {
       x1: this.a1.x + ddx1,
       y1: this.a1.y + ddy1,
       x2: this.a2.x - ddx2,
       y2: this.a2.y - ddy2
     };
+
+    this.cache.coords = coords;
+    return coords;
   },
 
   /*
    * Get the length of this bond.
    */
   length: function() {
+    if(this.cache.length) {
+      return this.cache.length;
+    }
     var c = this.coords();
     var dx = c.x2 - c.x1;
     var dy = c.y2 - c.y1;
-    return Math.sqrt(dx * dx + dy * dy);
+    var length = Math.sqrt(dx * dx + dy * dy);
+    this.cache.length = length;
+    return length;
   },
 
   /*
@@ -119,37 +133,34 @@ Bond.prototype = {
   },
 
   /*
-   * Draw this bond.
+   * Cache the coordinates of all bond lines.
    */
-  draw: function() {
-    this.drawConnectors();
+  cacheLineCoords: function() {
+    if(this.cache.lines) {
+      return;
+    }
+
+    this.cache.lines = Array();
     var a1 = this.a1;
     var a2 = this.a2;
     if(!this.show || a1.distance(a2) < a1.radius() + a2.radius()) {
       return;
     }
 
-    var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
+
     this.coords().extract(window);
-
-    ctx.lineWidth = s.bond_width;
-    ctx.strokeStyle = s.bond_color;
-
+    // Inner line for single/triple bonds
     if(this.type == 1 || this.type == 3) {
-      ctx.drawLine(x1, y1, x2, y2);
+      this.cache.lines.push({
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2
+      });
     }
 
-    // Draw the bond ID (if set to true)... TODO
-    if(false) {
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect((x1 + x2) / 2 - 8, (y1 + y2) / 2 - 8, 16, 16);
-      ctx.fillStyle = "#000000";
-      ctx.fillText(this.id, (x1 + x2) / 2, (y1 + y2) / 2);
-      ctx.strokeStyle = s.bond_color;
-    }
-
-    // Draw double/triple/aromatic bonds
+    // Outer lines for double/triple/aromatic bonds
     if(this.type > 1) {
       dx = x2 - x1;
       dy = y2 - y1;
@@ -159,7 +170,7 @@ Bond.prototype = {
       ddy = dx * s.bond_spacing / dist;
 
       if(this.type == 4) {
-        // Draw an aromatic bond
+        // Find the center of the aromatic cycle
         var cycle = this.a2.findCycle();
         var center = new AtomList(null, cycle).centerPoint();
         var cdx1 = center.x - (x1 + ddx);
@@ -170,25 +181,59 @@ Bond.prototype = {
         var cdist2 = Math.sqrt(cdx2 * cdx2 + cdy2 * cdy2);
 
         if(cdist1 > cdist2) {
-          ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
-          ctx.drawDashedLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy,
-              s.bond_dash_count);
+          this.cache.lines.push({
+            x1: x1 + ddx,
+            y1: y1 - ddy,
+            x2: x2 + ddx,
+            y2: y2 - ddy
+          });
+          this.cache.lines.push({
+            x1: x1 - ddx,
+            y1: y1 + ddy,
+            x2: x2 - ddx,
+            y2: y2 + ddy,
+            n: s.bond_dash_count
+          });
         } else {
-          ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
-          ctx.drawDashedLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy,
-              s.bond_dash_count);
+          this.cache.lines.push({
+            x1: x1 - ddx,
+            y1: y1 + ddy,
+            x2: x2 - ddx,
+            y2: y2 + ddy
+          });
+          this.cache.lines.push({
+            x1: x1 + ddx,
+            y1: y1 - ddy,
+            x2: x2 + ddx,
+            y2: y2 - ddy,
+            n: s.bond_dash_count
+          });
         }
       } else {
-        ctx.drawLine(x1 + ddx, y1 - ddy, x2 + ddx, y2 - ddy);
-        ctx.drawLine(x1 - ddx, y1 + ddy, x2 - ddx, y2 + ddy);
+        this.cache.lines.push({
+          x1: x1 + ddx,
+          y1: y1 - ddy,
+          x2: x2 + ddx,
+          y2: y2 - ddy
+        });
+        this.cache.lines.push({
+          x1: x1 - ddx,
+          y1: y1 + ddy,
+          x2: x2 - ddx,
+          y2: y2 + ddy
+        });
       }
     }
   },
 
   /*
-   * Draw the bond connector on atom a.
+   * Cache the coordinates of the bond's connector on atom a.
    */
-  drawAtomConnector: function(a) {
+  cacheConnectorCoords: function(a) {
+    if(!this.cache.connectors) {
+      this.cache.connectors = Array();
+    }
+
     var ep = {
       x: a.x + a.radius(),
       y: a.y
@@ -214,29 +259,88 @@ Bond.prototype = {
       alpha = -alpha;
     }
 
-    var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
-    ctx.lineWidth = s.bond_connector_width;
-    ctx.strokeStyle = s.bond_connector_color;
     var delta = s.bond_connector_width / a.radius() / 2;
 
     if(this.type == 1 || this.type == 3) {
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.radius(), alpha - delta, alpha + delta);
-      ctx.stroke();
+      this.cache.connectors.push({
+        x: a.x,
+        y: a.y,
+        r: a.radius(),
+        s: alpha - delta,
+        e: alpha + delta
+      });
     }
 
     // For double/triple/aromatic bonds
     if(this.type > 1) {
       var beta = Math.acos((2 * r2 - Math.pow(s.bond_spacing, 2)) / (2 * r2));
 
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.radius(), alpha + beta - delta, alpha + beta + delta);
-      ctx.stroke();
+      this.cache.connectors.push({
+        x: a.x,
+        y: a.y,
+        r: a.radius(),
+        s: alpha + beta - delta,
+        e: alpha + beta + delta
+      });
+      this.cache.connectors.push({
+        x: a.x,
+        y: a.y,
+        r: a.radius(),
+        s: alpha - beta - delta,
+        e: alpha - beta + delta
+      });
+    }
+  },
 
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.radius(), alpha - beta - delta, alpha - beta + delta);
-      ctx.stroke();
+  /*
+   * Cache the coordinates of this bond's atom connectors.
+   */
+  cacheConnectorsCoords: function() {
+    if(this.cache.connectors) {
+      return;
+    }
+
+    if(!this.show) {
+      this.cache.connectors = [];
+      return;
+    }
+
+    this.cacheConnectorCoords(this.a1);
+    this.cacheConnectorCoords(this.a2);
+  },
+
+  /*
+   * Draw this bond.
+   */
+  draw: function() {
+    if(!this.cache.lines) {
+      this.cacheLineCoords();
+    }
+
+    this.drawConnectors();
+
+    var ctx = this.list.molecule.mv.ctx;
+    var s = this.list.molecule.mv.settings;
+
+    ctx.lineWidth = s.bond_width;
+    ctx.strokeStyle = s.bond_color;
+
+    this.cache.lines.each(function(l) {
+      if(l.n) {
+        ctx.drawDashedLine(l.x1, l.y1, l.x2, l.y2, l.n);
+      } else {
+        ctx.drawLine(l.x1, l.y1, l.x2, l.y2);
+      }
+    });
+
+    // Draw the bond ID (if set to true)... TODO
+    if(false) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect((x1 + x2) / 2 - 8, (y1 + y2) / 2 - 8, 16, 16);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(this.id, (x1 + x2) / 2, (y1 + y2) / 2);
+      ctx.strokeStyle = s.bond_color;
     }
   },
 
@@ -244,11 +348,19 @@ Bond.prototype = {
    * Draw this bond's connectors.
    */
   drawConnectors: function() {
-    if(!this.show) {
-      return;
+    if(!this.cache.connectors) {
+      this.cacheConnectorsCoords();
     }
 
-    this.drawAtomConnector(this.a1);
-    this.drawAtomConnector(this.a2);
+    var ctx = this.list.molecule.mv.ctx;
+    var s = this.list.molecule.mv.settings;
+    ctx.lineWidth = s.bond_connector_width;
+    ctx.strokeStyle = s.bond_connector_color;
+
+    return this.cache.connectors.each(function(c) {
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r, c.s, c.e);
+      ctx.stroke();
+    });
   }
 };

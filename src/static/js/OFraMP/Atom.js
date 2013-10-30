@@ -36,12 +36,11 @@ Atom.prototype = {
    */
   bonds: function(arom) {
     var bonds = [];
-    for( var i = 0; i < this.list.molecule.bonds.count(); i++) {
-      var bond = this.list.molecule.bonds.get(i);
-      if(this === bond.a1 || this === bond.a2 && (!arom || bond.type == 4)) {
+    this.list.molecule.bonds.each(function(bond, atom) {
+      if(atom === bond.a1 || atom === bond.a2 && (!arom || bond.type == 4)) {
         bonds.push(bond);
       }
-    }
+    }, this);
     return bonds;
   },
 
@@ -176,6 +175,9 @@ Atom.prototype = {
   move: function(dx, dy) {
     this.x += dx;
     this.y += dy;
+    this.bonds().each(function(bond) {
+      bond.cache = {};
+    });
     return this;
   },
 
