@@ -334,12 +334,13 @@ Bond.prototype = {
       }
     });
 
-    // Draw the bond ID (if set to true)... TODO
-    if(false) {
+    // Draw the bond ID
+    if(s.draw_bond_id) {
+      var c = this.coords();
       ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect((x1 + x2) / 2 - 8, (y1 + y2) / 2 - 8, 16, 16);
+      ctx.fillRect((c.x1 + c.x2) / 2 - 8, (c.y1 + c.y2) / 2 - 8, 16, 16);
       ctx.fillStyle = "#000000";
-      ctx.fillText(this.id, (x1 + x2) / 2, (y1 + y2) / 2);
+      ctx.fillText(this.id, (c.x1 + c.x2) / 2, (c.y1 + c.y2) / 2);
       ctx.strokeStyle = s.bond_color;
     }
   },

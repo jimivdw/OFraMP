@@ -24,8 +24,10 @@ var DEFAULT_SETTINGS = {
   ideal_bond_length: 70,
   max_bond_length: 150,
 
-  draw_atom_circ: true,
-  draw_h_atoms: true,
+  deoverlap: true,
+  deoverlap_atoms: true,
+  deoverlap_bonds: true,
+  decross_bonds: true,
 
   canvas_padding: 40,
   canvas_cursor_normal: "default",
@@ -45,6 +47,9 @@ var DEFAULT_SETTINGS = {
     5: "rgba(131, 147, 202, .5)"
   },
 
+  draw_atom_circ: true,
+  draw_h_atoms: true,
+  draw_atom_id: false,
   atom_font: "bold 12px Arial",
   atom_charge_font: "9px Arial",
   atom_colors: {
@@ -74,6 +79,7 @@ var DEFAULT_SETTINGS = {
     3: "rgb(203,  83,  73)"
   },
 
+  draw_bond_id: false,
   bond_width: 1,
   bond_color: "rgb(0, 0, 0)",
   bond_connector_width: 3,

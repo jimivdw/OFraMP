@@ -127,9 +127,21 @@ Molecule.prototype = {
    * Returns true is atoms were moved and a redraw is needed.
    */
   deoverlap: function() {
-    var da = this.deoverlapAtoms();
-    var db = this.deoverlapBonds();
-    var dc = this.decrossBonds();
+    if(!mv.settings.deoverlap) {
+      return;
+    }
+
+    if(mv.settings.deoverlap_atoms) {
+      var da = this.deoverlapAtoms();
+    }
+
+    if(mv.settings.deoverlap_bonds) {
+      var db = this.deoverlapBonds();
+    }
+
+    if(mv.settings.decross_bonds) {
+      var dc = this.decrossBonds();
+    }
     return da || db || dc;
   },
 
@@ -252,7 +264,10 @@ Molecule.prototype = {
 
           var dx = c.x - a.x;
           var dy = c.y - a.y;
-          a.move(dx, dy);
+          var d = Math.sqrt(dx * dx + dy * dy);
+          var ddx = a.getRadius() * dx / d;
+          var ddy = a.getRadius() * dy / d;
+          a.move(dx + ddx, dy + ddy);
           changed = true;
         }
       }

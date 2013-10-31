@@ -66,11 +66,11 @@ Atom.prototype = {
     } else if(!arom && this.bonded_atoms) {
       return this.bonded_atoms;
     }
-    
+
     var bonded_atoms = this.getBonds(arom).mapF(function(b, atom) {
       return b.a1 === atom ? b.a2 : b.a1;
     }, this);
-    
+
     if(arom) {
       this.arom_bonded_atoms = bonded_atoms;
     } else {
@@ -291,15 +291,20 @@ Atom.prototype = {
       ctx.stroke();
     }
 
+    var label = this.element;
+    if(s.draw_atom_id) {
+      label += this.id;
+    }
+
     ctx.font = s.atom_font;
     ctx.fillStyle = this.getColor();
     if(this.isCharged()) {
-      ctx.fillText(this.element, this.x, this.y - s.atom_charge_offset);
+      ctx.fillText(label, this.x, this.y - s.atom_charge_offset);
       ctx.font = s.atom_charge_font;
       ctx.fillStyle = s.atom_charge_color;
       ctx.fillText(this.charge, this.x, this.y + s.atom_charge_offset);
     } else {
-      ctx.fillText(this.element, this.x, this.y);
+      ctx.fillText(label, this.x, this.y);
     }
   }
 };
