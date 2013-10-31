@@ -59,6 +59,22 @@
         cr.onclick = function() {
           mv.bestFit();
         };
+        var mn = document.getElementById("minim");
+        mn.onclick = function() {
+          mv.minimize();
+        };
+        var mm = document.getElementById("maxim");
+        mm.onclick = function() {
+          mv.maximize();
+        };
+        var id = document.getElementById("ideal");
+        id.onclick = function() {
+          mv.idealize();
+        };
+        var rp = document.getElementById("reset");
+        rp.onclick = function() {
+          mv.resetPositions();
+        };
         var sm = document.getElementById("show");
         sm.onclick = function() {
           var data = document.getElementById("data");
@@ -80,12 +96,22 @@
       <legend>
         OFraMP - The Online tool for Fragment-based Molecule Parameterisation
       </legend>
+
+      <input type="text" id="data" placeholder="SMILES" />
+      <button id="show">
+        Show
+      </button>
+      <span style="display:inline-block; width: 450px;">&nbsp;</span>
+      <a id="download" href="">Download</a>
+      <br />
+
       <button id="zoomin">
         Zoom +
       </button>
       <button id="zoomout">
         Zoom -
       </button>
+      <span style="display:inline-block; width: 50px;">&nbsp;</span>
       <button id="movel">
         Move &lt;
       </button>
@@ -98,14 +124,24 @@
       <button id="moved">
         Move v
       </button>
+      <br />
+
       <button id="centr">
-        Center
+        Best fit
       </button>
-      <input type="text" id="data" placeholder="SMILES" />
-      <button id="show">
-        Show
+      <button id="minim">
+        Minimize
       </button>
-      <a id="download" href="">Download</a>
+      <button id="ideal">
+        Idealize
+      </button>
+      <button id="maxim">
+        Maximize
+      </button>
+      <span style="display:inline-block; width: 50px;">&nbsp;</span>
+      <button id="reset">
+        Reset positions
+      </button>
     </fieldset>
 
     <canvas id="mainMolecule" width="800" height="420" style="border: 1px solid #333; border-top: 0;">

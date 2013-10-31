@@ -272,6 +272,18 @@ MoleculeViewer.prototype = {
   },
 
   /*
+   * Show the molecule in minimum size on the canvas.
+   */
+  minimize: function() {
+    if(!this.molecule) {
+      return;
+    }
+
+    this.molecule.minimize();
+    this.redraw();
+  },
+
+  /*
    * Show the molecule in ideal size on the canvas.
    */
   idealize: function() {
@@ -280,6 +292,30 @@ MoleculeViewer.prototype = {
     }
 
     this.molecule.idealize();
+    this.redraw();
+  },
+
+  /*
+   * Show the molecule in maximum size on the canvas.
+   */
+  maximize: function() {
+    if(!this.molecule) {
+      return;
+    }
+
+    this.molecule.maximize();
+    this.redraw();
+  },
+
+  /*
+   * Reset the atom positions to those obtained with OAPoC.
+   */
+  resetPositions: function() {
+    if(!this.molecule) {
+      return;
+    }
+
+    this.molecule.resetPositions();
     this.redraw();
   }
 };

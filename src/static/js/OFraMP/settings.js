@@ -21,7 +21,7 @@ var DEFAULT_SETTINGS = {
 
   min_zoom: 40,
   max_zoom: 300,
-  min_bond_length: 15,
+  min_bond_length: 50,
   ideal_bond_length: 70,
   max_bond_length: 150,
 
