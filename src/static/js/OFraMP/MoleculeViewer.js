@@ -15,6 +15,7 @@ MoleculeViewer.prototype = {
 
   init: function(canvas_id, settings) {
     this.canvas = document.getElementById(canvas_id);
+    this.ctx = this.canvas.getContext('2d');
     this.init_context();
 
     this.settings = DEFAULT_SETTINGS.copy().merge(settings);
@@ -25,7 +26,6 @@ MoleculeViewer.prototype = {
   },
 
   init_context: function() {
-    this.ctx = this.canvas.getContext('2d');
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
   },
@@ -199,6 +199,7 @@ MoleculeViewer.prototype = {
    */
   redraw: function() {
     this.ctx.clear();
+    this.init_context();
 
     if(this.molecule) {
       this.molecule.draw();

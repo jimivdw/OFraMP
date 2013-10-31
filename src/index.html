@@ -3,6 +3,7 @@
   <head>
     <title>OFraMP</title>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="static/css/style.css" />
     <script type="text/javascript" src="static/js/extensions/Array.js"></script>
     <script type="text/javascript" src="static/js/extensions/CanvasRenderingContext2D.js"></script>
     <script type="text/javascript" src="static/js/extensions/Date.js"></script>
@@ -23,11 +24,17 @@
       var mv;
 
       window.onload = function() {
+        var canvas = document.getElementById("mainMolecule");
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight - 120;
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight - 120;
+
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
         mv = new MoleculeViewer("mainMolecule", {
           interactive : true,
-          oapoc_url: OAPoC_URL
+          oapoc_url : OAPoC_URL
         });
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
@@ -87,21 +94,27 @@
           var date = new Date().format("%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";
         };
+
+        window.onresize = function() {
+          canvas.width = document.documentElement.clientWidth;
+          canvas.height = document.documentElement.clientHeight - 120;
+          canvas.width = document.documentElement.clientWidth;
+          canvas.height = document.documentElement.clientHeight - 120;
+          mv.redraw();
+        };
       };
     </script>
   </head>
 
-  <body style="-webkit-user-select: none; user-select: none;">
-    <fieldset style="width: 758px; margin: 0; padding: 5px 20px; border: 2px solid #333;">
-      <legend>
-        OFraMP - The Online tool for Fragment-based Molecule Parameterisation
-      </legend>
+  <body>
+    <div id="header">
+      <h1>OFraMP - The Online tool for Fragment-based Molecule Parameterisation</h1>
 
       <input type="text" id="data" placeholder="SMILES" />
       <button id="show">
         Show
       </button>
-      <span style="display:inline-block; width: 450px;">&nbsp;</span>
+      <span style="display:inline-block; width: 165px;">&nbsp;</span>
       <a id="download" href="">Download</a>
       <br />
 
@@ -142,10 +155,11 @@
       <button id="reset">
         Reset positions
       </button>
-    </fieldset>
-
-    <canvas id="mainMolecule" width="800" height="420" style="border: 1px solid #333; border-top: 0;">
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
+    </div>
+    <div id="canvasContainer">
+      <canvas id="mainMolecule" width="800" height="420">
+        Your browser does not support the HTML5 canvas tag.
+      </canvas>
+    </div>
   </body>
 </html>
