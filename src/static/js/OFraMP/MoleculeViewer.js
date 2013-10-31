@@ -94,9 +94,9 @@ MoleculeViewer.prototype = {
   },
 
   /*
-   * Load and show a molecule, represented by data_str (currently SMILES).
+   * Get the molecule data from OAPoC and run the success function on success.
    */
-  showMolecule: function(data_str) {
+  getMoleculeData: function(data_str, success) {
     var mv = this;
 
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
@@ -121,14 +121,7 @@ MoleculeViewer.prototype = {
         } else if(md.error) {
           mv.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
-          mv.showOverlay("Initializing molecule...");
-          mv.molecule = new Molecule(mv, md.atoms, md.bonds);
-          mv.hideOverlay();
-
-          mv.idealize();
-        } else {
-          mv.showOverlay("Missing data, received: " + md.show(),
-              MESSAGE_TYPES.critical);
+          success(md);
         }
       } else if(xhr.status != 200) {
         mv.showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
@@ -138,6 +131,20 @@ MoleculeViewer.prototype = {
     xhr.open("POST", this.settings.oapoc_url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send("fmt=smiles&data=" + data_str);
+  },
+
+  /*
+   * Load and show the molecule represented by data_str (currently in SMILES).
+   */
+  showMolecule: function(data_str) {
+    var mv = this;
+    this.getMoleculeData(data_str, function(md) {
+      mv.showOverlay("Initializing molecule...");
+      mv.molecule = new Molecule(mv, md.atoms, md.bonds);
+      mv.hideOverlay();
+
+      mv.idealize();
+    });
   },
 
   /*
