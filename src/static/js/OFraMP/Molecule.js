@@ -1,16 +1,18 @@
-function Molecule(mv, atoms, bonds) {
-  this.init(mv, atoms, bonds);
+function Molecule(mv, atoms, bonds, data_str) {
+  this.init(mv, atoms, bonds, data_str);
 }
 
 Molecule.prototype = {
   mv: undefined,
   atoms: undefined,
   bonds: undefined,
+  data_str: undefined,
 
-  init: function(mv, atoms, bonds) {
+  init: function(mv, atoms, bonds, data_str) {
     this.mv = mv;
     this.atoms = new AtomList(this, atoms);
     this.bonds = new BondList(this, bonds);
+    this.data_str = data_str;
   },
 
   /*
@@ -118,6 +120,24 @@ Molecule.prototype = {
     var ld = this.bonds.longestDistance();
     var f = this.mv.settings.max_bond_length / ld;
     this.zoom(f);
+  },
+
+  /*
+   * Reset the positions to those calculated by OAPoC.
+   */
+  resetPositions: function() {
+    var molecule = this;
+    this.mv.getMoleculeData(this.data_str, function(md) {
+      molecule.mv.showOverlay("Initializing atom positions...");
+      md.atoms.each(function(atom) {
+        var a = molecule.atoms.get(atom.id);
+        a.x = atom.x;
+        a.y = atom.y;
+      });
+
+      molecule.mv.idealize();
+      molecule.mv.hideOverlay();
+    });
   },
 
   /*

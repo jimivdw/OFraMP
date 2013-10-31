@@ -144,7 +144,7 @@ MoleculeViewer.prototype = {
     var mv = this;
     this.getMoleculeData(data_str, function(md) {
       mv.showOverlay("Initializing molecule...");
-      mv.molecule = new Molecule(mv, md.atoms, md.bonds);
+      mv.molecule = new Molecule(mv, md.atoms, md.bonds, md.data_str);
       mv.hideOverlay();
 
       mv.idealize();
