@@ -142,7 +142,12 @@ Molecule.prototype = {
     if(mv.settings.decross_bonds) {
       var dc = this.decrossBonds();
     }
-    return da || db || dc;
+
+    if(mv.settings.lengthen_bonds) {
+      var lb = this.lengthenBonds();
+    }
+
+    return da || db || dc || lb;
   },
 
   /*
@@ -270,6 +275,40 @@ Molecule.prototype = {
           a.move(dx + ddx, dy + ddy);
           changed = true;
         }
+      }
+    }
+
+    return changed;
+  },
+
+  /*
+   * Make sure each bond is at least min_bond_length long.
+   */
+  lengthenBonds: function() {
+    var s = this.mv.settings;
+    var changed = false;
+
+    for( var i = 0; i < this.bonds.count(); i++) {
+      var bond = this.bonds.bonds[i];
+      if(!bond.show) {
+        continue;
+      }
+
+      if(bond.length() < s.min_bond_length - 1) {
+        var dist = bond.a1.distance(bond.a2);
+        if(dist.approx(0)) {
+          bond.a2.move(1e-3, 1e-3);
+          dist = bond.a1.distance(bond.a2);
+        }
+
+        var d = Math.abs(s.min_bond_length - dist) / 2;
+        var dx = bond.a2.x - bond.a1.x;
+        var dy = bond.a2.y - bond.a1.y;
+        var ddx = d * dx / dist;
+        var ddy = d * dy / dist;
+        bond.a1.move(-ddx, -ddy);
+        bond.a2.move(ddx, ddy);
+        changed = true;
       }
     }
 

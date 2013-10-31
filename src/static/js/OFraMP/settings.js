@@ -20,7 +20,7 @@ var DEFAULT_SETTINGS = {
 
   min_zoom: 40,
   max_zoom: 300,
-  min_bond_length: 50,
+  min_bond_length: 15,
   ideal_bond_length: 70,
   max_bond_length: 150,
 
@@ -28,6 +28,7 @@ var DEFAULT_SETTINGS = {
   deoverlap_atoms: true,
   deoverlap_bonds: true,
   decross_bonds: true,
+  lengthen_bonds: false,
 
   canvas_padding: 40,
   canvas_cursor_normal: "default",

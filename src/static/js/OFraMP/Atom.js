@@ -220,6 +220,10 @@ Atom.prototype = {
    * Move this atom dx in the x direction and dy on the y axis.
    */
   move: function(dx, dy) {
+    if(isNaN(dx) || isNaN(dy)) {
+      throw "Moving to nowhere.";
+    }
+
     this.x += dx;
     this.y += dy;
     this.getBonds().each(function(bond) {
