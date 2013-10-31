@@ -17,6 +17,7 @@ var DEFAULT_SETTINGS = {
   zoom_factor: 1.1,
 
   oapoc_url: "http://vps955.directvps.nl/OAPoC/",
+  oapoc_version: "0.1.2",
 
   min_zoom: 40,
   max_zoom: 300,

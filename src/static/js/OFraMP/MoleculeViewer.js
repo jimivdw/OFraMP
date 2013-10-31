@@ -114,7 +114,11 @@ MoleculeViewer.prototype = {
         var md = JSON.parse(xhr.response);
         console.log("md", md);
 
-        if(md.error) {
+        if(mv.settings.oapoc_version.versionCompare(md.version) == -1) {
+          mv.showOverlay("OAPoC version too old.", MESSAGE_TYPES.error);
+        } else if(mv.settings.oapoc_version.versionCompare(md.version) == 1) {
+          mv.showOverlay("OAPoC version too new.", MESSAGE_TYPES.error);
+        } else if(md.error) {
           mv.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
           mv.showOverlay("Initializing molecule...");
