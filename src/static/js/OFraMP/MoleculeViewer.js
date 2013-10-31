@@ -115,9 +115,13 @@ MoleculeViewer.prototype = {
         console.log("md", md);
 
         if(mv.settings.oapoc_version.versionCompare(md.version) == -1) {
-          mv.showOverlay("OAPoC version too old.", MESSAGE_TYPES.error);
+          var msg = "OAPoC version too old." + "\n\nRequired version: "
+              + mv.settings.oapoc_version + "\nCurrent version: " + md.version;
+          mv.showOverlay(msg, MESSAGE_TYPES.error);
         } else if(mv.settings.oapoc_version.versionCompare(md.version) == 1) {
-          mv.showOverlay("OAPoC version too new.", MESSAGE_TYPES.error);
+          var msg = "OAPoC version too new." + "\n\nRequired version: "
+              + mv.settings.oapoc_version + "\nCurrent version: " + md.version;
+          mv.showOverlay(msg, MESSAGE_TYPES.error);
         } else if(md.error) {
           mv.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
