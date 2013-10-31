@@ -14,7 +14,6 @@ Atom.prototype = {
   y: undefined,
   charge: undefined,
   status: undefined,
-  show: true,
 
   init: function(list, id, element, element_id, x, y, charge) {
     this.list = list;
@@ -25,9 +24,17 @@ Atom.prototype = {
     this.y = y;
     this.charge = charge || Math.random() > .5 ? 0.123 : undefined;
     this.status = ATOM_STATUSES.normal;
-    if(element == "H" && !list.molecule.mv.settings.draw_h_atoms) {
-      this.show = false;
-    }
+  },
+
+  /*
+   * Determine if this atom is currently visible.
+   */
+  isVisible: function() {
+    var s = this.list.molecule.mv.settings;
+    var c = this.list.molecule.mv.canvas;
+    return((s.draw_h_atoms || this.element != "H")
+        && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
+        && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
   },
 
   /*
@@ -278,7 +285,7 @@ Atom.prototype = {
    * Draw this atom.
    */
   draw: function() {
-    if(!this.show) {
+    if(!this.isVisible()) {
       return;
     }
 

@@ -11,7 +11,6 @@ Bond.prototype = {
   a1: undefined,
   a2: undefined,
   type: undefined,
-  show: true,
 
   cache: {},
 
@@ -21,9 +20,21 @@ Bond.prototype = {
     this.a1 = a1;
     this.a2 = a2;
     this.type = type;
-    if(!a1.show || !a2.show) {
-      this.show = false;
+  },
+
+  /*
+   * Determine if this bond is currently visible.
+   */
+  isVisible: function() {
+    if(this.cache.visible) {
+      return this.cache.visible;
     }
+
+    var s = this.list.molecule.mv.settings;
+    var visible = (s.draw_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
+        && (this.a1.isVisible() || this.a2.isVisible());
+    this.cache.visible = visible;
+    return visible;
   },
 
   /*
@@ -143,7 +154,7 @@ Bond.prototype = {
     this.cache.lines = Array();
     var a1 = this.a1;
     var a2 = this.a2;
-    if(!this.show || a1.distance(a2) < a1.getRadius() + a2.getRadius()) {
+    if(!this.isVisible() || a1.distance(a2) < a1.getRadius() + a2.getRadius()) {
       return;
     }
 
@@ -301,7 +312,7 @@ Bond.prototype = {
       return;
     }
 
-    if(!this.show) {
+    if(!this.isVisible()) {
       this.cache.connectors = [];
       return;
     }

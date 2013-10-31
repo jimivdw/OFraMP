@@ -180,13 +180,13 @@ Molecule.prototype = {
 
     for( var i = 0; i < this.atoms.count(); i++) {
       var a1 = this.atoms.atoms[i];
-      if(!a1.show) {
+      if(!a1.isVisible()) {
         continue;
       }
 
       for( var j = i + 1; j < this.atoms.count(); j++) {
         var a2 = this.atoms.atoms[j];
-        if(!a2.show) {
+        if(!a2.isVisible()) {
           continue;
         }
 
@@ -226,13 +226,13 @@ Molecule.prototype = {
 
     for( var i = 0; i < this.atoms.count(); i++) {
       var a = this.atoms.atoms[i];
-      if(!a.show) {
+      if(!a.isVisible()) {
         continue;
       }
 
       for( var j = 0; j < this.bonds.count(); j++) {
         var b = this.bonds.bonds[j];
-        if(!b.show) {
+        if(!b.isVisible()) {
           continue;
         }
 
@@ -269,13 +269,13 @@ Molecule.prototype = {
 
     for( var i = 0; i < this.bonds.count(); i++) {
       var b1 = this.bonds.bonds[i];
-      if(!b1.show) {
+      if(!b1.isVisible()) {
         continue;
       }
 
       for( var j = i + 1; j < this.bonds.count(); j++) {
         var b2 = this.bonds.bonds[j];
-        if(!b2.show) {
+        if(!b2.isVisible()) {
           continue;
         }
 
@@ -310,7 +310,7 @@ Molecule.prototype = {
 
     for( var i = 0; i < this.bonds.count(); i++) {
       var bond = this.bonds.bonds[i];
-      if(!bond.show) {
+      if(!bond.isVisible()) {
         continue;
       }
 

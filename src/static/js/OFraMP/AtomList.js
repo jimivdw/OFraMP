@@ -142,7 +142,7 @@ AtomList.prototype = {
    * Returns true if the hover was changed and a redraw is needed.
    */
   setHover: function(h) {
-    if(h && !h.show) {
+    if(h && !h.isVisible()) {
       return;
     }
 
@@ -196,7 +196,7 @@ AtomList.prototype = {
 
     var t = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
-    if(s && s.show && s.status !== ATOM_STATUSES.selected) {
+    if(s && s.isVisible() && s.status !== ATOM_STATUSES.selected) {
       s.status = ATOM_STATUSES.selected;
 
       // Bring to back of list to be drawn last (on top).
