@@ -41,7 +41,7 @@
         });
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
-        gui = new dat.GUI();
+        gui = new dat.GUI({name: 'OFraMP Settings'});
         gui.addAll(mv.settings);
 
         var zi = document.getElementById("zoomin");

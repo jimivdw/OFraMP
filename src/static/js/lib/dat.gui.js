@@ -1841,6 +1841,17 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
     if (common.isUndefined(params.parent)) {
 
       //params.closed = false;
+      
+      if(params.name) {
+
+        var title_row_name = document.createTextNode(params.name);
+        dom.addClass(title_row_name, 'controller-name');
+
+        var title_row = addRow(_this, title_row_name);
+
+        dom.addClass(title_row, 'main-title');
+        
+      }
 
       dom.addClass(this.domElement, GUI.CLASS_MAIN);
       dom.makeSelectable(this.domElement, false);

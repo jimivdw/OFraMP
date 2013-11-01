@@ -34,3 +34,10 @@ html, body {
 .dg.main {
     transition: width .2s ease-out !important;
 }
+
+.main-title {
+    background-color: #000 !important;
+    color: #FFF !important;
+    font-weight: bold;
+    text-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 1px;
+}
