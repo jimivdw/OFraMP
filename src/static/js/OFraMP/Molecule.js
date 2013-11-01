@@ -98,7 +98,7 @@ Molecule.prototype = {
   minimize: function() {
     this.center();
     var sd = this.bonds.shortestDistance();
-    var f = this.mv.settings.min_bond_length / sd;
+    var f = this.mv.settings.zoom.min_bond_length / sd;
     this.zoom(f);
   },
 
@@ -108,7 +108,7 @@ Molecule.prototype = {
   idealize: function() {
     this.center();
     var sd = this.bonds.averageDistance();
-    var f = this.mv.settings.ideal_bond_length / sd;
+    var f = this.mv.settings.zoom.ideal_bond_length / sd;
     this.zoom(f);
   },
 
@@ -118,7 +118,7 @@ Molecule.prototype = {
   maximize: function() {
     this.center();
     var ld = this.bonds.longestDistance();
-    var f = this.mv.settings.max_bond_length / ld;
+    var f = this.mv.settings.zoom.max_bond_length / ld;
     this.zoom(f);
   },
 
@@ -147,23 +147,23 @@ Molecule.prototype = {
    * Returns true is atoms were moved and a redraw is needed.
    */
   deoverlap: function() {
-    if(!mv.settings.deoverlap) {
+    if(!mv.settings.deoverlap.deoverlap) {
       return;
     }
 
-    if(mv.settings.deoverlap_atoms) {
+    if(mv.settings.deoverlap.deoverlap_atoms) {
       var da = this.deoverlapAtoms();
     }
 
-    if(mv.settings.deoverlap_bonds) {
+    if(mv.settings.deoverlap.deoverlap_bonds) {
       var db = this.deoverlapBonds();
     }
 
-    if(mv.settings.decross_bonds) {
+    if(mv.settings.deoverlap.decross_bonds) {
       var dc = this.decrossBonds();
     }
 
-    if(mv.settings.lengthen_bonds) {
+    if(mv.settings.deoverlap.lengthen_bonds) {
       var lb = this.lengthenBonds();
     }
 
@@ -245,8 +245,8 @@ Molecule.prototype = {
           bd = a.bondDistance(b);
         }
 
-        if(bd < a.getRadius() + s.bond_spacing - 1) {
-          var f = (a.getRadius() - bd + s.bond_spacing) / bd;
+        if(bd < a.getRadius() + s.bond.spacing - 1) {
+          var f = (a.getRadius() - bd + s.bond.spacing) / bd;
           var ba = a.bondAnchor(b);
           var dx = (a.x - ba.x) * f;
           var dy = (a.y - ba.y) * f;
@@ -314,14 +314,14 @@ Molecule.prototype = {
         continue;
       }
 
-      if(bond.length() < s.min_bond_length - 1) {
+      if(bond.length() < s.zoom.min_bond_length - 1) {
         var dist = bond.a1.distance(bond.a2);
         if(dist.approx(0)) {
           bond.a2.move(1e-3, 1e-3);
           dist = bond.a1.distance(bond.a2);
         }
 
-        var d = Math.abs(s.min_bond_length - dist) / 2;
+        var d = Math.abs(s.zoom.min_bond_length - dist) / 2;
         var dx = bond.a2.x - bond.a1.x;
         var dy = bond.a2.y - bond.a1.y;
         var ddx = d * dx / dist;

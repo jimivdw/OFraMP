@@ -32,7 +32,7 @@ Atom.prototype = {
   isVisible: function() {
     var s = this.list.molecule.mv.settings;
     var c = this.list.molecule.mv.canvas;
-    return((s.draw_h_atoms || this.element != "H")
+    return((s.atom.show_h_atoms || this.element != "H")
         && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
   },
@@ -115,9 +115,9 @@ Atom.prototype = {
 
     var s = this.list.molecule.mv.settings;
     if(this.isCharged()) {
-      this.radius = s.atom_radius_charged;
+      this.radius = s.atom.radius_charged;
     } else {
-      this.radius = s.atom_radius;
+      this.radius = s.atom.radius;
     }
     return this.radius;
   },
@@ -218,8 +218,8 @@ Atom.prototype = {
     if(this.color) {
       return this.color;
     }
-    var c = this.list.molecule.mv.settings.atom_colors[this.element];
-    this.color = c || this.list.molecule.mv.settings.atom_colors["other"];
+    var c = this.list.molecule.mv.settings.atom.colors[this.element];
+    this.color = c || this.list.molecule.mv.settings.atom.colors["other"];
     return this.color;
   },
 
@@ -292,10 +292,10 @@ Atom.prototype = {
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
 
-    if(s.draw_atom_circ) {
-      ctx.lineWidth = s.atom_border_widths[this.status];
-      ctx.strokeStyle = s.atom_border_color;
-      ctx.fillStyle = s.atom_bg_colors[this.status];
+    if(s.atom.show_circ) {
+      ctx.lineWidth = s.atom.border_widths[this.status];
+      ctx.strokeStyle = s.atom.border_color;
+      ctx.fillStyle = s.atom.bg_colors[this.status];
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
       ctx.fill();
@@ -303,17 +303,17 @@ Atom.prototype = {
     }
 
     var label = this.element;
-    if(s.draw_atom_id) {
+    if(s.atom.show_id) {
       label += this.id;
     }
 
-    ctx.font = s.atom_font;
+    ctx.font = s.atom.font;
     ctx.fillStyle = this.getColor();
     if(this.isCharged()) {
-      ctx.fillText(label, this.x, this.y - s.atom_charge_offset);
-      ctx.font = s.atom_charge_font;
-      ctx.fillStyle = s.atom_charge_color;
-      ctx.fillText(this.charge, this.x, this.y + s.atom_charge_offset);
+      ctx.fillText(label, this.x, this.y - s.atom.charge_offset);
+      ctx.font = s.atom.charge_font;
+      ctx.fillStyle = s.atom.charge_color;
+      ctx.fillText(this.charge, this.x, this.y + s.atom.charge_offset);
     } else {
       ctx.fillText(label, this.x, this.y);
     }

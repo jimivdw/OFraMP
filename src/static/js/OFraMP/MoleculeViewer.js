@@ -37,9 +37,9 @@ MoleculeViewer.prototype = {
     this.canvas.onmousewheel = function(e) {
       if(!mv.overlay_showing) {
         if(e.wheelDelta > 0) {
-          var f = mv.settings.zoom_factor;
+          var f = mv.settings.zoom.factor;
         } else {
-          var f = 1 / mv.settings.zoom_factor;
+          var f = 1 / mv.settings.zoom.factor;
         }
         mv.zoomOn(e.offsetX, e.offsetY, f);
 
@@ -114,13 +114,13 @@ MoleculeViewer.prototype = {
         var md = JSON.parse(xhr.response);
         console.log("md", md);
 
-        if(mv.settings.oapoc_version.versionCompare(md.version) == -1) {
+        if(mv.settings.oapoc.version.versionCompare(md.version) == -1) {
           var msg = "OAPoC version too old." + "\n\nRequired version: "
-              + mv.settings.oapoc_version + "\nCurrent version: " + md.version;
+              + mv.settings.oapoc.version + "\nCurrent version: " + md.version;
           mv.showOverlay(msg, MESSAGE_TYPES.error);
-        } else if(mv.settings.oapoc_version.versionCompare(md.version) == 1) {
+        } else if(mv.settings.oapoc.version.versionCompare(md.version) == 1) {
           var msg = "OAPoC version too new." + "\n\nRequired version: "
-              + mv.settings.oapoc_version + "\nCurrent version: " + md.version;
+              + mv.settings.oapoc.version + "\nCurrent version: " + md.version;
           mv.showOverlay(msg, MESSAGE_TYPES.error);
         } else if(md.error) {
           mv.showOverlay(md.error, MESSAGE_TYPES.error);
@@ -132,7 +132,7 @@ MoleculeViewer.prototype = {
       }
     };
 
-    xhr.open("POST", this.settings.oapoc_url, true);
+    xhr.open("POST", this.settings.oapoc.url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send("fmt=smiles&data=" + data_str);
   },
@@ -165,21 +165,21 @@ MoleculeViewer.prototype = {
     status = status || this.overlay_status;
 
     var ctx = this.ctx;
-    ctx.fillStyle = this.settings.message_border_color;
+    ctx.fillStyle = this.settings.popup.border_color;
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    ctx.fillStyle = this.settings.message_bg_colors[status];
-    var bw = this.settings.message_border_width;
+    ctx.fillStyle = this.settings.popup.bg_colors[status];
+    var bw = this.settings.popup.border_width;
     ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2
         * bw);
 
-    ctx.font = this.settings.message_font;
-    ctx.fillStyle = this.settings.message_color;
-    var p = this.settings.message_padding + bw;
+    ctx.font = this.settings.popup.font;
+    ctx.fillStyle = this.settings.popup.color;
+    var p = this.settings.popup.padding + bw;
     ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
         this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
 
-    this.canvas.style.cursor = this.settings.canvas_cursor_normal;
+    this.canvas.style.cursor = this.settings.cursor.normal;
 
     this.overlay_showing = true;
     this.overlay_msg = msg;
@@ -232,8 +232,8 @@ MoleculeViewer.prototype = {
 
     // Restrict minimum and maximum zoom
     var ad = this.molecule.bonds.averageDistance();
-    if(f < 1 && ad < this.settings.min_zoom || f > 1
-        && ad > this.settings.max_zoom) {
+    if(f < 1 && ad < this.settings.zoom.min || f > 1
+        && ad > this.settings.zoom.max) {
       return;
     }
 
@@ -251,8 +251,8 @@ MoleculeViewer.prototype = {
 
     // Restrict minimum and maximum zoom
     var ad = this.molecule.bonds.averageDistance()
-    if(f < 1 && ad < this.settings.min_zoom || f > 1
-        && ad > this.settings.max_zoom) {
+    if(f < 1 && ad < this.settings.zoom.min || f > 1
+        && ad > this.settings.zoom.max) {
       return;
     }
 

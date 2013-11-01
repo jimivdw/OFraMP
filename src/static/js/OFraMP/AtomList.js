@@ -168,12 +168,12 @@ AtomList.prototype = {
         changed = true;
       }
       if(h.status === ATOM_STATUSES.hover) {
-        c.style.cursor = s.canvas_cursor_click;
+        c.style.cursor = s.cursor.click;
       } else {
-        c.style.cursor = s.canvas_cursor_normal;
+        c.style.cursor = s.cursor.normal;
       }
     } else {
-      c.style.cursor = s.canvas_cursor_drag;
+      c.style.cursor = s.cursor.drag;
     }
 
     return changed;
@@ -201,7 +201,7 @@ AtomList.prototype = {
 
       // Bring to back of list to be drawn last (on top).
       this.atoms.toBack(this.indexOf(s.id));
-      c.style.cursor = t.canvas_cursor_normal;
+      c.style.cursor = t.cursor.normal;
       changed = true;
     }
 
