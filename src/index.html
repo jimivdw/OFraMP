@@ -14,6 +14,8 @@
     <script type="text/javascript" src="static/js/extensions/Object.js"></script>
     <script type="text/javascript" src="static/js/extensions/String.js"></script>
 
+    <script type="text/javascript" src="static/js/Cache/Cache.js"></script>
+
     <script type="text/javascript" src="static/js/OFraMP/Atom.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/AtomList.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/Bond.js"></script>
@@ -41,7 +43,8 @@
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
         gui = new dat.GUI({name: 'OFraMP Settings'});
-        gui.addAll(mv.settings);
+        console.log(SETTINGS_OPTIONS);
+        gui.addAll(mv.settings, mv.settings, SETTINGS_OPTIONS);
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {

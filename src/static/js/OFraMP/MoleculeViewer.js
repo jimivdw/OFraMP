@@ -259,6 +259,26 @@ MoleculeViewer.prototype = {
     this.molecule.zoomOn(x, y, f);
     this.redraw();
   },
+  
+  /*
+   * Fix overlapping bonds and atoms.
+   */
+  deoverlap: function() {
+    if(!this.settings.deoverlap.deoverlap || !this.molecule) {
+      return;
+    }
+    
+    window.molecule = this.molecule;
+    window.fixcount = 0;
+    window.fixmax = 1000 - 4.8 * this.molecule.atoms.count();
+    window.requestAnimationFrame(function drawLoop() {
+      if(fixcount < fixmax && molecule.deoverlap()) {
+        fixcount++;
+        molecule.mv.redraw();
+        requestAnimationFrame(drawLoop);
+      }
+    });
+  },
 
   /*
    * Fit the molecule on the canvas.

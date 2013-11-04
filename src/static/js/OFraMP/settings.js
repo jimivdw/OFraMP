@@ -103,6 +103,74 @@ var DEFAULT_SETTINGS = {
   }
 };
 
+var SETTINGS_OPTIONS = extrapolate({
+  zoom: {
+    factor: {
+      min: 1.01,
+      max: 2,
+      step: 0.01
+    },
+    "min, max, min_bond_length, ideal_bond_length, max_bond_length": {
+      min: 0,
+      max: 500,
+      step: 1
+    }
+  },
+
+  deoverlap: {
+    "deoverlap, deoverlap_atoms, deoverlap_bonds, decross_bonds, lengthen_bonds": {
+      onChange: function(v) {
+        if(v) {
+          mv.deoverlap();
+        }
+      }
+    }
+  },
+
+  cursor: {
+    "normal, drag, click": {
+      options: ["crosshair", "default", "e-resize", "help", "move", "n-resize",
+          "ne-resize", "nw-resize", "pointer", "progress", "s-resize",
+          "se-resize", "sw-resize", "text", "w-resize", "wait"]
+    }
+  },
+  
+  popup: {
+    "border_width, border_color, padding, font, color": {
+      onChange: function() {
+        mv.redraw();
+      }
+    },
+    bg_colors: {
+      // TODO: colors don't have onChange!
+      "1, 2, 3, 4, 5": {
+        onChange: function() {
+          mv.redraw();
+        }
+      }
+    }
+  },
+  
+  atom: {
+    // TODO: add more
+    "show_circ, show_h_atoms, show_id, font, charge_font, charge_color, radius, radius_charged, charge_offset, border_color": {
+      onChange: function() {
+        mv.redraw();
+      }
+    }
+  },
+  
+  bond: {
+    // TODO: add more
+    "show_id, width, color, conector_width, connector_color, spacing, dash_count": {
+      onChange: function() {
+        mv.redraw();
+      }
+    }
+  }
+});
+
+
 /*
  * Nice colors: Gray: rgb(148, 148, 148) Green: rgb( 80, 169, 75) Blue: rgb( 76,
  * 81, 178) Red: rgb(203, 83, 73) Yellow: rgb(204, 166, 40) Brown: rgb(127, 79,

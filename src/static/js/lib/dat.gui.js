@@ -2043,20 +2043,28 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
 
         },
         
-        addAll: function(obj) {
-          for(var e in obj) {
-            if(typeof obj[e] === 'function') {
+        addAll: function(object, properties, options) {
+          for(var e in properties) {
+            if(typeof properties[e] === 'function') {
               continue;
-            } else if(typeof obj[e] === 'object') {
-              console.log("Add folder", e);
+            } else if(typeof properties[e] === 'object') {
               var f = this.addFolder(e);
-              f.addAll(obj[e]);
-            } else {
-              console.log("Add option", e);
-              if(dat.utils.common.isColorOption(obj[e])) {
-                this.addColor(obj, e);
+              if(options) {
+                f.addAll(object[e], properties[e], options[e]);
               } else {
-                this.add(obj, e);
+                f.addAll(object[e], properties[e]);
+              }
+            } else {
+              if(dat.utils.common.isColorOption(properties[e])) {
+                this.addColor(object, e);
+              } else {
+                var c = this.add(object, e);
+                if(options) {
+                  var opt = options[e];
+                  for(var o in opt) {
+                    c[o](opt[o]);
+                  }
+                }
               }
             }
           }

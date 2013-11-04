@@ -52,3 +52,31 @@ Object.prototype.show = function() {
   }
   return s.substr(0, s.length - 2) + "}";
 };
+
+/*
+ * Extrapolate all keys from an object.
+ */
+extrapolate = function(obj) {
+  var r = {};
+  for( var k in obj) {
+    var parts = k.split(",");
+    if(parts.length > 1) {
+      parts.each(function(part) {
+        part = part.trim();
+        if(r[part]) {
+          r[part].merge(obj[k]);
+        } else {
+          r[part] = obj[k];
+        }
+      });
+    } else {
+      if(typeof obj[k] === "object") {
+        r[k] = extrapolate(obj[k]);
+      } else {
+        r[k] = obj[k];
+      }
+    }
+  }
+
+  return r;
+};
