@@ -96,30 +96,30 @@ Molecule.prototype = {
    * Scale the molecule such that the shortest bond is of size min_bond_length.
    */
   minimize: function() {
-    this.center();
     var sd = this.bonds.shortestDistance();
     var f = this.mv.settings.zoom.min_bond_length / sd;
     this.zoom(f);
+    this.center();
   },
 
   /*
    * Scale the molecule such that the average bond is of size ideal_bond_length.
    */
   idealize: function() {
-    this.center();
     var sd = this.bonds.averageDistance();
     var f = this.mv.settings.zoom.ideal_bond_length / sd;
     this.zoom(f);
+    this.center();
   },
 
   /*
    * Scale the molecule such that the longest bond is of size max_bond_length.
    */
   maximize: function() {
-    this.center();
     var ld = this.bonds.longestDistance();
     var f = this.mv.settings.zoom.max_bond_length / ld;
     this.zoom(f);
+    this.center();
   },
 
   /*
