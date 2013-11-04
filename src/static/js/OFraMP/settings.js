@@ -15,9 +15,6 @@ var ATOM_STATUSES = {
 var DEFAULT_SETTINGS = {
   interactive: false,
 
-  // TODO: get rid of this!
-  canvas_padding: 40,
-
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/",
     version: "0.1.3",

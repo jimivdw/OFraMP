@@ -81,10 +81,10 @@ AtomList.prototype = {
   leftTop: function() {
     return {
       x: this.map(function(atom) {
-        return atom.x;
+        return atom.x - atom.getRadius();
       }).min(),
       y: this.map(function(atom) {
-        return atom.y;
+        return atom.y - atom.getRadius();
       }).min()
     };
   },
@@ -95,10 +95,10 @@ AtomList.prototype = {
   rightBottom: function() {
     return {
       x: this.map(function(atom) {
-        return atom.x;
+        return atom.x + atom.getRadius();
       }).max(),
       y: this.map(function(atom) {
-        return atom.y;
+        return atom.y + atom.getRadius();
       }).max()
     };
   },
@@ -268,12 +268,12 @@ AtomList.prototype = {
   },
 
   /*
-   * Fit the molecule in a box of size w * h.
+   * Fit the molecule in a box of size w * h and center it there.
    */
   bestFit: function(w, h) {
     var s = this.molecule.mv.settings;
-    var wf = (w - s.canvas_padding) / this.width();
-    var hf = (h - s.canvas_padding) / this.height();
+    var wf = w / this.width();
+    var hf = h / this.height();
     var f = wf < hf ? wf : hf;
     this.scale(f);
 
