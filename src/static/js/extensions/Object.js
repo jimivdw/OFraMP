@@ -10,8 +10,13 @@ Object.prototype.merge = function(other, nondestructive) {
   } else {
     var r = this;
   }
-  for( var k in other)
-    r[k] = other[k];
+  for( var k in other) {
+    if(typeof r[k] === 'object') {
+      r[k].merge(other[k]);
+    } else {
+      r[k] = other[k];
+    }
+  }
   return r;
 };
 
