@@ -106,8 +106,7 @@ dat.utils.common = (function () {
     
     each: function(obj, itr, scope) {
 
-      
-      if (ARR_EACH && obj.forEach === ARR_EACH) { 
+      if (ARR_EACH && obj.forEach === ARR_EACH) {
         
         obj.forEach(itr, scope);
         
@@ -120,9 +119,10 @@ dat.utils.common = (function () {
       } else {
 
         for (var key in obj) 
-          if (itr.call(scope, obj[key], key) === this.BREAK)
-            return;
-            
+          if(!(key in Object.prototype))
+            if (itr.call(scope, obj[key], key) === this.BREAK)
+              return;
+              
       }
             
     },
@@ -2056,15 +2056,14 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
               }
             } else {
               if(dat.utils.common.isColorOption(properties[e])) {
-                this.addColor(object, e);
+                var c = this.addColor(object, e);
               } else {
                 var c = this.add(object, e);
-                if(options) {
-                  var opt = options[e];
-                  for(var o in opt) {
-                    c[o](opt[o]);
-                  }
-                }
+              }
+              if(options && options[e]) {
+                common.each(options[e], function(v, o) {
+                  c = c[o](v);
+                });
               }
             }
           }

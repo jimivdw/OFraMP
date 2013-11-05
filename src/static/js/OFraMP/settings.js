@@ -134,15 +134,19 @@ var SETTINGS_OPTIONS = extrapolate({
           "se-resize", "sw-resize", "text", "w-resize", "wait"]
     }
   },
-  
+
   popup: {
+    "border_width, padding": {
+      min: 0,
+      max: 100,
+      step: 1
+    },
     "border_width, border_color, padding, font, color": {
       onChange: function() {
         mv.redraw();
       }
     },
     bg_colors: {
-      // TODO: colors don't have onChange!
       "1, 2, 3, 4, 5": {
         onChange: function() {
           mv.redraw();
@@ -150,18 +154,55 @@ var SETTINGS_OPTIONS = extrapolate({
       }
     }
   },
-  
+
   atom: {
-    // TODO: add more
+    "radius, radius_charged, charge_offset": {
+      min: 0,
+      max: 50,
+      step: 1
+    },
     "show_circ, show_h_atoms, show_id, font, charge_font, charge_color, radius, radius_charged, charge_offset, border_color": {
       onChange: function() {
         mv.redraw();
       }
+    },
+    colors: {
+      "S, O, N, H, F, Cl, Br, I, other": {
+        onChange: function() {
+          mv.redraw();
+        }
+      }
+    },
+    border_widths: {
+      "1, 2, 3": {
+        min: 1,
+        max: 10,
+        step: 1,
+        onChange: function() {
+          mv.redraw();
+        }
+      }
+    },
+    bg_colors: {
+      "1, 2, 3": {
+        onChange: function() {
+          mv.redraw();
+        }
+      }
     }
   },
-  
+
   bond: {
-    // TODO: add more
+    "width, connector_width, spacing": {
+      min: 1,
+      max: 10,
+      step: 1
+    },
+    dash_count: {
+      min: 1,
+      max: 20,
+      step: 1
+    },
     "show_id, width, color, conector_width, connector_color, spacing, dash_count": {
       onChange: function() {
         mv.redraw();
