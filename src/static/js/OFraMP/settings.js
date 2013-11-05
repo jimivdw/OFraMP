@@ -203,7 +203,15 @@ var SETTINGS_OPTIONS = extrapolate({
       max: 20,
       step: 1
     },
-    "show_id, width, color, conector_width, connector_color, spacing, dash_count": {
+    "connector_width, spacing, dash_count": {
+      onChange: function() {
+        mv.molecule.bonds.each(function(b) {
+          b.cache.clear('appearance');
+        });
+        mv.redraw();
+      }
+    },
+    "show_id, width, color, connector_color": {
       onChange: function() {
         mv.redraw();
       }
