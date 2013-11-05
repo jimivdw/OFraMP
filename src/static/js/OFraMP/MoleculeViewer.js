@@ -165,11 +165,14 @@ MoleculeViewer.prototype = {
     status = status || this.overlay_status;
 
     var ctx = this.ctx;
+    var bw = this.settings.popup.border_width;
     ctx.fillStyle = this.settings.popup.border_color;
-    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.fillRect(0, 0, this.canvas.width, bw);
+    ctx.fillRect(0, bw, bw, this.canvas.height - 2 * bw);
+    ctx.fillRect(this.canvas.width - bw, bw, bw, this.canvas.height - 2 * bw);
+    ctx.fillRect(0, this.canvas.height - bw, this.canvas.width, bw);
 
     ctx.fillStyle = this.settings.popup.bg_colors[status];
-    var bw = this.settings.popup.border_width;
     ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2
         * bw);
 
@@ -259,7 +262,7 @@ MoleculeViewer.prototype = {
     this.molecule.zoomOn(x, y, f);
     this.redraw();
   },
-  
+
   /*
    * Fix overlapping bonds and atoms.
    */
@@ -267,7 +270,7 @@ MoleculeViewer.prototype = {
     if(!this.settings.deoverlap.deoverlap || !this.molecule) {
       return;
     }
-    
+
     window.molecule = this.molecule;
     window.fixcount = 0;
     window.fixmax = 1000 - 4.8 * this.molecule.atoms.count();
