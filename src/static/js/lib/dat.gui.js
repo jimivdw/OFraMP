@@ -3086,6 +3086,15 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
         });
 
     });
+    
+    dom.bind(this.domElement, 'mouseover', function() {
+      var o = dom.getOffset(_this.domElement);
+      if(o.top + dom.getHeight(_this.__selector) + 23 > window.innerHeight) {
+        _this.__selector.style.marginTop = -dom.getHeight(_this.__selector) + 'px';
+      } else {
+        _this.__selector.style.marginTop = '23px';
+      }
+    });
 
     var value_field = document.createElement('div');
 
