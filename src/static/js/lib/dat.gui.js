@@ -3089,7 +3089,8 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     
     dom.bind(this.domElement, 'mouseover', function() {
       var o = dom.getOffset(_this.domElement);
-      if(o.top + dom.getHeight(_this.__selector) + 23 > window.innerHeight) {
+      if(o.top + dom.getHeight(_this.__selector) + 23 > 
+          Math.min(window.innerHeight, dom.getHeight(_this.__gui.getRoot().__ul))) {
         _this.__selector.style.marginTop = -dom.getHeight(_this.__selector) + 'px';
       } else {
         _this.__selector.style.marginTop = '23px';
