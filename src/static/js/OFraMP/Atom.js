@@ -234,7 +234,7 @@ Atom.prototype = {
     this.x += dx;
     this.y += dy;
     this.getBonds().each(function(bond) {
-      bond.cache = {};
+      bond.cache.clear('position');
     });
     return this;
   },

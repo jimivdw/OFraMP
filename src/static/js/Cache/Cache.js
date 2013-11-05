@@ -2,6 +2,12 @@ function Cache(name) {
   this.init(name);
 }
 
+Object.defineProperty(Cache, 'DEPEND', {
+  get: function() {
+    return {};
+  }
+});
+
 Cache.prototype = {
   init: function(name) {
     this.name = name;
@@ -30,7 +36,6 @@ Cache.prototype = {
   },
 
   set: function(k, v) {
-    console.log("Set", this.name, k, v);
     var parts = k.split(".");
     if(parts.length > 1) {
       var c = this.__createSubCache(parts[0]);

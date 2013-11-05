@@ -12,7 +12,7 @@ Bond.prototype = {
   a2: undefined,
   type: undefined,
 
-  cache: {},
+  cache: undefined,
 
   init: function(list, id, a1, a2, type) {
     this.list = list;
@@ -20,20 +20,26 @@ Bond.prototype = {
     this.a1 = a1;
     this.a2 = a2;
     this.type = type;
+
+    this.cache = new Cache();
   },
 
   /*
    * Determine if this bond is currently visible.
+   * 
+   * Depends on both position and appearance, so track both in cache.
    */
   isVisible: function() {
-    if(this.cache.visible) {
-      return this.cache.visible;
+    if(this.cache.get('position.visible')
+        && this.cache.get('appearance.visible')) {
+      return this.cache.get('position.visible');
     }
 
     var s = this.list.molecule.mv.settings;
     var visible = (s.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
         && (this.a1.isVisible() || this.a2.isVisible());
-    this.cache.visible = visible;
+    this.cache.set('position.visible', visible);
+    this.cache.set('appearance.visible', Cache.DEPEND);
     return visible;
   },
 
@@ -41,8 +47,8 @@ Bond.prototype = {
    * Get the coordinates of the starting and end points of this bond.
    */
   coords: function() {
-    if(this.cache.coords) {
-      return this.cache.coords;
+    if(this.cache.get('position.coords')) {
+      return this.cache.get('position.coords');
     }
 
     var dx = this.a1.dx(this.a2);
@@ -64,7 +70,7 @@ Bond.prototype = {
       y2: this.a2.y - ddy2
     };
 
-    this.cache.coords = coords;
+    this.cache.set('position.coords', coords);
     return coords;
   },
 
@@ -72,14 +78,14 @@ Bond.prototype = {
    * Get the length of this bond.
    */
   length: function() {
-    if(this.cache.length) {
-      return this.cache.length;
+    if(this.cache.get('position.length')) {
+      return this.cache.get('position.length');
     }
     var c = this.coords();
     var dx = c.x2 - c.x1;
     var dy = c.y2 - c.y1;
     var length = Math.sqrt(dx * dx + dy * dy);
-    this.cache.length = length;
+    this.cache.set('position.length', length);
     return length;
   },
 
@@ -147,102 +153,106 @@ Bond.prototype = {
    * Cache the coordinates of all bond lines.
    */
   cacheLineCoords: function() {
-    if(this.cache.lines) {
+    if(this.cache.get('position.lines') && this.cache.get('appearance.lines')) {
       return;
     }
 
-    this.cache.lines = Array();
     var a1 = this.a1;
     var a2 = this.a2;
-    if(!this.isVisible() || a1.distance(a2) < a1.getRadius() + a2.getRadius()) {
-      return;
-    }
-
+    var lines = Array();
     var s = this.list.molecule.mv.settings;
 
-    this.coords().extract(window);
-    // Inner line for single/triple bonds
-    if(this.type == 1 || this.type == 3) {
-      this.cache.lines.push({
-        x1: x1,
-        y1: y1,
-        x2: x2,
-        y2: y2
-      });
-    }
+    if(this.isVisible() && a1.distance(a2) >= a1.getRadius() + a2.getRadius()) {
+      this.coords().extract(window);
+      // Inner line for single/triple bonds
+      if(this.type == 1 || this.type == 3) {
+        lines.push({
+          x1: x1,
+          y1: y1,
+          x2: x2,
+          y2: y2
+        });
+      }
 
-    // Outer lines for double/triple/aromatic bonds
-    if(this.type > 1) {
-      dx = x2 - x1;
-      dy = y2 - y1;
-      dist = Math.sqrt(dx * dx + dy * dy);
+      // Outer lines for double/triple/aromatic bonds
+      if(this.type > 1) {
+        dx = x2 - x1;
+        dy = y2 - y1;
+        dist = Math.sqrt(dx * dx + dy * dy);
 
-      ddx = dy * s.bond.spacing / dist;
-      ddy = dx * s.bond.spacing / dist;
+        ddx = dy * s.bond.spacing / dist;
+        ddy = dx * s.bond.spacing / dist;
 
-      if(this.type == 4) {
-        // Find the center of the aromatic cycle
-        var cycle = this.a2.findCycle();
-        var center = new AtomList(this.list.molecule, cycle).centerPoint();
-        var cdx1 = center.x - (x1 + ddx);
-        var cdy1 = center.y - (y1 - ddy);
-        var cdx2 = center.x - (x1 - ddx);
-        var cdy2 = center.y - (y1 + ddy);
-        var cdist1 = Math.sqrt(cdx1 * cdx1 + cdy1 * cdy1);
-        var cdist2 = Math.sqrt(cdx2 * cdx2 + cdy2 * cdy2);
+        if(this.type == 4) {
+          // Find the center of the aromatic cycle
+          var cycle = this.a2.findCycle();
+          var center = new AtomList(this.list.molecule, cycle).centerPoint();
+          var cdx1 = center.x - (x1 + ddx);
+          var cdy1 = center.y - (y1 - ddy);
+          var cdx2 = center.x - (x1 - ddx);
+          var cdy2 = center.y - (y1 + ddy);
+          var cdist1 = Math.sqrt(cdx1 * cdx1 + cdy1 * cdy1);
+          var cdist2 = Math.sqrt(cdx2 * cdx2 + cdy2 * cdy2);
 
-        if(cdist1 > cdist2) {
-          this.cache.lines.push({
+          if(cdist1 > cdist2) {
+            lines.push({
+              x1: x1 + ddx,
+              y1: y1 - ddy,
+              x2: x2 + ddx,
+              y2: y2 - ddy
+            });
+            lines.push({
+              x1: x1 - ddx,
+              y1: y1 + ddy,
+              x2: x2 - ddx,
+              y2: y2 + ddy,
+              n: s.bond.dash_count
+            });
+          } else {
+            lines.push({
+              x1: x1 - ddx,
+              y1: y1 + ddy,
+              x2: x2 - ddx,
+              y2: y2 + ddy
+            });
+            lines.push({
+              x1: x1 + ddx,
+              y1: y1 - ddy,
+              x2: x2 + ddx,
+              y2: y2 - ddy,
+              n: s.bond.dash_count
+            });
+          }
+        } else {
+          lines.push({
             x1: x1 + ddx,
             y1: y1 - ddy,
             x2: x2 + ddx,
             y2: y2 - ddy
           });
-          this.cache.lines.push({
-            x1: x1 - ddx,
-            y1: y1 + ddy,
-            x2: x2 - ddx,
-            y2: y2 + ddy,
-            n: s.bond.dash_count
-          });
-        } else {
-          this.cache.lines.push({
+          lines.push({
             x1: x1 - ddx,
             y1: y1 + ddy,
             x2: x2 - ddx,
             y2: y2 + ddy
           });
-          this.cache.lines.push({
-            x1: x1 + ddx,
-            y1: y1 - ddy,
-            x2: x2 + ddx,
-            y2: y2 - ddy,
-            n: s.bond.dash_count
-          });
         }
-      } else {
-        this.cache.lines.push({
-          x1: x1 + ddx,
-          y1: y1 - ddy,
-          x2: x2 + ddx,
-          y2: y2 - ddy
-        });
-        this.cache.lines.push({
-          x1: x1 - ddx,
-          y1: y1 + ddy,
-          x2: x2 - ddx,
-          y2: y2 + ddy
-        });
       }
     }
+
+    this.cache.set('position.lines', lines);
+    this.cache.set('appearance.lines', Cache.DEPEND);
   },
 
   /*
    * Cache the coordinates of the bond's connector on atom a.
    */
   cacheConnectorCoords: function(a) {
-    if(!this.cache.connectors) {
-      this.cache.connectors = Array();
+    if(this.cache.get('position.connectors')
+        && this.cache.get('appearance.connectors')) {
+      var connectors = this.cache.get('position.connectors');
+    } else {
+      var connectors = new Array();
     }
 
     var ep = {
@@ -274,7 +284,7 @@ Bond.prototype = {
     var delta = s.bond.connector_width / a.getRadius() / 2;
 
     if(this.type == 1 || this.type == 3) {
-      this.cache.connectors.push({
+      connectors.push({
         x: a.x,
         y: a.y,
         r: a.getRadius(),
@@ -287,14 +297,14 @@ Bond.prototype = {
     if(this.type > 1) {
       var beta = Math.acos((2 * r2 - Math.pow(s.bond.spacing, 2)) / (2 * r2));
 
-      this.cache.connectors.push({
+      connectors.push({
         x: a.x,
         y: a.y,
         r: a.getRadius(),
         s: alpha + beta - delta,
         e: alpha + beta + delta
       });
-      this.cache.connectors.push({
+      connectors.push({
         x: a.x,
         y: a.y,
         r: a.getRadius(),
@@ -302,18 +312,23 @@ Bond.prototype = {
         e: alpha - beta + delta
       });
     }
+
+    this.cache.set('position.connectors', connectors);
+    this.cache.set('appearance.connectors', Cache.DEPEND);
   },
 
   /*
    * Cache the coordinates of this bond's atom connectors.
    */
   cacheConnectorsCoords: function() {
-    if(this.cache.connectors) {
+    if(this.cache.get('position.connectors')
+        && this.cache.get('appearance.connectors')) {
       return;
     }
 
     if(!this.isVisible()) {
-      this.cache.connectors = [];
+      this.cache.set('position.connectors', []);
+      this.cache.set('appearance.connectors', Cache.DEPEND);
       return;
     }
 
@@ -325,10 +340,7 @@ Bond.prototype = {
    * Draw this bond.
    */
   draw: function() {
-    if(!this.cache.lines) {
-      this.cacheLineCoords();
-    }
-
+    this.cacheLineCoords();
     this.drawConnectors();
 
     var ctx = this.list.molecule.mv.ctx;
@@ -337,7 +349,7 @@ Bond.prototype = {
     ctx.lineWidth = s.bond.width;
     ctx.strokeStyle = s.bond.color;
 
-    this.cache.lines.each(function(l) {
+    this.cache.get('position.lines').each(function(l) {
       if(l.n) {
         ctx.drawDashedLine(l.x1, l.y1, l.x2, l.y2, l.n);
       } else {
@@ -359,16 +371,14 @@ Bond.prototype = {
    * Draw this bond's connectors.
    */
   drawConnectors: function() {
-    if(!this.cache.connectors) {
-      this.cacheConnectorsCoords();
-    }
+    this.cacheConnectorsCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
     ctx.lineWidth = s.bond.connector_width;
     ctx.strokeStyle = s.bond.connector_color;
 
-    return this.cache.connectors.each(function(c) {
+    return this.cache.get('position.connectors').each(function(c) {
       ctx.beginPath();
       ctx.arc(c.x, c.y, c.r, c.s, c.e);
       ctx.stroke();
