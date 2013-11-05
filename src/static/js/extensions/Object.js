@@ -1,3 +1,16 @@
+Object.prototype.each = function(f, that) {
+  for( var k in this) {
+    if(Object.prototype[k] !== undefined) {
+      continue;
+    }
+
+    var r = f(k, that);
+    if(r !== undefined) {
+      return r;
+    }
+  }
+}
+
 /*
  * Merge two objects, either destructive (modify the current object) or
  * nondestructive (return a new object that is the merge result).
@@ -5,18 +18,17 @@
 Object.prototype.merge = function(other, nondestructive) {
   if(nondestructive) {
     var r = {};
-    for( var k in this)
-      r[k] = this[k];
+    this.extract(r);
   } else {
     var r = this;
   }
-  for( var k in other) {
+  other.each(function(k) {
     if(typeof r[k] === 'object') {
       r[k].merge(other[k]);
     } else {
       r[k] = other[k];
     }
-  }
+  });
   return r;
 };
 
@@ -31,9 +43,9 @@ Object.prototype.copy = function() {
  * Extract all key-value pairs of an object into another tgt object.
  */
 Object.prototype.extract = function(tgt) {
-  for( var k in this) {
-    tgt[k] = this[k];
-  }
+  this.each(function(k, _this) {
+    tgt[k] = _this[k];
+  }, this);
 };
 
 /*
@@ -41,15 +53,16 @@ Object.prototype.extract = function(tgt) {
  */
 Object.prototype.show = function() {
   var s = "{";
-  for( var k in this) {
-    if(typeof this[k] != "function") {
-      if(typeof this[k] == "object")
+  this.each(function(k, _this) {
+    if(typeof _this[k] != "function") {
+      if(typeof _this[k] == "object") {
         d = "object";
-      else
-        d = this[k];
+      } else {
+        d = _this[k];
+      }
       s += k + ": " + d + ", ";
     }
-  }
+  }, this);
   return s.substr(0, s.length - 2) + "}";
 };
 
@@ -58,7 +71,7 @@ Object.prototype.show = function() {
  */
 extrapolate = function(obj) {
   var r = {};
-  for( var k in obj) {
+  obj.each(function(k) {
     var parts = k.split(",");
     if(parts.length > 1) {
       parts.each(function(part) {
@@ -66,7 +79,7 @@ extrapolate = function(obj) {
         if(r[part]) {
           r[part].merge(obj[k]);
         } else {
-          r[part] = obj[k];
+          r[part] = obj[k].copy();
         }
       });
     } else {
@@ -76,7 +89,7 @@ extrapolate = function(obj) {
         r[k] = obj[k];
       }
     }
-  }
+  });
 
   return r;
 };
