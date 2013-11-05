@@ -161,14 +161,42 @@ var SETTINGS_OPTIONS = extrapolate({
       max: 50,
       step: 1
     },
-    "show_circ, show_h_atoms, show_id, font, charge_font, charge_color, radius, radius_charged, charge_offset, border_color": {
+    show_h_atoms: {
       onChange: function() {
+        mv.molecule.bonds.each(function(b) {
+          b.cache.clear('appearance');
+        });
         mv.redraw();
+      }
+    },
+    "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
+      onChange: function() {
+        mv.molecule.atoms.each(function(a) {
+          a.cache.clear('appearance');
+        });
+        mv.redraw();
+      }
+    },
+    "radius, radius_charged": {
+      onChange: function() {
+        mv.molecule.atoms.each(function(a) {
+          a.cache.clear('appearance');
+        });
+        mv.molecule.bonds.each(function(b) {
+          b.cache.clear();
+        });
+        mv.redraw();
+      },
+      onFinishChange: function() {
+        mv.deoverlap();
       }
     },
     colors: {
       "S, O, N, H, F, Cl, Br, I, other": {
         onChange: function() {
+          mv.molecule.atoms.each(function(a) {
+            a.cache.clear('appearance');
+          });
           mv.redraw();
         }
       }
