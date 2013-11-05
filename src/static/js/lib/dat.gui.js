@@ -1194,7 +1194,9 @@ dat.color.toString = (function (common) {
 
   return function(color) {
 
-    if (color.a == 1 || common.isUndefined(color.a)) {
+    if (color.__state.conversionName === "CSS_RGB") {
+      return 'rgb(' + Math.round(color.r) + ',' + Math.round(color.g) + ',' + Math.round(color.b) + ')';
+    } else if (color.a == 1 || common.isUndefined(color.a)) {
 
       var s = color.hex.toString(16);
       while (s.length < 6) {
