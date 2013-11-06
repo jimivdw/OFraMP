@@ -40,7 +40,8 @@ Number.prototype.format = function(bl, fl) {
     var s = frac.slice(frac.length + fd).charAt(0);
     frac = frac.rslice(frac.length + fd);
     if(s >= 5) {
-      frac = "" + (Number(frac) + 1);
+      var ol = frac.length;
+      frac = "" + (Number(frac) + 1).format(ol, 0);
     }
   }
 

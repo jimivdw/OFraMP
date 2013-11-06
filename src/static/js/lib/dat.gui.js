@@ -1194,21 +1194,17 @@ dat.color.toString = (function (common) {
 
   return function(color) {
 
-    if (color.__state.conversionName === "CSS_RGB") {
+    if (color.a == 1 || common.isUndefined(color.a)) {
       return 'rgb(' + Math.round(color.r) + ',' + Math.round(color.g) + ',' + Math.round(color.b) + ')';
-    } else if (color.a == 1 || common.isUndefined(color.a)) {
-
-      var s = color.hex.toString(16);
-      while (s.length < 6) {
-        s = '0' + s;
-      }
-
-      return '#' + s;
-
+      
+//      var s = color.hex.toString(16);
+//      while (s.length < 6) {
+//        s = '0' + s;
+//      }
+//
+//      return '#' + s;
     } else {
-
       return 'rgba(' + Math.round(color.r) + ',' + Math.round(color.g) + ',' + Math.round(color.b) + ',' + color.a + ')';
-
     }
 
   }
@@ -3067,6 +3063,12 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     this.__hue_field = document.createElement('div');
     this.__hue_field.className = 'hue-field';
 
+    this.__alpha_knob = document.createElement('div');
+    this.__alpha_knob.className = 'alpha-knob';
+
+    this.__alpha_field = document.createElement('div');
+    this.__alpha_field.className = 'alpha-field';
+
     this.__input = document.createElement('input');
     this.__input.type = 'text';
     this.__input_textShadow = '0 1px 1px ';
@@ -3090,7 +3092,7 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     });
     
     dom.bind(this.domElement, 'mouseover', function() {
-      var o = dom.getOffset(_this.domElement);
+      var o = dom.getOffset(_this.domElement, true);
       if(o.top + dom.getHeight(_this.__selector) + 23 > 
           Math.min(window.innerHeight, dom.getHeight(_this.__gui.getRoot().__ul))) {
         _this.__selector.style.marginTop = -dom.getHeight(_this.__selector) + 'px';
@@ -3102,7 +3104,7 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     var value_field = document.createElement('div');
 
     common.extend(this.__selector.style, {
-      width: '122px',
+      width: '142px',
       height: '102px',
       padding: '3px',
       backgroundColor: '#222',
@@ -3120,6 +3122,17 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     });
     
     common.extend(this.__hue_knob.style, {
+      position: 'absolute',
+      width: '15px',
+      height: '2px',
+      marginLeft: '-2px',
+      borderRight: '2px solid #fff',
+      borderLeft: '2px solid #fff',
+      backgroundColor: '#fff',
+      zIndex: 1
+    });
+    
+    common.extend(this.__alpha_knob.style, {
       position: 'absolute',
       width: '15px',
       height: '2px',
@@ -3150,12 +3163,29 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
     common.extend(this.__hue_field.style, {
       width: '15px',
       height: '100px',
+      marginRight: '3px',
       display: 'inline-block',
       border: '1px solid #555',
       cursor: 'ns-resize'
     });
 
     hueGradient(this.__hue_field);
+
+    common.extend(this.__alpha_field.style, {
+      width: '15px',
+      height: '100px',
+      display: 'inline-block',
+      border: '1px solid #555',
+      cursor: 'ns-resize'
+    });
+    
+    linearGradient(
+      this.__alpha_field,
+      'top',
+      'rgba(255, 255, 255, 1)',
+      'rgba(255, 255, 255, 0)',
+      'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAA3NCSVQICAjb4U/gAAADAFBMVEUAAAAAADMAAGYAAJkAAMwAAP8AMwAAMzMAM2YAM5kAM8wAM/8AZgAAZjMAZmYAZpkAZswAZv8AmQAAmTMAmWYAmZkAmcwAmf8AzAAAzDMAzGYAzJkAzMwAzP8A/wAA/zMA/2YA/5kA/8wA//8zAAAzADMzAGYzAJkzAMwzAP8zMwAzMzMzM2YzM5kzM8wzM/8zZgAzZjMzZmYzZpkzZswzZv8zmQAzmTMzmWYzmZkzmcwzmf8zzAAzzDMzzGYzzJkzzMwzzP8z/wAz/zMz/2Yz/5kz/8wz//9mAABmADNmAGZmAJlmAMxmAP9mMwBmMzNmM2ZmM5lmM8xmM/9mZgBmZjNmZmZmZplmZsxmZv9mmQBmmTNmmWZmmZlmmcxmmf9mzABmzDNmzGZmzJlmzMxmzP9m/wBm/zNm/2Zm/5lm/8xm//+ZAACZADOZAGaZAJmZAMyZAP+ZMwCZMzOZM2aZM5mZM8yZM/+ZZgCZZjOZZmaZZpmZZsyZZv+ZmQCZmTOZmWaZmZmZmcyZmf+ZzACZzDOZzGaZzJmZzMyZzP+Z/wCZ/zOZ/2aZ/5mZ/8yZ///MAADMADPMAGbMAJnMAMzMAP/MMwDMMzPMM2bMM5nMM8zMM//MZgDMZjPMZmbMZpnMZszMZv/MmQDMmTPMmWbMmZnMmczMmf/MzADMzDPMzGbMzJnMzMzMzP/M/wDM/zPM/2bM/5nM/8zM////AAD/ADP/AGb/AJn/AMz/AP//MwD/MzP/M2b/M5n/M8z/M///ZgD/ZjP/Zmb/Zpn/Zsz/Zv//mQD/mTP/mWb/mZn/mcz/mf//zAD/zDP/zGb/zJn/zMz/zP///wD//zP//2b//5n//8z///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABlenwdAAABAHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG8mZagAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABZJREFUCJljaASB6yDAQAoTTIL5pDABcJBDMTsuRxQAAAAASUVORK5CYII=")'
+    );
 
     common.extend(this.__input.style, {
       outline: 'none',
@@ -3176,6 +3206,12 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       setH(e);
       dom.bind(window, 'mousemove', setH);
       dom.bind(window, 'mouseup', unbindH);
+    });
+
+    dom.bind(this.__alpha_field, 'mousedown', function(e) {
+      setA(e);
+      dom.bind(window, 'mousemove', setA);
+      dom.bind(window, 'mouseup', unbindA);
     });
 
     function fieldDown(e) {
@@ -3206,11 +3242,18 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       dom.unbind(window, 'mouseup', unbindH);
     }
 
+    function unbindA() {
+      dom.unbind(window, 'mousemove', setA);
+      dom.unbind(window, 'mouseup', unbindA);
+    }
+
     this.__saturation_field.appendChild(value_field);
     this.__selector.appendChild(this.__field_knob);
     this.__selector.appendChild(this.__saturation_field);
     this.__selector.appendChild(this.__hue_field);
     this.__hue_field.appendChild(this.__hue_knob);
+    this.__selector.appendChild(this.__alpha_field);
+    this.__alpha_field.appendChild(this.__alpha_knob);
 
     this.domElement.appendChild(this.__input);
     this.domElement.appendChild(this.__selector);
@@ -3254,6 +3297,25 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
       else if (h < 0) h = 0;
 
       _this.__color.h = h * 360;
+
+      _this.setValue(_this.__color.toOriginal());
+
+      return false;
+
+    }
+
+    function setA(e) {
+
+      e.preventDefault();
+
+      var s = dom.getHeight(_this.__alpha_field);
+      var o = dom.getOffset(_this.__alpha_field, true);
+      var a = 1 - (e.clientY - o.top + document.body.scrollTop) / s;
+
+      if (a > 1) a = 1;
+      else if (a < 0) a = 0;
+
+      _this.__color.a = a.format(1, 2);
 
       _this.setValue(_this.__color.toOriginal());
 
@@ -3313,7 +3375,9 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
             border: this.__field_knob_border + 'rgb(' + flip + ',' + flip + ',' + flip +')'
           });
 
-          this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px'
+          this.__hue_knob.style.marginTop = (1 - this.__color.h / 360) * 100 + 'px';
+          
+          this.__alpha_knob.style.marginTop = (1 - this.__color.a) * 100 + 'px';
 
           this.__temp.s = 1;
           this.__temp.v = 1;
@@ -3334,10 +3398,15 @@ dat.controllers.ColorController = (function (Controller, dom, Color, interpret, 
   
   var vendors = ['-moz-','-o-','-webkit-','-ms-',''];
   
-  function linearGradient(elem, x, a, b) {
+  function linearGradient(elem, x, a, b, extra) {
     elem.style.background = '';
+    if(extra) {
+      extra = ', ' + extra;
+    } else {
+      extra = '';
+    }
     common.each(vendors, function(vendor) {
-      elem.style.cssText += 'background: ' + vendor + 'linear-gradient('+x+', '+a+' 0%, ' + b + ' 100%); ';
+      elem.style.cssText += 'background: ' + vendor + 'linear-gradient(' + x + ', ' + a + ' 0%, ' + b + ' 100%)' + extra + '; ';
     });
   }
   
