@@ -203,7 +203,7 @@ var SETTINGS_OPTIONS = extrapolate({
     },
     border_widths: {
       "1, 2, 3": {
-        min: 1,
+        min: 0,
         max: 10,
         step: 1,
         onChange: function() {
@@ -222,7 +222,7 @@ var SETTINGS_OPTIONS = extrapolate({
 
   bond: {
     "width, connector_width, spacing": {
-      min: 1,
+      min: 0,
       max: 10,
       step: 1
     },
