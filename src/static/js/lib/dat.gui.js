@@ -271,6 +271,10 @@ dat.controllers.Controller = (function (common) {
           this.__onFinishChange = fnc;
           return this;
         },
+        
+        reset: function() {
+          this.setValue(this.initialValue);
+        },
 
         /**
          * Change the value of <code>object[property]</code>
@@ -634,10 +638,7 @@ dat.controllers.OptionController = (function (Controller, dom, common) {
 
     common.each(options, function(value, key) {
 
-      var opt = document.createElement('option');
-      opt.innerHTML = key;
-      opt.setAttribute('value', value);
-      _this.__select.appendChild(opt);
+      _this.addOption(key, value);
 
     });
 
@@ -661,6 +662,23 @@ dat.controllers.OptionController = (function (Controller, dom, common) {
       Controller.prototype,
 
       {
+        
+        addOption: function(key, value) {
+          var opt = document.createElement('option');
+          opt.innerHTML = key;
+          opt.setAttribute('value', value);
+          this.__select.appendChild(opt);
+        },
+        
+        removeOption: function(key) {
+          common.each(this.__select.children, function(opt) {
+            if(opt.innerHTML == key) {
+              opt.remove();
+              common.BREAK;
+            }
+          });
+          this.setValue(this.initialValue);
+        },
 
         setValue: function(v) {
           var toReturn = OptionController.superclass.prototype.setValue.call(this, v);
@@ -1063,11 +1081,15 @@ dat.controllers.FunctionController = (function (Controller, dom, common) {
    *
    * @member dat.controllers
    */
-  var FunctionController = function(object, property, text) {
+  var FunctionController = function(object, property, text, fct) {
 
     FunctionController.superclass.call(this, object, property);
 
     var _this = this;
+    
+    if(fct) {
+      this.setValue(fct);
+    }
 
     this.__button = document.createElement('div');
     this.__button.innerHTML = text === undefined ? 'Fire' : text;
@@ -1850,6 +1872,85 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         dom.addClass(title_row, 'main-title');
         
       }
+      
+      if(params.savable && SUPPORTS_LOCAL_STORAGE) {
+
+        var cont = document.createElement("div");
+        var name_cont = document.createElement("span");
+        dom.addClass(name_cont, "property-name");
+        var save_row_name = document.createTextNode("Settings");
+        dom.addClass(save_row_name, 'controller-save');
+
+        var cont2 = document.createElement("div");
+        var name_cont2 = document.createElement("span");
+        dom.addClass(name_cont2, "property-name");
+        var save_row2_name = document.createTextNode("Presets");
+        dom.addClass(save_row2_name, 'controller-save');
+        
+        var presets = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
+        var oPresets = {'Default': ''};
+        common.each(presets, function(preset) {
+          oPresets[preset] = preset;
+        });
+        
+        var c = new OptionController({}, 'presets', oPresets);
+        c.domElement.style.float = "left";
+        c.onChange(function(v) {
+          _this.__preset = v;
+          _this.loadValues(v);
+        });
+        
+        var d = new FunctionController({}, 'delete', 'Delete', function() {
+          if(!_this.__preset || _this.__preset.length < 1) {
+            return;
+          }
+          
+          _this.deleteValues(_this.__preset);
+          c.removeOption(_this.__preset);
+          c.setValue('');
+        });
+        d.domElement.style.float = "left";
+        
+        var s = new FunctionController({}, 'save', 'Save', function() {
+          if(!_this.__preset || _this.__preset.length < 1) {
+            return alert('Cannot save over the default preset.');
+          }
+          
+          _this.saveValues(_this.__preset);
+        });
+        s.domElement.style.float = "left";
+        
+        var sa = new FunctionController({}, 'saveAs', 'Save as', function() {
+          var name = prompt("Save as...");
+          if(!name || name.length < 1) {
+            alert("A name needs to be provided.");
+          } else if(name.length > 10) {
+            alert("The name cannot exceed 10 characters.");
+          } else {
+            _this.saveValues(name);
+            c.addOption(name, name);
+            c.setValue(name);
+          }
+        });
+        sa.domElement.style.float = "left";
+        
+        name_cont.appendChild(save_row_name);
+        cont.appendChild(name_cont);
+        cont.appendChild(s.domElement);
+        cont.appendChild(sa.domElement);
+        
+        name_cont2.appendChild(save_row2_name);
+        cont2.appendChild(name_cont2);
+        cont2.appendChild(c.domElement);
+        cont2.appendChild(d.domElement);
+
+        var save_row = addRow(_this, cont);
+        dom.addClass(save_row, 'main-save');
+
+        var save_row2 = addRow(_this, cont2);
+        dom.addClass(save_row2, 'main-save');
+        
+      }
 
       dom.addClass(this.domElement, GUI.CLASS_MAIN);
       dom.makeSelectable(this.domElement, false);
@@ -2244,6 +2345,94 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
             gui = gui.parent;
           }
           return gui;
+        },
+        
+        getController: function(property) {
+          var toReturn = undefined;
+          common.each(this.__controllers, function(controller) {
+            if(controller.property === property) {
+              toReturn = controller;
+              return common.BREAK;
+            }
+          });
+          return toReturn;
+        },
+        
+        getValues: function() {
+          var toReturn = {};
+          common.each(this.__folders, function(folder, name) {
+            toReturn[name] = folder.getValues();
+          });
+          common.each(this.__controllers, function(controller) {
+            toReturn[controller.property] = controller.getValue();
+          });
+          return toReturn;
+        },
+        
+        saveValues: function(name) {
+          if(!name || name.length < 1) {
+            return;
+          }
+          
+          localStorage.setItem(
+            getLocalStorageHash(this, 'values.' + name),
+            JSON.stringify(this.getValues())
+          );
+          
+          var presets = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
+          if(!presets) {
+            presets = [name];
+          } else if(presets.indexOf(name) === -1) {
+            presets.push(name);
+          }
+          localStorage.setItem(getLocalStorageHash(this, 'presets'), JSON.stringify(presets));
+        },
+        
+        loadValues: function(name) {
+          if(!name || name.length < 1) {
+            return this.resetValues();
+          }
+          
+          var values = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'values.' + name)));
+          this.setValues(values);
+        },
+        
+        deleteValues: function(name) {
+          if(!name || name.length < 1) {
+            return;
+          }
+          
+          localStorage.removeItem(getLocalStorageHash(this, 'values.' + name));
+          var presets = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
+          var i = presets.indexOf(name);
+          if(i !== -1) {
+            presets.pop(i);
+          }
+          localStorage.setItem(getLocalStorageHash(this, 'presets'), JSON.stringify(presets));
+        },
+        
+        setValues: function(values) {
+          if(!values) {
+            return;
+          }
+          
+          var _this = this;
+          common.each(values, function(value, key) {
+            if(typeof value === 'object') {
+              _this.__folders[key].setValues(value);
+            } else {
+              _this.getController(key).setValue(value);
+            }
+          });
+        },
+        
+        resetValues: function() {
+          common.each(this.__folders, function(folder, name) {
+            folder.resetValues();
+          });
+          common.each(this.__controllers, function(controller) {
+            controller.reset();
+          });
         },
 
         /**
@@ -2903,7 +3092,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
 
 })(dat.utils.css,
 "<div id=\"dg-save\" class=\"dg dialogue\">\n\n  Here's the new load parameter for your <code>GUI</code>'s constructor:\n\n  <textarea id=\"dg-new-constructor\"></textarea>\n\n  <div id=\"dg-save-locally\">\n\n    <input id=\"dg-local-storage\" type=\"checkbox\"/> Automatically save\n    values to <code>localStorage</code> on exit.\n\n    <div id=\"dg-local-explain\">The values saved to <code>localStorage</code> will\n      override those passed to <code>dat.GUI</code>'s constructor. This makes it\n      easier to work incrementally, but <code>localStorage</code> is fragile,\n      and your friends may not see the same values you do.\n      \n    </div>\n    \n  </div>\n\n</div>",
-".dg ul{list-style:none;margin:0;padding:0;width:100%;clear:both}.dg.ac{position:fixed;top:0;left:0;right:0;height:0;z-index:0}.dg:not(.ac) .main{overflow:hidden}.dg.main{position:relative;-webkit-transition:opacity 0.1s linear;-o-transition:opacity 0.1s linear;-moz-transition:opacity 0.1s linear;transition:opacity 0.1s linear}.dg.main.taller-than-window{overflow-y:auto}.dg.main.taller-than-window .close-button{opacity:1;margin-top:-1px;border-top:1px solid #2c2c2c}.dg.main ul.closed .close-button{opacity:1 !important}.dg.main:hover .close-button,.dg.main .close-button.drag{opacity:1}.dg.main .close-button{-webkit-transition:opacity 0.1s linear;-o-transition:opacity 0.1s linear;-moz-transition:opacity 0.1s linear;transition:opacity 0.1s linear;border:0;position:absolute;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}.dg.main .close-button:hover{background-color:#111}.dg.a{float:right;overflow-x:hidden}.dg.a.has-save ul{margin-top:27px}.dg.a.has-save ul.closed{margin-top:0}.dg.a .save-row{position:fixed;top:0;z-index:1002}.dg li{-webkit-transition:height 0.1s ease-out;-o-transition:height 0.1s ease-out;-moz-transition:height 0.1s ease-out;transition:height 0.1s ease-out}.dg li:not(.folder){cursor:auto;height:27px;line-height:27px;overflow:hidden;padding:0 4px 0 5px}.dg li.folder{padding:0;border-left:4px solid rgba(0,0,0,0)}.dg li.title{cursor:pointer;margin-left:-4px}.dg .closed li:not(.title),.dg .closed ul li,.dg .closed ul li > *{height:0;overflow:hidden;border:0}.dg .cr{clear:both;padding-left:3px;height:27px}.dg .property-name{cursor:default;float:left;clear:left;width:40%;overflow:hidden;text-overflow:ellipsis}.dg .c{float:left;width:60%}.dg .c input[type=text]{border:0;margin-top:4px;padding:3px;width:100%;float:right}.dg .has-slider input[type=text]{width:30%;margin-left:0}.dg .slider{float:left;width:66%;margin-left:-5px;margin-right:0;height:19px;margin-top:4px}.dg .slider-fg{height:100%}.dg .c input[type=checkbox]{margin-top:9px}.dg .c select{margin-top:5px}.dg .cr.function,.dg .cr.function .property-name,.dg .cr.function *,.dg .cr.boolean,.dg .cr.boolean *{cursor:pointer}.dg .selector{display:none;position:absolute;margin-left:-9px;margin-top:23px;z-index:10}.dg .c:hover .selector,.dg .selector.drag{display:block}.dg li.save-row{padding:0}.dg li.save-row .button{display:inline-block;padding:0px 6px}.dg.dialogue{background-color:#222;width:460px;padding:15px;font-size:13px;line-height:15px}#dg-new-constructor{padding:10px;color:#222;font-family:Monaco, monospace;font-size:10px;border:0;resize:none;box-shadow:inset 1px 1px 1px #888;word-wrap:break-word;margin:12px 0;display:block;width:440px;overflow-y:scroll;height:100px;position:relative}#dg-local-explain{display:none;font-size:11px;line-height:17px;border-radius:3px;background-color:#333;padding:8px;margin-top:10px}#dg-local-explain code{font-size:10px}#dat-gui-save-locally{display:none}.dg{color:#eee;font:11px 'Lucida Grande', sans-serif;text-shadow:0 -1px 0 #111}.dg.main::-webkit-scrollbar{width:5px;background:#1a1a1a}.dg.main::-webkit-scrollbar-corner{height:0;display:none}.dg.main::-webkit-scrollbar-thumb{border-radius:5px;background:#676767}.dg li:not(.folder){background:#1a1a1a;border-bottom:1px solid #2c2c2c}.dg li.save-row{line-height:25px;background:#dad5cb;border:0}.dg li.save-row select{margin-left:5px;width:108px}.dg li.save-row .button{margin-left:5px;margin-top:1px;border-radius:2px;font-size:9px;line-height:7px;padding:4px 4px 5px 4px;background:#c5bdad;color:#fff;text-shadow:0 1px 0 #b0a58f;box-shadow:0 -1px 0 #b0a58f;cursor:pointer}.dg li.save-row .button.gears{background:#c5bdad url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAANCAYAAAB/9ZQ7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpiYKAU/P//PwGIC/ApCABiBSAW+I8AClAcgKxQ4T9hoMAEUrxx2QSGN6+egDX+/vWT4e7N82AMYoPAx/evwWoYoSYbACX2s7KxCxzcsezDh3evFoDEBYTEEqycggWAzA9AuUSQQgeYPa9fPv6/YWm/Acx5IPb7ty/fw+QZblw67vDs8R0YHyQhgObx+yAJkBqmG5dPPDh1aPOGR/eugW0G4vlIoTIfyFcA+QekhhHJhPdQxbiAIguMBTQZrPD7108M6roWYDFQiIAAv6Aow/1bFwXgis+f2LUAynwoIaNcz8XNx3Dl7MEJUDGQpx9gtQ8YCueB+D26OECAAQDadt7e46D42QAAAABJRU5ErkJggg==) 2px 1px no-repeat;height:7px;width:8px}.dg li.save-row .button:hover{background-color:#bab19e;box-shadow:0 -1px 0 #b0a58f}.dg li.folder{border-bottom:0}.dg li.title{padding-left:16px;background:#000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.2)}.dg .closed li.title{background-image:url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==)}.dg .cr.boolean{border-left:3px solid #806787}.dg .cr.function{border-left:3px solid #e61d5f}.dg .cr.number{border-left:3px solid #2fa1d6}.dg .cr.number input[type=text]{color:#2fa1d6}.dg .cr.string{border-left:3px solid #1ed36f}.dg .cr.string input[type=text]{color:#1ed36f}.dg .cr.function:hover,.dg .cr.boolean:hover{background:#111}.dg .c input[type=text]{background:#303030;outline:none}.dg .c input[type=text]:hover{background:#3c3c3c}.dg .c input[type=text]:focus{background:#494949;color:#fff}.dg .c .slider{background:#303030;cursor:ew-resize}.dg .c .slider-fg{background:#2fa1d6}.dg .c .slider:hover{background:#3c3c3c}.dg .c .slider:hover .slider-fg{background:#44abda}\n",
+".dg ul{list-style:none;margin:0;padding:0;width:100%;clear:both}.dg.ac{position:fixed;top:0;left:0;right:0;height:0;z-index:0}.dg:not(.ac) .main{overflow:hidden}.dg.main{position:relative;-webkit-transition:opacity 0.1s linear;-o-transition:opacity 0.1s linear;-moz-transition:opacity 0.1s linear;transition:opacity 0.1s linear}.dg.main.taller-than-window{overflow-y:auto}.dg.main.taller-than-window .close-button{opacity:1;margin-top:-1px;border-top:1px solid #2c2c2c}.dg.main ul.closed .close-button{opacity:1 !important}.dg.main:hover .close-button,.dg.main .close-button.drag{opacity:1}.dg.main .close-button{-webkit-transition:opacity 0.1s linear;-o-transition:opacity 0.1s linear;-moz-transition:opacity 0.1s linear;transition:opacity 0.1s linear;border:0;position:absolute;line-height:19px;height:20px;cursor:pointer;text-align:center;background-color:#000}.dg.main .close-button:hover{background-color:#111}.dg.a{float:right;overflow-x:hidden}.dg.a.has-save ul{margin-top:27px}.dg.a.has-save ul.closed{margin-top:0}.dg.a .save-row{position:fixed;top:0;z-index:1002}.dg li{-webkit-transition:height 0.1s ease-out;-o-transition:height 0.1s ease-out;-moz-transition:height 0.1s ease-out;transition:height 0.1s ease-out}.dg li:not(.folder){cursor:auto;height:27px;line-height:27px;overflow:hidden;padding:0 4px 0 5px}.dg li.folder{padding:0;border-left:4px solid rgba(0,0,0,0)}.dg li.title{cursor:pointer;margin-left:-4px}.dg .closed li:not(.title),.dg .closed ul li,.dg .closed ul li > *{height:0;overflow:hidden;border:0}.dg .cr{clear:both;padding-left:3px;height:27px}.dg .property-name{cursor:default;float:left;clear:left;width:40%;overflow:hidden;text-overflow:ellipsis}.dg .c{float:left;width:60%}.dg .c input[type=text]{border:0;margin-top:4px;padding:3px;width:100%;float:right}.dg .has-slider input[type=text]{width:30%;margin-left:0}.dg .slider{float:left;width:66%;margin-left:-5px;margin-right:0;height:19px;margin-top:4px}.dg .slider-fg{height:100%}.dg .c input[type=checkbox]{margin-top:9px}.dg .c select{margin-top:5px}.dg .cr.function,.dg .cr.function .property-name,.dg .cr.function *,.dg .cr.boolean,.dg .cr.boolean *{cursor:pointer}.dg .selector{display:none;position:absolute;margin-left:-9px;margin-top:23px;z-index:10}.dg .c:hover .selector,.dg .selector.drag{display:block}.dg li.save-row{padding:0}.dg li.save-row .button{display:inline-block;padding:0px 6px}.dg.dialogue{background-color:#222;width:460px;padding:15px;font-size:13px;line-height:15px}#dg-new-constructor{padding:10px;color:#222;font-family:Monaco, monospace;font-size:10px;border:0;resize:none;box-shadow:inset 1px 1px 1px #888;word-wrap:break-word;margin:12px 0;display:block;width:440px;overflow-y:scroll;height:100px;position:relative}#dg-local-explain{display:none;font-size:11px;line-height:17px;border-radius:3px;background-color:#333;padding:8px;margin-top:10px}#dg-local-explain code{font-size:10px}#dat-gui-save-locally{display:none}.dg{color:#eee;font:11px 'Lucida Grande', sans-serif;text-shadow:0 -1px 0 #111}.dg.main::-webkit-scrollbar{width:5px;background:#1a1a1a}.dg.main::-webkit-scrollbar-corner{height:0;display:none}.dg.main::-webkit-scrollbar-thumb{border-radius:5px;background:#676767}.dg li:not(.folder){background:#1a1a1a;border-bottom:1px solid #2c2c2c}.dg li.save-row{line-height:25px;background:#dad5cb;border:0}.dg li.save-row select{margin-left:5px;width:108px}.dg li.save-row .button{margin-left:5px;margin-top:1px;border-radius:2px;font-size:9px;line-height:7px;padding:4px 4px 5px 4px;background:#c5bdad;color:#fff;text-shadow:0 1px 0 #b0a58f;box-shadow:0 -1px 0 #b0a58f;cursor:pointer}.dg li.save-row .button.gears{background:#c5bdad url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAANCAYAAAB/9ZQ7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQJJREFUeNpiYKAU/P//PwGIC/ApCABiBSAW+I8AClAcgKxQ4T9hoMAEUrxx2QSGN6+egDX+/vWT4e7N82AMYoPAx/evwWoYoSYbACX2s7KxCxzcsezDh3evFoDEBYTEEqycggWAzA9AuUSQQgeYPa9fPv6/YWm/Acx5IPb7ty/fw+QZblw67vDs8R0YHyQhgObx+yAJkBqmG5dPPDh1aPOGR/eugW0G4vlIoTIfyFcA+QekhhHJhPdQxbiAIguMBTQZrPD7108M6roWYDFQiIAAv6Aow/1bFwXgis+f2LUAynwoIaNcz8XNx3Dl7MEJUDGQpx9gtQ8YCueB+D26OECAAQDadt7e46D42QAAAABJRU5ErkJggg==) 2px 1px no-repeat;height:7px;width:8px}.dg li.save-row .button:hover{background-color:#bab19e;box-shadow:0 -1px 0 #b0a58f}.dg li.folder{border-bottom:0}.dg li.title{padding-left:16px;background:#000 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.2)}.dg .closed li.title{background-image:url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlGIWqMCbWAEAOw==)}.dg .cr.boolean{border-left:3px solid #806787}.dg .cr.function{border-left:3px solid #e61d5f}.dg .cr.number{border-left:3px solid #2fa1d6}.dg .cr.number input[type=text]{color:#2fa1d6}.dg .cr.string{border-left:3px solid #1ed36f}.dg .cr.string input[type=text]{color:#1ed36f}.dg .cr.function:hover,.dg .cr.boolean:hover{background:#111}.dg .c input[type=text]{background:#303030;outline:none}.dg .c input[type=text]:hover{background:#3c3c3c}.dg .c input[type=text]:focus{background:#494949;color:#fff}.dg .c .slider{background:#303030;cursor:ew-resize}.dg .c .slider-fg{background:#2fa1d6}.dg .c .slider:hover{background:#3c3c3c}.dg .c .slider:hover .slider-fg{background:#44abda}.dg .button{margin-top: 2px;margin-right: 3px;border-radius: 2px;font-size: 11px;line-height: 11px;padding: 5px 4px 4px 4px;background: #eee;color: #000;text-shadow: 0 1px 0 #fff;cursor: pointer;}\n",
 dat.controllers.factory = (function (OptionController, NumberControllerBox, NumberControllerSlider, StringController, FunctionController, BooleanController, common) {
 
       return function(object, property) {
