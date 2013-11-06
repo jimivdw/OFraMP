@@ -45,17 +45,17 @@ var DEFAULT_SETTINGS = {
 
   popup: {
     border_width: 40,
-    border_color: "rgba(0, 0, 0, .8)",
+    border_color: "rgba(0, 0, 0, 0.8)",
     padding: 10,
     font: "40px Arial",
     color: "rgb(0, 0, 0)",
     bg_colors: {
-      1: "rgba(255, 255, 255, .5)",
-      2: "rgba(253, 198, 137, .5)",
-      3: "rgba(246, 150, 121, .5)",
-      4: "rgba(189, 140, 191, .5)",
-      5: "rgba(131, 147, 202, .5)"
-    },
+      1: "rgba(255, 255, 255, 0.9)",
+      2: "rgba(253, 198, 137, 0.9)",
+      3: "rgba(246, 150, 121, 0.9)",
+      4: "rgba(189, 140, 191, 0.9)",
+      5: "rgba(131, 147, 202, 0.9)"
+    }
   },
 
   atom: {
