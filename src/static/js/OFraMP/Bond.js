@@ -148,6 +148,14 @@ Bond.prototype = {
       };
     }
   },
+  
+  /*
+   * Clear the given value from the cache and the parent's cache.
+   */
+  clearCache: function(name) {
+    this.cache.clear(name);
+    this.list.clearCache(name);
+  },
 
   /*
    * Cache the coordinates of all bond lines.

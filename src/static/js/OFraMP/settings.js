@@ -164,7 +164,7 @@ var SETTINGS_OPTIONS = extrapolate({
     show_h_atoms: {
       onChange: function() {
         mv.molecule.bonds.each(function(b) {
-          b.cache.clear('appearance');
+          b.clearCache('appearance');
         });
         mv.redraw();
       }
@@ -172,7 +172,7 @@ var SETTINGS_OPTIONS = extrapolate({
     "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
       onChange: function() {
         mv.molecule.atoms.each(function(a) {
-          a.cache.clear('appearance');
+          a.clearCache('appearance');
         });
         mv.redraw();
       }
@@ -180,10 +180,10 @@ var SETTINGS_OPTIONS = extrapolate({
     "radius, radius_charged": {
       onChange: function() {
         mv.molecule.atoms.each(function(a) {
-          a.cache.clear('appearance');
+          a.clearCache('appearance');
         });
         mv.molecule.bonds.each(function(b) {
-          b.cache.clear();
+          b.clearCache('position');
         });
         mv.redraw();
       },
@@ -195,7 +195,7 @@ var SETTINGS_OPTIONS = extrapolate({
       "S, O, N, H, F, Cl, Br, I, other": {
         onChange: function() {
           mv.molecule.atoms.each(function(a) {
-            a.cache.clear('appearance');
+            a.clearCache('appearance');
           });
           mv.redraw();
         }
@@ -234,7 +234,7 @@ var SETTINGS_OPTIONS = extrapolate({
     "connector_width, spacing, dash_count": {
       onChange: function() {
         mv.molecule.bonds.each(function(b) {
-          b.cache.clear('appearance');
+          b.clearCache('appearance');
         });
         mv.redraw();
       }

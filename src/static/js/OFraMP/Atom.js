@@ -249,9 +249,9 @@ Atom.prototype = {
     this.x += dx;
     this.y += dy;
 
-    this.cache.clear('position');
+    this.clearCache('position');
     this.getBonds().each(function(bond) {
-      bond.cache.clear('position');
+      bond.clearCache('position');
     });
     return this;
   },
@@ -296,6 +296,14 @@ Atom.prototype = {
         return path;
       }
     }
+  },
+  
+  /*
+   * Clear the given cache of this atom and its parent.
+   */
+  clearCache: function(name) {
+    this.cache.clear(name);
+    this.list.clearCache(name);
   },
 
   /*

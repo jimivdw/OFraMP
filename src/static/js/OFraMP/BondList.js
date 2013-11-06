@@ -92,6 +92,11 @@ BondList.prototype = {
       return b.a1.distance(b.a2);
     }).max();
   },
+  
+  clearCache: function(name) {
+    this.cache.clear(name);
+    // this.molecule.clearCache(name);
+  },
 
   /*
    * Draw all bonds in this list.

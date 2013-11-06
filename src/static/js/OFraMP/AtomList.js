@@ -8,6 +8,8 @@ function AtomList(molecule, atoms) {
 AtomList.prototype = {
   molecule: undefined,
   atoms: undefined,
+  
+  cache: undefined,
 
   init: function(molecule, atoms) {
     this.molecule = molecule;
@@ -16,6 +18,7 @@ AtomList.prototype = {
       list.atoms.push(new Atom(list, atom.id, atom.element, atom.element_id,
           atom.x, atom.y));
     }, this);
+    this.cache = new Cache();
   },
 
   /*
@@ -61,25 +64,38 @@ AtomList.prototype = {
    * Get the width of this AtomList.
    */
   width: function() {
+    if(this.cache.get('position.width')) {
+      return this.cache.get('position.width');
+    }
     var lt = this.leftTop();
     var rb = this.rightBottom();
-    return rb.x - lt.x;
+    var width = rb.x - lt.x;
+    this.cache.set('position.width', width);
+    return width;
   },
 
   /*
    * Get the height of this AtomList.
    */
   height: function() {
+    if(this.cache.get('position.height')) {
+      return this.cache.get('position.height');
+    }
     var lt = this.leftTop();
     var rb = this.rightBottom();
-    return rb.y - lt.y;
+    var height = rb.y - lt.y;
+    this.cache.set('position.height', height);
+    return height;
   },
 
   /*
    * Get the coordinates of the left top of this AtomList.
    */
   leftTop: function() {
-    return {
+    if(this.cache.get('position.left_top')) {
+      return this.cache.get('position.left_top');
+    }
+    var lt = {
       x: this.map(function(atom) {
         return atom.x - atom.getRadius();
       }).min(),
@@ -87,13 +103,18 @@ AtomList.prototype = {
         return atom.y - atom.getRadius();
       }).min()
     };
+    this.cache.set('position.left_top', lt);
+    return lt;
   },
 
   /*
    * Get the coordinates of the right bottom of this AtomList.
    */
   rightBottom: function() {
-    return {
+    if(this.cache.get('position.right_bottom')) {
+      return this.cache.get('position.right_bottom');
+    }
+    var rb = {
       x: this.map(function(atom) {
         return atom.x + atom.getRadius();
       }).max(),
@@ -101,28 +122,40 @@ AtomList.prototype = {
         return atom.y + atom.getRadius();
       }).max()
     };
+    this.cache.set('position.right_bottom', rb);
+    return rb;
   },
 
   /*
    * Get the size (width, height) of this AtomList.
    */
   size: function() {
-    return {
+    if(this.cache.get('position.size')) {
+      return this.cache.get('position.size');
+    }
+    var s = {
       w: this.width(),
       h: this.height()
     };
+    this.cache.set('position.size', s);
+    return s;
   },
 
   /*
    * Get the coordinates of the center of this AtomList.
    */
   centerPoint: function() {
+    if(this.cache.get('position.center_point')) {
+      return this.cache.get('position.center_point');
+    }
     var lt = this.leftTop();
     var s = this.size();
-    return {
+    var cp = {
       x: lt.x + s.w / 2,
       y: lt.y + s.h / 2
     };
+    this.cache.set('position.center_point', cp);
+    return cp;
   },
 
   /*
@@ -283,6 +316,11 @@ AtomList.prototype = {
     var dx = tx - lt.x;
     var dy = ty - lt.y;
     this.move(dx, dy);
+  },
+  
+  clearCache: function(name) {
+    this.cache.clear(name);
+    // this.molecule.clearCache(name);
   },
 
   /*
