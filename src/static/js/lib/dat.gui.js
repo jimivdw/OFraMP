@@ -1902,7 +1902,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         
         var d = new FunctionController({}, 'delete', 'Delete', function() {
           if(!_this.__preset || _this.__preset.length < 1) {
-            return;
+            return alert('Cannot delete the default preset.');
           }
           
           _this.deleteValues(_this.__preset);
@@ -1913,7 +1913,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         
         var s = new FunctionController({}, 'save', 'Save', function() {
           if(!_this.__preset || _this.__preset.length < 1) {
-            return alert('Cannot save over the default preset.');
+            return alert('Cannot overwrite the default preset.');
           }
           
           _this.saveValues(_this.__preset);
@@ -2406,7 +2406,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
           var presets = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
           var i = presets.indexOf(name);
           if(i !== -1) {
-            presets.pop(i);
+            presets.splice(i, 1);
           }
           localStorage.setItem(getLocalStorageHash(this, 'presets'), JSON.stringify(presets));
         },
