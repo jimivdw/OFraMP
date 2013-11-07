@@ -210,7 +210,7 @@ Molecule.prototype = {
 
         // Prevent problems with atoms at the exact same position by slightly
         // moving one of them.
-        if(d.approx(0)) {
+        if($ext.number.approx(d, 0)) {
           a1.move(1e-3, 1e-3);
           d = a1.distance(a2);
           rd = a1.radiusDistance(a2);
@@ -255,7 +255,7 @@ Molecule.prototype = {
 
         // Prevent problems with atoms that are exactly on a bond by slightly
         // moving them.
-        if(bd.approx(0)) {
+        if($ext.number.approx(bd, 0)) {
           a.move(1e-3, 1e-3);
           bd = a.bondDistance(b);
         }
@@ -331,7 +331,7 @@ Molecule.prototype = {
 
       if(bond.length() < s.zoom.min_bond_length - 1) {
         var dist = bond.a1.distance(bond.a2);
-        if(dist.approx(0)) {
+        if($ext.number.approx(dist, 0)) {
           bond.a2.move(1e-3, 1e-3);
           dist = bond.a1.distance(bond.a2);
         }

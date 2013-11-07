@@ -176,7 +176,7 @@ $ext.extend($ext, {
               break;
 
             case "d": // Day of the month as a zero-padded decimal number.
-              d_str += date.getDate().format(2);
+              d_str += $ext.number.format(date.getDate(), 2);
               break;
 
             case "b": // Month as locale's abbreviated name (Jan, Feb).
@@ -188,7 +188,7 @@ $ext.extend($ext, {
               break;
 
             case "m": // Month as a zero-padded decimal number.
-              d_str += (date.getMonth() + 1).format(2);
+              d_str += $ext.number.format(date.getMonth() + 1, 2);
               break;
 
             case "y": // Year without century as a zero-padded decimal number.
@@ -200,15 +200,15 @@ $ext.extend($ext, {
               break;
 
             case "H": // Hour (24-hour clock) as a zero-padded decimal number.
-              d_str += date.getHours().format(2);
+              d_str += $ext.number.format(date.getHours(), 2);
               break;
 
             case "I": // Hour (12-hour clock) as a zero-padded decimal number.
               var h = date.getHours();
               if(h > 12) { // Keep 12pm as 12pm, not as 0pm.
-                d_str += (h % 12).format(2);
+                d_str += $ext.number.format(h % 12, 2);
               } else {
-                d_str += h.format(2);
+                d_str += $ext.number.format(h, 2);
               }
               break;
 
@@ -221,15 +221,15 @@ $ext.extend($ext, {
               break;
 
             case "M": // Minute as a zero-padded decimal number.
-              d_str += date.getMinutes().format(2);
+              d_str += $ext.number.format(date.getMinutes(), 2);
               break;
 
             case "S": // Second as a zero-padded decimal number.
-              d_str += date.getSeconds().format(2);
+              d_str += $ext.number.format(date.getSeconds(), 2);
               break;
 
             case "f": // Microsecond as a decimal number, left zero-padded.
-              d_str += (date.getMilliseconds() * 1000).format(6);
+              d_str += $ext.number.format(date.getMilliseconds() * 1000, 6);
               break;
 
             case "z": // UTC offset in the form +HHMM or -HHMM.
@@ -242,19 +242,20 @@ $ext.extend($ext, {
               }
               var oh = tzo / 60;
               var om = tzo % 60;
-              d_str += p + oh.format(2) + om.format(2);
+              d_str += p + $ext.number.format(oh, 2)
+                  + $ext.number.format(om, 2);
               break;
 
             case "j": // Day of the year as a zero-padded decimal number.
-              d_str += this.getDayOfYear(date).format(3);
+              d_str += $ext.number.format(this.getDayOfYear(date), 3);
               break;
 
             case "U": // Week number of the year (Sunday as the first day).
-              d_str += this.getWeek(date).format(2);
+              d_str += $ext.number.format(this.getWeek(date), 2);
               break;
 
             case "W": // Week number of the year (Monday as the first day).
-              d_str += this.getWeekM(date).format(2);
+              d_str += $ext.number.format(this.getWeekM(date), 2);
               break;
 
             case "c": // Locale's appropriate date and time representation.

@@ -92,7 +92,8 @@ Bond.prototype = {
    * Determine if a point (x, y) lies within the bounding box of this bond.
    */
   inBB: function(x, y) {
-    return x.between(this.a1.x, this.a2.x) && y.between(this.a1.y, this.a2.y);
+    return $ext.number.between(x, this.a1.x, this.a2.x)
+        && $ext.number.between(y, this.a1.y, this.a2.y);
   },
 
   /*
@@ -106,7 +107,7 @@ Bond.prototype = {
     var c = this.coords();
     var br = Math.abs(c.x1 - c.x2) / Math.abs(c.y1 - c.y2);
     var tr = Math.abs(c.x1 - x) / Math.abs(c.y1 - y);
-    return br.approx(tr);
+    return $ext.number.approx(br, tr);
   },
 
   /*
