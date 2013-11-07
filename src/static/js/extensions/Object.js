@@ -84,7 +84,12 @@ extrapolate = function(obj) {
       });
     } else {
       if(typeof obj[k] === "object") {
-        r[k] = extrapolate(obj[k]);
+        var e = extrapolate(obj[k]);
+        if(r[k]) {
+          r[k].merge(e);
+        } else {
+          r[k] = e;
+        }
       } else {
         r[k] = obj[k];
       }
