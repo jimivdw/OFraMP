@@ -123,11 +123,12 @@ MoleculeViewer.prototype = {
         var md = JSON.parse(xhr.response);
         console.log("md", md);
 
-        if(mv.settings.oapoc.version.versionCompare(md.version) == -1) {
+        var vc = $ext.string.versionCompare(mv.settings.oapoc.version, md.version);
+        if(vc == -1) {
           var msg = "OAPoC version too old." + "\n\nRequired version: "
               + mv.settings.oapoc.version + "\nCurrent version: " + md.version;
           mv.showOverlay(msg, MESSAGE_TYPES.error);
-        } else if(mv.settings.oapoc.version.versionCompare(md.version) == 1) {
+        } else if(vc == 1) {
           var msg = "OAPoC version too new." + "\n\nRequired version: "
               + mv.settings.oapoc.version + "\nCurrent version: " + md.version;
           mv.showOverlay(msg, MESSAGE_TYPES.error);

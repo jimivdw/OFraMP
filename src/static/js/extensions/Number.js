@@ -28,19 +28,19 @@ $ext.extend($ext, {
 
       var bd = bl - base.length;
       if(bd > 0) {
-        base = "0".repeat(bd) + base;
+        base = $ext.string.repeat("0", bd) + base;
       } else {
         frac = base.slice(base.length + bd) + frac;
-        base = base.rslice(base.length + bd);
+        base = $ext.string.rslice(base, base.length + bd);
         exp = -bd;
       }
 
       var fd = fl - frac.length;
       if(fd > 0) {
-        frac = frac + "0".repeat(fd);
+        frac = frac + $ext.string.repeat("0", fd)
       } else {
         var s = frac.slice(frac.length + fd).charAt(0);
-        frac = frac.rslice(frac.length + fd);
+        frac = $ext.string.rslice(frac, frac.length + fd);
         if(s >= 5) {
           var ol = frac.length;
           frac = this.format(Number(frac) + 1, ol, 0);
