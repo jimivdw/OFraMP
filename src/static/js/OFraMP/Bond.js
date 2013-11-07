@@ -249,7 +249,7 @@ Bond.prototype = {
 
     this.cache.set('position.lines', lines, [
         this.cache.getCache('appearance.lines'),
-        this.cache.getCache('appearance.visible')]);
+        this.cache.getCache('position.visible')]);
   },
 
   /*
@@ -322,7 +322,7 @@ Bond.prototype = {
 
     this.cache.set('position.connectors', connectors, [
         this.cache.getCache('appearance.connectors'),
-        this.cache.getCache('appearance.visible')]);
+        this.cache.getCache('position.visible')]);
   },
 
   /*
@@ -336,7 +336,7 @@ Bond.prototype = {
     if(!this.isVisible()) {
       this.cache.set('position.connectors', [], [
           this.cache.getCache('appearance.connectors'),
-          this.cache.getCache('appearance.visible')]);
+          this.cache.getCache('position.visible')]);
       return;
     }
 
@@ -348,8 +348,8 @@ Bond.prototype = {
    * Draw this bond.
    */
   draw: function() {
-    this.cacheLineCoords();
     this.drawConnectors();
+    this.cacheLineCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
