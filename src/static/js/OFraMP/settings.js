@@ -103,7 +103,7 @@ var DEFAULT_SETTINGS = {
   }
 };
 
-var SETTINGS_OPTIONS = extrapolate({
+var SETTINGS_OPTIONS = {
   zoom: {
     factor: {
       min: 1.01,
@@ -260,7 +260,7 @@ var SETTINGS_OPTIONS = extrapolate({
       }
     }
   }
-});
+};
 
 
 /*
