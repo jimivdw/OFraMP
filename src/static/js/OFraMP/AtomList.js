@@ -323,7 +323,7 @@ AtomList.prototype = {
 
   clearCache: function(name) {
     this.cache.clear(name);
-    // this.molecule.clearCache(name);
+    this.molecule.clearCache(name);
   },
 
   /*

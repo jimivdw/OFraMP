@@ -8,25 +8,38 @@ Molecule.prototype = {
   bonds: undefined,
   data_str: undefined,
 
+  cache: undefined,
+
   init: function(mv, atoms, bonds, data_str) {
     this.mv = mv;
     this.atoms = new AtomList(this, atoms);
     this.bonds = new BondList(this, bonds);
     this.data_str = data_str;
+    this.cache = new Cache();
   },
 
   /*
    * Get the width of this molecule.
    */
   width: function() {
-    return this.atoms.width();
+    if(this.cache.get('position.width')) {
+      return this.cache.get('position.width');
+    }
+    var w = this.atoms.width();
+    this.cache.set('position.width', w, this.cache.getCache('appearance'));
+    return w;
   },
 
   /*
    * Get the height of this molecule.
    */
   height: function() {
-    return this.atoms.height();
+    if(this.cache.get('position.height')) {
+      return this.cache.get('position.height');
+    }
+    var h = this.atoms.height();
+    this.cache.set('position.height', h, this.cache.getCache('appearance'));
+    return h;
   },
 
   /*
@@ -333,6 +346,11 @@ Molecule.prototype = {
     }
 
     return changed;
+  },
+
+  clearCache: function(name) {
+    this.cache.clear(name);
+    // this.mv.clearCache(name);
   },
 
   /*
