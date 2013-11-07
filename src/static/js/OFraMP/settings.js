@@ -163,24 +163,24 @@ var SETTINGS_OPTIONS = extrapolate({
     },
     show_h_atoms: {
       onChange: function() {
+        mv.molecule.atoms.each(function(a) {
+          a.clearCache('appearance.visible');
+        });
         mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance');
+          b.clearCache('appearance.visible');
         });
         mv.redraw();
       }
     },
     "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
       onChange: function() {
-        mv.molecule.atoms.each(function(a) {
-          a.clearCache('appearance');
-        });
         mv.redraw();
       }
     },
     "radius, radius_charged": {
       onChange: function() {
         mv.molecule.atoms.each(function(a) {
-          a.clearCache('appearance');
+          a.clearCache('appearance.radius');
         });
         mv.molecule.bonds.each(function(b) {
           b.clearCache('position');
@@ -195,7 +195,7 @@ var SETTINGS_OPTIONS = extrapolate({
       "S, O, N, H, F, Cl, Br, I, other": {
         onChange: function() {
           mv.molecule.atoms.each(function(a) {
-            a.clearCache('appearance');
+            a.clearCache('appearance.color');
           });
           mv.redraw();
         }
@@ -226,15 +226,30 @@ var SETTINGS_OPTIONS = extrapolate({
       max: 10,
       step: 1
     },
+    connector_width: {
+      onChange: function() {
+        mv.molecule.bonds.each(function(b) {
+          b.clearCache('appearance.connectors');
+        });
+        mv.redraw();
+      }
+    },
+    spacing: {
+      onChange: function() {
+        mv.molecule.bonds.each(function(b) {
+          b.clearCache('appearance.lines');
+          b.clearCache('appearance.connectors');
+        });
+        mv.redraw();
+      }
+    },
     dash_count: {
       min: 1,
       max: 20,
-      step: 1
-    },
-    "connector_width, spacing, dash_count": {
+      step: 1,
       onChange: function() {
         mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance');
+          b.clearCache('appearance.lines');
         });
         mv.redraw();
       }
