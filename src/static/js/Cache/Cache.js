@@ -11,20 +11,38 @@ Object.defineProperty(Cache, 'DEPEND', {
 Cache.prototype = {
   init: function(name) {
     this.name = name;
+    this.__value = undefined;
+    this.__dependent = undefined;
+    this.__ts = new Date();
     this.__subcaches = new Array();
-    this.__values = new Object();
+  },
+
+  touch: function() {
+    this.__ts = new Date();
   },
 
   get: function(k) {
-    var parts = k.split(".");
-    if(parts.length > 1) {
+    if(k && k.length > 0) {
+      var parts = k.split(".");
       var c = this.__getSubCache(parts[0]);
       if(c) {
         return c.get(parts.splice(1).join("."));
       }
     } else {
-      return this.__values[k];
+      if(this.__dependent && this.__ts < this.__dependent.__ts) {
+        this.clear();
+      }
+      return this.__value;
     }
+  },
+
+  getCache: function(name) {
+    if(name && name.length > 0) {
+      var parts = name.split(".");
+      var c = this.__createSubCache(parts[0]);
+      return c.getCache(parts.splice(1).join("."));
+    }
+    return this;
   },
 
   __getSubCache: function(name) {
@@ -35,20 +53,23 @@ Cache.prototype = {
     });
   },
 
-  set: function(k, v) {
-    var parts = k.split(".");
-    if(parts.length > 1) {
+  set: function(k, v, dependent) {
+    if(k && k.length > 0) {
+      var parts = k.split(".");
       var c = this.__createSubCache(parts[0]);
-      c.set(parts.splice(1).join("."), v);
+      c.set(parts.splice(1).join("."), v, dependent);
     } else {
-      this.__values[k] = v;
+      this.__value = v;
+      this.__dependent = dependent;
     }
+    this.touch();
     return this;
   },
 
   __createSubCache: function(name) {
-    if(this.__getSubCache(name)) {
-      return this.__getSubCache(name);
+    var c = this.__getSubCache(name);
+    if(c) {
+      return c;
     }
 
     var c = new Cache(name);
@@ -57,21 +78,20 @@ Cache.prototype = {
   },
 
   clear: function(name) {
-    if(name) {
+    if(name && name.length > 0) {
       var parts = name.split(".");
       var c = this.__getSubCache(parts[0]);
       if(c) {
         c.clear(parts.splice(1).join("."));
-      } else if(parts.length == 1) {
-        delete this.__values[name];
       }
     } else {
-      this.__values = Object();
+      delete this.__value;
       this.__subcaches.each(function(c) {
         c.clear();
       });
     }
 
+    this.touch();
     return c;
   }
 };

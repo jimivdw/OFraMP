@@ -8,7 +8,7 @@ function AtomList(molecule, atoms) {
 AtomList.prototype = {
   molecule: undefined,
   atoms: undefined,
-  
+
   cache: undefined,
 
   init: function(molecule, atoms) {
@@ -70,7 +70,7 @@ AtomList.prototype = {
     var lt = this.leftTop();
     var rb = this.rightBottom();
     var width = rb.x - lt.x;
-    this.cache.set('position.width', width);
+    this.cache.set('position.width', width, this.cache.getCache('appearance'));
     return width;
   },
 
@@ -84,7 +84,8 @@ AtomList.prototype = {
     var lt = this.leftTop();
     var rb = this.rightBottom();
     var height = rb.y - lt.y;
-    this.cache.set('position.height', height);
+    this.cache
+        .set('position.height', height, this.cache.getCache('appearance'));
     return height;
   },
 
@@ -103,7 +104,7 @@ AtomList.prototype = {
         return atom.y - atom.getRadius();
       }).min()
     };
-    this.cache.set('position.left_top', lt);
+    this.cache.set('position.left_top', lt, this.cache.getCache('appearance'));
     return lt;
   },
 
@@ -122,7 +123,8 @@ AtomList.prototype = {
         return atom.y + atom.getRadius();
       }).max()
     };
-    this.cache.set('position.right_bottom', rb);
+    this.cache.set('position.right_bottom', rb, this.cache
+        .getCache('appearance'));
     return rb;
   },
 
@@ -137,7 +139,7 @@ AtomList.prototype = {
       w: this.width(),
       h: this.height()
     };
-    this.cache.set('position.size', s);
+    this.cache.set('position.size', s, this.cache.getCache('appearance'));
     return s;
   },
 
@@ -154,7 +156,8 @@ AtomList.prototype = {
       x: lt.x + s.w / 2,
       y: lt.y + s.h / 2
     };
-    this.cache.set('position.center_point', cp);
+    this.cache.set('position.center_point', cp, this.cache
+        .getCache('appearance'));
     return cp;
   },
 
@@ -317,7 +320,7 @@ AtomList.prototype = {
     var dy = ty - lt.y;
     this.move(dx, dy);
   },
-  
+
   clearCache: function(name) {
     this.cache.clear(name);
     // this.molecule.clearCache(name);
