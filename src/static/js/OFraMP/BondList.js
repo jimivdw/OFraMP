@@ -8,6 +8,7 @@ function BondList(molecule, bonds) {
 BondList.prototype = {
   molecule: undefined,
   bonds: undefined,
+  cache: undefined,
 
   init: function(molecule, bonds) {
     this.molecule = molecule;
@@ -16,6 +17,7 @@ BondList.prototype = {
       list.bonds.push(new Bond(list, bond.id, molecule.atoms.get(bond.a1),
           molecule.atoms.get(bond.a2), bond.bond_type));
     }, this);
+    this.cache = new Cache();
   },
 
   /*
