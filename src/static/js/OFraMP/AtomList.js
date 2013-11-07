@@ -70,7 +70,9 @@ AtomList.prototype = {
     var lt = this.leftTop();
     var rb = this.rightBottom();
     var width = rb.x - lt.x;
-    this.cache.set('position.width', width, this.cache.getCache('appearance'));
+    this.cache.set('position.width', width, [
+        this.cache.getCache('position.left_top'),
+        this.cache.getCache('position.right_bottom')]);
     return width;
   },
 
@@ -84,8 +86,9 @@ AtomList.prototype = {
     var lt = this.leftTop();
     var rb = this.rightBottom();
     var height = rb.y - lt.y;
-    this.cache
-        .set('position.height', height, this.cache.getCache('appearance'));
+    this.cache.set('position.height', height, [
+        this.cache.getCache('position.left_top'),
+        this.cache.getCache('position.right_bottom')]);
     return height;
   },
 
@@ -104,7 +107,8 @@ AtomList.prototype = {
         return atom.y - atom.getRadius();
       }).min()
     };
-    this.cache.set('position.left_top', lt, this.cache.getCache('appearance'));
+    this.cache.set('position.left_top', lt, this.cache
+        .getCache('appearance.radius'));
     return lt;
   },
 
@@ -124,7 +128,7 @@ AtomList.prototype = {
       }).max()
     };
     this.cache.set('position.right_bottom', rb, this.cache
-        .getCache('appearance'));
+        .getCache('appearance.radius'));
     return rb;
   },
 
@@ -139,7 +143,8 @@ AtomList.prototype = {
       w: this.width(),
       h: this.height()
     };
-    this.cache.set('position.size', s, this.cache.getCache('appearance'));
+    this.cache.set('position.size', s, [this.cache.getCache('position.width'),
+        this.cache.getCache('position.height')]);
     return s;
   },
 
@@ -156,8 +161,9 @@ AtomList.prototype = {
       x: lt.x + s.w / 2,
       y: lt.y + s.h / 2
     };
-    this.cache.set('position.center_point', cp, this.cache
-        .getCache('appearance'));
+    this.cache.set('position.center_point', cp, [
+        this.cache.getCache('position.left_top'),
+        this.cache.getCache('position.size')]);
     return cp;
   },
 
@@ -333,5 +339,7 @@ AtomList.prototype = {
     this.each(function(a) {
       a.draw();
     });
+    var cp = this.centerPoint();
+    this.molecule.mv.ctx.fillRect(cp.x - 10, cp.y - 10, 20, 20);
   }
 };
