@@ -6,7 +6,7 @@ Cache.prototype = {
   init: function(name) {
     this.name = name;
     this.__value = undefined;
-    this.__dependent = undefined;
+    this.__dependencies = new Array();
     this.__ts = new Date();
     this.__subcaches = new Array();
   },
@@ -23,8 +23,8 @@ Cache.prototype = {
         return c.get(parts.splice(1).join("."));
       }
     } else {
-      if(this.__dependent && this.__ts < this.__dependent.__ts) {
-        this.clear();
+      if(this.__dependencies && !this.__checkDependencies()) {
+        return this.clear();
       }
       return this.__value;
     }
@@ -47,14 +47,30 @@ Cache.prototype = {
     });
   },
 
-  set: function(k, v, dependent) {
+  __checkDependencies: function() {
+    var clean = this.__dependencies.each(function(d, cache) {
+      if(cache.__ts < d.__ts) {
+        return false;
+      }
+      if(!d.__checkDependencies()) {
+        return false;
+      }
+    }, this);
+    return clean === false ? false : true;
+  },
+
+  set: function(k, v, dependencies) {
     if(k && k.length > 0) {
       var parts = k.split(".");
       var c = this.__createSubCache(parts[0]);
-      c.set(parts.splice(1).join("."), v, dependent);
+      c.set(parts.splice(1).join("."), v, dependencies);
     } else {
       this.__value = v;
-      this.__dependent = dependent;
+      if(dependencies && dependencies.length > 0) {
+        this.__dependencies = dependencies;
+      } else if(dependencies) {
+        this.__dependencies = [dependencies];
+      }
     }
     this.touch();
     return this;
