@@ -53,13 +53,14 @@ MoleculeViewer.prototype = {
 
     this.canvas.onmousedown = function(e) {
       if(!mv.overlay_showing) {
-        var a = mv.molecule.atomAt(e.getX(), e.getY());
+        var c = $ext.mouse.getCoords(e);
+        var a = mv.molecule.atomAt(c.x, c.y);
         if(a) {
           if(mv.molecule.setSelected(a))
             mv.redraw();
         } else {
-          mv.lastX = e.getX();
-          mv.lastY = e.getY();
+          mv.lastX = c.x;
+          mv.lastY = c.y;
           mv.mouseDown = true;
         }
       }
@@ -67,18 +68,20 @@ MoleculeViewer.prototype = {
 
     this.canvas.onmousemove = function(e) {
       if(!mv.overlay_showing) {
+        var c = $ext.mouse.getCoords(e);
         if(mv.mouseDown) {
-          var dx = e.getX() - mv.lastX;
-          var dy = e.getY() - mv.lastY;
+          var dx = c.x - mv.lastX;
+          var dy = c.y - mv.lastY;
           mv.move(dx, dy);
 
-          mv.lastX = e.getX();
-          mv.lastY = e.getY();
+          mv.lastX = c.x;
+          mv.lastY = c.y;
           mv.mouseDragged = true;
         } else {
-          var a = mv.molecule.atomAt(e.getX(), e.getY());
-          if(mv.molecule.setHover(a))
+          var a = mv.molecule.atomAt(c.x, c.y);
+          if(mv.molecule.setHover(a)) {
             mv.redraw();
+          }
         }
       }
     };
@@ -86,9 +89,11 @@ MoleculeViewer.prototype = {
     document.onmouseup = function(e) {
       if(!mv.overlay_showing) {
         if(e.target === mv.canvas && !mv.mouseDragged) {
-          if(!mv.molecule.atomAt(e.getX(), e.getY())) {
-            if(mv.molecule.setSelected())
+          var c = $ext.mouse.getCoords(e);
+          if(!mv.molecule.atomAt(c.x, c.y)) {
+            if(mv.molecule.setSelected()) {
               mv.redraw();
+            }
           }
         }
         mv.mouseDown = false;
