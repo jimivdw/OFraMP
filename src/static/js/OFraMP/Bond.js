@@ -30,16 +30,15 @@ Bond.prototype = {
    * Depends on both position and appearance, so track both in cache.
    */
   isVisible: function() {
-    if(this.cache.get('position.visible')
-        && this.cache.get('appearance.visible')) {
+    if(this.cache.get('position.visible')) {
       return this.cache.get('position.visible');
     }
 
     var s = this.list.molecule.mv.settings;
     var visible = (s.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
         && (this.a1.isVisible() || this.a2.isVisible());
-    this.cache.set('position.visible', visible);
-    this.cache.set('appearance.visible', Cache.DEPEND);
+    this.cache.set('position.visible', visible, this.cache
+        .getCache('appearance'));
     return visible;
   },
 
@@ -148,7 +147,7 @@ Bond.prototype = {
       };
     }
   },
-  
+
   /*
    * Clear the given value from the cache and the parent's cache.
    */
@@ -161,7 +160,7 @@ Bond.prototype = {
    * Cache the coordinates of all bond lines.
    */
   cacheLineCoords: function() {
-    if(this.cache.get('position.lines') && this.cache.get('appearance.lines')) {
+    if(this.cache.get('position.lines')) {
       return;
     }
 
@@ -248,16 +247,14 @@ Bond.prototype = {
       }
     }
 
-    this.cache.set('position.lines', lines);
-    this.cache.set('appearance.lines', Cache.DEPEND);
+    this.cache.set('position.lines', lines, this.cache.getCache('appearance'));
   },
 
   /*
    * Cache the coordinates of the bond's connector on atom a.
    */
   cacheConnectorCoords: function(a) {
-    if(this.cache.get('position.connectors')
-        && this.cache.get('appearance.connectors')) {
+    if(this.cache.get('position.connectors')) {
       var connectors = this.cache.get('position.connectors');
     } else {
       var connectors = new Array();
@@ -321,22 +318,21 @@ Bond.prototype = {
       });
     }
 
-    this.cache.set('position.connectors', connectors);
-    this.cache.set('appearance.connectors', Cache.DEPEND);
+    this.cache.set('position.connectors', connectors, this.cache
+        .getCache('appearance'));
   },
 
   /*
    * Cache the coordinates of this bond's atom connectors.
    */
   cacheConnectorsCoords: function() {
-    if(this.cache.get('position.connectors')
-        && this.cache.get('appearance.connectors')) {
+    if(this.cache.get('position.connectors')) {
       return;
     }
 
     if(!this.isVisible()) {
-      this.cache.set('position.connectors', []);
-      this.cache.set('appearance.connectors', Cache.DEPEND);
+      this.cache.set('position.connectors', [], this.cache
+          .getCache('appearance'));
       return;
     }
 

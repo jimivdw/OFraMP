@@ -2,12 +2,6 @@ function Cache(name) {
   this.init(name);
 }
 
-Object.defineProperty(Cache, 'DEPEND', {
-  get: function() {
-    return {};
-  }
-});
-
 Cache.prototype = {
   init: function(name) {
     this.name = name;

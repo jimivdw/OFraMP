@@ -34,8 +34,7 @@ Atom.prototype = {
    * Determine if this atom is currently visible.
    */
   isVisible: function() {
-    if(this.cache.get('position.visible')
-        && this.cache.get('appearance.visible')) {
+    if(this.cache.get('position.visible')) {
       return this.cache.get('position.visible');
     }
 
@@ -45,8 +44,7 @@ Atom.prototype = {
         && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
 
-    this.cache.set('position.visible', visible);
-    this.cache.set('appearance.visible', Cache.DEPEND);
+    this.cache.set('position.visible', visible, this.cache.getCache('appearance'));
     return visible;
   },
 
