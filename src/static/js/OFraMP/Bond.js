@@ -357,7 +357,7 @@ Bond.prototype = {
     ctx.lineWidth = s.bond.width;
     ctx.strokeStyle = s.bond.color;
 
-    this.cache.get('position.lines').each(function(l) {
+    $ext.each(this.cache.get('position.lines'), function(l) {
       if(l.n) {
         ctx.drawDashedLine(l.x1, l.y1, l.x2, l.y2, l.n);
       } else {
@@ -386,7 +386,7 @@ Bond.prototype = {
     ctx.lineWidth = s.bond.connector_width;
     ctx.strokeStyle = s.bond.connector_color;
 
-    return this.cache.get('position.connectors').each(function(c) {
+    $ext.each(this.cache.get('position.connectors'), function(c) {
       ctx.beginPath();
       ctx.arc(c.x, c.y, c.r, c.s, c.e);
       ctx.stroke();

@@ -144,7 +144,7 @@ Molecule.prototype = {
     var molecule = this;
     this.mv.getMoleculeData(this.data_str, function(md) {
       molecule.mv.showOverlay("Initializing atom positions...");
-      md.atoms.each(function(atom) {
+      $ext.each(md.atoms, function(atom) {
         var a = molecule.atoms.get(atom.id);
         a.x = atom.x;
         a.y = atom.y;

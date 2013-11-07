@@ -13,8 +13,8 @@ BondList.prototype = {
   init: function(molecule, bonds) {
     this.molecule = molecule;
     this.bonds = new Array();
-    bonds.each(function(bond, list) {
-      list.bonds.push(new Bond(list, bond.id, molecule.atoms.get(bond.a1),
+    $ext.each(bonds, function(bond) {
+      this.bonds.push(new Bond(this, bond.id, molecule.atoms.get(bond.a1),
           molecule.atoms.get(bond.a2), bond.bond_type));
     }, this);
     this.cache = new Cache();
@@ -48,8 +48,8 @@ BondList.prototype = {
   /*
    * Apply a function to each bond in this list.
    */
-  each: function(f, that) {
-    return this.bonds.each(f, that);
+  each: function(f, scope) {
+    return $ext.each(this.bonds, f, scope);
   },
 
   /*

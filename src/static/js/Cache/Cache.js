@@ -40,7 +40,7 @@ Cache.prototype = {
   },
 
   __getSubCache: function(name) {
-    return this.__subcaches.each(function(c) {
+    return $ext.each(this.__subcaches, function(c) {
       if(c.name === name) {
         return c;
       }
@@ -48,8 +48,8 @@ Cache.prototype = {
   },
 
   __checkDependencies: function() {
-    var clean = this.__dependencies.each(function(d, cache) {
-      if(cache.__ts < d.__ts) {
+    var clean = $ext.each(this.__dependencies, function(d) {
+      if(this.__ts < d.__ts) {
         return false;
       }
       if(!d.__checkDependencies()) {
@@ -96,7 +96,7 @@ Cache.prototype = {
       }
     } else {
       delete this.__value;
-      this.__subcaches.each(function(c) {
+      $ext.each(this.__subcaches, function(c) {
         c.clear();
       });
     }

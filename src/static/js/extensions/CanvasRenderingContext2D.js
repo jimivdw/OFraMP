@@ -57,21 +57,21 @@ CanvasRenderingContext2D.prototype.drawDashedLine = function(x1, y1, x2, y2, n) 
 CanvasRenderingContext2D.prototype.textLines = function(w, h, text, hard_wrap) {
   var lines = Array();
   var hard_lines = text.trim().split("\n");
-  hard_lines.each(function(hard_line, ctx) {
-    if(ctx.measureText(hard_line).width > w) {
+  $ext.each(hard_lines, function(hard_line) {
+    if(this.measureText(hard_line).width > w) {
       var line = "";
       var words = hard_line.split(" ");
-      words.each(function(word) {
+      $ext.each(words, function(word) {
         var nline = line + word + " ";
-        if(ctx.measureText(nline).width > w) {
+        if(this.measureText(nline).width > w) {
           lines.push(line);
 
-          if(ctx.measureText(word).width > w && hard_wrap) {
+          if(this.measureText(word).width > w && hard_wrap) {
             line = "";
             var chars = word.split("");
-            chars.each(function(char) {
+            $ext.each(chars, function(char) {
               var nline = line + char;
-              if(ctx.measureText(nline).width > w) {
+              if(this.measureText(nline).width > w) {
                 lines.push(line);
                 line = char;
               } else {
@@ -124,9 +124,9 @@ CanvasRenderingContext2D.prototype.boxedFillText = function(x, y, w, h, text,
     }
   }
 
-  lines.each(function(line, ctx) {
+  $ext.each(lines, function(line) {
     if(y <= max_y) {
-      ctx.fillText(line, x, y);
+      this.fillText(line, x, y);
     }
     y += lineHeight;
   }, this);

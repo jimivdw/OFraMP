@@ -23,7 +23,7 @@ Array.prototype.min = function() {
  */
 Array.prototype.sum = function() {
   var sum = 0;
-  this.each(function(e) {
+  $ext.each(this, function(e) {
     sum += e;
   });
   return sum;
@@ -45,22 +45,6 @@ Array.prototype.toBack = function(i) {
     return this.length;
   else
     return this.push(e);
-};
-
-/*
- * Apply a function f to each entry of an Array, as long as that function does
- * not return anyting.
- * 
- * The parameter that will be provided to the function and can be used for
- * 'this' scoping.
- */
-Array.prototype.each = function(f, that) {
-  for( var i = 0; i < this.length; i++) {
-    var r = f(this[i], that);
-    if(r !== undefined) {
-      return r;
-    }
-  }
 };
 
 /*

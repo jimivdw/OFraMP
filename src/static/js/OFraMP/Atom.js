@@ -61,8 +61,8 @@ Atom.prototype = {
     }
 
     var bonds = Array();
-    this.list.molecule.bonds.each(function(bond, atom) {
-      if(atom === bond.a1 || atom === bond.a2 && (!arom || bond.type == 4)) {
+    this.list.molecule.bonds.each(function(bond) {
+      if(this === bond.a1 || this === bond.a2 && (!arom || bond.type == 4)) {
         bonds.push(bond);
       }
     }, this);
@@ -249,7 +249,7 @@ Atom.prototype = {
     this.y += dy;
 
     this.clearCache('position');
-    this.getBonds().each(function(bond) {
+    $ext.each(this.getBonds(), function(bond) {
       bond.clearCache('position');
     });
     return this;
@@ -275,8 +275,8 @@ Atom.prototype = {
 
       var bas = c.bondedAtoms(arom);
 
-      var path = bas.each(function(ba, needle) {
-        if(ba === needle && p.length > 2) {
+      var path = $ext.each(bas, function(ba) {
+        if(ba === this && p.length > 2) {
           return p;
         }
 

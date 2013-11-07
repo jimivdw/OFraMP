@@ -14,8 +14,8 @@ AtomList.prototype = {
   init: function(molecule, atoms) {
     this.molecule = molecule;
     this.atoms = new Array();
-    atoms.each(function(atom, list) {
-      list.atoms.push(new Atom(list, atom.id, atom.element, atom.element_id,
+    $ext.each(atoms, function(atom) {
+      this.atoms.push(new Atom(this, atom.id, atom.element, atom.element_id,
           atom.x, atom.y));
     }, this);
     this.cache = new Cache();
@@ -49,8 +49,8 @@ AtomList.prototype = {
   /*
    * Apply a function f to each atom in this list.
    */
-  each: function(f, that) {
-    return this.atoms.each(f, that);
+  each: function(f, scope) {
+    return $ext.each(this.atoms, f, scope);
   },
 
   /*

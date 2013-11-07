@@ -178,11 +178,14 @@ dat.utils.common = (function () {
       }
 
       var COs = ["#", "rgb(", "rgba("];
-      return COs.each(function(co) {
+      var isCO = false;
+      this.each(COs, function(co) {
         if(o.indexOf(co) === 0) {
-          return true;
+          isCO = true;
+          return this.BREAK;
         }
       });
+      return isCO;
     }
   
   };

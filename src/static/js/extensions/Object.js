@@ -1,16 +1,3 @@
-Object.prototype.each = function(f, that) {
-  for( var k in this) {
-    if(Object.prototype[k] !== undefined) {
-      continue;
-    }
-
-    var r = f(k, that);
-    if(r !== undefined) {
-      return r;
-    }
-  }
-}
-
 /*
  * Merge two objects, either destructive (modify the current object) or
  * nondestructive (return a new object that is the merge result).
@@ -22,7 +9,7 @@ Object.prototype.merge = function(other, nondestructive) {
   } else {
     var r = this;
   }
-  other.each(function(k) {
+  $ext.each(other, function(_, k) {
     if(typeof r[k] === 'object') {
       r[k].merge(other[k]);
     } else {
@@ -43,8 +30,8 @@ Object.prototype.copy = function() {
  * Extract all key-value pairs of an object into another tgt object.
  */
 Object.prototype.extract = function(tgt) {
-  this.each(function(k, _this) {
-    tgt[k] = _this[k];
+  $ext.each(this, function(_, k) {
+    tgt[k] = this[k];
   }, this);
 };
 
@@ -71,10 +58,10 @@ Object.prototype.show = function() {
  */
 extrapolate = function(obj) {
   var r = {};
-  obj.each(function(k) {
+  $ext.each(obj, function(_, k) {
     var parts = k.split(",");
     if(parts.length > 1) {
-      parts.each(function(part) {
+      $ext.each(parts, function(part) {
         part = part.trim();
         if(r[part]) {
           r[part].merge(obj[k]);
