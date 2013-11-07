@@ -38,7 +38,7 @@ Bond.prototype = {
     var visible = (s.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
         && (this.a1.isVisible() || this.a2.isVisible());
     this.cache.set('position.visible', visible, this.cache
-        .getCache('appearance'));
+        .getCache('appearance.visible'));
     return visible;
   },
 
@@ -247,7 +247,9 @@ Bond.prototype = {
       }
     }
 
-    this.cache.set('position.lines', lines, this.cache.getCache('appearance'));
+    this.cache.set('position.lines', lines, [
+        this.cache.getCache('appearance.lines'),
+        this.cache.getCache('appearance.visible')]);
   },
 
   /*
@@ -318,8 +320,9 @@ Bond.prototype = {
       });
     }
 
-    this.cache.set('position.connectors', connectors, this.cache
-        .getCache('appearance'));
+    this.cache.set('position.connectors', connectors, [
+        this.cache.getCache('appearance.connectors'),
+        this.cache.getCache('appearance.visible')]);
   },
 
   /*
@@ -331,8 +334,9 @@ Bond.prototype = {
     }
 
     if(!this.isVisible()) {
-      this.cache.set('position.connectors', [], this.cache
-          .getCache('appearance'));
+      this.cache.set('position.connectors', [], [
+          this.cache.getCache('appearance.connectors'),
+          this.cache.getCache('appearance.visible')]);
       return;
     }
 

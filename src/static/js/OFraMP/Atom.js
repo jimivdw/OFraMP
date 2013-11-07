@@ -45,7 +45,7 @@ Atom.prototype = {
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
 
     this.cache.set('position.visible', visible, this.cache
-        .getCache('appearance'));
+        .getCache('appearance.visible'));
     return visible;
   },
 
