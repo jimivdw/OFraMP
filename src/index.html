@@ -104,7 +104,7 @@
         dl.onclick = function() {
           var data = mv.canvas.toDataURL('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-          var date = new Date().format("%Y%m%d%H%M%S");
+          var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";
         };
 
