@@ -26,7 +26,8 @@ Molecule.prototype = {
       return this.cache.get('position.width');
     }
     var w = this.atoms.width();
-    this.cache.set('position.width', w, this.cache.getCache('appearance'));
+    this.cache.set('position.width', w, this.cache
+        .getCache('appearance.radius'));
     return w;
   },
 
@@ -38,7 +39,8 @@ Molecule.prototype = {
       return this.cache.get('position.height');
     }
     var h = this.atoms.height();
-    this.cache.set('position.height', h, this.cache.getCache('appearance'));
+    this.cache.set('position.height', h, this.cache
+        .getCache('appearance.radius'));
     return h;
   },
 
