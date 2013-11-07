@@ -55,8 +55,8 @@ BondList.prototype = {
   /*
    * Mapping function for the list of bonds.
    */
-  map: function(f, that) {
-    return this.bonds.mapF(f, that);
+  map: function(f, scope) {
+    return $ext.array.map(this.bonds, f, scope);
   },
 
   /*
@@ -66,9 +66,9 @@ BondList.prototype = {
     if(this.cache.get('position.shortest_length')) {
       return this.cache.get('position.shortest_length');
     }
-    var sl = this.map(function(b) {
+    var sl = $ext.array.min(this.map(function(b) {
       return b.length();
-    }).min();
+    }));
     this.cache.set('position.shortest_length', sl);
     return sl;
   },
@@ -80,9 +80,9 @@ BondList.prototype = {
     if(this.cache.get('position.shortest_distance')) {
       return this.cache.get('position.shortest_distance');
     }
-    var sd = this.map(function(b) {
+    var sd = $ext.array.min(this.map(function(b) {
       return b.a1.distance(b.a2);
-    }).min();
+    }));
     this.cache.set('position.shortest_distance', sd);
     return sd;
   },
@@ -94,9 +94,9 @@ BondList.prototype = {
     if(this.cache.get('position.average_distance')) {
       return this.cache.get('position.average_distance');
     }
-    var ad = this.map(function(b) {
+    var ad = $ext.array.avg(this.map(function(b) {
       return b.a1.distance(b.a2);
-    }).avg();
+    }));
     this.cache.set('position.average_distance', ad);
     return ad;
   },
@@ -108,9 +108,9 @@ BondList.prototype = {
     if(this.cache.get('position.longest_distance')) {
       return this.cache.get('position.longest_distance');
     }
-    var ld = this.map(function(b) {
+    var ld = $ext.array.max(this.map(function(b) {
       return b.a1.distance(b.a2);
-    }).max();
+    }));
     this.cache.set('position.longest_distance', ld);
     return ld;
   },

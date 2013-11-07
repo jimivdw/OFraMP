@@ -97,7 +97,8 @@ Date.prototype.isLeapYear = function() {
  * Get the day number in the year this Date represents.
  */
 Date.prototype.getDayOfYear = function() {
-  var d = MONTH_LENGTHS.rslice(this.getMonth()).sum() + this.getDate();
+  var d = $ext.array.sum($ext.array.rslice(MONTH_LENGTHS, this.getMonth()))
+      + this.getDate();
   if(this.isLeapYear() && this.getMonth() > 1) {
     d += 1;
   }

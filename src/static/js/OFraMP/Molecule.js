@@ -297,10 +297,10 @@ Molecule.prototype = {
         var c = b1.intersection(b2);
         if(c) {
           var atoms = [b1.a1, b1.a2, b2.a1, b2.a2];
-          var bcs = atoms.map(function(a) {
+          var bcs = $ext.array.map(atoms, function(a) {
             return a.bondCount();
           });
-          var a = atoms[bcs.indexOf(bcs.min())];
+          var a = atoms[bcs.indexOf($ext.array.min(bcs))];
 
           var dx = c.x - a.x;
           var dy = c.y - a.y;

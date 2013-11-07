@@ -56,8 +56,8 @@ AtomList.prototype = {
   /*
    * Mapping function for a list of atoms.
    */
-  map: function(f, that) {
-    return this.atoms.mapF(f, that);
+  map: function(f, scope) {
+    return $ext.array.map(this.atoms, f, scope);
   },
 
   /*
@@ -100,12 +100,12 @@ AtomList.prototype = {
       return this.cache.get('position.left_top');
     }
     var lt = {
-      x: this.map(function(atom) {
+      x: $ext.array.min(this.map(function(atom) {
         return atom.x - atom.getRadius();
-      }).min(),
-      y: this.map(function(atom) {
+      })),
+      y: $ext.array.min(this.map(function(atom) {
         return atom.y - atom.getRadius();
-      }).min()
+      }))
     };
     this.cache.set('position.left_top', lt, this.cache
         .getCache('appearance.radius'));
@@ -120,12 +120,12 @@ AtomList.prototype = {
       return this.cache.get('position.right_bottom');
     }
     var rb = {
-      x: this.map(function(atom) {
+      x: $ext.array.max(this.map(function(atom) {
         return atom.x + atom.getRadius();
-      }).max(),
-      y: this.map(function(atom) {
+      })),
+      y: $ext.array.max(this.map(function(atom) {
         return atom.y + atom.getRadius();
-      }).max()
+      }))
     };
     this.cache.set('position.right_bottom', rb, this.cache
         .getCache('appearance.radius'));
@@ -206,7 +206,7 @@ AtomList.prototype = {
         h.status = ATOM_STATUSES.hover;
 
         // Bring to back of list to be drawn last (on top).
-        this.atoms.toBack(this.indexOf(h.id));
+        $ext.array.toBack(this.atoms, this.indexOf(h.id));
         changed = true;
       }
       if(h.status === ATOM_STATUSES.hover) {
@@ -242,7 +242,7 @@ AtomList.prototype = {
       s.status = ATOM_STATUSES.selected;
 
       // Bring to back of list to be drawn last (on top).
-      this.atoms.toBack(this.indexOf(s.id));
+      $ext.array.toBack(this.atoms, this.indexOf(s.id));
       c.style.cursor = t.cursor.normal;
       changed = true;
     }
