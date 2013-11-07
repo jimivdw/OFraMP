@@ -1,25 +1,4 @@
 /*
- * Merge two objects, either destructive (modify the current object) or
- * nondestructive (return a new object that is the merge result).
- */
-Object.prototype.merge = function(other, nondestructive) {
-  if(nondestructive) {
-    var r = {};
-    this.extract(r);
-  } else {
-    var r = this;
-  }
-  $ext.each(other, function(_, k) {
-    if(typeof r[k] === 'object') {
-      r[k].merge(other[k]);
-    } else {
-      r[k] = other[k];
-    }
-  });
-  return r;
-};
-
-/*
  * Extract all key-value pairs of an object into another tgt object.
  */
 Object.prototype.extract = function(tgt) {
@@ -57,7 +36,7 @@ extrapolate = function(obj) {
       $ext.each(parts, function(part) {
         part = part.trim();
         if(r[part]) {
-          r[part].merge(obj[k]);
+          $ext.merge(r[part], obj[k]);
         } else {
           r[part] = $ext.copy(obj[k]);
         }
@@ -66,7 +45,7 @@ extrapolate = function(obj) {
       if(typeof obj[k] === "object") {
         var e = extrapolate(obj[k]);
         if(r[k]) {
-          r[k].merge(e);
+          $ext.merge(r[k], e);
         } else {
           r[k] = e;
         }
