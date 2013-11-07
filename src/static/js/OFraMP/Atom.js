@@ -86,8 +86,8 @@ Atom.prototype = {
       return this.cache.get('structure.atoms');
     }
 
-    var bonded_atoms = this.getBonds(arom).mapF(function(b, atom) {
-      return b.a1 === atom ? b.a2 : b.a1;
+    var bonded_atoms = $ext.array.map(this.getBonds(arom), function(b) {
+      return b.a1 === this ? b.a2 : b.a1;
     }, this);
 
     if(arom) {
