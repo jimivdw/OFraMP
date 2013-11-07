@@ -350,7 +350,7 @@ Molecule.prototype = {
 
   clearCache: function(name) {
     this.cache.clear(name);
-    // this.mv.clearCache(name);
+    this.mv.clearCache(name);
   },
 
   /*

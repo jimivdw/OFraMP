@@ -12,6 +12,8 @@ MoleculeViewer.prototype = {
   overlay_status: 1,
 
   settings: undefined,
+  
+  cache: undefined,
 
   init: function(canvas_id, settings) {
     this.canvas = document.getElementById(canvas_id);
@@ -23,6 +25,8 @@ MoleculeViewer.prototype = {
     if(this.settings.interactive) {
       this.init_interaction();
     }
+    
+    this.cache = new Cache();
   },
 
   init_context: function() {
@@ -198,22 +202,6 @@ MoleculeViewer.prototype = {
   },
 
   /*
-   * Redraw the canvas.
-   */
-  redraw: function() {
-    this.ctx.clear();
-    this.init_context();
-
-    if(this.molecule) {
-      this.molecule.draw();
-    }
-
-    if(this.overlay_showing) {
-      this.showOverlay();
-    }
-  },
-
-  /*
    * Move the molecule dx in the x direction and dy on the y axis.
    */
   move: function(dx, dy) {
@@ -341,5 +329,25 @@ MoleculeViewer.prototype = {
 
     this.molecule.resetPositions();
     this.redraw();
+  },
+  
+  clearCache: function(name) {
+    this.cache.clear(name);
+  },
+
+  /*
+   * Redraw the canvas.
+   */
+  redraw: function() {
+    this.ctx.clear();
+    this.init_context();
+
+    if(this.molecule) {
+      this.molecule.draw();
+    }
+
+    if(this.overlay_showing) {
+      this.showOverlay();
+    }
   }
 };
