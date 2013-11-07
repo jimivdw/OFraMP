@@ -170,21 +170,21 @@ Bond.prototype = {
     var s = this.list.molecule.mv.settings;
 
     if(this.isVisible() && a1.distance(a2) >= a1.getRadius() + a2.getRadius()) {
-      this.coords().extract(window);
+      var c = this.coords();
       // Inner line for single/triple bonds
       if(this.type == 1 || this.type == 3) {
         lines.push({
-          x1: x1,
-          y1: y1,
-          x2: x2,
-          y2: y2
+          x1: c.x1,
+          y1: c.y1,
+          x2: c.x2,
+          y2: c.y2
         });
       }
 
       // Outer lines for double/triple/aromatic bonds
       if(this.type > 1) {
-        dx = x2 - x1;
-        dy = y2 - y1;
+        dx = c.x2 - c.x1;
+        dy = c.y2 - c.y1;
         dist = Math.sqrt(dx * dx + dy * dy);
 
         ddx = dy * s.bond.spacing / dist;
@@ -194,54 +194,54 @@ Bond.prototype = {
           // Find the center of the aromatic cycle
           var cycle = this.a2.findCycle();
           var center = new AtomList(this.list.molecule, cycle).centerPoint();
-          var cdx1 = center.x - (x1 + ddx);
-          var cdy1 = center.y - (y1 - ddy);
-          var cdx2 = center.x - (x1 - ddx);
-          var cdy2 = center.y - (y1 + ddy);
+          var cdx1 = center.x - (c.x1 + ddx);
+          var cdy1 = center.y - (c.y1 - ddy);
+          var cdx2 = center.x - (c.x1 - ddx);
+          var cdy2 = center.y - (c.y1 + ddy);
           var cdist1 = Math.sqrt(cdx1 * cdx1 + cdy1 * cdy1);
           var cdist2 = Math.sqrt(cdx2 * cdx2 + cdy2 * cdy2);
 
           if(cdist1 > cdist2) {
             lines.push({
-              x1: x1 + ddx,
-              y1: y1 - ddy,
-              x2: x2 + ddx,
-              y2: y2 - ddy
+              x1: c.x1 + ddx,
+              y1: c.y1 - ddy,
+              x2: c.x2 + ddx,
+              y2: c.y2 - ddy
             });
             lines.push({
-              x1: x1 - ddx,
-              y1: y1 + ddy,
-              x2: x2 - ddx,
-              y2: y2 + ddy,
+              x1: c.x1 - ddx,
+              y1: c.y1 + ddy,
+              x2: c.x2 - ddx,
+              y2: c.y2 + ddy,
               n: s.bond.dash_count
             });
           } else {
             lines.push({
-              x1: x1 - ddx,
-              y1: y1 + ddy,
-              x2: x2 - ddx,
-              y2: y2 + ddy
+              x1: c.x1 - ddx,
+              y1: c.y1 + ddy,
+              x2: c.x2 - ddx,
+              y2: c.y2 + ddy
             });
             lines.push({
-              x1: x1 + ddx,
-              y1: y1 - ddy,
-              x2: x2 + ddx,
-              y2: y2 - ddy,
+              x1: c.x1 + ddx,
+              y1: c.y1 - ddy,
+              x2: c.x2 + ddx,
+              y2: c.y2 - ddy,
               n: s.bond.dash_count
             });
           }
         } else {
           lines.push({
-            x1: x1 + ddx,
-            y1: y1 - ddy,
-            x2: x2 + ddx,
-            y2: y2 - ddy
+            x1: c.x1 + ddx,
+            y1: c.y1 - ddy,
+            x2: c.x2 + ddx,
+            y2: c.y2 - ddy
           });
           lines.push({
-            x1: x1 - ddx,
-            y1: y1 + ddy,
-            x2: x2 - ddx,
-            y2: y2 + ddy
+            x1: c.x1 - ddx,
+            y1: c.y1 + ddy,
+            x2: c.x2 - ddx,
+            y2: c.y2 + ddy
           });
         }
       }
