@@ -339,7 +339,5 @@ AtomList.prototype = {
     this.each(function(a) {
       a.draw();
     });
-    var cp = this.centerPoint();
-    this.molecule.mv.ctx.fillRect(cp.x - 10, cp.y - 10, 20, 20);
   }
 };
