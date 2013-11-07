@@ -359,9 +359,9 @@ Bond.prototype = {
 
     $ext.each(this.cache.get('position.lines'), function(l) {
       if(l.n) {
-        ctx.drawDashedLine(l.x1, l.y1, l.x2, l.y2, l.n);
+        $ext.context.dashedLine(ctx, l.x1, l.y1, l.x2, l.y2, l.n);
       } else {
-        ctx.drawLine(l.x1, l.y1, l.x2, l.y2);
+        $ext.context.line(ctx, l.x1, l.y1, l.x2, l.y2);
       }
     });
 

@@ -12,7 +12,7 @@ MoleculeViewer.prototype = {
   overlay_status: 1,
 
   settings: undefined,
-  
+
   cache: undefined,
 
   init: function(canvas_id, settings) {
@@ -25,7 +25,7 @@ MoleculeViewer.prototype = {
     if(this.settings.interactive) {
       this.init_interaction();
     }
-    
+
     this.cache = new Cache();
   },
 
@@ -183,8 +183,9 @@ MoleculeViewer.prototype = {
     ctx.font = this.settings.popup.font;
     ctx.fillStyle = this.settings.popup.color;
     var p = this.settings.popup.padding + bw;
-    ctx.boxedFillText(this.canvas.width / 2, this.canvas.height / 2,
-        this.canvas.width - 2 * p, this.canvas.height - 2 * p, msg, true);
+    $ext.context.boxedFillText(ctx, this.canvas.width / 2,
+        this.canvas.height / 2, this.canvas.width - 2 * p, this.canvas.height
+            - 2 * p, msg, true);
 
     this.canvas.style.cursor = this.settings.cursor.normal;
 
@@ -330,7 +331,7 @@ MoleculeViewer.prototype = {
     this.molecule.resetPositions();
     this.redraw();
   },
-  
+
   clearCache: function(name) {
     this.cache.clear(name);
   },
@@ -339,7 +340,7 @@ MoleculeViewer.prototype = {
    * Redraw the canvas.
    */
   redraw: function() {
-    this.ctx.clear();
+    $ext.context.clear(this.ctx);
     this.init_context();
 
     if(this.molecule) {

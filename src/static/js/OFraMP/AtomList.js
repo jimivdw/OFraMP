@@ -285,7 +285,7 @@ AtomList.prototype = {
    * Center the list of atoms.
    */
   center: function() {
-    var cc = this.molecule.mv.ctx.centerPoint();
+    var cc = $ext.context.centerPoint(this.molecule.mv.ctx);
     var mc = this.centerPoint();
     var dx = cc.x - mc.x;
     var dy = cc.y - mc.y;
