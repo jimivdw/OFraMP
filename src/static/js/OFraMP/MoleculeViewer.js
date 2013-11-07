@@ -20,7 +20,7 @@ MoleculeViewer.prototype = {
     this.ctx = this.canvas.getContext('2d');
     this.init_context();
 
-    this.settings = DEFAULT_SETTINGS.copy().merge(settings);
+    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
 
     if(this.settings.interactive) {
       this.init_interaction();

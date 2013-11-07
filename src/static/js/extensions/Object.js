@@ -20,13 +20,6 @@ Object.prototype.merge = function(other, nondestructive) {
 };
 
 /*
- * Create a copy of an object.
- */
-Object.prototype.copy = function() {
-  return this.merge({}, true);
-};
-
-/*
  * Extract all key-value pairs of an object into another tgt object.
  */
 Object.prototype.extract = function(tgt) {
@@ -66,7 +59,7 @@ extrapolate = function(obj) {
         if(r[part]) {
           r[part].merge(obj[k]);
         } else {
-          r[part] = obj[k].copy();
+          r[part] = $ext.copy(obj[k]);
         }
       });
     } else {
