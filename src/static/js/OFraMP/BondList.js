@@ -63,38 +63,58 @@ BondList.prototype = {
    * Get the shortest bond length.
    */
   shortestLength: function() {
-    return this.map(function(b) {
+    if(this.cache.get('position.shortest_length')) {
+      return this.cache.get('position.shortest_length');
+    }
+    var sl = this.map(function(b) {
       return b.length();
     }).min();
+    this.cache.set('position.shortest_length', sl);
+    return sl;
   },
 
   /*
    * Get the shortest distance between two atoms over all bonds in this list.
    */
   shortestDistance: function() {
-    return this.map(function(b) {
+    if(this.cache.get('position.shortest_distance')) {
+      return this.cache.get('position.shortest_distance');
+    }
+    var sd = this.map(function(b) {
       return b.a1.distance(b.a2);
     }).min();
+    this.cache.set('position.shortest_distance', sd);
+    return sd;
   },
 
   /*
    * Get the average distance between two atoms over all bonds in this list.
    */
   averageDistance: function() {
-    return this.map(function(b) {
+    if(this.cache.get('position.average_distance')) {
+      return this.cache.get('position.average_distance');
+    }
+    var ad = this.map(function(b) {
       return b.a1.distance(b.a2);
     }).avg();
+    this.cache.set('position.average_distance', ad);
+    return ad;
   },
 
   /*
    * Get the longest distance between two atoms over all bonds in this list.
    */
   longestDistance: function() {
-    return this.map(function(b) {
+    if(this.cache.get('position.longest_distance')) {
+      return this.cache.get('position.longest_distance');
+    }
+    var ld = this.map(function(b) {
       return b.a1.distance(b.a2);
     }).max();
+    this.cache.set('position.longest_distance', ld);
+    return ld;
   },
-  
+
   clearCache: function(name) {
     this.cache.clear(name);
     // this.molecule.clearCache(name);
