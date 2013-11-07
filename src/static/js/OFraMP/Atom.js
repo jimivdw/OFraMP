@@ -44,7 +44,8 @@ Atom.prototype = {
         && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
 
-    this.cache.set('position.visible', visible, this.cache.getCache('appearance'));
+    this.cache.set('position.visible', visible, this.cache
+        .getCache('appearance'));
     return visible;
   },
 
@@ -53,10 +54,10 @@ Atom.prototype = {
    * when arom is set to true.
    */
   getBonds: function(arom) {
-    if(arom && this.cache.get('molecule.arom_bonds')) {
-      return this.cache.get('molecule.arom_bonds');
-    } else if(!arom && this.cache.get('molecule.bonds')) {
-      return this.cache.get('molecule.bonds');
+    if(arom && this.cache.get('structure.arom_bonds')) {
+      return this.cache.get('structure.arom_bonds');
+    } else if(!arom && this.cache.get('structure.bonds')) {
+      return this.cache.get('structure.bonds');
     }
 
     var bonds = Array();
@@ -67,9 +68,9 @@ Atom.prototype = {
     }, this);
 
     if(arom) {
-      this.cache.set('molecule.arom_bonds', bonds);
+      this.cache.set('structure.arom_bonds', bonds);
     } else {
-      this.cache.set('molecule.bonds', bonds);
+      this.cache.set('structure.bonds', bonds);
     }
     return bonds;
   },
@@ -79,10 +80,10 @@ Atom.prototype = {
    * atom has an aromatic bond when arom is set to true.
    */
   bondedAtoms: function(arom) {
-    if(arom && this.cache.get('molecule.arom_atoms')) {
-      return this.cache.get('molecule.arom_atoms');
-    } else if(!arom && this.cache.get('molecule.atoms')) {
-      return this.cache.get('molecule.atoms');
+    if(arom && this.cache.get('structure.arom_atoms')) {
+      return this.cache.get('structure.arom_atoms');
+    } else if(!arom && this.cache.get('structure.atoms')) {
+      return this.cache.get('structure.atoms');
     }
 
     var bonded_atoms = this.getBonds(arom).mapF(function(b, atom) {
@@ -90,9 +91,9 @@ Atom.prototype = {
     }, this);
 
     if(arom) {
-      this.cache.set('molecule.arom_atoms', bonded_atoms);
+      this.cache.set('structure.arom_atoms', bonded_atoms);
     } else {
-      this.cache.set('molecule.atoms', bonded_atoms);
+      this.cache.set('structure.atoms', bonded_atoms);
     }
     return bonded_atoms;
   },
@@ -101,17 +102,17 @@ Atom.prototype = {
    * Get the number of bonds this atom has, or just the aromatic ones.
    */
   bondCount: function(arom) {
-    if(arom && this.cache.get('molecule.arom_bond_count')) {
-      return this.cache.get('molecule.arom_bond_count');
-    } else if(!arom && this.cache.get('molecule.bond_count')) {
-      return this.cache.get('molecule.bond_count');
+    if(arom && this.cache.get('structure.arom_bond_count')) {
+      return this.cache.get('structure.arom_bond_count');
+    } else if(!arom && this.cache.get('structure.bond_count')) {
+      return this.cache.get('structure.bond_count');
     }
 
     var bond_count = this.getBonds(arom).length;
     if(arom) {
-      this.cache.get('molecule.arom_bond_count', bond_count);
+      this.cache.get('structure.arom_bond_count', bond_count);
     } else {
-      this.cache.get('molecule.bond_count', bond_count);
+      this.cache.get('structure.bond_count', bond_count);
     }
     return bond_count;
   },
@@ -260,10 +261,10 @@ Atom.prototype = {
    * If arom is set to true, only aromatic cycles will be considered.
    */
   findCycle: function(arom) {
-    if(arom && this.cache.get('molecule.arom_cycle')) {
-      return this.cache.get('molecule.arom_cycle');
-    } else if(!arom && this.cache.get('molecule.cycle')) {
-      return this.cache.get('molecule.cycle');
+    if(arom && this.cache.get('structure.arom_cycle')) {
+      return this.cache.get('structure.arom_cycle');
+    } else if(!arom && this.cache.get('structure.cycle')) {
+      return this.cache.get('structure.cycle');
     }
 
     var q = [this];
@@ -287,15 +288,15 @@ Atom.prototype = {
 
       if(path) {
         if(arom) {
-          this.cache.set('molecule.arom_cycle', path);
+          this.cache.set('structure.arom_cycle', path);
         } else {
-          this.cache.set('molecule.cycle', path);
+          this.cache.set('structure.cycle', path);
         }
         return path;
       }
     }
   },
-  
+
   /*
    * Clear the given cache of this atom and its parent.
    */
