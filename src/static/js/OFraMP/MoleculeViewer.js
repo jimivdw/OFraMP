@@ -37,19 +37,19 @@ MoleculeViewer.prototype = {
   init_interaction: function() {
     var mv = this;
 
-    // TODO: Not supported in Firefox!
-    this.canvas.onmousewheel = function(e) {
+    $ext.dom.onWheel(this.canvas, function(e) {
       if(!mv.overlay_showing) {
-        if(e.wheelDelta > 0) {
+        if(e.deltaY < 0) {
           var f = mv.settings.zoom.factor;
         } else {
           var f = 1 / mv.settings.zoom.factor;
         }
-        mv.zoomOn(e.offsetX, e.offsetY, f);
+        var c = $ext.mouse.getCoords(e);
+        mv.zoomOn(c.x, c.y, f);
 
         return false;
       }
-    };
+    });
 
     this.canvas.onmousedown = function(e) {
       if(!mv.overlay_showing) {
@@ -123,7 +123,8 @@ MoleculeViewer.prototype = {
         var md = JSON.parse(xhr.response);
         console.log("md", md);
 
-        var vc = $ext.string.versionCompare(mv.settings.oapoc.version, md.version);
+        var vc = $ext.string.versionCompare(mv.settings.oapoc.version,
+            md.version);
         if(vc == -1) {
           var msg = "OAPoC version too old." + "\n\nRequired version: "
               + mv.settings.oapoc.version + "\nCurrent version: " + md.version;
