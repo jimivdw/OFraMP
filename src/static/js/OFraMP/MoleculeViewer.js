@@ -51,53 +51,31 @@ MoleculeViewer.prototype = {
       }
     });
 
-    this.canvas.onmousedown = function(e) {
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!mv.overlay_showing) {
-        var c = $ext.mouse.getCoords(e);
-        var a = mv.molecule.atomAt(c.x, c.y);
-        if(a) {
-          if(mv.molecule.setSelected(a))
-            mv.redraw();
-        } else {
-          mv.lastX = c.x;
-          mv.lastY = c.y;
-          mv.mouseDown = true;
-        }
+        mv.move(e.deltaX, e.deltaY);
       }
-    };
+    });
 
+    // TODO: mouseMove only when NOT dragging
     this.canvas.onmousemove = function(e) {
       if(!mv.overlay_showing) {
         var c = $ext.mouse.getCoords(e);
-        if(mv.mouseDown) {
-          var dx = c.x - mv.lastX;
-          var dy = c.y - mv.lastY;
-          mv.move(dx, dy);
-
-          mv.lastX = c.x;
-          mv.lastY = c.y;
-          mv.mouseDragged = true;
-        } else {
-          var a = mv.molecule.atomAt(c.x, c.y);
-          if(mv.molecule.setHover(a)) {
-            mv.redraw();
-          }
+        var a = mv.molecule.atomAt(c.x, c.y);
+        if(mv.molecule.setHover(a)) {
+          mv.redraw();
         }
       }
     };
 
-    document.onmouseup = function(e) {
+    // TODO: replace with onClick without drag
+    this.canvas.onmouseup = function(e) {
       if(!mv.overlay_showing) {
-        if(e.target === mv.canvas && !mv.mouseDragged) {
-          var c = $ext.mouse.getCoords(e);
-          if(!mv.molecule.atomAt(c.x, c.y)) {
-            if(mv.molecule.setSelected()) {
-              mv.redraw();
-            }
-          }
+        var c = $ext.mouse.getCoords(e);
+        var a = mv.molecule.atomAt(c.x, c.y);
+        if(mv.molecule.setSelected(a)) {
+          mv.redraw();
         }
-        mv.mouseDown = false;
-        mv.mouseDragged = false;
       }
     };
   },

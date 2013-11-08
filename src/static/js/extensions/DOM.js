@@ -4,10 +4,21 @@ $ext.extend($ext, {
       elem = elem || window;
       useCapture = useCapture || false;
 
-      if(window.addEventListener) {
+      if(elem.addEventListener) {
         return elem.addEventListener(type, callback, useCapture);
       } else {
         return elem.attachEvent(type, callback, useCapture);
+      }
+    },
+
+    removeEventListener: function(elem, type, callback, useCapture) {
+      elem = elem || window;
+      useCapture = useCapture || false;
+
+      if(elem.removeEventListener) {
+        return elem.removeEventListener(type, callback, useCapture);
+      } else {
+        return elem.detachEvent(type, callback, useCapture);
       }
     },
 
@@ -91,6 +102,60 @@ $ext.extend($ext, {
             // it's time to fire the callback
             return callback(event);
           }, useCapture);
+        }
+      }
+    },
+
+    MOUSE_DRAG_EPSILON: 2,
+
+    onMouseDrag: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mousedown", _onMouseDown);
+      this.addEventListener(elem, "mousemove", function(evt) {
+        if(!window.__mouseDragged === true) {
+          return;
+        }
+
+        if(window.__lastDragPos) {
+          var delta = {
+            deltaX: evt.clientX - window.__lastDragPos.clientX,
+            deltaY: evt.clientY - window.__lastDragPos.clientY
+          };
+        } else {
+          var delta = {
+            deltaX: evt.clientX - window.__downPos.clientX,
+            deltaY: evt.clientY - window.__downPos.clientY
+          };
+        }
+        window.__lastDragPos = {
+          clientX: evt.clientX,
+          clientY: evt.clientY
+        };
+
+        return callback($ext.merge(evt, delta));
+      });
+
+      function _onMouseDown(evt) {
+        window.__downPos = {
+          clientX: evt.clientX,
+          clientY: evt.clientY
+        };
+
+        $ext.dom.addEventListener(window, "mousemove", _onMouseMove);
+        $ext.dom.addEventListener(window, "mouseup", function() {
+          delete window.__mouseDragged;
+          delete window.__downPos;
+          delete window.__lastDragPos;
+          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
+        });
+      }
+
+      function _onMouseMove(evt) {
+        var dp = window.__downPos;
+        var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
+            + Math.pow(dp.clientY - evt.clientY, 2));
+        if(delta >= $ext.dom.MOUSE_DRAG_EPSILON) {
+          window.__mouseDragged = true;
+          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
         }
       }
     }
