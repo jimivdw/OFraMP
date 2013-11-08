@@ -37,7 +37,33 @@ MoleculeViewer.prototype = {
   init_interaction: function() {
     var mv = this;
 
-    $ext.dom.onWheel(this.canvas, function(e) {
+    $ext.dom.onMouseMove(this.canvas, function(e) {
+      if(!mv.overlay_showing) {
+        var c = $ext.mouse.getCoords(e);
+        var a = mv.molecule.atomAt(c.x, c.y);
+        if(mv.molecule.setHover(a)) {
+          mv.redraw();
+        }
+      }
+    });
+
+    $ext.dom.onMouseClick(this.canvas, function(e) {
+      if(!mv.overlay_showing) {
+        var c = $ext.mouse.getCoords(e);
+        var a = mv.molecule.atomAt(c.x, c.y);
+        if(mv.molecule.setSelected(a)) {
+          mv.redraw();
+        }
+      }
+    });
+
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
+      if(!mv.overlay_showing) {
+        mv.move(e.deltaX, e.deltaY);
+      }
+    });
+
+    $ext.dom.onMouseWheel(this.canvas, function(e) {
       if(!mv.overlay_showing) {
         if(e.deltaY < 0) {
           var f = mv.settings.zoom.factor;
@@ -50,34 +76,6 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
-
-    $ext.dom.onMouseDrag(this.canvas, function(e) {
-      if(!mv.overlay_showing) {
-        mv.move(e.deltaX, e.deltaY);
-      }
-    });
-
-    // TODO: mouseMove only when NOT dragging
-    this.canvas.onmousemove = function(e) {
-      if(!mv.overlay_showing) {
-        var c = $ext.mouse.getCoords(e);
-        var a = mv.molecule.atomAt(c.x, c.y);
-        if(mv.molecule.setHover(a)) {
-          mv.redraw();
-        }
-      }
-    };
-
-    // TODO: replace with onClick without drag
-    this.canvas.onmouseup = function(e) {
-      if(!mv.overlay_showing) {
-        var c = $ext.mouse.getCoords(e);
-        var a = mv.molecule.atomAt(c.x, c.y);
-        if(mv.molecule.setSelected(a)) {
-          mv.redraw();
-        }
-      }
-    };
   },
 
   /*

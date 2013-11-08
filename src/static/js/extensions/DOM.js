@@ -1,5 +1,8 @@
 $ext.extend($ext, {
   dom: {
+    /*
+     * Fairly cross-browser function for adding an eventListener to an element.
+     */
     addEventListener: function(elem, type, callback, useCapture) {
       elem = elem || window;
       useCapture = useCapture || false;
@@ -11,6 +14,10 @@ $ext.extend($ext, {
       }
     },
 
+    /*
+     * Fairly cross-browser function for removing an eventListener from an
+     * element.
+     */
     removeEventListener: function(elem, type, callback, useCapture) {
       elem = elem || window;
       useCapture = useCapture || false;
@@ -45,7 +52,7 @@ $ext.extend($ext, {
      * Based on the implementation from:
      * https://developer.mozilla.org/en-US/docs/Web/Reference/Events/wheel
      */
-    onWheel: function(elem, callback, useCapture) {
+    onMouseWheel: function(elem, callback, useCapture) {
       _onWheel(elem, this.wheelEventName, callback, useCapture);
       if(this.wheelEventName === "DOMMouseScroll") {
         _onWheel(elem, "MozMousePixelScroll", callback, useCapture);
@@ -106,12 +113,93 @@ $ext.extend($ext, {
       }
     },
 
+    // Minimal distance a mouse should move before a click becomes a drag.
     MOUSE_DRAG_EPSILON: 2,
 
-    onMouseDrag: function(elem, callback, useCapture) {
-      this.addEventListener(elem, "mousedown", _onMouseDown);
+    /*
+     * Attach a callback to the mousedown event on a given elem.
+     */
+    onMouseDown: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mousedown", function(evt) {
+        window.__mouseDown = true;
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
+    },
+
+    /*
+     * Attach a callback to the mouseup event on a given elem.
+     */
+    onMouseUp: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mouseup", function(evt) {
+        delete window.__mouseDown;
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
+    },
+
+    /*
+     * Attach a callback to the mousemove event on a given elem.
+     * 
+     * Note that, in this implementation, this event will only be fired when the
+     * mouse is moved but NOT down, i.e. the user is not dragging.
+     */
+    onMouseMove: function(elem, callback, useCapture) {
+      this.onMouseDown(elem);
+      this.onMouseUp(elem);
       this.addEventListener(elem, "mousemove", function(evt) {
-        if(!window.__mouseDragged === true) {
+        if(window.__mouseDown === true) {
+          return;
+        }
+
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
+    },
+
+    /*
+     * Attach a callback to the mouseclick event on a given elem.
+     * 
+     * Note that, in this implementation, this event will only be fired when the
+     * mouse is not moved more than MOUSE_DRAG_EPSILON, i.e. only when the user
+     * is not dragging.
+     */
+    onMouseClick: function(elem, callback, useCapture) {
+      this.onMouseDown(elem, function(evt) {
+        window.__lastDownPos = {
+          clientX: evt.clientX,
+          clientY: evt.clientY
+        };
+      }, useCapture);
+
+      this.onMouseUp(elem, function(evt) {
+        var dp = window.__lastDownPos;
+        var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
+            + Math.pow(dp.clientY - evt.clientY, 2));
+        if(dp && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
+          return callback(evt);
+        }
+        delete window.__lastDownPos;
+      }, useCapture);
+    },
+
+    /*
+     * Attach a callback for when the mouse is dragged on a given elem.
+     * 
+     * Note the difference between this event and the regular onDrag event.
+     */
+    onMouseDrag: function(elem, callback, useCapture) {
+      this.onMouseDown(elem, _onMouseDown, useCapture);
+      this.onMouseUp(window, function() {
+        delete window.__lastDragPos;
+        $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
+      }, useCapture);
+
+      this.addEventListener(elem, "mousemove", function(evt) {
+        if(window.__mouseDragged !== true || window.__mouseDown !== true) {
           return;
         }
 
@@ -122,40 +210,44 @@ $ext.extend($ext, {
           };
         } else {
           var delta = {
-            deltaX: evt.clientX - window.__downPos.clientX,
-            deltaY: evt.clientY - window.__downPos.clientY
+            deltaX: evt.clientX - window.__lastDownPos.clientX,
+            deltaY: evt.clientY - window.__lastDownPos.clientY
           };
         }
+        $ext.merge(delta, {
+          type: "mousedrag"
+        });
+
         window.__lastDragPos = {
           clientX: evt.clientX,
           clientY: evt.clientY
         };
 
-        return callback($ext.merge(evt, delta));
-      });
+        if(callback instanceof Function) {
+          return callback($ext.merge(evt, delta, true));
+        }
+      }, useCapture);
 
       function _onMouseDown(evt) {
-        window.__downPos = {
+        window.__mouseDown = true;
+        window.__mouseDragged = false;
+        window.__lastDownPos = {
           clientX: evt.clientX,
           clientY: evt.clientY
         };
 
-        $ext.dom.addEventListener(window, "mousemove", _onMouseMove);
-        $ext.dom.addEventListener(window, "mouseup", function() {
-          delete window.__mouseDragged;
-          delete window.__downPos;
-          delete window.__lastDragPos;
-          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
-        });
+        $ext.dom
+            .addEventListener(window, "mousemove", _onMouseMove, useCapture);
       }
 
       function _onMouseMove(evt) {
-        var dp = window.__downPos;
+        var dp = window.__lastDownPos;
         var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
             + Math.pow(dp.clientY - evt.clientY, 2));
-        if(delta >= $ext.dom.MOUSE_DRAG_EPSILON) {
+        if(delta > $ext.dom.MOUSE_DRAG_EPSILON) {
           window.__mouseDragged = true;
-          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
+          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove,
+              useCapture);
         }
       }
     }
