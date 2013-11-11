@@ -371,11 +371,16 @@ Bond.prototype = {
     });
 
     // Draw the bond ID
-    if(s.bond.show_id) {
+    if(s.bond.id.show && this.isVisible()) {
       var c = this.coords();
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect((c.x1 + c.x2) / 2 - 8, (c.y1 + c.y2) / 2 - 8, 16, 16);
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = s.bond.id.bg_color;
+      var r = s.bond.id.radius;
+      ctx.beginPath();
+      ctx.arc((c.x1 + c.x2) / 2, (c.y1 + c.y2) / 2, r, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.font = s.bond.id.font;
+      ctx.fillStyle = s.bond.id.color;
       ctx.fillText(this.id, (c.x1 + c.x2) / 2, (c.y1 + c.y2) / 2);
     }
   },

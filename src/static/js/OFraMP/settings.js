@@ -94,13 +94,19 @@ var DEFAULT_SETTINGS = {
   },
 
   bond: {
-    show_id: false,
     width: 1,
     color: "rgb(0, 0, 0)",
     connector_width: 3,
     connector_color: "rgb(0, 0, 0)",
     spacing: 4,
-    dash_count: 5
+    dash_count: 5,
+    id: {
+      show: false,
+      radius: 8,
+      bg_color: "rgb(205, 205, 205)",
+      font: "9px Arial",
+      color: "rgb(0, 0, 0)"
+    }
   }
 };
 
@@ -266,9 +272,21 @@ var SETTINGS_OPTIONS = {
         mv.redraw();
       }
     },
-    "show_id, width, color, connector_color": {
+    "width, color, connector_color": {
       onChange: function() {
         mv.redraw();
+      }
+    },
+    id: {
+      radius: {
+        min: 0,
+        max: 30,
+        step: 1
+      },
+      "show, radius, bg_color, font, color": {
+        onChange: function() {
+          mv.redraw();
+        }
       }
     }
   }
