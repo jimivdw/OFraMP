@@ -61,6 +61,32 @@ AtomList.prototype = {
   },
 
   /*
+   * Get the AtomList represented at a tree with Atom with id aid as the root.
+   */
+  toTree: function(aid) {
+    if(aid === undefined) {
+      var root = this.atoms[0];
+    } else {
+      var root = this.get(aid);
+    }
+
+    var tree = new Tree(root.id, root);
+    var q = [tree];
+    var pq = [[root.id]];
+    while(q.length > 0) {
+      var n = q.shift();
+      var p = pq.shift();
+      $ext.each(n.value.bondedAtoms(), function(atom) {
+        if(p.indexOf(atom.id) === -1) {
+          q.push(n.addChild(atom.id, atom));
+          pq.push(p.concat(atom.id));
+        }
+      });
+    }
+    return tree;
+  },
+
+  /*
    * Get the width of this AtomList.
    */
   width: function() {
