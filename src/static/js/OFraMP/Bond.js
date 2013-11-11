@@ -84,7 +84,8 @@ Bond.prototype = {
     var dx = c.x2 - c.x1;
     var dy = c.y2 - c.y1;
     var length = Math.sqrt(dx * dx + dy * dy);
-    this.cache.set('position.length', length);
+    this.cache.set('position.length', length, this.cache
+        .getCache('position.coords'));
     return length;
   },
 
@@ -250,7 +251,8 @@ Bond.prototype = {
 
     this.cache.set('position.lines', lines, [
         this.cache.getCache('appearance.lines'),
-        this.cache.getCache('position.visible')]);
+        this.cache.getCache('position.visible'),
+        this.cache.getCache('position.coords')]);
   },
 
   /*
@@ -323,7 +325,8 @@ Bond.prototype = {
 
     this.cache.set('position.connectors', connectors, [
         this.cache.getCache('appearance.connectors'),
-        this.cache.getCache('position.visible')]);
+        this.cache.getCache('position.visible'),
+        this.cache.getCache('position.coords')]);
   },
 
   /*
@@ -337,7 +340,8 @@ Bond.prototype = {
     if(!this.isVisible()) {
       this.cache.set('position.connectors', [], [
           this.cache.getCache('appearance.connectors'),
-          this.cache.getCache('position.visible')]);
+          this.cache.getCache('position.visible'),
+          this.cache.getCache('position.coords')]);
       return;
     }
 

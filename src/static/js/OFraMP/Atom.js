@@ -50,6 +50,22 @@ Atom.prototype = {
   },
 
   /*
+   * Determine if this atom's label should be shown.
+   */
+  showLabel: function() {
+    if(this.cache.get('appearance.show_label')) {
+      return this.cache.get('appearance.show_label');
+    }
+
+    var s = this.list.molecule.mv.settings;
+    var show = (s.atom.show_c_labels || this.element != "C");
+
+    this.cache.set('appearance.show_label', show);
+    return show;
+  },
+
+
+  /*
    * Get all bonds that are connected to this atom, or just the aromatic ones
    * when arom is set to true.
    */
@@ -126,12 +142,15 @@ Atom.prototype = {
     }
 
     var s = this.list.molecule.mv.settings;
-    if(this.isCharged()) {
+    if(!this.showLabel()) {
+      var radius = 0;
+    } else if(this.isCharged()) {
       var radius = s.atom.radius_charged;
     } else {
       var radius = s.atom.radius;
     }
-    this.cache.set('appearance.radius', radius);
+    this.cache.set('appearance.radius', radius, this.cache
+        .getCache('appearance.show_label'));
     return radius;
   },
 
@@ -309,7 +328,7 @@ Atom.prototype = {
    * Draw this atom.
    */
   draw: function() {
-    if(!this.isVisible()) {
+    if(!this.isVisible() || !this.showLabel()) {
       return;
     }
 
