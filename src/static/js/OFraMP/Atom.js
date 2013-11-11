@@ -275,6 +275,24 @@ Atom.prototype = {
   },
 
   /*
+   * Rotate this atom around the point (x, y) by a given angle alpha in radians.
+   */
+  rotateAround: function(x, y, alpha) {
+    var dx = this.x - x;
+    var dy = this.y - y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    var v1 = (Math.cos(alpha) * dx + Math.sin(alpha) * dy) / dist;
+    var v2 = (Math.cos(alpha) * dy - Math.sin(alpha) * dx) / dist;
+
+    var tx = x + dist * v1;
+    var ty = y + dist * v2;
+    var ddx = tx - this.x;
+    var ddy = ty - this.y;
+    this.move(ddx, ddy);
+  },
+
+  /*
    * Find the cycle this atom is a part of (if any).
    * 
    * If arom is set to true, only aromatic cycles will be considered.
