@@ -73,6 +73,34 @@ $ext.extend($ext, {
         r.push(arr[j]);
       }
       return r;
+    },
+
+    /*
+     * Reduce an array to only its unique elements.
+     */
+    unique: function(arr) {
+      var r = Array();
+      $ext.each(arr, function(e) {
+        if(r.indexOf(e) === -1) {
+          r.push(e);
+        }
+      });
+      return r;
+    },
+
+    /*
+     * Flatten a multi-level array.
+     */
+    flatten: function(arr) {
+      var r = Array();
+      $ext.each(arr, function(e) {
+        if(e instanceof Array) {
+          r = r.concat(this.flatten(e));
+        } else {
+          r.push(e);
+        }
+      }, this);
+      return r;
     }
   }
 });
