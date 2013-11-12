@@ -375,6 +375,9 @@ AtomList.prototype = {
         return a.element;
       }));
     }, this);
+    $ext.each($ext.array.flatten(seqs), function(atom) {
+      atom.highlight();
+    });
     return seqs;
   },
 
