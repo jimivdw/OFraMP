@@ -176,7 +176,7 @@ Node.prototype = {
       }
     } else if(e === f(this.value)) {
       if(seq.length == 0) {
-        return [[this.key]];
+        return [[this.value]];
       } else {
         var seqs = new Array();
         $ext.each(this.children, function(child) {
@@ -187,7 +187,7 @@ Node.prototype = {
         });
         if(seqs.length > 0) {
           return $ext.array.map(seqs, function(s) {
-            return [this.key].concat(s);
+            return [this.value].concat(s);
           }, this);
         } else {
           return [];
