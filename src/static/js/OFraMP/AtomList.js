@@ -224,8 +224,8 @@ AtomList.prototype = {
 
     // Unset hover from the currently hovered atom
     this.each(function(a) {
-      if(a.status === ATOM_STATUSES.hover && a !== h) {
-        a.status = ATOM_STATUSES.normal;
+      if(a.status & ATOM_STATUSES.hover && a !== h) {
+        a.dehover();
         changed = true;
         return;
       }
@@ -234,14 +234,14 @@ AtomList.prototype = {
     var s = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     if(h) {
-      if(h.status === ATOM_STATUSES.normal) {
-        h.status = ATOM_STATUSES.hover;
+      if(!(h.status & (ATOM_STATUSES.hover | ATOM_STATUSES.selected))) {
+        h.hover();
 
         // Bring to back of list to be drawn last (on top).
         $ext.array.toBack(this.atoms, this.indexOf(h.id));
         changed = true;
       }
-      if(h.status === ATOM_STATUSES.hover) {
+      if(h.status & ATOM_STATUSES.hover) {
         c.style.cursor = s.cursor.click;
       } else {
         c.style.cursor = s.cursor.normal;
@@ -261,8 +261,8 @@ AtomList.prototype = {
   setSelected: function(s) {
     var changed = false;
     this.each(function(a) {
-      if(a.status === ATOM_STATUSES.selected && a !== s) {
-        a.status = ATOM_STATUSES.normal;
+      if(a.status & ATOM_STATUSES.selected && a !== s) {
+        a.deselect();
         changed = true;
         return;
       }
@@ -271,7 +271,7 @@ AtomList.prototype = {
     var t = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     if(s && s.isVisible() && s.status !== ATOM_STATUSES.selected) {
-      s.status = ATOM_STATUSES.selected;
+      s.select();
 
       // Bring to back of list to be drawn last (on top).
       $ext.array.toBack(this.atoms, this.indexOf(s.id));

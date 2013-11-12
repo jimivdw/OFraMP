@@ -17,6 +17,18 @@ $ext.extend($ext, {
     },
 
     /*
+     * Get the most significant bit of a 32-bit number.
+     */
+    msb: function(x) {
+      x |= (x >> 1);
+      x |= (x >> 2);
+      x |= (x >> 4);
+      x |= (x >> 8);
+      x |= (x >> 16);
+      return(x & ~(x >> 1));
+    },
+
+    /*
      * Format a number to have bl characters berfore the comma, and fl after it.
      */
     format: function(num, bl, fl) {

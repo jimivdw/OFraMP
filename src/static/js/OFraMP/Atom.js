@@ -296,6 +296,48 @@ Atom.prototype = {
   },
 
   /*
+   * Hover this atom.
+   */
+  hover: function() {
+    this.status |= ATOM_STATUSES.hover;
+  },
+
+  /*
+   * Remove hover from this atom.
+   */
+  dehover: function() {
+    this.status &= ~ATOM_STATUSES.hover;
+  },
+
+  /*
+   * Select this atom.
+   */
+  select: function() {
+    this.status |= ATOM_STATUSES.selected;
+  },
+
+  /*
+   * Deselect this atom.
+   */
+  deselect: function() {
+    this.status &= ~ATOM_STATUSES.selected;
+  },
+
+  /*
+   * Highlight this atom.
+   */
+  highlight: function() {
+    this.status |= ATOM_STATUSES.highlighted;
+  },
+
+  /*
+   * Remove highlight from this atom.
+   */
+  dehighlight: function() {
+    this.status &= ~ATOM_STATUSES.highlighted;
+  },
+
+  /*
    * Find the cycle this atom is a part of (if any).
    * 
    * If arom is set to true, only aromatic cycles will be considered.
@@ -338,9 +380,10 @@ Atom.prototype = {
     var s = this.list.molecule.mv.settings;
 
     if(s.atom.show_circ) {
-      ctx.lineWidth = s.atom.border_widths[this.status];
+      var status = $ext.number.msb(this.status);
+      ctx.lineWidth = s.atom.border_widths[status];
       ctx.strokeStyle = s.atom.border_color;
-      ctx.fillStyle = s.atom.bg_colors[this.status];
+      ctx.fillStyle = s.atom.bg_colors[status];
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
       ctx.fill();

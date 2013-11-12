@@ -7,9 +7,10 @@ var MESSAGE_TYPES = {
 };
 
 var ATOM_STATUSES = {
-  normal: 1,
+  normal: 0,
+  highlighted: 1,
   hover: 2,
-  selected: 3
+  selected: 4
 };
 
 var DEFAULT_SETTINGS = {
@@ -81,15 +82,17 @@ var DEFAULT_SETTINGS = {
     radius_charged: 20,
     charge_offset: 6,
     border_widths: {
-      1: 1,
+      0: 1,
+      1: 3,
       2: 3,
-      3: 3
+      4: 3
     },
     border_color: "rgb(0, 0, 0)",
     bg_colors: {
-      1: "rgb(255, 255, 255)",
+      0: "rgb(255, 255, 255)",
+      1: "rgb( 80, 169,  75)",
       2: "rgb(204, 166,  40)",
-      3: "rgb(203,  83,  73)"
+      4: "rgb(203,  83,  73)"
     },
   },
 
