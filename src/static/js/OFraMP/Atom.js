@@ -142,9 +142,7 @@ Atom.prototype = {
     }
 
     var s = this.list.molecule.mv.settings;
-    if(!this.showLabel()) {
-      var radius = 0;
-    } else if(this.isCharged()) {
+    if(this.isCharged()) {
       var radius = s.atom.radius_charged;
     } else {
       var radius = s.atom.radius;
@@ -372,22 +370,26 @@ Atom.prototype = {
    * Draw this atom.
    */
   draw: function() {
-    if(!this.isVisible() || !this.showLabel()) {
+    if(!this.isVisible()) {
       return;
     }
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
 
+    var status = $ext.number.msb(this.status);
+    ctx.fillStyle = s.atom.bg_colors[status];
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
+    ctx.fill();
     if(s.atom.show_circ) {
-      var status = $ext.number.msb(this.status);
       ctx.lineWidth = s.atom.border_widths[status];
       ctx.strokeStyle = s.atom.border_color;
-      ctx.fillStyle = s.atom.bg_colors[status];
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
-      ctx.fill();
       ctx.stroke();
+    }
+
+    if(!this.showLabel()) {
+      return;
     }
 
     var label = this.element;

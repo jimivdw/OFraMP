@@ -54,11 +54,19 @@ Bond.prototype = {
     var dy = this.a1.dy(this.a2);
     var dist = this.a1.distance(this.a2);
 
-    var ar1 = this.a1.getRadius();
+    if(this.a1.showLabel()) {
+      var ar1 = this.a1.getRadius();
+    } else {
+      var ar1 = 0;
+    }
     var ddx1 = dx * ar1 / dist;
     var ddy1 = dy * ar1 / dist;
 
-    var ar2 = this.a2.getRadius();
+    if(this.a2.showLabel()) {
+      var ar2 = this.a2.getRadius();
+    } else {
+      var ar2 = 0;
+    }
     var ddx2 = dx * ar2 / dist;
     var ddy2 = dy * ar2 / dist;
 
