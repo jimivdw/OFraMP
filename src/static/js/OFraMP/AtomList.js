@@ -365,6 +365,20 @@ AtomList.prototype = {
   },
 
   /*
+   * Find all occurences of a given sequence in this molecule.
+   */
+  findSequences: function(seq) {
+    var seqs = new Array();
+    this.each(function(atom) {
+      var t = this.toTree(atom);
+      seqs = seqs.concat(t.findSequences($ext.copy(seq), function(a) {
+        return a.element;
+      }));
+    }, this);
+    return seqs;
+  },
+
+  /*
    * Draw all atoms in this list.
    */
   draw: function() {
