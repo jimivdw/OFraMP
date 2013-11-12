@@ -281,6 +281,9 @@ Atom.prototype = {
     var dx = this.x - x;
     var dy = this.y - y;
     var dist = Math.sqrt(dx * dx + dy * dy);
+    if($ext.number.approx(dist, 0)) {
+      return;
+    }
 
     var v1 = (Math.cos(alpha) * dx + Math.sin(alpha) * dy) / dist;
     var v2 = (Math.cos(alpha) * dy - Math.sin(alpha) * dx) / dist;
@@ -304,33 +307,14 @@ Atom.prototype = {
       return this.cache.get('structure.cycle');
     }
 
-    var q = [this];
-    var pq = [[this]];
-    while(q.length > 0) {
-      var c = q.shift();
-      var p = pq.shift();
-
-      var bas = c.bondedAtoms(arom);
-
-      var path = $ext.each(bas, function(ba) {
-        if(ba === this && p.length > 2) {
-          return p;
-        }
-
-        if(p.indexOf(ba) == -1) {
-          q.push(ba);
-          pq.push(p.concat(ba));
-        }
-      }, this);
-
-      if(path) {
-        if(arom) {
-          this.cache.set('structure.arom_cycle', path);
-        } else {
-          this.cache.set('structure.cycle', path);
-        }
-        return path;
+    var path = this.list.toTree(this.id, arom).findShortestPath(this.id);
+    if(path && path.length > 1) {
+      if(arom) {
+        this.cache.set('structure.arom_cycle', path);
+      } else {
+        this.cache.set('structure.cycle', path);
       }
+      return path;
     }
   },
 
