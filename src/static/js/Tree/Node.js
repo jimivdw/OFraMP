@@ -133,6 +133,38 @@ Node.prototype = {
     return p;
   },
 
+  findSequences: function(seq, f) {
+    if(f === undefined) {
+      f = function(e) {
+        return e;
+      };
+    }
+
+    var e = seq.shift();
+    if(e === f(this.value)) {
+      if(seq.length == 0) {
+        return [[this.key]];
+      } else {
+        var seqs = new Array();
+        $ext.each(this.children, function(child) {
+          var s = child.findSequences($ext.copy(seq), f);
+          if(s.length > 0) {
+            seqs = seqs.concat(s);
+          }
+        });
+        if(seqs.length > 0) {
+          return $ext.array.map(seqs, function(s) {
+            return s.concat(this.key);
+          }, this);
+        } else {
+          return seqs;
+        }
+      }
+    } else {
+      return [];
+    }
+  },
+
   flatten: function(tgt) {
     if(!tgt) {
       tgt = new Array();
