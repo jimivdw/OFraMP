@@ -223,7 +223,7 @@ var SETTINGS_OPTIONS = {
       }
     },
     border_widths: {
-      "1, 2, 3": {
+      "0, 1, 2, 4": {
         min: 0,
         max: 10,
         step: 1,
@@ -233,7 +233,7 @@ var SETTINGS_OPTIONS = {
       }
     },
     bg_colors: {
-      "1, 2, 3": {
+      "0, 1, 2, 4": {
         onChange: function() {
           mv.redraw();
         }
