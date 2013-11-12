@@ -133,6 +133,15 @@ Node.prototype = {
     return p;
   },
 
+  /*
+   * Find a given sequence seq in the tree.
+   * 
+   * The function f acts as a mapping function for transforming tree values into
+   * values of the sequence.
+   * 
+   * Note that, for subsequences, the first element will be considered as part
+   * of the main sequence.
+   */
   findSequences: function(seq, f) {
     if(f === undefined) {
       f = function(e) {
@@ -141,7 +150,27 @@ Node.prototype = {
     }
 
     var e = seq.shift();
-    if(e === f(this.value)) {
+    if(e instanceof Array) {
+      var ss = this.findSequences($ext.copy(e), f);
+      if(ss.length > 0) {
+        var seqs = new Array();
+        $ext.each(this.children, function(child) {
+          var s = child.findSequences($ext.copy(seq), f);
+          if(s.length > 0) {
+            seqs = seqs.concat(s);
+          }
+        });
+        if(seqs.length > 0) {
+          return $ext.array.map(seqs, function(s) {
+            return ss.concat(s);
+          }, this);
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    } else if(e === f(this.value)) {
       if(seq.length == 0) {
         return [[this.key]];
       } else {
@@ -154,10 +183,10 @@ Node.prototype = {
         });
         if(seqs.length > 0) {
           return $ext.array.map(seqs, function(s) {
-            return s.concat(this.key);
+            return [this.key].concat(s);
           }, this);
         } else {
-          return seqs;
+          return [];
         }
       }
     } else {
