@@ -61,13 +61,17 @@ AtomList.prototype = {
   },
 
   /*
-   * Get the AtomList represented at a tree with Atom with id aid as the root.
+   * Get the AtomList represented at a tree with Atom a as the root.
+   * 
+   * Only take into account the atoms with aromatic bonds if arom is true.
    */
-  toTree: function(aid) {
-    if(aid === undefined) {
+  toTree: function(a, arom) {
+    if(a instanceof Atom) {
+      var root = a;
+    } else if(a === undefined) {
       var root = this.atoms[0];
     } else {
-      var root = this.get(aid);
+      var root = this.get(a);
     }
 
     var tree = new Tree(root.id, root);
@@ -76,10 +80,12 @@ AtomList.prototype = {
     while(q.length > 0) {
       var n = q.shift();
       var p = pq.shift();
-      $ext.each(n.value.bondedAtoms(), function(atom) {
+      $ext.each(n.value.bondedAtoms(arom), function(atom) {
         if(p.indexOf(atom.id) === -1) {
           q.push(n.addChild(atom.id, atom));
           pq.push(p.concat(atom.id));
+        } else if(atom.id === root.id && n.parent.key !== atom.id) {
+          n.addChild(atom.id, atom);
         }
       });
     }
