@@ -139,8 +139,8 @@ Node.prototype = {
    * The function f acts as a mapping function for transforming tree values into
    * values of the sequence.
    * 
-   * Note that, for subsequences, the first element will be considered as part
-   * of the main sequence.
+   * Note that, for subsequences, the first element will NOT be considered as
+   * part of the main sequence.
    */
   findSequences: function(seq, f) {
     if(f === undefined) {
@@ -153,19 +153,23 @@ Node.prototype = {
     if(e instanceof Array) {
       var ss = this.findSequences($ext.copy(e), f);
       if(ss.length > 0) {
-        var seqs = new Array();
-        $ext.each(this.children, function(child) {
-          var s = child.findSequences($ext.copy(seq), f);
-          if(s.length > 0) {
-            seqs = seqs.concat(s);
+        if(seq.length > 0) {
+          var seqs = new Array();
+          $ext.each(this.parent.children, function(child) {
+            var s = child.findSequences($ext.copy(seq), f);
+            if(s.length > 0) {
+              seqs = seqs.concat(s);
+            }
+          });
+          if(seqs.length > 0) {
+            return $ext.array.map(seqs, function(s) {
+              return ss.concat(s);
+            }, this);
+          } else {
+            return [];
           }
-        });
-        if(seqs.length > 0) {
-          return $ext.array.map(seqs, function(s) {
-            return ss.concat(s);
-          }, this);
         } else {
-          return [];
+          return ss;
         }
       } else {
         return [];
