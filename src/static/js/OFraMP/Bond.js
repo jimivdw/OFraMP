@@ -194,7 +194,7 @@ Bond.prototype = {
 
         if(this.type == 4) {
           // Find the center of the aromatic cycle
-          var cycle = this.a2.findCycle();
+          var cycle = this.a2.findCycle(true);
           var center = new AtomList(this.list.molecule, cycle).centerPoint();
           var cdx1 = center.x - (c.x1 + ddx);
           var cdy1 = center.y - (c.y1 - ddy);
