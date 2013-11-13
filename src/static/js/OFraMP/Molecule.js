@@ -296,11 +296,13 @@ Molecule.prototype = {
 
         var c = b1.intersection(b2);
         if(c) {
+          var tds = [this.atoms.toTree(b1.a2).getChild(b1.a1.id).depth(),
+              this.atoms.toTree(b1.a1).getChild(b1.a2.id).depth(),
+              this.atoms.toTree(b2.a2).getChild(b2.a1.id).depth(),
+              this.atoms.toTree(b2.a1).getChild(b2.a2.id).depth()];
+
           var atoms = [b1.a1, b1.a2, b2.a1, b2.a2];
-          var bcs = $ext.array.map(atoms, function(a) {
-            return a.bondCount();
-          });
-          var a = atoms[bcs.indexOf($ext.array.min(bcs))];
+          var a = atoms[tds.indexOf($ext.array.min(tds))];
 
           var dx = c.x - a.x;
           var dy = c.y - a.y;

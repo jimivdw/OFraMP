@@ -25,6 +25,15 @@ Node.prototype = {
     }
   },
 
+  getChild: function(key) {
+    var r = $ext.each(this.children, function(child) {
+      if(child.key === key) {
+        return child;
+      }
+    });
+    return r;
+  },
+
   addChild: function(key, value) {
     if(this.find(key)) {
       return false;
