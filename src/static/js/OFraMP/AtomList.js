@@ -382,6 +382,16 @@ AtomList.prototype = {
   },
 
   /*
+   * Find all occurences of a given AtomList in this list.
+   */
+  findOccurences: function(list) {
+    var seq = $ext.array.map(list.toTree().toArray(), function(atom) {
+      return atom.element;
+    }, null, true);
+    return this.findSequences(seq);
+  },
+
+  /*
    * Draw all atoms in this list.
    */
   draw: function() {
