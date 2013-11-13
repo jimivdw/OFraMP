@@ -1,4 +1,11 @@
 $ext = {
+  /*
+   * Identity function.
+   */
+  id: function(obj) {
+    return obj;
+  },
+
   BREAK: {
     $break: 'break'
   },

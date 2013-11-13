@@ -50,17 +50,31 @@ $ext.extend($ext, {
     },
 
     /*
+     * Insert a given element at a position i.
+     */
+    insertAt: function(arr, i, e) {
+      arr.splice(i, 0, e);
+    },
+
+    /*
      * Return an array, consisting of the results of applying a function f to
      * each entry of the current Array.
      * 
      * The parameter that will be provided to the function and can be used for
      * 'this' scoping.
+     * 
+     * If recursive is set to true, the mapping will also be applied to the
+     * array's subarrays.
      */
-    map: function(arr, f, scope) {
+    map: function(arr, f, scope, recursive) {
       var r = Array();
       $ext.each(arr, function(e, i) {
-        r.push(f.call(scope, e, i));
-      });
+        if(recursive && e instanceof Array) {
+          r.push(this.map(e, f, scope, recursive));
+        } else {
+          r.push(f.call(scope, e, i));
+        }
+      }, this);
       return r;
     },
 
@@ -101,6 +115,13 @@ $ext.extend($ext, {
         }
       }, this);
       return r;
+    },
+
+    /*
+     * See if an element e is contained in an array arr or any of its subarrays.
+     */
+    containsr: function(arr, e) {
+      return this.flatten(arr).indexOf(e) !== -1;
     }
   }
 });

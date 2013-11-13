@@ -143,11 +143,7 @@ Node.prototype = {
    * part of the main sequence.
    */
   findSequences: function(seq, f) {
-    if(f === undefined) {
-      f = function(e) {
-        return e;
-      };
-    }
+    f = f || $ext.id;
 
     var e = seq.shift();
     if(e instanceof Array) {
@@ -212,5 +208,40 @@ Node.prototype = {
     });
 
     return tgt;
+  },
+
+  longestPathNodes: function() {
+    var depths = $ext.array.map(this.children, function(child) {
+      return child.depth();
+    });
+
+    var deepest = this.children[depths.indexOf($ext.array.max(depths))];
+    var path = [this];
+    if(deepest && deepest.children.length > 0) {
+      path = path.concat(deepest.longestPathNodes());
+    }
+    return path;
+  },
+
+  longestPath: function() {
+    return $ext.array.map(this.longestPathNodes(), function(node) {
+      return node.value;
+    });
+  },
+
+  toArray: function() {
+    var lp = this.longestPathNodes();
+    var arr = $ext.array.map(lp, function(node) {
+      return node.value;
+    });
+    $ext.each(lp, function(node, i) {
+      $ext.each(node.children, function(child) {
+        var p = arr.indexOf(node.value);
+        if(!$ext.array.containsr(arr, child.value)) {
+          $ext.array.insertAt(arr, ++p, child.toArray());
+        }
+      });
+    });
+    return arr;
   }
 };
