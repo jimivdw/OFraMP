@@ -1899,13 +1899,14 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         common.each(presets, function(preset) {
           oPresets[preset] = preset;
         });
+        var preset = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
         
         var c = new OptionController({}, 'presets', oPresets);
         c.domElement.style.float = "left";
         c.onChange(function(v) {
-          _this.__preset = v;
           _this.loadValues(v);
         });
+        this.__preset_controller = c;
         
         var d = new FunctionController({}, 'delete', 'Delete', function() {
           if(!_this.__preset || _this.__preset.length < 1) {
@@ -2173,6 +2174,13 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
               }
             }
           }
+          
+          if(SUPPORTS_LOCAL_STORAGE) {
+            var preset = localStorage.getItem(getLocalStorageHash(this, 'preset'));
+            if(preset && this.__preset_controller) {
+              this.__preset_controller.setValue(preset);
+            }
+          }
         },
 
         /**
@@ -2396,10 +2404,12 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         },
         
         loadValues: function(name) {
+          this.__preset = name;
+          localStorage.setItem(getLocalStorageHash(this, 'preset'), name);
           if(!name || name.length < 1) {
             return this.resetValues();
           }
-          
+
           var values = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'values.' + name)));
           this.setValues(values);
         },
