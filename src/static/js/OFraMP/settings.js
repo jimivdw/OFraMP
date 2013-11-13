@@ -173,24 +173,28 @@ var SETTINGS_OPTIONS = {
     },
     show_h_atoms: {
       onChange: function() {
-        mv.molecule.atoms.each(function(a) {
-          a.clearCache('appearance.visible');
-        });
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance.visible');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.atoms.each(function(a) {
+            a.clearCache('appearance.visible');
+          });
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('appearance.visible');
+          });
+          mv.redraw();
+        }
       }
     },
     show_c_labels: {
       onChange: function() {
-        mv.molecule.atoms.each(function(a) {
-          a.clearCache('appearance.show_label');
-        });
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('position.coords');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.atoms.each(function(a) {
+            a.clearCache('appearance.show_label');
+          });
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('position.coords');
+          });
+          mv.redraw();
+        }
       }
     },
     "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
@@ -200,13 +204,15 @@ var SETTINGS_OPTIONS = {
     },
     "radius, radius_charged": {
       onChange: function() {
-        mv.molecule.atoms.each(function(a) {
-          a.clearCache('appearance.radius');
-        });
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('position');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.atoms.each(function(a) {
+            a.clearCache('appearance.radius');
+          });
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('position');
+          });
+          mv.redraw();
+        }
       },
       onFinishChange: function() {
         mv.deoverlap();
@@ -215,10 +221,12 @@ var SETTINGS_OPTIONS = {
     colors: {
       "S, O, N, H, F, Cl, Br, I, other": {
         onChange: function() {
-          mv.molecule.atoms.each(function(a) {
-            a.clearCache('appearance.color');
-          });
-          mv.redraw();
+          if(mv.molecule) {
+            mv.molecule.atoms.each(function(a) {
+              a.clearCache('appearance.color');
+            });
+            mv.redraw();
+          }
         }
       }
     },
@@ -249,19 +257,23 @@ var SETTINGS_OPTIONS = {
     },
     connector_width: {
       onChange: function() {
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance.connectors');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('appearance.connectors');
+          });
+          mv.redraw();
+        }
       }
     },
     spacing: {
       onChange: function() {
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance.lines');
-          b.clearCache('appearance.connectors');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('appearance.lines');
+            b.clearCache('appearance.connectors');
+          });
+          mv.redraw();
+        }
       }
     },
     dash_count: {
@@ -269,10 +281,12 @@ var SETTINGS_OPTIONS = {
       max: 20,
       step: 1,
       onChange: function() {
-        mv.molecule.bonds.each(function(b) {
-          b.clearCache('appearance.lines');
-        });
-        mv.redraw();
+        if(mv.molecule) {
+          mv.molecule.bonds.each(function(b) {
+            b.clearCache('appearance.lines');
+          });
+          mv.redraw();
+        }
       }
     },
     "width, color, connector_color": {
