@@ -121,7 +121,7 @@ MoleculeViewer.prototype = {
 
     xhr.open("POST", this.settings.oapoc.url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("fmt=smiles&data=" + data_str);
+    xhr.send("fmt=smiles&data=" + encodeURIComponent(data_str));
   },
 
   /*
