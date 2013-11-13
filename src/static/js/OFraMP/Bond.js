@@ -197,10 +197,10 @@ Bond.prototype = {
         dy = c.y2 - c.y1;
         dist = Math.sqrt(dx * dx + dy * dy);
 
-        ddx = dy * s.bond.spacing / dist;
-        ddy = dx * s.bond.spacing / dist;
-
         if(this.type == 4) {
+          ddx = dy * 2 * s.bond.spacing / dist;
+          ddy = dx * 2 * s.bond.spacing / dist;
+
           // Find the center of the aromatic cycle
           var cycle = this.a2.findCycle(true);
           var center = new AtomList(this.list.molecule, cycle).centerPoint();
@@ -213,10 +213,10 @@ Bond.prototype = {
 
           if(cdist1 > cdist2) {
             lines.push({
-              x1: c.x1 + ddx,
-              y1: c.y1 - ddy,
-              x2: c.x2 + ddx,
-              y2: c.y2 - ddy
+              x1: c.x1,
+              y1: c.y1,
+              x2: c.x2,
+              y2: c.y2
             });
             lines.push({
               x1: c.x1 - ddx,
@@ -227,10 +227,10 @@ Bond.prototype = {
             });
           } else {
             lines.push({
-              x1: c.x1 - ddx,
-              y1: c.y1 + ddy,
-              x2: c.x2 - ddx,
-              y2: c.y2 + ddy
+              x1: c.x1,
+              y1: c.y1,
+              x2: c.x2,
+              y2: c.y2
             });
             lines.push({
               x1: c.x1 + ddx,
@@ -241,6 +241,9 @@ Bond.prototype = {
             });
           }
         } else {
+          ddx = dy * s.bond.spacing / dist;
+          ddy = dx * s.bond.spacing / dist;
+
           lines.push({
             x1: c.x1 + ddx,
             y1: c.y1 - ddy,
@@ -301,7 +304,7 @@ Bond.prototype = {
     var s = this.list.molecule.mv.settings;
     var delta = s.bond.connector_width / a.getRadius() / 2;
 
-    if(this.type == 1 || this.type == 3) {
+    if(this.type == 1 || this.type == 3 || this.type == 4) {
       connectors.push({
         x: a.x,
         y: a.y,
@@ -312,7 +315,7 @@ Bond.prototype = {
     }
 
     // For double/triple/aromatic bonds
-    if(this.type > 1) {
+    if(this.type > 1 && this.type != 4) {
       var beta = Math.acos((2 * r2 - Math.pow(s.bond.spacing, 2)) / (2 * r2));
 
       connectors.push({
