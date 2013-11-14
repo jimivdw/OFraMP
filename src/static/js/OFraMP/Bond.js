@@ -179,7 +179,17 @@ Bond.prototype = {
     var lines = Array();
     var s = this.list.molecule.mv.settings;
 
-    if(this.isVisible() && a1.distance(a2) >= a1.getRadius() + a2.getRadius()) {
+    if(this.a1.showLabel()) {
+      var ar1 = this.a1.getRadius();
+    } else {
+      var ar1 = 0;
+    }
+    if(this.a2.showLabel()) {
+      var ar2 = this.a2.getRadius();
+    } else {
+      var ar2 = 0;
+    }
+    if(this.isVisible() && a1.distance(a2) >= ar1 + ar2) {
       var c = this.coords();
       // Inner line for single/triple bonds
       if(this.type == 1 || this.type == 3) {
