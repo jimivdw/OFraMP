@@ -14,6 +14,24 @@ Node.prototype = {
     this.children = new Array();
   },
 
+  fromArray: function(arr, f) {
+    if(f === undefined) {
+      f = $ext.id;
+    }
+
+    var e = arr.shift();
+    var n = new Node(this, f(e), e);
+    this.children.push(n);
+    while(arr[0] instanceof Array) {
+      e = arr.shift();
+      n.fromArray($ext.copy(e), f);
+    }
+    if(arr.length > 0) {
+      n.fromArray(arr, f);
+    }
+    return n;
+  },
+
   depth: function() {
     depths = $ext.array.map(this.children, function(child) {
       return child.depth();
