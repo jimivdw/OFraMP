@@ -183,6 +183,8 @@ Node.prototype = {
    * Note that, for subsequences, the first element will NOT be considered as
    * part of the main sequence.
    */
+  // TODO: refactor, this is horrible...
+  // TODO 2: fix the wrong concatenation in subsequences.
   findSequences: function(seq, f) {
     f = f || $ext.id;
 
@@ -202,7 +204,9 @@ Node.prototype = {
             var q = new Array();
             $ext.each(seqs, function(s) {
               if($ext.array.flatten(s).indexOf(this.value) == -1) {
-                q.push([this.value].concat(s));
+                $ext.each(ss, function(sse) {
+                  q.push([sse.concat(s)]);
+                });
               }
             }, this);
             return q;
@@ -210,7 +214,7 @@ Node.prototype = {
             return [];
           }
         } else {
-          return ss;
+          return [ss];
         }
       } else {
         return [];

@@ -153,8 +153,9 @@ $ext.extend($ext, {
         if(e instanceof Array) {
           r += this.toString(e, f);
         } else {
-          r += e.id + ", ";
+          r += e;
         }
+        r += ", ";
       }, this);
       if(r.charAt(r.length - 2) === ',') {
         r = $ext.string.rslice(r, r.length - 2);
