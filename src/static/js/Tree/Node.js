@@ -15,9 +15,7 @@ Node.prototype = {
   },
 
   fromArray: function(arr, f) {
-    if(f === undefined) {
-      f = $ext.id;
-    }
+    f = f || $ext.id;
 
     var e = arr.shift();
     var n = new Node(this, f(e), e);
@@ -30,6 +28,22 @@ Node.prototype = {
       n.fromArray(arr, f);
     }
     return n;
+  },
+
+  toArray: function() {
+    var lp = this.longestPathNodes();
+    var arr = $ext.array.map(lp, function(node) {
+      return node.value;
+    });
+    $ext.each(lp, function(node, i) {
+      $ext.each(node.children, function(child) {
+        var p = arr.indexOf(node.value);
+        if(!$ext.array.containsr(arr, child.value)) {
+          $ext.array.insertAt(arr, ++p, child.toArray());
+        }
+      });
+    });
+    return arr;
   },
 
   depth: function() {
@@ -185,9 +199,13 @@ Node.prototype = {
             }
           });
           if(seqs.length > 0) {
-            return $ext.array.map(seqs, function(s) {
-              return ss.concat(s);
+            var q = new Array();
+            $ext.each(seqs, function(s) {
+              if($ext.array.flatten(s).indexOf(this.value) == -1) {
+                q.push([this.value].concat(s));
+              }
             }, this);
+            return q;
           } else {
             return [];
           }
@@ -209,9 +227,13 @@ Node.prototype = {
           }
         });
         if(seqs.length > 0) {
-          return $ext.array.map(seqs, function(s) {
-            return [this.value].concat(s);
+          var q = new Array();
+          $ext.each(seqs, function(s) {
+            if($ext.array.flatten(s).indexOf(this.value) == -1) {
+              q.push([this.value].concat(s));
+            }
           }, this);
+          return q;
         } else {
           return [];
         }
@@ -254,21 +276,5 @@ Node.prototype = {
     return $ext.array.map(this.longestPathNodes(), function(node) {
       return node.value;
     });
-  },
-
-  toArray: function() {
-    var lp = this.longestPathNodes();
-    var arr = $ext.array.map(lp, function(node) {
-      return node.value;
-    });
-    $ext.each(lp, function(node, i) {
-      $ext.each(node.children, function(child) {
-        var p = arr.indexOf(node.value);
-        if(!$ext.array.containsr(arr, child.value)) {
-          $ext.array.insertAt(arr, ++p, child.toArray());
-        }
-      });
-    });
-    return arr;
   }
 };

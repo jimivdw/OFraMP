@@ -57,6 +57,23 @@ $ext.extend($ext, {
     },
 
     /*
+     * Remove the element with a given value v from a given array arr.
+     */
+    remove: function(arr, v) {
+      var i = arr.indexOf(v);
+      if(i !== -1) {
+        return this.removeI(arr, i);
+      }
+    },
+
+    /*
+     * Remove the item at position i from a given array arr.
+     */
+    removeI: function(arr, i) {
+      return arr.splice(i, 1)[0];
+    },
+
+    /*
      * Return an array, consisting of the results of applying a function f to
      * each entry of the current Array.
      * 
@@ -122,6 +139,28 @@ $ext.extend($ext, {
      */
     containsr: function(arr, e) {
       return this.flatten(arr).indexOf(e) !== -1;
+    },
+
+    /*
+     * Convert an arbitrarily nested Array to a string with an optional string
+     * conversion method for its elements.
+     */
+    toString: function(arr, f) {
+      f = f || $ext.id;
+
+      var r = "[";
+      $ext.each(arr, function(e) {
+        if(e instanceof Array) {
+          r += this.toString(e, f);
+        } else {
+          r += e.id + ", ";
+        }
+      }, this);
+      if(r.charAt(r.length - 2) === ',') {
+        r = $ext.string.rslice(r, r.length - 2);
+      }
+      r += "]";
+      return r;
     }
   }
 });
