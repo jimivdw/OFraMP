@@ -49,12 +49,22 @@ Node.prototype = {
   depth: function() {
     depths = $ext.array.map(this.children, function(child) {
       return child.depth();
-    }, this);
+    });
     if(depths.length > 0) {
       return 1 + $ext.array.max(depths);
     } else {
       return 1;
     }
+  },
+
+  getSiblings: function() {
+    var r = new Array();
+    $ext.each(this.parent.children, function(child) {
+      if(child !== this) {
+        r.push(child);
+      }
+    }, this);
+    return r;
   },
 
   getChild: function(key) {
@@ -183,61 +193,50 @@ Node.prototype = {
    * Note that, for subsequences, the first element will NOT be considered as
    * part of the main sequence.
    */
-  // TODO: refactor, this is horrible...
-  // TODO 2: fix the wrong concatenation in subsequences.
-  findSequences: function(seq, f) {
+  findSequences: function(needles, f) {
     f = f || $ext.id;
 
-    var e = seq.shift();
-    if(e instanceof Array) {
-      var ss = this.findSequences($ext.copy(e), f);
-      if(ss.length > 0) {
-        if(seq.length > 0) {
-          var seqs = new Array();
-          $ext.each(this.parent.children, function(child) {
-            var s = child.findSequences($ext.copy(seq), f);
-            if(s.length > 0) {
-              seqs = seqs.concat(s);
+    var needle = needles.shift();
+    if(needle instanceof Array) {
+      var subsequences = this.findSequences($ext.copy(needle), f);
+      if(subsequences.length > 0) {
+        var parentneedle = [f(this.parent.value)].concat(needles);
+        var parentsequences = this.parent.findSequences(parentneedle, f);
+        var childsequences = $ext.array.map(parentsequences, function(s) {
+          s.shift();
+          return s;
+        });
+
+        var sequences = new Array();
+        $ext.each(childsequences, function(childsequence) {
+          $ext.each(subsequences, function(subsequence) {
+            var sequence = [subsequence].concat(childsequence);
+            var flatsequence = $ext.array.flatten(sequence);
+            if($ext.array.unique(flatsequence).length === flatsequence.length) {
+              sequences.push(sequence);
             }
           });
-          if(seqs.length > 0) {
-            var q = new Array();
-            $ext.each(seqs, function(s) {
-              if($ext.array.flatten(s).indexOf(this.value) == -1) {
-                $ext.each(ss, function(sse) {
-                  q.push([sse.concat(s)]);
-                });
-              }
-            }, this);
-            return q;
-          } else {
-            return [];
-          }
-        } else {
-          return [ss];
-        }
+        });
+        return sequences;
       } else {
         return [];
       }
-    } else if(e === f(this.value)) {
-      if(seq.length == 0) {
+    } else if(needle === f(this.value)) {
+      if(needles.length == 0) {
         return [[this.value]];
       } else {
-        var seqs = new Array();
+        var sequences = new Array();
         $ext.each(this.children, function(child) {
-          var s = child.findSequences($ext.copy(seq), f);
-          if(s.length > 0) {
-            seqs = seqs.concat(s);
+          var childsequences = child.findSequences($ext.copy(needles), f);
+          if($ext.array.flatten(childsequences).indexOf(this.value) == -1) {
+            sequences = sequences.concat(childsequences);
           }
-        });
-        if(seqs.length > 0) {
-          var q = new Array();
-          $ext.each(seqs, function(s) {
-            if($ext.array.flatten(s).indexOf(this.value) == -1) {
-              q.push([this.value].concat(s));
-            }
+        }, this);
+
+        if(sequences.length > 0) {
+          return $ext.array.map(sequences, function(sequence) {
+            return [this.value].concat(sequence);
           }, this);
-          return q;
         } else {
           return [];
         }

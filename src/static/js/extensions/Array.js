@@ -153,7 +153,7 @@ $ext.extend($ext, {
         if(e instanceof Array) {
           r += this.toString(e, f);
         } else {
-          r += e;
+          r += f(e);
         }
         r += ", ";
       }, this);
