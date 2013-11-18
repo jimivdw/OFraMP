@@ -190,8 +190,8 @@ Molecule.prototype = {
   /*
    * Find all occurrences of a given Molecule in this molecule.
    */
-  findOccurrences: function(list) {
-    return this.atoms.findOccurrences(list);
+  findOccurrences: function(molecule) {
+    return this.atoms.findOccurrences(molecule.atoms);
   },
 
   /*
