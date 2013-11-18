@@ -283,6 +283,15 @@ AtomList.prototype = {
   },
 
   /*
+   * Dehighlight all atoms in this list.
+   */
+  dehighlight: function() {
+    this.each(function(atom) {
+      atom.dehighlight();
+    });
+  },
+
+  /*
    * Move all atoms in this list dx in the x direction and dy on the y axis.
    */
   move: function(dx, dy) {
@@ -365,7 +374,7 @@ AtomList.prototype = {
   },
 
   /*
-   * Find all occurences of a given sequence in this molecule.
+   * Find all occurences of a given sequence in this list.
    */
   findSequences: function(seq) {
     var seqs = new Array();
@@ -375,16 +384,13 @@ AtomList.prototype = {
         return a.element;
       }));
     }, this);
-    $ext.each($ext.array.flatten(seqs), function(atom) {
-      atom.highlight();
-    });
     return seqs;
   },
 
   /*
    * Find all occurences of a given AtomList in this list.
    */
-  findOccurences: function(list) {
+  findOccurrences: function(list) {
     var seq = $ext.array.map(list.toTree().toArray(), function(atom) {
       return atom.element;
     }, null, true);

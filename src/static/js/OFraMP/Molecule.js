@@ -65,6 +65,10 @@ Molecule.prototype = {
     return this.atoms.setSelected(a);
   },
 
+  dehighlight: function() {
+    this.atoms.dehighlight();
+  },
+
   /*
    * Move the molecule dx in the x direction and dy on the y axis.
    */
@@ -153,6 +157,41 @@ Molecule.prototype = {
       molecule.mv.idealize();
       molecule.mv.hideOverlay();
     });
+  },
+
+  /*
+   * Find all occurrences of a given sequence or Molecule in this molecule.
+   */
+  find: function(needle) {
+    if(needle instanceof Molecule) {
+      var seqs = this.findOccurrences(needle);
+    } else if(needle instanceof Array) {
+      var seqs = this.findSequences(needle);
+    } else {
+      throw "Find only works with Molecules or Arrays";
+    }
+
+    this.dehighlight();
+    $ext.each($ext.array.flatten(seqs), function(atom) {
+      atom.highlight();
+    });
+    this.mv.redraw();
+
+    return seqs;
+  },
+
+  /*
+   * Find all occurrences of a given sequence in this molecule.
+   */
+  findSequences: function(seq) {
+    return this.atoms.findSequences(seq);
+  },
+
+  /*
+   * Find all occurrences of a given Molecule in this molecule.
+   */
+  findOccurrences: function(list) {
+    return this.atoms.findOccurrences(list);
   },
 
   /*
