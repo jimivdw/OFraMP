@@ -22,6 +22,15 @@ AtomList.prototype = {
   },
 
   /*
+   * Convert the basic data of this AtomList to JSON.
+   */
+  toBasicJSON: function() {
+    return $ext.array.map(this.atoms, function(atom) {
+      return atom.toBasicJSON();
+    });
+  },
+
+  /*
    * Get the atom with the given id.
    */
   get: function(id) {

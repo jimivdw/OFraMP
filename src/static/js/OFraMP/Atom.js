@@ -31,6 +31,16 @@ Atom.prototype = {
   },
 
   /*
+   * Convert the basic data of this Atom to JSON.
+   */
+  toBasicJSON: function() {
+    return {
+      id: this.id,
+      element: this.element
+    };
+  },
+
+  /*
    * Determine if this atom is currently visible.
    */
   isVisible: function() {

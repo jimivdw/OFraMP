@@ -25,6 +25,16 @@ Bond.prototype = {
   },
 
   /*
+   * Convert the basic data of this Bond to JSON.
+   */
+  toBasicJSON: function() {
+    return {
+      atom_1: this.a1.id,
+      atom_2: this.a2.id
+    };
+  },
+
+  /*
    * Determine if this bond is currently visible.
    * 
    * Depends on both position and appearance, so track both in cache.

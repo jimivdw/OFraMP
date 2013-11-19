@@ -19,6 +19,16 @@ Molecule.prototype = {
   },
 
   /*
+   * Convert the basic data of this Molecule to JSON.
+   */
+  toBasicJSON: function() {
+    return {
+      atoms: this.atoms.toBasicJSON(),
+      bonds: this.bonds.toBasicJSON()
+    };
+  },
+
+  /*
    * Get the width of this molecule.
    */
   width: function() {
