@@ -83,7 +83,7 @@ $ext.extend($ext, {
               screenY: originalEvent.screenY || 0,
               clientX: originalEvent.clientX || 0,
               clientY: originalEvent.clientY || 0,
-              button: originalEvent.button,
+              button: $ext.dom.getMouseButton(originalEvent),
               buttons: originalEvent.buttons,
               deltaMode: originalEvent.type == "MozMousePixelScroll" ? 0 : 1,
               deltaX: 0,
@@ -116,6 +116,23 @@ $ext.extend($ext, {
     // Minimal distance a mouse should move before a click becomes a drag.
     MOUSE_DRAG_EPSILON: 2,
 
+
+    getMouseButton: function(evt) {
+      if(evt.target.addEventListener) {
+        return evt.button;
+      } else {
+        if(evt.button & 1) {
+          return 0;
+        } else if(evt.button & 2) {
+          return 2;
+        } else if(evt.button & 4) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    },
+
     /*
      * Attach a callback to the mousedown event on a given elem.
      */
@@ -123,6 +140,7 @@ $ext.extend($ext, {
       this.addEventListener(elem, "mousedown", function(evt) {
         window.__mouseDown = true;
         if(callback instanceof Function) {
+          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -133,8 +151,10 @@ $ext.extend($ext, {
      */
     onMouseUp: function(elem, callback, useCapture) {
       this.addEventListener(elem, "mouseup", function(evt) {
+        window.__mouseDown = false;
         delete window.__mouseDown;
         if(callback instanceof Function) {
+          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -155,6 +175,7 @@ $ext.extend($ext, {
         }
 
         if(callback instanceof Function) {
+          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -224,6 +245,7 @@ $ext.extend($ext, {
         };
 
         if(callback instanceof Function) {
+          evt.button = $ext.dom.getMouseButton(evt);
           return callback($ext.merge(evt, delta, true));
         }
       }, useCapture);
