@@ -60,6 +60,33 @@ Atom.prototype = {
   },
 
   /*
+   * Get this atom's label.
+   */
+  label: function() {
+    if(this.cache.get('appearance.label')) {
+      return this.cache.get('appearance.label');
+    }
+
+    var label = this.element;
+    if(this.list.molecule.mv.settings.atom.show_h_atoms !== true) {
+      var hs = $ext.array.filter(this.bondedAtoms(), function(atom) {
+        return atom.element === "H";
+      });
+
+      if(hs.length > 0) {
+        label += "H";
+        if(hs.length > 1) {
+          label += String.fromCharCode(8320 + hs.length);
+        }
+      }
+    }
+
+    this.cache.set('appearance.label', label, this.cache
+        .getCache('appearance.visible'));
+    return label;
+  },
+
+  /*
    * Determine if this atom's label should be shown.
    */
   showLabel: function() {
@@ -402,7 +429,7 @@ Atom.prototype = {
       return;
     }
 
-    var label = this.element;
+    var label = this.label();
     if(s.atom.show_id) {
       label += this.id;
     }
