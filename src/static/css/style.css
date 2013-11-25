@@ -59,7 +59,7 @@ html, body {
 }
 
 .dg.main {
-    transition: width .2s ease-out !important;
+    transition: width .2s ease-out, visibility .2s ease-out !important;
 }
 
 .main-title {

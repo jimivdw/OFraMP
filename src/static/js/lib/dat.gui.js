@@ -2267,7 +2267,9 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
           if(w > 10) {
             this.__reshow_width = w;
             setWidth(root, 0);
+            root.domElement.style.visibility = 'hidden';
           } else {
+            root.domElement.style.visibility = 'visible';
             if(this.__reshow_width) {
               setWidth(root, this.__reshow_width);
             } else {
