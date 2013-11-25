@@ -96,6 +96,34 @@ $ext.extend($ext, {
     },
 
     /*
+     * Return an array, consisting of only the elements in the given array arr
+     * for which applying the function f to them returns true.
+     * 
+     * The parameter that will be provided to the function and can be used for
+     * 'this' scoping.
+     * 
+     * If recursive is set to true, the filter will also be applied to the
+     * array's subarrays.
+     */
+    filter: function(arr, f, scope, recursive) {
+      var r = Array();
+      $ext.each(arr, function(e, i) {
+        if(recursive && e instanceof Array) {
+          var rr = this.filter(e, f, scope, recursive);
+          if(rr.length > 0) {
+            r.push(rr);
+          }
+        } else {
+          var m = f.call(scope, e, i);
+          if(m === true) {
+            r.push(e);
+          }
+        }
+      }, this);
+      return r;
+    },
+
+    /*
      * Reverse slice, returns the opposite of what slice returns.
      */
     rslice: function(arr, i) {
