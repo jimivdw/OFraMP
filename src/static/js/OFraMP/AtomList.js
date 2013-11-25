@@ -140,11 +140,18 @@ AtomList.prototype = {
     if(this.cache.get('position.left_top')) {
       return this.cache.get('position.left_top');
     }
+    var s = this.molecule.mv.settings;
     var lt = {
       x: $ext.array.min(this.map(function(atom) {
+        if(!s.atom.show_h_atoms && atom.element === "H") {
+          return Infinity;
+        }
         return atom.x - atom.getRadius();
       })),
       y: $ext.array.min(this.map(function(atom) {
+        if(!s.atom.show_h_atoms && atom.element === "H") {
+          return Infinity;
+        }
         return atom.y - atom.getRadius();
       }))
     };
@@ -160,11 +167,18 @@ AtomList.prototype = {
     if(this.cache.get('position.right_bottom')) {
       return this.cache.get('position.right_bottom');
     }
+    var s = this.molecule.mv.settings;
     var rb = {
       x: $ext.array.max(this.map(function(atom) {
+        if(!s.atom.show_h_atoms && atom.element === "H") {
+          return 0;
+        }
         return atom.x + atom.getRadius();
       })),
       y: $ext.array.max(this.map(function(atom) {
+        if(!s.atom.show_h_atoms && atom.element === "H") {
+          return 0;
+        }
         return atom.y + atom.getRadius();
       }))
     };
