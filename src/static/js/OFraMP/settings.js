@@ -33,8 +33,8 @@ var DEFAULT_SETTINGS = {
   deoverlap: {
     deoverlap: true,
     deoverlap_atoms: true,
-    deoverlap_bonds: true,
-    decross_bonds: true,
+    deoverlap_bonds: false,
+    decross_bonds: false,
     lengthen_bonds: false,
   },
 
@@ -61,7 +61,7 @@ var DEFAULT_SETTINGS = {
 
   atom: {
     show_circ: true,
-    show_h_atoms: true,
+    show_h_atoms: false,
     show_c_labels: true,
     show_id: false,
     font: "bold 12px Arial",
@@ -78,7 +78,7 @@ var DEFAULT_SETTINGS = {
       other: "#000000"
     },
     charge_color: "rgb(0, 0, 0)",
-    radius: 10,
+    radius: 20,
     radius_charged: 20,
     charge_offset: 6,
     border_widths: {
