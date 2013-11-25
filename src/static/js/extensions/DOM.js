@@ -136,11 +136,15 @@ $ext.extend($ext, {
     /*
      * Attach a callback to the mousedown event on a given elem.
      */
-    onMouseDown: function(elem, callback, useCapture) {
+    onMouseDown: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mousedown", function(evt) {
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
+          return;
+        }
+
         window.__mouseDown = true;
         if(callback instanceof Function) {
-          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -149,12 +153,15 @@ $ext.extend($ext, {
     /*
      * Attach a callback to the mouseup event on a given elem.
      */
-    onMouseUp: function(elem, callback, useCapture) {
+    onMouseUp: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mouseup", function(evt) {
-        window.__mouseDown = false;
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
+          return;
+        }
+
         delete window.__mouseDown;
         if(callback instanceof Function) {
-          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -166,16 +173,17 @@ $ext.extend($ext, {
      * Note that, in this implementation, this event will only be fired when the
      * mouse is moved but NOT down, i.e. the user is not dragging.
      */
-    onMouseMove: function(elem, callback, useCapture) {
-      this.onMouseDown(elem);
-      this.onMouseUp(elem);
+    onMouseMove: function(elem, callback, button, useCapture) {
+      this.onMouseDown(elem, null, button);
+      this.onMouseUp(elem, null, button);
       this.addEventListener(elem, "mousemove", function(evt) {
-        if(window.__mouseDown === true) {
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(window.__mouseDown === true || button !== undefined
+            && evt.button !== button) {
           return;
         }
 
         if(callback instanceof Function) {
-          evt.button = $ext.dom.getMouseButton(evt);
           return callback(evt);
         }
       }, useCapture);
@@ -188,13 +196,13 @@ $ext.extend($ext, {
      * mouse is not moved more than MOUSE_DRAG_EPSILON, i.e. only when the user
      * is not dragging.
      */
-    onMouseClick: function(elem, callback, useCapture) {
+    onMouseClick: function(elem, callback, button, useCapture) {
       this.onMouseDown(elem, function(evt) {
         window.__lastDownPos = {
           clientX: evt.clientX,
           clientY: evt.clientY
         };
-      }, useCapture);
+      }, button, useCapture);
 
       this.onMouseUp(elem, function(evt) {
         var dp = window.__lastDownPos;
@@ -204,7 +212,7 @@ $ext.extend($ext, {
           return callback(evt);
         }
         delete window.__lastDownPos;
-      }, useCapture);
+      }, button, useCapture);
     },
 
     /*
@@ -212,15 +220,18 @@ $ext.extend($ext, {
      * 
      * Note the difference between this event and the regular onDrag event.
      */
-    onMouseDrag: function(elem, callback, useCapture) {
-      this.onMouseDown(elem, _onMouseDown, useCapture);
+    onMouseDrag: function(elem, callback, button, useCapture) {
+      this.onMouseDown(elem, _onMouseDown, button, useCapture);
       this.onMouseUp(window, function() {
         delete window.__lastDragPos;
+        delete window.__mouseDragged;
         $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
-      }, useCapture);
+      }, button, useCapture);
 
       this.addEventListener(elem, "mousemove", function(evt) {
-        if(window.__mouseDragged !== true || window.__mouseDown !== true) {
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button
+            || window.__mouseDragged !== true || window.__mouseDown !== true) {
           return;
         }
 
@@ -245,7 +256,6 @@ $ext.extend($ext, {
         };
 
         if(callback instanceof Function) {
-          evt.button = $ext.dom.getMouseButton(evt);
           return callback($ext.merge(evt, delta, true));
         }
       }, useCapture);
@@ -272,6 +282,19 @@ $ext.extend($ext, {
               useCapture);
         }
       }
+    },
+
+    onContextMenu: function(elem, callback, button, useCapture) {
+      this.addEventListener(elem, "contextmenu", function(evt) {
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
+          return;
+        }
+
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
     }
   }
 });

@@ -37,6 +37,12 @@ MoleculeViewer.prototype = {
   init_interaction: function() {
     var mv = this;
 
+    $ext.dom.onContextMenu(this.canvas, function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
     $ext.dom.onMouseMove(this.canvas, function(e) {
       if(!mv.overlay_showing) {
         var c = $ext.mouse.getCoords(e);
@@ -55,13 +61,13 @@ MoleculeViewer.prototype = {
           mv.redraw();
         }
       }
-    });
+    }, 0);
 
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!mv.overlay_showing) {
         mv.move(e.deltaX, e.deltaY);
       }
-    });
+    }, 0);
 
     $ext.dom.onMouseWheel(this.canvas, function(e) {
       if(!mv.overlay_showing) {
