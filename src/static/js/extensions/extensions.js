@@ -112,6 +112,6 @@ $ext = {
    * Determine whether the user is using a broken IE browser (i.e. IE <= 8).
    */
   onBrokenIE: function() {
-    return !BrowserDetect.browser === "MSIE" || BrowserDetect.version > 8;
+    return BrowserDetect.browser === "MSIE" && BrowserDetect.version < 9;
   }
 };
