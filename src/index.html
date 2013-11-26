@@ -53,8 +53,10 @@
         });
         mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
 
-        gui = new dat.GUI({name: 'OFraMP Settings', savable: true});
-        gui.addAll(mv.settings, mv.settings, $ext.object.extrapolate(SETTINGS_OPTIONS));
+        if(!$ext.onBrokenIE()) {
+          gui = new dat.GUI({name: 'OFraMP Settings', savable: true});
+          gui.addAll(mv.settings, mv.settings, $ext.object.extrapolate(SETTINGS_OPTIONS));
+        }
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {
@@ -101,9 +103,13 @@
           mv.resetPositions();
         };
         var op = document.getElementById("opti");
-        op.onclick = function() {
-          gui.toggle();
-        };
+        if($ext.onBrokenIE()) {
+          op.remove();
+        } else {
+          op.onclick = function() {
+            gui.toggle();
+          };
+        }
         var sm = document.getElementById("show");
         sm.onclick = function() {
           var data = document.getElementById("data");

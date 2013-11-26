@@ -211,7 +211,7 @@ Molecule.prototype = {
    * Returns true is atoms were moved and a redraw is needed.
    */
   deoverlap: function() {
-    if(!mv.settings.deoverlap.deoverlap) {
+    if(!mv.settings.deoverlap.deoverlap || $ext.onBrokenIE()) {
       return;
     }
 
