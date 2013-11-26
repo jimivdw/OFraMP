@@ -43,7 +43,11 @@ dat.utils.css = (function () {
       doc = doc || document;
       var injected = document.createElement('style');
       injected.type = 'text/css';
-      injected.innerHTML = css;
+      if(injected.styleSheet) {
+        injected.styleSheet.cssText = css;
+      } else {
+        injected.innerHTML = css;
+      }
       doc.getElementsByTagName('head')[0].appendChild(injected);
     }
   }
