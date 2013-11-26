@@ -2000,8 +2000,6 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
       }
 
       var title_row_name = document.createTextNode(params.name);
-      dom.addClass(title_row_name, 'controller-name');
-
       var title_row = addRow(_this, title_row_name);
 
       var on_click_title = function(e) {
