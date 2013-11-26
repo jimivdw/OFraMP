@@ -3670,7 +3670,7 @@ dat.color.Color = (function (interpret, math, toString, common) {
   Object.defineProperty(Color.prototype, 'a', {
 
     get: function() {
-      return this.__state.a;
+      return this.__state.a || 0;
     },
 
     set: function(v) {
@@ -3683,7 +3683,7 @@ dat.color.Color = (function (interpret, math, toString, common) {
 
     get: function() {
 
-      if (!this.__state.space !== 'HEX') {
+      if (this.__state.space !== 'HEX') {
         this.__state.hex = math.rgb_to_hex(this.r, this.g, this.b);
       }
 
@@ -3707,12 +3707,12 @@ dat.color.Color = (function (interpret, math, toString, common) {
       get: function() {
 
         if (this.__state.space === 'RGB') {
-          return this.__state[component];
+          return this.__state[component] || 0;
         }
 
         recalculateRGB(this, component, componentHexIndex);
 
-        return this.__state[component];
+        return this.__state[component] || 0;
 
       },
 
@@ -3738,11 +3738,11 @@ dat.color.Color = (function (interpret, math, toString, common) {
       get: function() {
 
         if (this.__state.space === 'HSV')
-          return this.__state[component];
+          return this.__state[component] || 0;
 
         recalculateHSV(this);
 
-        return this.__state[component];
+        return this.__state[component] || 0;
 
       },
 
