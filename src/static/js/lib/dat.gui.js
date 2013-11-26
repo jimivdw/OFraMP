@@ -2306,7 +2306,8 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
           }
 
           if (root.__closeButton) {
-            root.__closeButton.style.width = root.width + 'px';
+            var width = root.width || 0;
+            root.__closeButton.style.width = width + 'px';
           }
 
         },
