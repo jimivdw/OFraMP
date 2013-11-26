@@ -1876,10 +1876,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
       if(params.name) {
 
         var title_row_name = document.createTextNode(params.name);
-        dom.addClass(title_row_name, 'controller-name');
-
         var title_row = addRow(_this, title_row_name);
-
         dom.addClass(title_row, 'main-title');
         
       }
@@ -1890,13 +1887,11 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         var name_cont = document.createElement("span");
         dom.addClass(name_cont, "property-name");
         var save_row_name = document.createTextNode("Settings");
-        dom.addClass(save_row_name, 'controller-save');
 
         var cont2 = document.createElement("div");
         var name_cont2 = document.createElement("span");
         dom.addClass(name_cont2, "property-name");
         var save_row2_name = document.createTextNode("Presets");
-        dom.addClass(save_row2_name, 'controller-save');
         
         var presets = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'presets')));
         var oPresets = {'Default': ''};
