@@ -49,7 +49,7 @@ Cache.prototype = {
 
   __checkDependencies: function() {
     var clean = $ext.each(this.__dependencies, function(d) {
-      if(this.__ts <= d.__ts) {
+      if(this.__ts < d.__ts) {
         return false;
       }
       if(!d.__checkDependencies()) {
