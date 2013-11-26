@@ -11,3 +11,11 @@
     });
   }
 })();
+
+(function() {
+  if(document.createElement("div").remove === undefined) {
+    Element.prototype.remove = function() {
+      this.parentElement.removeChild(this);
+    };
+  }
+})();
