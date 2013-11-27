@@ -134,8 +134,8 @@ $ext.extend($ext, {
      */
     onMouseDown: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mousedown", function(evt) {
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button) {
+        evt.properButton = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.properButton !== button) {
           return;
         }
 
@@ -151,8 +151,8 @@ $ext.extend($ext, {
      */
     onMouseUp: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mouseup", function(evt) {
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button) {
+        evt.properButton = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.properButton !== button) {
           return;
         }
 
@@ -173,9 +173,9 @@ $ext.extend($ext, {
       this.onMouseDown(elem, null, button);
       this.onMouseUp(elem, null, button);
       this.addEventListener(elem, "mousemove", function(evt) {
-        evt.button = $ext.dom.getMouseButton(evt);
+        evt.properButton = $ext.dom.getMouseButton(evt);
         if(window.__mouseDown === true || button !== undefined
-            && evt.button !== button) {
+            && evt.properButton !== button) {
           return;
         }
 
@@ -225,8 +225,8 @@ $ext.extend($ext, {
       }, button, useCapture);
 
       this.addEventListener(elem, "mousemove", function(evt) {
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button
+        evt.properButton = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.properButton !== button
             || window.__mouseDragged !== true || window.__mouseDown !== true) {
           return;
         }
@@ -282,8 +282,8 @@ $ext.extend($ext, {
 
     onContextMenu: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "contextmenu", function(evt) {
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button) {
+        evt.properButton = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.properButton !== button) {
           return;
         }
 
