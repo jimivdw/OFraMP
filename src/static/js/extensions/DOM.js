@@ -156,7 +156,7 @@ $ext.extend($ext, {
           return;
         }
 
-        delete window.__mouseDown;
+        window.__mouseDown = null;
         if(callback instanceof Function) {
           return callback(evt);
         }
@@ -207,7 +207,7 @@ $ext.extend($ext, {
         if(dp && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
           return callback(evt);
         }
-        delete window.__lastDownPos;
+        window.__lastDownPos = null;
       }, button, useCapture);
     },
 
@@ -219,8 +219,8 @@ $ext.extend($ext, {
     onMouseDrag: function(elem, callback, button, useCapture) {
       this.onMouseDown(elem, _onMouseDown, button, useCapture);
       this.onMouseUp(window, function() {
-        delete window.__lastDragPos;
-        delete window.__mouseDragged;
+        window.__lastDragPos = null;
+        window.__mouseDragged = null;
         $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
       }, button, useCapture);
 
