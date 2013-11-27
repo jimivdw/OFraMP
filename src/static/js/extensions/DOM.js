@@ -10,7 +10,7 @@ $ext.extend($ext, {
       if(elem.addEventListener) {
         return elem.addEventListener(type, callback, useCapture);
       } else {
-        return elem.attachEvent(type, callback, useCapture);
+        return elem.attachEvent("on" + type, callback, useCapture);
       }
     },
 
@@ -36,11 +36,7 @@ $ext.extend($ext, {
       if("onwheel" in document.createElement("div")) {
         return "wheel";
       } else if(document.onmousewheel !== undefined) {
-        if(window.addEventListener) {
-          return "mousewheel";
-        } else {
-          return "onmousewheel";
-        }
+        return "mousewheel";
       } else {
         return "DOMMouseScroll";
       }
