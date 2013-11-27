@@ -181,7 +181,7 @@ Bond.prototype = {
    */
   cacheLineCoords: function() {
     if(this.cache.get('position.lines')) {
-      return;
+      return this.cache.get('position.lines');
     }
 
     var a1 = this.a1;
@@ -284,6 +284,8 @@ Bond.prototype = {
         this.cache.getCache('appearance.lines'),
         this.cache.getCache('position.visible'),
         this.cache.getCache('position.coords')]);
+
+    return lines;
   },
 
   /*
@@ -358,6 +360,8 @@ Bond.prototype = {
         this.cache.getCache('appearance.connectors'),
         this.cache.getCache('position.visible'),
         this.cache.getCache('position.coords')]);
+
+    return connectors;
   },
 
   /*
@@ -365,7 +369,7 @@ Bond.prototype = {
    */
   cacheConnectorsCoords: function() {
     if(this.cache.get('position.connectors')) {
-      return;
+      return this.cache.get('position.connectors');
     }
 
     if(!this.isVisible()) {
@@ -373,11 +377,12 @@ Bond.prototype = {
           this.cache.getCache('appearance.connectors'),
           this.cache.getCache('position.visible'),
           this.cache.getCache('position.coords')]);
-      return;
+      return [];
     }
 
-    this.cacheConnectorCoords(this.a1);
-    this.cacheConnectorCoords(this.a2);
+    var c1 = this.cacheConnectorCoords(this.a1);
+    var c2 = this.cacheConnectorCoords(this.a2);
+    return $ext.merge(c1, c2, true);
   },
 
   /*
@@ -385,7 +390,7 @@ Bond.prototype = {
    */
   draw: function() {
     this.drawConnectors();
-    this.cacheLineCoords();
+    var lines = this.cacheLineCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
@@ -393,7 +398,7 @@ Bond.prototype = {
     ctx.lineWidth = s.bond.width;
     ctx.strokeStyle = s.bond.color;
 
-    $ext.each(this.cache.get('position.lines'), function(l) {
+    $ext.each(lines, function(l) {
       if(l.n) {
         $ext.context.dashedLine(ctx, l.x1, l.y1, l.x2, l.y2, l.n);
       } else {
@@ -420,14 +425,14 @@ Bond.prototype = {
    * Draw this bond's connectors.
    */
   drawConnectors: function() {
-    this.cacheConnectorsCoords();
+    var connectors = this.cacheConnectorsCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.list.molecule.mv.settings;
     ctx.lineWidth = s.bond.connector_width;
     ctx.strokeStyle = s.bond.connector_color;
 
-    $ext.each(this.cache.get('position.connectors'), function(c) {
+    $ext.each(connectors, function(c) {
       ctx.beginPath();
       ctx.arc(c.x, c.y, c.r, c.s, c.e);
       ctx.stroke();
