@@ -419,14 +419,15 @@ Atom.prototype = {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
     ctx.fill();
+
+    if(!this.showLabel()) {
+      return;
+    }
+
     if(s.atom.show_circ) {
       ctx.lineWidth = s.atom.border_widths[status];
       ctx.strokeStyle = s.atom.border_color;
       ctx.stroke();
-    }
-
-    if(!this.showLabel()) {
-      return;
     }
 
     var label = this.label();

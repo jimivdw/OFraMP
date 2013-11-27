@@ -298,6 +298,10 @@ Bond.prototype = {
       var connectors = new Array();
     }
 
+    if(!a.showLabel()) {
+      return [];
+    }
+
     var ep = {
       x: a.x + a.getRadius(),
       y: a.y
