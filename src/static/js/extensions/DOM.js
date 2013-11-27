@@ -118,7 +118,7 @@ $ext.extend($ext, {
 
 
     getMouseButton: function(evt) {
-      if(!$ext.isBrokenIE()) {
+      if(!$ext.onBrokenIE()) {
         return evt.button;
       } else {
         if(evt.button & 1) {
