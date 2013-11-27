@@ -18,7 +18,7 @@ var DEFAULT_SETTINGS = {
 
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/",
-    version: "0.1.3",
+    version: "0.1.3"
   },
 
   zoom: {
@@ -27,7 +27,7 @@ var DEFAULT_SETTINGS = {
     max: 300,
     min_bond_length: 50,
     ideal_bond_length: 70,
-    max_bond_length: 150,
+    max_bond_length: 150
   },
 
   deoverlap: {
@@ -35,13 +35,13 @@ var DEFAULT_SETTINGS = {
     deoverlap_atoms: true,
     deoverlap_bonds: false,
     decross_bonds: false,
-    lengthen_bonds: false,
+    lengthen_bonds: false
   },
 
   cursor: {
     normal: "default",
     drag: "move",
-    click: "pointer",
+    click: "pointer"
   },
 
   popup: {
@@ -93,7 +93,7 @@ var DEFAULT_SETTINGS = {
       1: "rgb( 80, 169,  75)",
       2: "rgb(204, 166,  40)",
       4: "rgb(203,  83,  73)"
-    },
+    }
   },
 
   bond: {
