@@ -25,7 +25,7 @@ $ext.extend($ext, {
       if(elem.removeEventListener) {
         return elem.removeEventListener(type, callback, useCapture);
       } else {
-        return elem.detachEvent(type, callback, useCapture);
+        return elem.detachEvent("on" + type, callback, useCapture);
       }
     },
 
