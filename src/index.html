@@ -130,6 +130,13 @@
           canvas.height = document.documentElement.clientHeight - 120;
           canvas.width = document.documentElement.clientWidth;
           canvas.height = document.documentElement.clientHeight - 120;
+
+          mv.molecule.atoms.each(function(atom) {
+            atom.cache.clear('position.visible');
+          });
+          mv.molecule.bonds.each(function(bond) {
+            bond.cache.clear('position.visible');
+          });
           mv.redraw();
         };
       };
