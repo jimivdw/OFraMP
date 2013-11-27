@@ -4,16 +4,30 @@ $ext.extend($ext, {
      * Get the proper x coordinate of a MouseEvent.
      */
     getX: function(evt) {
-      return evt.clientX - evt.target.offsetLeft
-          + document.documentElement.scrollLeft;
+      if(evt.target) {
+        return evt.clientX - evt.target.offsetLeft
+            + document.documentElement.scrollLeft;
+      } else if(evt.srcElement) {
+        return evt.clientX - evt.srcElement.offsetLeft
+            + document.documentElement.scrollLeft;
+      } else {
+        return evt.clientX + document.documentElement.scrollLeft;
+      }
     },
 
     /*
      * Get the proper y coordinate of a MouseEvent.
      */
     getY: function(evt) {
-      return evt.clientY - evt.target.offsetTop
-          + document.documentElement.scrollTop;
+      if(evt.target) {
+        return evt.clientY - evt.target.offsetTop
+            + document.documentElement.scrollTop;
+      } else if(evt.srcElement) {
+        return evt.clientY - evt.srcElement.offsetTop
+            + document.documentElement.scrollTop;
+      } else {
+        return evt.clientY + document.documentElement.scrollTop;
+      }
     },
 
     /*
