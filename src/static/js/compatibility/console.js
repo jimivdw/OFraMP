@@ -169,13 +169,13 @@
     this.open = function() {
       display.style.visibility = 'visible';
       controls.style.bottom = '211px';
-      toggle.firstChild.innerHTML = CLOSE_TEXT;
+      toggle.innerHTML = CLOSE_TEXT;
     };
 
     this.close = function() {
       display.style.visibility = 'hidden';
       controls.style.bottom = '0';
-      toggle.firstChild.innerHTML = OPEN_TEXT;
+      toggle.innerHTML = OPEN_TEXT;
     };
 
     this.toggle = function() {
