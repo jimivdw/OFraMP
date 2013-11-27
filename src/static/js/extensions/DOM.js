@@ -30,6 +30,22 @@ $ext.extend($ext, {
     },
 
     /*
+     * Get an Event represented as an Object (fix for IE <= 8 where this
+     * strangely isn't the case).
+     */
+    eventObject: function(evt) {
+      if(evt instanceof Object) {
+        return evt;
+      }
+
+      var r = new Object();
+      for(k in evt) {
+        r[k] = evt[k];
+      }
+      return r;
+    },
+
+    /*
      * Get the name the user's browser uses for the wheel event.
      */
     wheelEventName: (function() {
@@ -134,8 +150,9 @@ $ext.extend($ext, {
      */
     onMouseDown: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mousedown", function(evt) {
-        evt.properButton = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.properButton !== button) {
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
           return;
         }
 
@@ -151,8 +168,9 @@ $ext.extend($ext, {
      */
     onMouseUp: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "mouseup", function(evt) {
-        evt.properButton = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.properButton !== button) {
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
           return;
         }
 
@@ -173,9 +191,10 @@ $ext.extend($ext, {
       this.onMouseDown(elem, null, button);
       this.onMouseUp(elem, null, button);
       this.addEventListener(elem, "mousemove", function(evt) {
-        evt.properButton = $ext.dom.getMouseButton(evt);
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
         if(window.__mouseDown === true || button !== undefined
-            && evt.properButton !== button) {
+            && evt.button !== button) {
           return;
         }
 
@@ -225,8 +244,9 @@ $ext.extend($ext, {
       }, button, useCapture);
 
       this.addEventListener(elem, "mousemove", function(evt) {
-        evt.properButton = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.properButton !== button
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button
             || window.__mouseDragged !== true || window.__mouseDown !== true) {
           return;
         }
@@ -265,7 +285,7 @@ $ext.extend($ext, {
         };
 
         $ext.dom
-            .addEventListener(window, "mousemove", _onMouseMove, useCapture);
+            .addEventListener(elem, "mousemove", _onMouseMove, useCapture);
       }
 
       function _onMouseMove(evt) {
@@ -274,7 +294,7 @@ $ext.extend($ext, {
             + Math.pow(dp.clientY - evt.clientY, 2));
         if(delta > $ext.dom.MOUSE_DRAG_EPSILON) {
           window.__mouseDragged = true;
-          $ext.dom.removeEventListener(window, "mousemove", _onMouseMove,
+          $ext.dom.removeEventListener(elem, "mousemove", _onMouseMove,
               useCapture);
         }
       }
@@ -282,8 +302,9 @@ $ext.extend($ext, {
 
     onContextMenu: function(elem, callback, button, useCapture) {
       this.addEventListener(elem, "contextmenu", function(evt) {
-        evt.properButton = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.properButton !== button) {
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
           return;
         }
 
