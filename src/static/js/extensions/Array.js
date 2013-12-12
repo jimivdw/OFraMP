@@ -190,6 +190,14 @@ $ext.extend($ext, {
       }
       r += "]";
       return r;
+    },
+
+    /*
+     * Get a random element from a given array.
+     */
+    randomElement: function(arr) {
+      var i = Math.floor(Math.random() * arr.length);
+      return arr[i];
     }
   }
 });

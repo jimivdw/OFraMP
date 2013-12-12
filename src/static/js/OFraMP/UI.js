@@ -24,13 +24,22 @@ function showInsertMoleculePopup() {
   var content = document.createElement('div');
   var ta = document.createElement('textarea');
   ta.placeholder = "Insert SMILES / InChI string here";
+  var cbs = document.createElement('div');
+  cbs.className = 'controls';
   var sb = document.createElement('button');
   sb.appendChild(document.createTextNode("Submit"));
   sb.onclick = function() {
     mv.showMolecule(ta.value);
     hidePopup();
   }
+  var rb = document.createElement('button');
+  rb.appendChild(document.createTextNode("Random molecule"));
+  rb.onclick = function() {
+    ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
+  }
+  cbs.appendChild(sb);
+  cbs.appendChild(rb);
   content.appendChild(ta);
-  content.appendChild(sb);
+  content.appendChild(cbs);
   showPopup(title, content);
 }

@@ -13,6 +13,11 @@ var ATOM_STATUSES = {
   selected: 4
 };
 
+var PREDEFINED_MOLECULES = [
+  "CC(NC)CC1=CC=C(OCO2)C2=C1",
+  "c1ccccc1"
+];
+
 var DEFAULT_SETTINGS = {
   interactive: false,
 

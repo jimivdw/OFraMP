@@ -202,7 +202,7 @@ html, body {
     border: 1px solid #333;
 }
 
-#popup_content button {
+#popup_content .controls {
     position: absolute;
     display: block;
     bottom: 0;
