@@ -37,6 +37,13 @@ html, body {
     text-align: center;
     -webkit-user-select: none;
     user-select: none;
+    opacity: 0.3;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+#header:hover {
+    opacity: 1;
 }
 
 #header span {
@@ -83,8 +90,13 @@ html, body {
     text-align: center;
     background-color: #333;
     border-radius: 5px 5px 0 0;
-    -webkit-transition: height .2s ease-out;
-    transition: height .2s ease-out;
+    -webkit-transition: height .2s ease-out, opacity .2s ease-out;
+    transition: height .2s ease-out, opacity .2s ease-out;
+    opacity: 0.3;
+}
+
+#controls:hover {
+    opacity: 1;
 }
 
 .bgroup {
