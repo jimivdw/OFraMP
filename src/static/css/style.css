@@ -1,7 +1,6 @@
 * {
     font-family: Arial, Helvetica, sans-serif;
-    color: #444;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, .9);
+    color: #333;
 }
 
 html, body {
@@ -17,6 +16,10 @@ html, body {
     user-select: none;
     background-color: #CCC;
     overflow: hidden;
+}
+
+#canvasContainer > * {
+    text-shadow: 0 1px 1px rgba(255, 255, 255, .9);
 }
 
 #mainMolecule {
@@ -70,10 +73,60 @@ html, body {
 
 #controls {
     position: absolute;
-    bottom: 20px;
+    bottom: 0px;
     left: 50%;
     width: 600px;
+    height: 40px;
+    box-sizing: border-box;
     margin-left: -300px;
+    padding: 5px;
+    text-align: center;
+    background-color: #333;
+    border-radius: 5px 5px 0 0;
+    -webkit-transition: height .2s ease-out;
+    transition: height .2s ease-out;
+}
+
+.bgroup {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.bgroup > * {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 6px;
+    border-right-width: 0 !important;
+    border-radius: 0 !important;
+    color: #888;
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.bgroup > select {
+    /* Fix for weird padding */
+    padding: 5px;
+}
+
+.bgroup > *:hover {
+    color: #333;
+}
+
+.bgroup > *:active {
+    background-color: #EEE !important;
+}
+
+.bgroup > *:first-child {
+    border-top-left-radius: 2px !important;
+    border-bottom-left-radius: 2px !important;
+}
+
+.bgroup > *:last-child {
+    border-right-width: 1px !important;
+    border-top-right-radius: 2px !important;
+    border-bottom-right-radius: 2px !important;
 }
 
 #leftbar, #rightbar {
@@ -83,7 +136,6 @@ html, body {
     width: 240px;
     overflow: auto;
     z-index: 2;
-    background-color: #FFF;
 }
 
 #leftbar {
@@ -102,7 +154,6 @@ html, body {
     margin-left: -300px;
     width: 600px;
     z-index: 10;
-    background-color: #FFF;
 }
 
 #popup_title {
@@ -136,14 +187,20 @@ html, body {
     border: 1px solid #AAA;
     border-radius: 2px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .1), 0 -1px 2px rgba(0, 0, 0, .1);
-    visibility: hidden;
+    background-color: #FFF;
+    /*visibility: hidden;*/
 }
 
 .dg.ac {
     z-index: 100 !important;
 }
 
+.dg.ac span, .dg.ac li {
+    color: #EEE;
+}
+
 .dg.main {
+    -webkit-transition: width .2s ease-out, visibility .2s ease-out !important;
     transition: width .2s ease-out, visibility .2s ease-out !important;
 }
 
