@@ -36,6 +36,7 @@
     <script type="text/javascript" src="static/js/OFraMP/Molecule.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/MoleculeViewer.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/settings.js"></script>
+    <script type="text/javascript" src="static/js/OFraMP/UI.js"></script>
 
     <script>
       var mv;
@@ -53,7 +54,9 @@
             url : OAPoC_URL
           }
         });
-        mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
+        //mv.showMolecule("CC(NC)CC1=CC=C(OCO2)C2=C1");
+        mv.showOverlay(" ", MESSAGE_TYPES.info);
+        showInsertMoleculePopup();
 
         if (!$ext.onBrokenIE()) {
           gui = new dat.GUI({
@@ -93,26 +96,19 @@
           zp.value = 'pre';
         };
 
-        var cr = document.getElementById("centr");
-        cr.onclick = function() {
-          mv.bestFit();
-        };
-        var mn = document.getElementById("minim");
-        mn.onclick = function() {
-          mv.minimize();
-        };
-        var mm = document.getElementById("maxim");
-        mm.onclick = function() {
-          mv.maximize();
-        };
-        var id = document.getElementById("ideal");
-        id.onclick = function() {
-          mv.idealize();
-        };
         var rp = document.getElementById("reset");
         rp.onclick = function() {
           mv.resetPositions();
         };
+
+        var dl = document.getElementById("download");
+        dl.onclick = function() {
+          var data = mv.canvas.toDataURL('image/png');
+          this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+          var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
+          this.download = "OFraMP-" + date + ".png";
+        };
+
         var op = document.getElementById("opti");
         if ($ext.onBrokenIE()) {
           op.remove();
@@ -121,18 +117,6 @@
             gui.toggle();
           };
         }
-        var sm = document.getElementById("show");
-        sm.onclick = function() {
-          var data = document.getElementById("data");
-          mv.showMolecule(data.value);
-        };
-        var dl = document.getElementById("download");
-        dl.onclick = function() {
-          var data = mv.canvas.toDataURL('image/png');
-          this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-          var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
-          this.download = "OFraMP-" + date + ".png";
-        };
 
         window.onresize = function() {
           canvas.width = document.documentElement.clientWidth;
@@ -154,42 +138,6 @@
     <div id="header">
       <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
     </div>
-
-    <div style="display: none;">
-
-      <input type="text" id="data" placeholder="SMILES" />
-      <button id="show">
-        Show
-      </button>
-      <span style="display:inline-block; width: 50px;">&nbsp;</span>
-      <br />
-      <button id="movel">
-        Move &lt;
-      </button>
-      <button id="mover">
-        Move &gt;
-      </button>
-      <button id="moveu">
-        Move ^
-      </button>
-      <button id="moved">
-        Move v
-      </button>
-
-      <button id="centr">
-        Best fit
-      </button>
-      <button id="minim">
-        Minimize
-      </button>
-      <button id="ideal">
-        Idealize
-      </button>
-      <button id="maxim">
-        Maximize
-      </button>
-      <span style="display:inline-block; width: 50px;">&nbsp;</span>
-      </div>
 
     <div id="controls">
       <div class="bgroup">
@@ -243,11 +191,11 @@
 
     <div id="popup" class="borderBox" style="visibility: hidden;">
       <div id="popup_title">
-        Popup
+        Title
       </div>
       <hr />
       <div id="popup_content">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+        Content
       </div>
     </div>
 

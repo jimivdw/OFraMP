@@ -8,6 +8,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 #canvasContainer {
@@ -23,7 +24,6 @@ html, body {
 }
 
 #mainMolecule {
-    margin-bottom: -5px;
     background-color: #FFF;
 }
 
@@ -177,6 +177,25 @@ html, body {
     box-sizing: border-box;
     padding: 10px;
     text-align: center;
+}
+
+#popup_content textarea {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    bottom: 30px;
+    left: 0;
+    margin: 10px;
+    border: 1px solid #333;
+}
+
+#popup_content button {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: 0;
+    margin: 10px;
 }
 
 #atomDetails, #relatedFragments {
