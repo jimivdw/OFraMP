@@ -43,9 +43,9 @@
       window.onload = function() {
         var canvas = document.getElementById("mainMolecule");
         canvas.width = document.documentElement.clientWidth;
-        canvas.height = document.documentElement.clientHeight - 120;
+        canvas.height = document.documentElement.clientHeight;
         canvas.width = document.documentElement.clientWidth;
-        canvas.height = document.documentElement.clientHeight - 120;
+        canvas.height = document.documentElement.clientHeight;
 
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
@@ -127,9 +127,9 @@
 
         window.onresize = function() {
           canvas.width = document.documentElement.clientWidth;
-          canvas.height = document.documentElement.clientHeight - 120;
+          canvas.height = document.documentElement.clientHeight;
           canvas.width = document.documentElement.clientWidth;
-          canvas.height = document.documentElement.clientHeight - 120;
+          canvas.height = document.documentElement.clientHeight;
 
           mv.molecule.atoms.each(function(atom) {
             atom.cache.clear('position.visible');
@@ -145,6 +145,8 @@
 
   <body>
     <div id="header">
+      <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+    <div style="display: none;">
       <img src="static/img/logo.png" alt="OFraMP" title="The Online tool for Fragment-based Molecule Parameterisation" />
       <br />
 
@@ -198,16 +200,29 @@
         Reset positions
       </button>
     </div>
+    </div>
 
-    <div id="leftbar">
+    <div id="copyright">
+      &copy; 2013 jimivdw | CWI
+    </div>
+
+    <div id="leftbar" class="borderBox">
       <div id="atomDetails">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </div>
 
-    <div id="rightbar">
+    <div id="rightbar" class="borderBox">
       <div id="relatedFragments">
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+      </div>
+    </div>
+
+    <div id="popup" class="borderBox">
+      <div id="popup_title">Popup</div>
+      <hr />
+      <div id="popup_content">
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
       </div>
     </div>
 
