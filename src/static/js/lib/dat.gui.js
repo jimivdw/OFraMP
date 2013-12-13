@@ -2151,7 +2151,9 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         
         addAll: function(object, properties, options) {
           for(var e in properties) {
-            if(typeof properties[e] === 'function') {
+            if(options && options[e] && options[e]["hidden"] === true) {
+              continue;
+            } else if(typeof properties[e] === 'function') {
               continue;
             } else if(typeof properties[e] === 'object') {
               var f = this.addFolder(e);
@@ -2168,7 +2170,9 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
               }
               if(options && options[e]) {
                 common.each(options[e], function(v, o) {
-                  c = c[o](v);
+                  if(o !== "hidden") {
+                    c = c[o](v);
+                  }
                 });
               }
             }
