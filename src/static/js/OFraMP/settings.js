@@ -19,8 +19,6 @@ var PREDEFINED_MOLECULES = [
 ];
 
 var DEFAULT_SETTINGS = {
-  interactive: false,
-
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/",
     version: "0.1.3"

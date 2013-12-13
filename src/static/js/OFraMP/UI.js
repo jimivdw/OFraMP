@@ -30,6 +30,8 @@ function showInsertMoleculePopup() {
   sb.appendChild(document.createTextNode("Submit"));
   sb.onclick = function() {
     mv.showMolecule(ta.value);
+    mv.init_interaction();
+    init();
     hidePopup();
   }
   var rb = document.createElement('button');

@@ -49,12 +49,10 @@
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
         mv = new MoleculeViewer("mainMolecule", {
-          interactive : true,
           oapoc : {
             url : OAPoC_URL
           }
         });
-        mv.showOverlay(" ", MESSAGE_TYPES.info);
         showInsertMoleculePopup();
 
         if (!$ext.onBrokenIE()) {

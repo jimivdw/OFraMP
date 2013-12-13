@@ -22,10 +22,6 @@ MoleculeViewer.prototype = {
 
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
 
-    if(this.settings.interactive) {
-      this.init_interaction();
-    }
-
     this.cache = new Cache();
   },
 
@@ -195,7 +191,7 @@ MoleculeViewer.prototype = {
    * Move the molecule dx in the x direction and dy on the y axis.
    */
   move: function(dx, dy) {
-    if(!this.settings.interactive || !this.molecule) {
+    if(!this.molecule) {
       return;
     }
 
@@ -207,7 +203,7 @@ MoleculeViewer.prototype = {
    * Zoom on the center of the molecule with a factor f.
    */
   zoom: function(f) {
-    if(!this.settings.interactive || !this.molecule) {
+    if(!this.molecule) {
       return;
     }
 
@@ -226,7 +222,7 @@ MoleculeViewer.prototype = {
    * Zoom on the position (x, y) with a factor f.
    */
   zoomOn: function(x, y, f) {
-    if(!this.settings.interactive || !this.molecule) {
+    if(!this.molecule) {
       return;
     }
 
@@ -245,7 +241,7 @@ MoleculeViewer.prototype = {
    * Fix overlapping bonds and atoms.
    */
   deoverlap: function() {
-    if(!this.settings.deoverlap.deoverlap || !this.molecule) {
+    if(!this.molecule) {
       return;
     }
 
