@@ -37,7 +37,7 @@ html, body {
     text-align: center;
     -webkit-user-select: none;
     user-select: none;
-    opacity: 0.3;
+    opacity: 0.5;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
 }
@@ -90,9 +90,11 @@ html, body {
     text-align: center;
     background-color: #333;
     border-radius: 5px 5px 0 0;
+    -webkit-user-select: none;
+    user-select: none;
     -webkit-transition: height .2s ease-out, opacity .2s ease-out;
     transition: height .2s ease-out, opacity .2s ease-out;
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 #controls:hover {
@@ -219,7 +221,6 @@ html, body {
     border-radius: 2px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, .1), 0 -1px 2px rgba(0, 0, 0, .1);
     background-color: #FFF;
-    /*visibility: hidden;*/
 }
 
 .dg.ac {
