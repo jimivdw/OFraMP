@@ -38,6 +38,7 @@ html, body {
     -webkit-user-select: none;
     user-select: none;
     opacity: 0.5;
+    cursor: default;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
 }
@@ -78,26 +79,52 @@ html, body {
     user-select: none;
 }
 
+#controls_toggle {
+    position: absolute;
+    bottom: 0px;
+    font-size: 12px;
+    color: #FFF;
+    background-color: #333;
+    padding: 1px 5px;
+    border-radius: 5px 5px 0 0;
+    left: 50%;
+    width: 80px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-left: 220px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-transition: bottom .2s ease-out, opacity .2s ease-out;
+    transition: bottom .2s ease-out, opacity .2s ease-out;
+    opacity: 0.5;
+}
+
+#controls_toggle:hover, #controls_toggle.hover {
+    opacity: 1;
+}
+
 #controls {
     position: absolute;
     bottom: 0px;
     left: 50%;
     width: 600px;
-    height: 40px;
+    height: 0px;
     box-sizing: border-box;
     margin-left: -300px;
     padding: 5px;
     text-align: center;
     background-color: #333;
-    border-radius: 5px 5px 0 0;
+    border-radius: 5px 0 0 0;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-transition: height .2s ease-out, opacity .2s ease-out;
-    transition: height .2s ease-out, opacity .2s ease-out;
+    -webkit-transition: height .2s ease-out, opacity .2s ease-out, visibility .2s ease-out;
+    transition: height .2s ease-out, opacity .2s ease-out, visibility .2s ease-out;
     opacity: 0.5;
+    visibility: hidden;
 }
 
-#controls:hover {
+#controls:hover, #controls_toggle:hover ~ #controls {
     opacity: 1;
 }
 

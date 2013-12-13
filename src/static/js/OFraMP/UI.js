@@ -43,3 +43,34 @@ function showInsertMoleculePopup() {
   content.appendChild(cbs);
   showPopup(title, content);
 }
+
+function init() {
+  initControls();
+}
+
+function initControls() {
+  var controls = document.getElementById("controls");
+  var toggle = document.getElementById("controls_toggle");
+  $ext.dom.onMouseOver(controls, function() {
+    toggle.className = "hover";
+  });
+  $ext.dom.onMouseOut(controls, function() {
+    toggle.className = "";
+  });
+
+  $ext.dom.onMouseClick(toggle, function() {
+    if(controls.style.visibility === "visible") {
+      controls.style.height = "0px";
+      controls.style.padding = "0px";
+      controls.style.visibility = "hidden";
+      toggle.style.bottom = "0px";
+      toggle.innerHTML = "Controls &#8673";
+    } else {
+      controls.style.visibility = "visible";
+      controls.style.height = "40px";
+      controls.style.padding = "5px";
+      toggle.style.bottom = "40px";
+      toggle.innerHTML = "Controls &#8675";
+    }
+  });
+}

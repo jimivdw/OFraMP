@@ -146,6 +146,30 @@ $ext.extend($ext, {
     },
 
     /*
+     * Attach a callback to the mouseover event on a given elem.
+     */
+    onMouseOver: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mouseover", function(evt) {
+        evt = $ext.dom.eventObject(evt);
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
+    },
+
+    /*
+     * Attach a callback to the mouseout event on a given elem.
+     */
+    onMouseOut: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mouseout", function(evt) {
+        evt = $ext.dom.eventObject(evt);
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
+    },
+
+    /*
      * Attach a callback to the mousedown event on a given elem.
      */
     onMouseDown: function(elem, callback, button, useCapture) {
