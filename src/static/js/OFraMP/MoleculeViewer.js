@@ -55,9 +55,13 @@ MoleculeViewer.prototype = {
         var c = $ext.mouse.getCoords(e);
         var a = mv.molecule.atomAt(c.x, c.y);
         var s = a ? [a] : [];
-        if(mv.molecule.setSelected(s)) {
+        if(e.ctrlKey === true) {
+          mv.molecule.atoms.addSelected(s);
+          mv.redraw();
+        } else if(mv.molecule.setSelected(s)) {
           mv.redraw();
         }
+        console.log(e);
       }
     }, 0);
 
@@ -71,11 +75,22 @@ MoleculeViewer.prototype = {
       if(!mv.overlay_showing) {
         if(!mv.selection_area) {
           mv.selection_area = new SelectionArea(mv, e.clientX, e.clientY);
+          if(e.ctrlKey === true) {
+            window.__initial_selection = $ext.array.filter(
+                mv.molecule.atoms.atoms, function(atom) {
+                  return (atom.status & ATOM_STATUSES.selected) > 0;
+                });
+          }
         } else {
           mv.selection_area.resize(e.deltaX, e.deltaY);
           var bb = mv.selection_area.getBB();
           var atoms = mv.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
-          mv.molecule.setSelected(atoms);
+          if(e.ctrlKey === true) {
+            mv.molecule.setSelected(window.__initial_selection);
+            mv.molecule.atoms.addSelected(atoms);
+          } else {
+            mv.molecule.setSelected(atoms);
+          }
           mv.redraw();
         }
       }

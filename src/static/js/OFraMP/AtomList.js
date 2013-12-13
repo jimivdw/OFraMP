@@ -320,6 +320,16 @@ AtomList.prototype = {
     return changed;
   },
 
+  addSelected: function(s) {
+    $ext.each(s, function(atom) {
+      if(atom.status === ATOM_STATUSES.selected) {
+        atom.deselect();
+      } else if(atom.isVisible()) {
+        atom.select();
+      }
+    });
+  },
+
   /*
    * Dehighlight all atoms in this list.
    */
