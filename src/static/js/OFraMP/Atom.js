@@ -101,6 +101,15 @@ Atom.prototype = {
     return show;
   },
 
+  /*
+   * Determine if this atom lies within the bounding box from (x1, y1) to (x2,
+   * y2).
+   */
+  inBB: function(x1, y1, x2, y2) {
+    return $ext.number.between(this.x, x1, x2)
+        && $ext.number.between(this.y, y1, y2);
+  },
+
 
   /*
    * Get all bonds that are connected to this atom, or just the aromatic ones

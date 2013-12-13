@@ -7,6 +7,7 @@ MoleculeViewer.prototype = {
   canvas: undefined,
   ctx: undefined,
 
+  selection_area: undefined,
   overlay_showing: false,
   overlay_message: "",
   overlay_status: 1,
@@ -53,7 +54,8 @@ MoleculeViewer.prototype = {
       if(!mv.overlay_showing) {
         var c = $ext.mouse.getCoords(e);
         var a = mv.molecule.atomAt(c.x, c.y);
-        if(mv.molecule.setSelected(a)) {
+        var s = a ? [a] : [];
+        if(mv.molecule.setSelected(s)) {
           mv.redraw();
         }
       }
@@ -64,6 +66,27 @@ MoleculeViewer.prototype = {
         mv.move(e.deltaX, e.deltaY);
       }
     }, 0);
+
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
+      if(!mv.overlay_showing) {
+        if(!mv.selection_area) {
+          mv.selection_area = new SelectionArea(mv, e.clientX, e.clientY);
+        } else {
+          mv.selection_area.resize(e.deltaX, e.deltaY);
+          var bb = mv.selection_area.getBB();
+          var atoms = mv.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
+          mv.molecule.setSelected(atoms);
+          mv.redraw();
+        }
+      }
+    }, 2);
+
+    $ext.dom.onMouseUp(this.canvas, function(e) {
+      if(!mv.overlay_showing) {
+        mv.selection_area = undefined;
+        mv.redraw();
+      }
+    }, 2);
 
     $ext.dom.onMouseWheel(this.canvas, function(e) {
       if(!mv.overlay_showing) {
@@ -330,6 +353,10 @@ MoleculeViewer.prototype = {
 
     if(this.molecule) {
       this.molecule.draw();
+    }
+
+    if(this.selection_area) {
+      this.selection_area.draw();
     }
 
     if(this.overlay_showing) {

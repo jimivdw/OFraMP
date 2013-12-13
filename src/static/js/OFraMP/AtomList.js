@@ -234,6 +234,19 @@ AtomList.prototype = {
   },
 
   /*
+   * Get all atoms in a bounding box from (x1, y1) to (x2, y2).
+   */
+  atomsIn: function(x1, y1, x2, y2) {
+    var r = new Array();
+    this.each(function(atom) {
+      if(atom.isVisible() && atom.inBB(x1, y1, x2, y2)) {
+        r.push(atom);
+      }
+    });
+    return r;
+  },
+
+  /*
    * Set the atom that is hovered to h. If h is undefined, no atom is hovered.
    * 
    * Returns true if the hover was changed and a redraw is needed.
@@ -277,14 +290,14 @@ AtomList.prototype = {
   },
 
   /*
-   * Set the selected atom to s. If s is undefined, no atom is selected.
+   * Set the selected atoms to s. If s is undefined, no atom is selected.
    * 
    * Returns true if the selection was changed and a redraw is needed.
    */
   setSelected: function(s) {
     var changed = false;
     this.each(function(a) {
-      if(a.status & ATOM_STATUSES.selected && a !== s) {
+      if(a.status & ATOM_STATUSES.selected && s.indexOf(a) === -1) {
         a.deselect();
         changed = true;
         return;
@@ -293,14 +306,16 @@ AtomList.prototype = {
 
     var t = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
-    if(s && s.isVisible() && s.status !== ATOM_STATUSES.selected) {
-      s.select();
+    $ext.each(s, function(atom) {
+      if(atom.isVisible() && atom.status !== ATOM_STATUSES.selected) {
+        atom.select();
 
-      // Bring to back of list to be drawn last (on top).
-      $ext.array.toBack(this.atoms, this.indexOf(s.id));
-      c.style.cursor = t.cursor.normal;
-      changed = true;
-    }
+        // Bring to back of list to be drawn last (on top).
+        $ext.array.toBack(this.atoms, this.indexOf(atom.id));
+        c.style.cursor = t.cursor.normal;
+        changed = true;
+      }
+    }, this);
 
     return changed;
   },

@@ -110,6 +110,12 @@ var DEFAULT_SETTINGS = {
       font: "9px Arial",
       color: "rgb( 48, 48, 48)"
     }
+  },
+
+  selection: {
+    color: "rgba(44, 10, 205, .3)",
+    border_width: 1,
+    border_color: "rgba(44, 10, 205, .5)"
   }
 };
 
