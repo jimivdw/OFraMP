@@ -61,7 +61,6 @@ MoleculeViewer.prototype = {
         } else if(mv.molecule.setSelected(s)) {
           mv.redraw();
         }
-        console.log(e);
       }
     }, 0);
 
