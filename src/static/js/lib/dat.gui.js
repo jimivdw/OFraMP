@@ -1878,7 +1878,9 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         var title_row_name = document.createTextNode(params.name);
         var title_row = addRow(_this, title_row_name);
         dom.addClass(title_row, 'main-title');
-        
+        dom.bind(title_row, 'click', function() {
+          _this.toggle();
+        });
       }
       
       if(params.savable && SUPPORTS_LOCAL_STORAGE) {

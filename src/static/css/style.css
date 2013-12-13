@@ -256,6 +256,8 @@ html, body {
 
 .dg.ac {
     z-index: 100 !important;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .dg.ac span, .dg.ac li {
@@ -272,6 +274,7 @@ html, body {
     color: #FFF !important;
     font-weight: bold;
     text-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 1px;
+    cursor: pointer !important;
 }
 
 .main-save {
