@@ -49,7 +49,7 @@ var DEFAULT_SETTINGS = {
     border_color: "rgba(0, 0, 0, 0.8)",
     padding: 10,
     font: "40px Arial",
-    color: "rgb(0, 0, 0)",
+    color: "rgb( 48, 48, 48)",
     bg_colors: {
       1: "rgba(255, 255, 255, 0.9)",
       2: "rgba(253, 198, 137, 0.9)",
@@ -67,17 +67,17 @@ var DEFAULT_SETTINGS = {
     font: "bold 12px Arial",
     charge_font: "9px Arial",
     colors: {
-      S: "#b2b200",
-      O: "#ff0000",
-      N: "#004dff",
-      H: "#707070",
-      F: "#66cd00",
-      Cl: "#66cd00",
-      Br: "#66cd00",
-      I: "#66cd00",
-      other: "#000000"
+      S: "rgb(204, 166,  40)",
+      O: "rgb(223,  83,  73)",
+      N: "rgb( 76,  81, 178)",
+      H: "rgb(148, 148, 148)",
+      F: "rgb( 80, 169,  75)",
+      Cl: "rgb( 80, 169,  75)",
+      Br: "rgb( 80, 169,  75)",
+      I: "rgb( 80, 169,  75)",
+      other: "rgb( 48, 48, 48)"
     },
-    charge_color: "rgb(0, 0, 0)",
+    charge_color: "rgb( 48, 48, 48)",
     radius: 20,
     radius_charged: 20,
     charge_offset: 6,
@@ -87,7 +87,7 @@ var DEFAULT_SETTINGS = {
       2: 3,
       4: 3
     },
-    border_color: "rgb(0, 0, 0)",
+    border_color: "rgb( 48, 48, 48)",
     bg_colors: {
       0: "rgb(255, 255, 255)",
       1: "rgb( 80, 169,  75)",
@@ -98,9 +98,9 @@ var DEFAULT_SETTINGS = {
 
   bond: {
     width: 1,
-    color: "rgb(0, 0, 0)",
+    color: "rgb( 48, 48, 48)",
     connector_width: 3,
-    connector_color: "rgb(0, 0, 0)",
+    connector_color: "rgb( 48, 48, 48)",
     spacing: 4,
     dash_count: 5,
     id: {
@@ -108,7 +108,7 @@ var DEFAULT_SETTINGS = {
       radius: 8,
       bg_color: "rgb(205, 205, 205)",
       font: "9px Arial",
-      color: "rgb(0, 0, 0)"
+      color: "rgb( 48, 48, 48)"
     }
   }
 };
