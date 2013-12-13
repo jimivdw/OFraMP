@@ -35,7 +35,8 @@ var DEFAULT_SETTINGS = {
     deoverlap_atoms: true,
     deoverlap_bonds: false,
     decross_bonds: false,
-    lengthen_bonds: false
+    lengthen_bonds: false,
+    time_limit: .5
   },
 
   cursor: {
@@ -144,6 +145,11 @@ var SETTINGS_OPTIONS = {
           mv.deoverlap();
         }
       }
+    },
+    time_limit: {
+      min: .1,
+      max: 10,
+      step: .1
     }
   },
 

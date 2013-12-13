@@ -282,14 +282,18 @@ MoleculeViewer.prototype = {
       return;
     }
 
+    var limit = this.molecule.mv.settings.deoverlap.time_limit * 1000;
     window.molecule = this.molecule;
-    window.fixcount = 0;
-    window.fixmax = 1000 - 4.8 * this.molecule.atoms.count();
-    window.requestAnimationFrame(function drawLoop() {
-      if(fixcount < fixmax && molecule.deoverlap()) {
-        fixcount++;
+    window.requestAnimationFrame(function drawLoop(ts) {
+      if(!window.__anim_start) {
+        window.__anim_start = ts;
+      }
+
+      if(ts - window.__anim_start < limit && molecule.deoverlap()) {
         molecule.mv.redraw();
         requestAnimationFrame(drawLoop);
+      } else {
+        window.__anim_start = undefined;
       }
     });
   },
