@@ -221,6 +221,10 @@ $ext.extend($ext, {
 
       this.onMouseUp(elem, function(evt) {
         var dp = window.__lastDownPos;
+        if(!dp) {
+          return;
+        }
+
         var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
             + Math.pow(dp.clientY - evt.clientY, 2));
         if(dp && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
@@ -284,8 +288,7 @@ $ext.extend($ext, {
           clientY: evt.clientY
         };
 
-        $ext.dom
-            .addEventListener(elem, "mousemove", _onMouseMove, useCapture);
+        $ext.dom.addEventListener(elem, "mousemove", _onMouseMove, useCapture);
       }
 
       function _onMouseMove(evt) {
