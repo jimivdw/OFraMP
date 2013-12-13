@@ -51,6 +51,8 @@ function init() {
 function initControls() {
   var controls = document.getElementById("controls");
   var toggle = document.getElementById("controls_toggle");
+  toggle.style.visibility = "visible";
+
   $ext.dom.onMouseOver(controls, function() {
     toggle.className = "hover";
   });
