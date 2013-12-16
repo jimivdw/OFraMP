@@ -44,13 +44,9 @@
       var mv;
 
       window.onload = function() {
-        var canvas = document.getElementById("mainMolecule");
-        canvas.width = document.documentElement.clientWidth;
-        canvas.height = document.documentElement.clientHeight;
-
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
-        mv = new MoleculeViewer("mainMolecule", {
+        mv = new MoleculeViewer({
           oapoc : {
             url : OAPoC_URL
           }
@@ -202,10 +198,6 @@
       </div>
     </div>
 
-    <div id="canvasContainer">
-      <canvas id="mainMolecule" width="800" height="420">
-        Your browser does not support the HTML5 canvas tag.
-      </canvas>
-    </div>
+    <div id="canvasContainer"></div>
   </body>
 </html>

@@ -1,5 +1,5 @@
-function MoleculeViewer(canvas_id, settings) {
-  this.init(canvas_id, settings);
+function MoleculeViewer(settings) {
+  this.init(settings);
 }
 
 MoleculeViewer.prototype = {
@@ -16,8 +16,14 @@ MoleculeViewer.prototype = {
 
   cache: undefined,
 
-  init: function(canvas_id, settings) {
-    this.canvas = document.getElementById(canvas_id);
+  init: function(settings) {
+    var canvas = document.createElement('canvas');
+    canvas.id = "mainMolecule";
+    canvas.width = document.documentElement.clientWidth;
+    canvas.height = document.documentElement.clientHeight;
+    document.getElementById("canvasContainer").appendChild(canvas);
+    this.canvas = canvas;
+    
     this.ctx = this.canvas.getContext('2d');
     this.init_context();
 
