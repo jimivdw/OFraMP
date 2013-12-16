@@ -70,6 +70,15 @@ AtomList.prototype = {
   },
 
   /*
+   * Get the selected atoms.
+   */
+  getSelected: function() {
+    return $ext.array.filter(this.atoms, function(atom) {
+      return (atom.status & ATOM_STATUSES.selected) > 0;
+    });
+  },
+
+  /*
    * Get the AtomList represented at a tree with Atom a as the root.
    * 
    * Only take into account the atoms with aromatic bonds if arom is true.

@@ -46,6 +46,16 @@ Node.prototype = {
     return arr;
   },
 
+  toJSON: function() {
+    return {
+      key: this.key,
+      value: this.value,
+      children: $ext.array.map(this.children, function(child) {
+        return child.toJSON();
+      })
+    };
+  },
+
   depth: function() {
     depths = $ext.array.map(this.children, function(child) {
       return child.depth();
@@ -97,6 +107,43 @@ Node.prototype = {
     if(ci !== undefined) {
       return this.children.splice(ci, 1)[0];
     }
+  },
+
+  each: function(f, scope, i) {
+    var r = f.call(scope, this, i);
+    if(r !== undefined) {
+      return r;
+    }
+
+    return $ext.each(this.children, function(child, i) {
+      var r = child.each(f, scope, i);
+      if(r !== undefined) {
+        return r;
+      }
+    });
+  },
+
+  __filterChildren: function(f, scope) {
+    for( var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+      if(f.call(scope, child) !== true) {
+        this.removeChild(child.key);
+        i--;
+      } else {
+        child.__filterChildren(f, scope);
+      }
+    }
+  },
+
+  filter: function(f, scope) {
+    // Return an empty tree if the root node needs to be filtered out.
+    if(f.call(scope, this) !== true) {
+      return new Tree();
+    }
+
+    var cp = $ext.copy(this)
+    cp.__filterChildren(f, scope);
+    return cp;
   },
 
   findNode: function(key, skip) {
@@ -279,5 +326,11 @@ Node.prototype = {
     return $ext.array.map(this.longestPathNodes(), function(node) {
       return node.value;
     });
+  },
+
+  toIDString: function() {
+    return JSON.stringify($ext.array.map(this.toArray(), function(node) {
+      return node.id;
+    }, null, true));
   }
 };

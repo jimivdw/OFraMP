@@ -110,6 +110,12 @@ Atom.prototype = {
         && $ext.number.between(this.y, y1, y2);
   },
 
+  /*
+   * Determine if this atom is bonded with another atom 'other'.
+   */
+  isBondedWith: function(other) {
+    return this.bondedAtoms().indexOf(other) !== -1;
+  },
 
   /*
    * Get all bonds that are connected to this atom, or just the aromatic ones

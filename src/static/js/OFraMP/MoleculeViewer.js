@@ -164,6 +164,47 @@ MoleculeViewer.prototype = {
   },
 
   /*
+   * Get the matching fragments with the selection of the molecule.
+   */
+  getMatchingFragments: function() {
+    var selection = this.molecule.atoms.getSelected();
+    if(selection.length === 0) {
+      alert("No atoms have been selected.");
+      return false;
+    }
+
+    var selection_ids = $ext.array.map(selection, function(atom) {
+      return atom.id;
+    });
+    var tree = this.molecule.atoms.toTree(selection[0]);
+    var selection_tree = tree.filter(function(node) {
+      return selection_ids.indexOf(node.key) !== -1;
+    });
+
+    var connected = $ext.each(selection, function(atom) {
+      var f = selection_tree.findNode(atom.id);
+      if(!f) {
+        return false;
+      }
+    });
+
+    if(connected === false) {
+      alert("The atoms in the selection are not connected.");
+      return false;
+    }
+
+    var queryJSON = JSON.stringify({
+      needle: $ext.array.map(selection, function(atom) {
+        return atom.id;
+      }),
+      molecule: this.molecule.toBasicJSON()
+    });
+
+    console.log(queryJSON);
+    // TODO!!
+  },
+
+  /*
    * Load and show the molecule represented by data_str (currently in SMILES).
    */
   showMolecule: function(data_str) {
