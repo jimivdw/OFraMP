@@ -1,6 +1,20 @@
 $ext.extend($ext, {
   dom: {
     /*
+     * Remove all child elements from the given elem.
+     */
+    clear: function(elem) {
+      // Make a copy of the children to not mess with the foreach loop.
+      var children = $ext.copy(elem.children);
+      $ext.each(children, function(child) {
+        if(child instanceof Element) {
+          elem.removeChild(child);
+        }
+      });
+      elem.textContent = "";
+    },
+
+    /*
      * Fairly cross-browser function for adding an eventListener to an element.
      */
     addEventListener: function(elem, type, callback, useCapture) {

@@ -39,7 +39,6 @@
     <script type="text/javascript" src="static/js/OFraMP/OFraMP.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/SelectionArea.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/settings.js"></script>
-    <script type="text/javascript" src="static/js/OFraMP/UI.js"></script>
 
     <script>
       var mv;
@@ -52,8 +51,10 @@
             url : OAPoC_URL
           }
         });
+
+        // ONLY for debug purposes, TODO : remove
+        doframp = oframp;
         mv = oframp.mv;
-        showInsertMoleculePopup();
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {
@@ -106,6 +107,39 @@
             oframp.settings_ui.toggle();
           };
         }
+
+        function initControls() {
+          var controls = document.getElementById("controls");
+          var toggle = document.getElementById("controls_toggle");
+          toggle.style.visibility = "visible";
+
+          $ext.dom.onMouseOver(controls, function() {
+            toggle.className = "hover";
+          });
+          $ext.dom.onMouseOut(controls, function() {
+            toggle.className = "";
+          });
+
+          $ext.dom.onMouseClick(toggle, function() {
+            if (controls.style.visibility === "visible") {
+              controls.style.height = "0px";
+              controls.style.padding = "0px";
+              controls.style.visibility = "hidden";
+              toggle.style.bottom = "0px";
+              toggle.innerHTML = "Controls &#8673";
+            } else {
+              controls.style.visibility = "visible";
+              controls.style.height = "40px";
+              controls.style.padding = "5px";
+              toggle.style.bottom = "40px";
+              toggle.innerHTML = "Controls &#8675";
+            }
+          });
+        }
+
+        $ext.dom.addEventListener(oframp.container, 'molecule_entered', function() {
+          initControls();
+        });
       };
     </script>
   </head>
