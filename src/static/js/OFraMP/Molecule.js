@@ -159,17 +159,17 @@ Molecule.prototype = {
    * Reset the positions to those calculated by OAPoC.
    */
   resetPositions: function() {
-    var molecule = this;
+    var _this = this;
     this.mv.getMoleculeData(this.data_str, function(md) {
-      molecule.mv.showOverlay("Initializing atom positions...");
+      _this.mv.showOverlay("Initializing atom positions...");
       $ext.each(md.atoms, function(atom) {
-        var a = molecule.atoms.get(atom.id);
+        var a = _this.atoms.get(atom.id);
         a.x = atom.x;
         a.y = atom.y;
       });
 
-      molecule.mv.idealize();
-      molecule.mv.hideOverlay();
+      _this.mv.idealize();
+      _this.mv.hideOverlay();
     });
   },
 

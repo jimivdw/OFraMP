@@ -2150,6 +2150,7 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
         },
         
         addAll: function(object, properties, options) {
+          this.object = object;
           for(var e in properties) {
             if(options && options[e] && options[e]["hidden"] === true) {
               continue;
@@ -2366,6 +2367,10 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
             gui = gui.parent;
           }
           return gui;
+        },
+        
+        getRootObject: function() {
+          return this.getRoot().object;
         },
         
         getController: function(property) {

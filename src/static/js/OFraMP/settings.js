@@ -143,7 +143,7 @@ var SETTINGS_OPTIONS = {
     "deoverlap, deoverlap_atoms, deoverlap_bonds, decross_bonds, lengthen_bonds": {
       onChange: function(v) {
         if(v) {
-          mv.deoverlap();
+          this.__gui.getRootObject().getMV().deoverlap();
         }
       }
     },
@@ -170,13 +170,13 @@ var SETTINGS_OPTIONS = {
     },
     "border_width, border_color, padding, font, color": {
       onChange: function() {
-        mv.redraw();
+        this.__gui.getRootObject().getMV().redraw();
       }
     },
     bg_colors: {
       "1, 2, 3, 4, 5": {
         onChange: function() {
-          mv.redraw();
+          this.__gui.getRootObject().getMV().redraw();
         }
       }
     }
@@ -190,6 +190,7 @@ var SETTINGS_OPTIONS = {
     },
     show_h_atoms: {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.atoms.each(function(a) {
             a.clearCache('appearance.visible');
@@ -203,6 +204,7 @@ var SETTINGS_OPTIONS = {
     },
     combine_h_labels: {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.atoms.each(function(a) {
             a.clearCache('appearance.label');
@@ -213,6 +215,7 @@ var SETTINGS_OPTIONS = {
     },
     show_c_labels: {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.atoms.each(function(a) {
             a.clearCache('appearance.show_label');
@@ -226,11 +229,12 @@ var SETTINGS_OPTIONS = {
     },
     "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
       onChange: function() {
-        mv.redraw();
+        this.__gui.getRootObject().getMV().redraw();
       }
     },
     "radius, radius_charged": {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.atoms.each(function(a) {
             a.clearCache('appearance.radius');
@@ -242,12 +246,13 @@ var SETTINGS_OPTIONS = {
         }
       },
       onFinishChange: function() {
-        mv.deoverlap();
+        this.__gui.getRootObject().getMV().deoverlap();
       }
     },
     colors: {
       "S, O, N, H, F, Cl, Br, I, other": {
         onChange: function() {
+          var mv = this.__gui.getRootObject().getMV();
           if(mv.molecule) {
             mv.molecule.atoms.each(function(a) {
               a.clearCache('appearance.color');
@@ -263,14 +268,14 @@ var SETTINGS_OPTIONS = {
         max: 10,
         step: 1,
         onChange: function() {
-          mv.redraw();
+          this.__gui.getRootObject().getMV().redraw();
         }
       }
     },
     bg_colors: {
       "0, 1, 2, 4": {
         onChange: function() {
-          mv.redraw();
+          this.__gui.getRootObject().getMV().redraw();
         }
       }
     }
@@ -284,6 +289,7 @@ var SETTINGS_OPTIONS = {
     },
     connector_width: {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.bonds.each(function(b) {
             b.clearCache('appearance.connectors');
@@ -294,6 +300,7 @@ var SETTINGS_OPTIONS = {
     },
     spacing: {
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.bonds.each(function(b) {
             b.clearCache('appearance.lines');
@@ -308,6 +315,7 @@ var SETTINGS_OPTIONS = {
       max: 20,
       step: 1,
       onChange: function() {
+        var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.bonds.each(function(b) {
             b.clearCache('appearance.lines');
@@ -318,7 +326,7 @@ var SETTINGS_OPTIONS = {
     },
     "width, color, connector_color": {
       onChange: function() {
-        mv.redraw();
+        this.__gui.getRootObject().getMV().redraw();
       }
     },
     id: {
@@ -329,7 +337,7 @@ var SETTINGS_OPTIONS = {
       },
       "show, radius, bg_color, font, color": {
         onChange: function() {
-          mv.redraw();
+          this.__gui.getRootObject().getMV().redraw();
         }
       }
     }

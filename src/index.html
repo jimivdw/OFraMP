@@ -41,8 +41,6 @@
     <script type="text/javascript" src="static/js/OFraMP/settings.js"></script>
 
     <script>
-      var mv;
-
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
@@ -54,7 +52,7 @@
 
         // ONLY for debug purposes, TODO : remove
         doframp = oframp;
-        mv = oframp.mv;
+        var mv = oframp.mv;
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {

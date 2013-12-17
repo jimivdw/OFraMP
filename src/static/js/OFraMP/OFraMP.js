@@ -91,7 +91,14 @@ OFraMP.prototype = {
       name: 'OFraMP Settings',
       savable: true
     });
-    this.settings_ui.addAll(this.settings, this.settings, $ext.object
+
+    var _this = this;
+    var settings_obj = $ext.extend($ext.copy(this.settings), {
+      getMV: function() {
+        return _this.mv;
+      }
+    });
+    this.settings_ui.addAll(settings_obj, this.settings, $ext.object
         .extrapolate(SETTINGS_OPTIONS));
   },
 

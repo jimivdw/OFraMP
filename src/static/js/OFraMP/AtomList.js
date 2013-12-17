@@ -366,16 +366,7 @@ AtomList.prototype = {
       a.move(dx, dy);
     });
 
-    window.molecule = this.molecule;
-    window.fixcount = 0;
-    window.fixmax = 1000 - 4.8 * this.count();
-    window.requestAnimationFrame(function drawLoop() {
-      if(fixcount < fixmax && molecule.deoverlap()) {
-        fixcount++;
-        molecule.mv.redraw();
-        requestAnimationFrame(drawLoop);
-      }
-    });
+    this.molecule.mv.deoverlap();
   },
 
   /*
