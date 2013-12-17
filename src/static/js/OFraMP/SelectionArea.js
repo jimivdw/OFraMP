@@ -26,10 +26,10 @@ SelectionArea.prototype = {
   },
 
   draw: function() {
-    mv.ctx.fillStyle = mv.settings.selection.color;
-    mv.ctx.fillRect(this.x, this.y, this.width, this.height);
-    mv.ctx.lineWidth = mv.settings.selection.border_width;
-    mv.ctx.strokeStyle = mv.settings.selection.border_color;
-    mv.ctx.strokeRect(this.x, this.y, this.width, this.height);
+    this.mv.ctx.fillStyle = this.mv.settings.selection.color;
+    this.mv.ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.mv.ctx.lineWidth = this.mv.settings.selection.border_width;
+    this.mv.ctx.strokeStyle = this.mv.settings.selection.border_color;
+    this.mv.ctx.strokeRect(this.x, this.y, this.width, this.height);
   }
 };
