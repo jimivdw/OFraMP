@@ -159,7 +159,7 @@ html, body {
 }
 
 .bgroup > *:active {
-    background-color: #EEE !important;
+    background-color: #DDD !important;
 }
 
 .bgroup > *:first-child {
@@ -200,9 +200,47 @@ html, body {
     font-weight: bold;
 }
 
+#atom_details canvas {
+    border: 1px solid #AAA;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+#atom_details table {
+    width: 230px;
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+#atom_details tr:nth-child(even) {
+    background-color: #EEE;
+}
+
+#atom_details th, #atom_details td {
+    padding: 3px 2px;
+}
+
 #atom_details th {
     width: 120px;
     text-align: left;
+}
+
+#atom_details button {
+    width: 230px;
+    margin: 10px 0;
+    height: 30px;
+    cursor: pointer;
+    opacity: 0.5;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+#atom_details button:hover {
+    opacity: 1.0;
+}
+
+#atom_details button:active {
+    background-color: #DDD;
 }
 
 #popup {
@@ -245,6 +283,8 @@ html, body {
     right: 0;
     bottom: 30px;
     left: 0;
+    box-sizing: border-box;
+    width: 580px;
     margin: 10px;
     border: 1px solid #333;
 }

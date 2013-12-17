@@ -10,7 +10,7 @@ OFraMP.prototype = {
 
   atom_details: undefined,
   related_fragments: undefined,
-  
+
   popup: undefined,
   popup_title: undefined,
   popup_content: undefined,
@@ -211,35 +211,45 @@ OFraMP.prototype = {
 
     this.showPopup(title, content);
   },
-  
+
   showSelectionDetails: function(selection) {
     if(selection.length === 1) {
       return this.showAtomDetails(selection[0]);
     }
-    
+
     $ext.dom.clear(this.atom_details);
-    
+
     var ts = document.createElement('span');
     ts.className = "title";
     ts.appendChild(document.createTextNode("Selection details"));
     this.atom_details.appendChild(ts);
-    
+
     var c = document.createElement('canvas');
     c.width = 228;
     c.height = 130;
-    c.style.border = "1px solid #CCC";
     var ctx = c.getContext('2d');
+
     var sl = new AtomList(this.mv.molecule, selection);
     var center = sl.centerPoint();
     var s = sl.size();
-    var dx = Math.max(114, s.w / 2);
-    var dy = Math.max(65, s.h / 2);
-    var wf = 228 / (2 * dx);
-    var hf = 130 / (2 * dy);
+
+    // Increase selection size when the ratio is off
+    var r = s.w / s.h;
+    if(r > c.width / c.height) {
+      s.h *= r * c.height / c.width;
+    } else {
+      s.w *= (1 / r) * c.width / c.height;
+    }
+
+    var dx = Math.max(c.width, s.w) / 2;
+    var dy = Math.max(c.height, s.h) / 2;
+    var wf = c.width / (2 * dx);
+    var hf = c.height / (2 * dy);
     var f = wf < hf ? wf : hf;
-    
-    var id = this.mv.ctx.getImageData(center.x - dx, center.y - dy, 2 * dx, 2 * dy);
-    
+
+    var id = this.mv.ctx.getImageData(center.x - dx, center.y - dy, 2 * dx,
+        2 * dy);
+
     var tc = document.createElement('canvas');
     tc.width = id.width;
     tc.height = id.height;
@@ -248,7 +258,7 @@ OFraMP.prototype = {
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
     this.atom_details.appendChild(c);
-    
+
     var st = document.createElement('table');
     var cr = document.createElement('tr');
     var cl = document.createElement('th');
@@ -258,7 +268,7 @@ OFraMP.prototype = {
     cr.appendChild(cl);
     cr.appendChild(cv);
     st.appendChild(cr);
-    
+
     var ur = document.createElement('tr');
     var ul = document.createElement('th');
     ul.appendChild(document.createTextNode("Unparameterised"));
@@ -270,7 +280,7 @@ OFraMP.prototype = {
     ur.appendChild(ul);
     ur.appendChild(uv);
     st.appendChild(ur);
-    
+
     var pr = document.createElement('tr');
     var pl = document.createElement('th');
     pl.appendChild(document.createTextNode("Parameterised"));
@@ -279,7 +289,7 @@ OFraMP.prototype = {
     pr.appendChild(pl);
     pr.appendChild(pv);
     st.appendChild(pr);
-    
+
     var cr = document.createElement('tr');
     var cl = document.createElement('th');
     cl.appendChild(document.createTextNode("Total charge"));
@@ -291,10 +301,18 @@ OFraMP.prototype = {
     cr.appendChild(cl);
     cr.appendChild(cv);
     st.appendChild(cr);
-    
-    
+
     this.atom_details.appendChild(st);
-    
+
+    var ffb = document.createElement('button');
+    ffb.className = "border_box";
+    ffb.appendChild(document.createTextNode("Find matching fragments"));
+    this.atom_details.appendChild(ffb);
+    var _this = this;
+    $ext.dom.onMouseClick(ffb, function() {
+      _this.mv.getMatchingFragments();
+    });
+
     this.atom_details.parentElement.style.visibility = "visible";
   }
 };
