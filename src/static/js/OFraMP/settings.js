@@ -63,6 +63,7 @@ var DEFAULT_SETTINGS = {
   atom: {
     show_circ: true,
     show_h_atoms: false,
+    combine_h_labels: true,
     show_c_labels: true,
     show_id: false,
     font: "bold 12px Arial",
@@ -195,6 +196,16 @@ var SETTINGS_OPTIONS = {
           });
           mv.molecule.bonds.each(function(b) {
             b.clearCache('appearance.visible');
+          });
+          mv.redraw();
+        }
+      }
+    },
+    combine_h_labels: {
+      onChange: function() {
+        if(mv.molecule) {
+          mv.molecule.atoms.each(function(a) {
+            a.clearCache('appearance.label');
           });
           mv.redraw();
         }

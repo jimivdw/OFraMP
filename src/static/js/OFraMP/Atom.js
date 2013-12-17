@@ -68,7 +68,8 @@ Atom.prototype = {
     }
 
     var label = this.element;
-    if(this.list.molecule.mv.settings.atom.show_h_atoms !== true) {
+    if(this.list.molecule.mv.settings.atom.combine_h_labels === true
+        && this.list.molecule.mv.settings.atom.show_h_atoms !== true) {
       var hs = $ext.array.filter(this.bondedAtoms(), function(atom) {
         return atom.element === "H";
       });
