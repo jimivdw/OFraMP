@@ -8,6 +8,9 @@ OFraMP.prototype = {
   mv: undefined,
   settings_ui: undefined,
 
+  atom_details: undefined,
+  related_fragments: undefined,
+  
   popup: undefined,
   popup_title: undefined,
   popup_content: undefined,
@@ -80,6 +83,7 @@ OFraMP.prototype = {
     ad.id = "atom_details";
     ad.appendChild(document.createTextNode("Atom details... Coming soon!"));
     container.appendChild(ad);
+    this.atom_details = ad;
   },
 
   __initRelatedFragments: function(container) {
@@ -87,6 +91,7 @@ OFraMP.prototype = {
     rf.id = "related_fragments";
     rf.appendChild(document.createTextNode("Related frags... Coming soon!"));
     container.appendChild(rf);
+    this.related_fragments = rf;
   },
 
   __initPopup: function(container) {
@@ -205,5 +210,91 @@ OFraMP.prototype = {
     cbs.appendChild(cb);
 
     this.showPopup(title, content);
+  },
+  
+  showSelectionDetails: function(selection) {
+    if(selection.length === 1) {
+      return this.showAtomDetails(selection[0]);
+    }
+    
+    $ext.dom.clear(this.atom_details);
+    
+    var ts = document.createElement('span');
+    ts.className = "title";
+    ts.appendChild(document.createTextNode("Selection details"));
+    this.atom_details.appendChild(ts);
+    
+    var c = document.createElement('canvas');
+    c.width = 228;
+    c.height = 130;
+    c.style.border = "1px solid #CCC";
+    var ctx = c.getContext('2d');
+    var sl = new AtomList(this.mv.molecule, selection);
+    var center = sl.centerPoint();
+    var s = sl.size();
+    var dx = Math.max(114, s.w / 2);
+    var dy = Math.max(65, s.h / 2);
+    var wf = 228 / (2 * dx);
+    var hf = 130 / (2 * dy);
+    var f = wf < hf ? wf : hf;
+    
+    var id = this.mv.ctx.getImageData(center.x - dx, center.y - dy, 2 * dx, 2 * dy);
+    
+    var tc = document.createElement('canvas');
+    tc.width = id.width;
+    tc.height = id.height;
+    tc.getContext("2d").putImageData(id, 0, 0);
+
+    ctx.scale(f, f);
+    ctx.drawImage(tc, 0, 0);
+    this.atom_details.appendChild(c);
+    
+    var st = document.createElement('table');
+    var cr = document.createElement('tr');
+    var cl = document.createElement('th');
+    cl.appendChild(document.createTextNode("Selection count"));
+    var cv = document.createElement('td');
+    cv.appendChild(document.createTextNode(selection.length));
+    cr.appendChild(cl);
+    cr.appendChild(cv);
+    st.appendChild(cr);
+    
+    var ur = document.createElement('tr');
+    var ul = document.createElement('th');
+    ul.appendChild(document.createTextNode("Unparameterised"));
+    var uv = document.createElement('td');
+    var u = $ext.array.filter(selection, function(atom) {
+      return atom.charge === undefined;
+    });
+    uv.appendChild(document.createTextNode(u.length));
+    ur.appendChild(ul);
+    ur.appendChild(uv);
+    st.appendChild(ur);
+    
+    var pr = document.createElement('tr');
+    var pl = document.createElement('th');
+    pl.appendChild(document.createTextNode("Parameterised"));
+    var pv = document.createElement('td');
+    pv.appendChild(document.createTextNode(selection.length - u.length));
+    pr.appendChild(pl);
+    pr.appendChild(pv);
+    st.appendChild(pr);
+    
+    var cr = document.createElement('tr');
+    var cl = document.createElement('th');
+    cl.appendChild(document.createTextNode("Total charge"));
+    var cv = document.createElement('td');
+    var c = $ext.array.map(selection, function(atom) {
+      return atom.charge || 0;
+    });
+    cv.appendChild(document.createTextNode($ext.array.sum(c)));
+    cr.appendChild(cl);
+    cr.appendChild(cv);
+    st.appendChild(cr);
+    
+    
+    this.atom_details.appendChild(st);
+    
+    this.atom_details.parentElement.style.visibility = "visible";
   }
 };

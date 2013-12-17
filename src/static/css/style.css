@@ -180,6 +180,7 @@ html, body {
     width: 240px;
     overflow: auto;
     z-index: 2;
+    font-size: 12px;
 }
 
 #leftbar {
@@ -192,6 +193,16 @@ html, body {
 
 #atom_details, #related_fragments {
     padding: 5px 5px 5px 5px;
+}
+
+#atom_details span.title, #related_fragments span.title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#atom_details th {
+    width: 120px;
+    text-align: left;
 }
 
 #popup {
