@@ -213,15 +213,30 @@ OFraMP.prototype = {
   },
 
   showSelectionDetails: function(selection) {
-    if(selection.length === 1) {
-      return this.showAtomDetails(selection[0]);
+    function addTableRow(table, label, value) {
+      var row = document.createElement('tr');
+      var head = document.createElement('th');
+      head.appendChild(document.createTextNode(label));
+      var data = document.createElement('td');
+      data.appendChild(document.createTextNode(value));
+      row.appendChild(head);
+      row.appendChild(data);
+      table.appendChild(row);
     }
 
     $ext.dom.clear(this.atom_details);
+    if(selection.length === 1) {
+      var atom = selection[0];
+    }
 
     var ts = document.createElement('span');
     ts.className = "title";
-    ts.appendChild(document.createTextNode("Selection details"));
+    if(atom) {
+      var tn = document.createTextNode("Atom details");
+    } else {
+      var tn = document.createTextNode("Selection details");
+    }
+    ts.appendChild(tn);
     this.atom_details.appendChild(ts);
 
     var c = document.createElement('canvas');
@@ -259,50 +274,29 @@ OFraMP.prototype = {
     ctx.drawImage(tc, 0, 0);
     this.atom_details.appendChild(c);
 
-    var st = document.createElement('table');
-    var cr = document.createElement('tr');
-    var cl = document.createElement('th');
-    cl.appendChild(document.createTextNode("Selection count"));
-    var cv = document.createElement('td');
-    cv.appendChild(document.createTextNode(selection.length));
-    cr.appendChild(cl);
-    cr.appendChild(cv);
-    st.appendChild(cr);
+    var dt = document.createElement('table');
 
-    var ur = document.createElement('tr');
-    var ul = document.createElement('th');
-    ul.appendChild(document.createTextNode("Unparameterised"));
-    var uv = document.createElement('td');
-    var u = $ext.array.filter(selection, function(atom) {
-      return atom.charge === undefined;
-    });
-    uv.appendChild(document.createTextNode(u.length));
-    ur.appendChild(ul);
-    ur.appendChild(uv);
-    st.appendChild(ur);
+    if(atom) {
+      addTableRow(dt, "ID", atom.id);
+      addTableRow(dt, "Element", atom.element);
+      addTableRow(dt, "Charge", atom.charge || "unknown");
+    } else {
+      // Get the unparameterised atoms
+      var uas = $ext.array.filter(selection, function(atom) {
+        return atom.charge === undefined;
+      });
+      // Get the charged of all atoms
+      var cs = $ext.array.map(selection, function(atom) {
+        return atom.charge || 0;
+      });
 
-    var pr = document.createElement('tr');
-    var pl = document.createElement('th');
-    pl.appendChild(document.createTextNode("Parameterised"));
-    var pv = document.createElement('td');
-    pv.appendChild(document.createTextNode(selection.length - u.length));
-    pr.appendChild(pl);
-    pr.appendChild(pv);
-    st.appendChild(pr);
+      addTableRow(dt, "Selection count", selection.length);
+      addTableRow(dt, "Unparameterised", uas.length);
+      addTableRow(dt, "Parameterised", selection.length - uas.length);
+      addTableRow(dt, "Total charge", $ext.array.sum(cs));
+    }
 
-    var cr = document.createElement('tr');
-    var cl = document.createElement('th');
-    cl.appendChild(document.createTextNode("Total charge"));
-    var cv = document.createElement('td');
-    var c = $ext.array.map(selection, function(atom) {
-      return atom.charge || 0;
-    });
-    cv.appendChild(document.createTextNode($ext.array.sum(c)));
-    cr.appendChild(cl);
-    cr.appendChild(cv);
-    st.appendChild(cr);
-
-    this.atom_details.appendChild(st);
+    this.atom_details.appendChild(dt);
 
     var ffb = document.createElement('button');
     ffb.className = "border_box";
@@ -314,9 +308,11 @@ OFraMP.prototype = {
     });
 
     this.atom_details.parentElement.style.visibility = "visible";
+    this.atom_details.parentElement.style.opacity = "1.0";
   },
-  
+
   hideSelectionDetails: function() {
     this.atom_details.parentElement.style.visibility = "hidden";
+    this.atom_details.parentElement.style.opacity = "0.0";
   }
 };
