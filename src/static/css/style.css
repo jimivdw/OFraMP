@@ -267,7 +267,7 @@ html, body {
 }
 
 #enter_molecule:disabled, #find_fragments:disabled {
-    opacity: 0.5 !important;
+    opacity: 0.1 !important;
     cursor: default !important;
 }
 
