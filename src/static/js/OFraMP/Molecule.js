@@ -4,18 +4,22 @@ function Molecule(mv, atoms, bonds, data_str) {
 
 Molecule.prototype = {
   mv: undefined,
+  settings: undefined,
+  cache: undefined,
+
+  data_str: undefined,
   atoms: undefined,
   bonds: undefined,
-  data_str: undefined,
 
-  cache: undefined,
 
   init: function(mv, atoms, bonds, data_str) {
     this.mv = mv;
+    this.settings = mv.settings;
+    this.cache = new Cache();
+
+    this.data_str = data_str;
     this.atoms = new AtomList(this, atoms);
     this.bonds = new BondList(this, bonds);
-    this.data_str = data_str;
-    this.cache = new Cache();
   },
 
   /*
@@ -126,7 +130,7 @@ Molecule.prototype = {
    */
   minimize: function() {
     var sd = this.bonds.shortestDistance();
-    var f = this.mv.settings.zoom.min_bond_length / sd;
+    var f = this.settings.zoom.min_bond_length / sd;
     this.zoom(f);
     this.center();
   },
@@ -136,7 +140,7 @@ Molecule.prototype = {
    */
   idealize: function() {
     var sd = this.bonds.averageDistance();
-    var f = this.mv.settings.zoom.ideal_bond_length / sd;
+    var f = this.settings.zoom.ideal_bond_length / sd;
     this.zoom(f);
     this.center();
   },
@@ -146,7 +150,7 @@ Molecule.prototype = {
    */
   maximize: function() {
     var ld = this.bonds.longestDistance();
-    var f = this.mv.settings.zoom.max_bond_length / ld;
+    var f = this.settings.zoom.max_bond_length / ld;
     this.zoom(f);
     this.center();
   },
@@ -211,23 +215,23 @@ Molecule.prototype = {
    * Returns true is atoms were moved and a redraw is needed.
    */
   deoverlap: function() {
-    if(!mv.settings.deoverlap.deoverlap || $ext.onBrokenIE()) {
+    if(!this.settings.deoverlap.deoverlap || $ext.onBrokenIE()) {
       return;
     }
 
-    if(mv.settings.deoverlap.deoverlap_atoms) {
+    if(this.settings.deoverlap.deoverlap_atoms) {
       var da = this.deoverlapAtoms();
     }
 
-    if(mv.settings.deoverlap.deoverlap_bonds) {
+    if(this.settings.deoverlap.deoverlap_bonds) {
       var db = this.deoverlapBonds();
     }
 
-    if(mv.settings.deoverlap.decross_bonds) {
+    if(this.settings.deoverlap.decross_bonds) {
       var dc = this.decrossBonds();
     }
 
-    if(mv.settings.deoverlap.lengthen_bonds) {
+    if(this.settings.deoverlap.lengthen_bonds) {
       var lb = this.lengthenBonds();
     }
 
@@ -285,7 +289,6 @@ Molecule.prototype = {
    * Returns true is atoms were moved and a redraw is needed.
    */
   deoverlapBonds: function() {
-    var s = this.mv.settings;
     var changed = false;
 
     for( var i = 0; i < this.atoms.count(); i++) {
@@ -309,8 +312,8 @@ Molecule.prototype = {
           bd = a.bondDistance(b);
         }
 
-        if(bd < a.getRadius() + s.bond.spacing - 1) {
-          var f = (a.getRadius() - bd + s.bond.spacing) / bd;
+        if(bd < a.getRadius() + this.settings.bond.spacing - 1) {
+          var f = (a.getRadius() - bd + this.settings.bond.spacing) / bd;
           var ba = a.bondAnchor(b);
           var dx = (a.x - ba.x) * f;
           var dy = (a.y - ba.y) * f;
@@ -371,7 +374,6 @@ Molecule.prototype = {
    * Make sure each bond is at least min_bond_length long.
    */
   lengthenBonds: function() {
-    var s = this.mv.settings;
     var changed = false;
 
     for( var i = 0; i < this.bonds.count(); i++) {
@@ -380,14 +382,14 @@ Molecule.prototype = {
         continue;
       }
 
-      if(bond.length() < s.zoom.min_bond_length - 1) {
+      if(bond.length() < this.settings.zoom.min_bond_length - 1) {
         var dist = bond.a1.distance(bond.a2);
         if($ext.number.approx(dist, 0)) {
           bond.a2.move(1e-3, 1e-3);
           dist = bond.a1.distance(bond.a2);
         }
 
-        var d = Math.abs(s.zoom.min_bond_length - dist) / 2;
+        var d = Math.abs(this.settings.zoom.min_bond_length - dist) / 2;
         var dx = bond.a2.x - bond.a1.x;
         var dy = bond.a2.y - bond.a1.y;
         var ddx = d * dx / dist;

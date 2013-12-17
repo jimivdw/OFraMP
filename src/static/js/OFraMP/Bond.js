@@ -7,21 +7,23 @@ function Bond(list, id, a1, a2, type) {
 
 Bond.prototype = {
   list: undefined,
+  settings: undefined,
+  cache: undefined,
+
   id: undefined,
   a1: undefined,
   a2: undefined,
   type: undefined,
 
-  cache: undefined,
-
   init: function(list, id, a1, a2, type) {
     this.list = list;
+    this.settings = list.settings;
+    this.cache = new Cache();
+
     this.id = id;
     this.a1 = a1;
     this.a2 = a2;
     this.type = type;
-
-    this.cache = new Cache();
   },
 
   /*
@@ -44,8 +46,7 @@ Bond.prototype = {
       return this.cache.get('position.visible');
     }
 
-    var s = this.list.molecule.mv.settings;
-    var visible = (s.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
+    var visible = (this.settings.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
         && (this.a1.isVisible() || this.a2.isVisible());
     this.cache.set('position.visible', visible, this.cache
         .getCache('appearance.visible'));
@@ -187,7 +188,6 @@ Bond.prototype = {
     var a1 = this.a1;
     var a2 = this.a2;
     var lines = Array();
-    var s = this.list.molecule.mv.settings;
 
     if(this.a1.showLabel()) {
       var ar1 = this.a1.getRadius();
@@ -218,8 +218,8 @@ Bond.prototype = {
         dist = Math.sqrt(dx * dx + dy * dy);
 
         if(this.type == 4) {
-          ddx = dy * 2 * s.bond.spacing / dist;
-          ddy = dx * 2 * s.bond.spacing / dist;
+          ddx = dy * 2 * this.settings.bond.spacing / dist;
+          ddy = dx * 2 * this.settings.bond.spacing / dist;
 
           // Find the center of the aromatic cycle
           var cycle = this.a2.findCycle(true);
@@ -243,7 +243,7 @@ Bond.prototype = {
               y1: c.y1 + ddy,
               x2: c.x2 - ddx,
               y2: c.y2 + ddy,
-              n: s.bond.dash_count
+              n: this.settings.bond.dash_count
             });
           } else {
             lines.push({
@@ -257,12 +257,12 @@ Bond.prototype = {
               y1: c.y1 - ddy,
               x2: c.x2 + ddx,
               y2: c.y2 - ddy,
-              n: s.bond.dash_count
+              n: this.settings.bond.dash_count
             });
           }
         } else {
-          ddx = dy * s.bond.spacing / dist;
-          ddy = dx * s.bond.spacing / dist;
+          ddx = dy * this.settings.bond.spacing / dist;
+          ddy = dx * this.settings.bond.spacing / dist;
 
           lines.push({
             x1: c.x1 + ddx,
@@ -327,8 +327,7 @@ Bond.prototype = {
       alpha = -alpha;
     }
 
-    var s = this.list.molecule.mv.settings;
-    var delta = s.bond.connector_width / a.getRadius() / 2;
+    var delta = this.settings.bond.connector_width / a.getRadius() / 2;
 
     if(this.type == 1 || this.type == 3 || this.type == 4) {
       connectors.push({
@@ -342,7 +341,8 @@ Bond.prototype = {
 
     // For double/triple/aromatic bonds
     if(this.type > 1 && this.type != 4) {
-      var beta = Math.acos((2 * r2 - Math.pow(s.bond.spacing, 2)) / (2 * r2));
+      var beta = Math.acos((2 * r2 - Math.pow(this.settings.bond.spacing, 2))
+          / (2 * r2));
 
       connectors.push({
         x: a.x,
@@ -397,7 +397,7 @@ Bond.prototype = {
     var lines = this.cacheLineCoords();
 
     var ctx = this.list.molecule.mv.ctx;
-    var s = this.list.molecule.mv.settings;
+    var s = this.settings;
 
     ctx.lineWidth = s.bond.width;
     ctx.strokeStyle = s.bond.color;
@@ -432,9 +432,8 @@ Bond.prototype = {
     var connectors = this.cacheConnectorsCoords();
 
     var ctx = this.list.molecule.mv.ctx;
-    var s = this.list.molecule.mv.settings;
-    ctx.lineWidth = s.bond.connector_width;
-    ctx.strokeStyle = s.bond.connector_color;
+    ctx.lineWidth = this.settings.bond.connector_width;
+    ctx.strokeStyle = this.settings.bond.connector_color;
 
     $ext.each(connectors, function(c) {
       ctx.beginPath();

@@ -7,17 +7,21 @@ function BondList(molecule, bonds) {
 
 BondList.prototype = {
   molecule: undefined,
-  bonds: undefined,
+  settings: undefined,
   cache: undefined,
+
+  bonds: undefined,
 
   init: function(molecule, bonds) {
     this.molecule = molecule;
+    this.settings = molecule.settings;
+    this.cache = new Cache();
+
     this.bonds = new Array();
     $ext.each(bonds, function(bond) {
       this.bonds.push(new Bond(this, bond.id, molecule.atoms.get(bond.a1),
           molecule.atoms.get(bond.a2), bond.bond_type));
     }, this);
-    this.cache = new Cache();
   },
 
   /*

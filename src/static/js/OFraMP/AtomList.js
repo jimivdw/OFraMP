@@ -7,18 +7,21 @@ function AtomList(molecule, atoms) {
 
 AtomList.prototype = {
   molecule: undefined,
-  atoms: undefined,
-
+  settings: undefined,
   cache: undefined,
+
+  atoms: undefined,
 
   init: function(molecule, atoms) {
     this.molecule = molecule;
+    this.settings = molecule.settings;
+    this.cache = new Cache();
+
     this.atoms = new Array();
     $ext.each(atoms, function(atom) {
       this.atoms.push(new Atom(this, atom.id, atom.element, atom.element_id,
           atom.x, atom.y));
     }, this);
-    this.cache = new Cache();
   },
 
   /*
@@ -149,20 +152,19 @@ AtomList.prototype = {
     if(this.cache.get('position.left_top')) {
       return this.cache.get('position.left_top');
     }
-    var s = this.molecule.mv.settings;
     var lt = {
       x: $ext.array.min(this.map(function(atom) {
-        if(!s.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
           return Infinity;
         }
         return atom.x - atom.getRadius();
-      })),
+      }, this)),
       y: $ext.array.min(this.map(function(atom) {
-        if(!s.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
           return Infinity;
         }
         return atom.y - atom.getRadius();
-      }))
+      }, this))
     };
     this.cache.set('position.left_top', lt, this.cache
         .getCache('appearance.radius'));
@@ -176,20 +178,19 @@ AtomList.prototype = {
     if(this.cache.get('position.right_bottom')) {
       return this.cache.get('position.right_bottom');
     }
-    var s = this.molecule.mv.settings;
     var rb = {
       x: $ext.array.max(this.map(function(atom) {
-        if(!s.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
           return 0;
         }
         return atom.x + atom.getRadius();
-      })),
+      }, this)),
       y: $ext.array.max(this.map(function(atom) {
-        if(!s.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
           return 0;
         }
         return atom.y + atom.getRadius();
-      }))
+      }, this))
     };
     this.cache.set('position.right_bottom', rb, this.cache
         .getCache('appearance.radius'));
@@ -276,7 +277,6 @@ AtomList.prototype = {
       }
     });
 
-    var s = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     if(h) {
       if(!(h.status & (ATOM_STATUSES.hover | ATOM_STATUSES.selected))) {
@@ -287,12 +287,12 @@ AtomList.prototype = {
         changed = true;
       }
       if(h.status & ATOM_STATUSES.hover) {
-        c.style.cursor = s.cursor.click;
+        c.style.cursor = this.settings.cursor.click;
       } else {
-        c.style.cursor = s.cursor.normal;
+        c.style.cursor = this.settings.cursor.normal;
       }
     } else {
-      c.style.cursor = s.cursor.drag;
+      c.style.cursor = this.settings.cursor.drag;
     }
 
     return changed;
@@ -313,7 +313,6 @@ AtomList.prototype = {
       }
     });
 
-    var t = this.molecule.mv.settings;
     var c = this.molecule.mv.canvas;
     $ext.each(s, function(atom) {
       if(atom.isVisible() && atom.status !== ATOM_STATUSES.selected) {
@@ -321,7 +320,7 @@ AtomList.prototype = {
 
         // Bring to back of list to be drawn last (on top).
         $ext.array.toBack(this.atoms, this.indexOf(atom.id));
-        c.style.cursor = t.cursor.normal;
+        c.style.cursor = this.settings.cursor.normal;
         changed = true;
       }
     }, this);
@@ -411,7 +410,6 @@ AtomList.prototype = {
    * Fit the molecule in a box of size w * h and center it there.
    */
   bestFit: function(w, h) {
-    var s = this.molecule.mv.settings;
     var wf = w / this.width();
     var hf = h / this.height();
     var f = wf < hf ? wf : hf;

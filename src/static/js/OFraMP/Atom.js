@@ -7,6 +7,9 @@ function Atom(list, id, element, element_id, x, y, charge) {
 
 Atom.prototype = {
   list: undefined,
+  settings: undefined,
+  cache: undefined,
+
   id: undefined,
   element: undefined,
   element_id: undefined,
@@ -15,10 +18,11 @@ Atom.prototype = {
   charge: undefined,
   status: undefined,
 
-  cache: undefined,
-
   init: function(list, id, element, element_id, x, y, charge) {
     this.list = list;
+    this.settings = list.settings;
+    this.cache = new Cache();
+
     this.id = id;
     this.element = element;
     this.element_id = element_id;
@@ -26,8 +30,6 @@ Atom.prototype = {
     this.y = y;
     this.charge = charge || Math.random() > .5 ? 0.123 : undefined;
     this.status = ATOM_STATUSES.normal;
-
-    this.cache = new Cache();
   },
 
   /*
@@ -48,9 +50,8 @@ Atom.prototype = {
       return this.cache.get('position.visible');
     }
 
-    var s = this.list.molecule.mv.settings;
     var c = this.list.molecule.mv.canvas;
-    var visible = ((s.atom.show_h_atoms || this.element != "H")
+    var visible = ((this.settings.atom.show_h_atoms || this.element != "H")
         && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
 
@@ -68,8 +69,8 @@ Atom.prototype = {
     }
 
     var label = this.element;
-    if(this.list.molecule.mv.settings.atom.combine_h_labels === true
-        && this.list.molecule.mv.settings.atom.show_h_atoms !== true) {
+    if(this.settings.atom.combine_h_labels === true
+        && this.settings.atom.show_h_atoms !== true) {
       var hs = $ext.array.filter(this.bondedAtoms(), function(atom) {
         return atom.element === "H";
       });
@@ -95,8 +96,7 @@ Atom.prototype = {
       return this.cache.get('appearance.show_label');
     }
 
-    var s = this.list.molecule.mv.settings;
-    var show = (s.atom.show_c_labels || this.element != "C");
+    var show = (this.settings.atom.show_c_labels || this.element != "C");
 
     this.cache.set('appearance.show_label', show);
     return show;
@@ -194,11 +194,10 @@ Atom.prototype = {
       return this.cache.get('appearance.radius');
     }
 
-    var s = this.list.molecule.mv.settings;
     if(this.isCharged()) {
-      var radius = s.atom.radius_charged;
+      var radius = this.settings.atom.radius_charged;
     } else {
-      var radius = s.atom.radius;
+      var radius = this.settings.atom.radius;
     }
     this.cache.set('appearance.radius', radius, this.cache
         .getCache('appearance.show_label'));
@@ -301,8 +300,8 @@ Atom.prototype = {
     if(this.cache.get('appearance.color')) {
       return this.cache.get('appearance.color');
     }
-    var c = this.list.molecule.mv.settings.atom.colors[this.element];
-    var color = c || this.list.molecule.mv.settings.atom.colors["other"];
+    var c = this.settings.atom.colors[this.element];
+    var color = c || this.settings.atom.colors["other"];
     this.cache.set('appearance.color', color);
     return color;
   },
@@ -428,7 +427,7 @@ Atom.prototype = {
     }
 
     var ctx = this.list.molecule.mv.ctx;
-    var s = this.list.molecule.mv.settings;
+    var s = this.settings;
 
     var status = $ext.number.msb(this.status);
     ctx.fillStyle = s.atom.bg_colors[status];
