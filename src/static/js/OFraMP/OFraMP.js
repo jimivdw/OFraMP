@@ -314,5 +314,9 @@ OFraMP.prototype = {
     });
 
     this.atom_details.parentElement.style.visibility = "visible";
+  },
+  
+  hideSelectionDetails: function() {
+    this.atom_details.parentElement.style.visibility = "hidden";
   }
 };

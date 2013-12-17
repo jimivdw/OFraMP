@@ -79,8 +79,10 @@ MoleculeViewer.prototype = {
         var selection = _this.molecule.atoms.getSelected();
         if(selection && selection.length > 0) {
           _this.oframp.find_fragments_button.disabled = "";
+          _this.oframp.showSelectionDetails(selection);
         } else {
           _this.oframp.find_fragments_button.disabled = "disabled";
+          _this.oframp.hideSelectionDetails();
         }
       }
     }, 0);
@@ -124,6 +126,7 @@ MoleculeViewer.prototype = {
           _this.oframp.showSelectionDetails(selection);
         } else {
           _this.oframp.find_fragments_button.disabled = "disabled";
+          _this.oframp.hideSelectionDetails();
         }
       }
     }, 2);
