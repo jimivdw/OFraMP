@@ -19,28 +19,27 @@ OFraMP.prototype = {
     lb.id = "leftbar";
     lb.className = "border_box";
     lb.style.visibility = "hidden";
+    this.container.appendChild(lb);
     this.__initAtomDetails(lb);
 
     var rb = document.createElement('div');
     rb.id = "rightbar";
     rb.className = "border_box";
     rb.style.visibility = "hidden";
+    this.container.appendChild(rb);
     this.__initRelatedFragments(rb);
 
     var popup = document.createElement('div');
     popup.id = "popup";
     popup.className = "border_box";
     popup.style.visibility = "hidden";
+    this.container.appendChild(popup);
     this.__initPopup(popup);
 
     var cc = document.createElement('div');
     cc.id = "canvas_container";
-    this.__initMainViewer(cc);
-
-    this.container.appendChild(lb);
-    this.container.appendChild(rb);
-    this.container.appendChild(popup);
     this.container.appendChild(cc);
+    this.__initMainViewer(cc);
 
     if(!$ext.onBrokenIE()) {
       this.__initSettingsUI();
