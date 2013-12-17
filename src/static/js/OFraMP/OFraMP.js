@@ -111,7 +111,7 @@ OFraMP.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
       _this.showInsertMoleculePopup();
-    });
+    }, 0);
   },
 
   __initFFB: function(elem) {
@@ -120,7 +120,7 @@ OFraMP.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
       _this.mv.getMatchingFragments();
-    });
+    }, 0);
   },
 
   __initMainViewer: function(container) {
@@ -305,7 +305,18 @@ OFraMP.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(ffb, function() {
       _this.mv.getMatchingFragments();
-    });
+    }, 0);
+
+    if(atom) {
+      var ecb = document.createElement('button');
+      ecb.className = "border_box";
+      ecb.disabled = "disabled";
+      ecb.appendChild(document.createTextNode("Edit charge"));
+      this.atom_details.appendChild(ecb);
+      $ext.dom.onMouseClick(ecb, function() {
+        alert("TODO =)");
+      }, 0);
+    }
 
     this.atom_details.parentElement.style.visibility = "visible";
     this.atom_details.parentElement.style.opacity = "1.0";

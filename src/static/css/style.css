@@ -211,6 +211,7 @@ html, body {
 
 #atom_details table {
     width: 230px;
+    margin: 3px 0;
     border-spacing: 0px;
     border-collapse: collapse;
 }
@@ -230,12 +231,18 @@ html, body {
 
 #atom_details button {
     width: 230px;
-    margin: 10px 0;
+    margin: 3px 0;
     height: 30px;
     cursor: pointer;
     opacity: 0.5;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
+}
+
+#atom_details button:disabled {
+    opacity: 0.1 !important;
+    cursor: default !important;
+    background-color: #FFF !important;
 }
 
 #atom_details button:hover {
@@ -305,7 +312,7 @@ html, body {
     float: left;
 }
 
-#enter_molecule, #find_fragments {
+#oframp > button {
     position: absolute;
     top: 10px;
     left: 50%;
@@ -320,13 +327,18 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-#enter_molecule:disabled, #find_fragments:disabled {
+#oframp > button:disabled {
     opacity: 0.1 !important;
     cursor: default !important;
+    background-color: #FFF !important;
 }
 
-#enter_molecule:hover, #find_fragments:hover {
+#oframp > button:hover {
     opacity: 1;
+}
+
+#oframp > button:active {
+    background-color: #DDD;
 }
 
 #enter_molecule {
