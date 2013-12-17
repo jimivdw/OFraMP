@@ -52,33 +52,32 @@
 
         // ONLY for debug purposes, TODO : remove
         doframp = oframp;
-        var mv = oframp.mv;
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {
-          mv.zoom(1.1);
+          oframp.mv.zoom(1.1);
         };
         var zo = document.getElementById("zoomout");
         zo.onclick = function() {
-          mv.zoom(.9);
+          oframp.mv.zoom(.9);
         };
         var zp = document.getElementById("zoom");
         zp.onclick = function(e, x, y, z) {
           switch(zp.value) {
             case 'min':
-              mv.minimize();
+              oframp.mv.minimize();
               break;
 
             case 'max':
-              mv.maximize();
+              oframp.mv.maximize();
               break;
 
             case 'avg':
-              mv.idealize();
+              oframp.mv.idealize();
               break;
 
             case 'fit':
-              mv.bestFit();
+              oframp.mv.bestFit();
               break;
           }
           zp.value = 'pre';
@@ -86,12 +85,12 @@
 
         var rp = document.getElementById("reset");
         rp.onclick = function() {
-          mv.resetPositions();
+          oframp.mv.resetPositions();
         };
 
         var dl = document.getElementById("download");
         dl.onclick = function() {
-          var data = mv.canvas.toDataURL('image/png');
+          var data = oframp.mv.canvas.toDataURL('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";
