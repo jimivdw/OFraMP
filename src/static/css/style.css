@@ -15,7 +15,6 @@ html, body {
     width: 100%;
     -webkit-user-select: none;
     user-select: none;
-    background-color: #CCC;
     overflow: hidden;
 }
 

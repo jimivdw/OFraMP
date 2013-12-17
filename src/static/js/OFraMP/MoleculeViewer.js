@@ -1,35 +1,41 @@
-function MoleculeViewer(settings) {
-  this.init(settings);
+function MoleculeViewer(id, parent_id, settings) {
+  this.init(id, parent_id, settings);
 }
 
 MoleculeViewer.prototype = {
-  molecule: undefined,
+  settings: undefined,
+  cache: undefined,
+
+  id: undefined,
   canvas: undefined,
   ctx: undefined,
+
+  molecule: undefined,
 
   selection_area: undefined,
   overlay_showing: false,
   overlay_message: "",
   overlay_status: 1,
 
-  settings: undefined,
+  init: function(id, parent_id, settings) {
+    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+    this.cache = new Cache();
 
-  cache: undefined,
+    this.id = id;
+    this.canvas = document.createElement('canvas');
+    this.init_canvas(parent_id);
 
-  init: function(settings) {
-    var canvas = document.createElement('canvas');
-    canvas.id = "mainMolecule";
-    canvas.width = document.documentElement.clientWidth;
-    canvas.height = document.documentElement.clientHeight;
-    document.getElementById("canvasContainer").appendChild(canvas);
-    this.canvas = canvas;
-    
     this.ctx = this.canvas.getContext('2d');
     this.init_context();
+  },
 
-    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+  init_canvas: function(parent_id) {
+    this.canvas.id = this.id;
+    this.canvas.width = document.documentElement.clientWidth;
+    this.canvas.height = document.documentElement.clientHeight;
 
-    this.cache = new Cache();
+    var parent = document.getElementById(parent_id);
+    parent.appendChild(this.canvas);
   },
 
   init_context: function() {
@@ -121,6 +127,21 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
+
+    window.onresize = function() {
+      mv.canvas.width = document.documentElement.clientWidth;
+      mv.canvas.height = document.documentElement.clientHeight;
+
+      if(mv.molecule) {
+        mv.molecule.atoms.each(function(atom) {
+          atom.cache.clear('position.visible');
+        });
+        mv.molecule.bonds.each(function(bond) {
+          bond.cache.clear('position.visible');
+        });
+        mv.redraw();
+      }
+    };
   },
 
   /*

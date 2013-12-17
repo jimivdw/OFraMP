@@ -46,7 +46,7 @@
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
-        mv = new MoleculeViewer({
+        mv = new MoleculeViewer("mainMolecule", "canvasContainer", {
           oapoc : {
             url : OAPoC_URL
           }
@@ -112,19 +112,6 @@
             gui.toggle();
           };
         }
-
-        window.onresize = function() {
-          canvas.width = document.documentElement.clientWidth;
-          canvas.height = document.documentElement.clientHeight;
-
-          mv.molecule.atoms.each(function(atom) {
-            atom.cache.clear('position.visible');
-          });
-          mv.molecule.bonds.each(function(bond) {
-            bond.cache.clear('position.visible');
-          });
-          mv.redraw();
-        };
       };
     </script>
   </head>
