@@ -190,6 +190,10 @@ html, body {
     right: 10px;
 }
 
+#atom_details, #related_fragments {
+    padding: 5px 5px 5px 5px;
+}
+
 #popup {
     position: absolute;
     left: 50%;
@@ -239,11 +243,44 @@ html, body {
     display: block;
     bottom: 0;
     left: 0;
+    right: 0;
     margin: 10px;
 }
 
-#atom_details, #related_fragments {
-    padding: 5px 5px 5px 5px;
+#popup_content .controls button {
+    float: left;
+}
+
+#enter_molecule, #find_fragments {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 160px;
+    height: 30px;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+    opacity: 0.5;
+    cursor: pointer;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+#enter_molecule:disabled, #find_fragments:disabled {
+    opacity: 0.5 !important;
+    cursor: default !important;
+}
+
+#enter_molecule:hover, #find_fragments:hover {
+    opacity: 1;
+}
+
+#enter_molecule {
+    margin-left: -230px;
+}
+
+#find_fragments {
+    margin-left: 70px;
 }
 
 .border_box {

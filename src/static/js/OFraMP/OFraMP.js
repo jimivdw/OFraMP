@@ -12,6 +12,9 @@ OFraMP.prototype = {
   popup_title: undefined,
   popup_content: undefined,
 
+  enter_molecule_button: undefined,
+  find_fragments_button: undefined,
+
   ui_initialized_event: new Event('ui_initialized'),
   molecule_entered_event: new Event('molecule_entered'),
 
@@ -19,7 +22,7 @@ OFraMP.prototype = {
     this.container = document.getElementById(container_id);
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.__initUI();
-    this.__showInsertMoleculePopup();
+    this.showInsertMoleculePopup();
   },
 
   __initUI: function() {
@@ -43,6 +46,22 @@ OFraMP.prototype = {
     this.popup.style.visibility = "hidden";
     this.container.appendChild(this.popup);
     this.__initPopup(this.popup);
+
+    var emb = document.createElement('button');
+    emb.id = "enter_molecule";
+    emb.className = "border_box";
+    emb.style.visibility = "hidden";
+    this.container.appendChild(emb);
+    this.__initEMB(emb);
+    this.enter_molecule_button = emb;
+
+    var ffb = document.createElement('button');
+    ffb.id = "find_fragments";
+    ffb.className = "border_box";
+    ffb.style.visibility = "hidden";
+    this.container.appendChild(ffb);
+    this.__initFFB(ffb);
+    this.find_fragments_button = ffb;
 
     var cc = document.createElement('div');
     cc.id = "canvas_container";
@@ -82,6 +101,23 @@ OFraMP.prototype = {
     container.appendChild(this.popup_content);
   },
 
+  __initEMB: function(elem) {
+    elem.appendChild(document.createTextNode("Submit a new molecule"));
+    var _this = this;
+    $ext.dom.onMouseClick(elem, function() {
+      _this.showInsertMoleculePopup();
+    });
+  },
+
+  __initFFB: function(elem) {
+    elem.appendChild(document.createTextNode("Find matching fragments"));
+    elem.disabled = "disabled";
+    var _this = this;
+    $ext.dom.onMouseClick(elem, function() {
+      _this.mv.getMatchingFragments();
+    });
+  },
+
   __initMainViewer: function(container) {
     this.mv = new MoleculeViewer(this, "main_molecule", "canvas_container");
   },
@@ -102,6 +138,11 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
+  __initMP: function() {
+    this.enter_molecule_button.style.visibility = "visible";
+    this.find_fragments_button.style.visibility = "visible";
+  },
+
   showPopup: function(title, content) {
     $ext.dom.clear(this.popup_title);
     $ext.dom.clear(this.popup_content);
@@ -114,7 +155,7 @@ OFraMP.prototype = {
     this.popup.style.visibility = "hidden";
   },
 
-  __showInsertMoleculePopup: function() {
+  showInsertMoleculePopup: function() {
     var _this = this;
 
     var title = "Please enter a molecule data string";
@@ -133,7 +174,10 @@ OFraMP.prototype = {
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.mv.showMolecule(ta.value);
-      _this.mv.init_interaction();
+      if(!_this.mv.molecule) {
+        _this.mv.init_interaction();
+        _this.__initMP();
+      }
       _this.container.dispatchEvent(_this.molecule_entered_event);
       _this.hidePopup();
     }
@@ -145,6 +189,20 @@ OFraMP.prototype = {
       ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
     }
     cbs.appendChild(rb);
+
+    var cb = document.createElement('button');
+    cb.style.float = 'right';
+    cb.appendChild(document.createTextNode("Cancel"));
+    cb.onclick = function() {
+      if(!_this.mv.molecule) {
+        _this.mv.showMolecule($ext.array.randomElement(PREDEFINED_MOLECULES));
+        _this.mv.init_interaction();
+        _this.__initMP();
+        _this.container.dispatchEvent(_this.molecule_entered_event);
+      }
+      _this.hidePopup();
+    }
+    cbs.appendChild(cb);
 
     this.showPopup(title, content);
   }
