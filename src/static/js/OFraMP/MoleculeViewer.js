@@ -3,6 +3,7 @@ function MoleculeViewer(id, parent_id, settings) {
 }
 
 MoleculeViewer.prototype = {
+  oframp: undefined,
   settings: undefined,
   cache: undefined,
 
@@ -17,8 +18,9 @@ MoleculeViewer.prototype = {
   overlay_message: "",
   overlay_status: 1,
 
-  init: function(id, parent_id, settings) {
-    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+  init: function(oframp, id, parent_id) {
+    this.oframp = oframp;
+    this.settings = oframp.settings;
     this.cache = new Cache();
 
     this.id = id;

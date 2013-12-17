@@ -36,6 +36,7 @@
     <script type="text/javascript" src="static/js/OFraMP/BondList.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/Molecule.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/MoleculeViewer.js"></script>
+    <script type="text/javascript" src="static/js/OFraMP/OFraMP.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/SelectionArea.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/settings.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/UI.js"></script>
@@ -46,20 +47,13 @@
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
 
-        mv = new MoleculeViewer("mainMolecule", "canvasContainer", {
+        var oframp = new OFraMP("oframp", {
           oapoc : {
             url : OAPoC_URL
           }
         });
+        mv = oframp.mv;
         showInsertMoleculePopup();
-
-        if (!$ext.onBrokenIE()) {
-          gui = new dat.GUI({
-            name : 'OFraMP Settings',
-            savable : true
-          });
-          gui.addAll(mv.settings, mv.settings, $ext.object.extrapolate(SETTINGS_OPTIONS));
-        }
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {
@@ -109,7 +103,7 @@
           op.remove();
         } else {
           op.onclick = function() {
-            gui.toggle();
+            oframp.settings_ui.toggle();
           };
         }
       };
@@ -127,13 +121,13 @@
 
     <div id="controls">
       <div class="bgroup">
-        <button id="zoomin" class="borderBox">
+        <button id="zoomin" class="border_box">
           Zoom +
         </button>
-        <button id="zoomout" class="borderBox">
+        <button id="zoomout" class="border_box">
           Zoom -
         </button>
-        <select id="zoom" class="borderBox">
+        <select id="zoom" class="border_box">
           <option value="pre" disabled="disabled" selected="selected">Predefined</option>
           <option value="min">Minimal</option>
           <option value="avg">Ideal</option>
@@ -143,17 +137,17 @@
       </div>
 
       <div class="bgroup">
-        <button id="reset" class="borderBox">
+        <button id="reset" class="border_box">
           Reset positions
         </button>
       </div>
 
       <div class="bgroup">
-        <a id="download" class="borderBox" href="">Download</a>
+        <a id="download" class="border_box" href="">Download</a>
       </div>
 
       <div class="bgroup">
-        <button id="opti" class="borderBox">
+        <button id="opti" class="border_box">
           Settings
         </button>
       </div>
@@ -163,28 +157,30 @@
       &copy; 2013 jimivdw | CWI
     </div>
 
-    <div id="leftbar" class="borderBox" style="visibility: hidden;">
-      <div id="atomDetails">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <div id="oframp">
+      <div id="leftbar" class="border_box" style="visibility: hidden;">
+        <div id="atom_details">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
       </div>
-    </div>
 
-    <div id="rightbar" class="borderBox" style="visibility: hidden;">
-      <div id="relatedFragments">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+      <div id="rightbar" class="border_box" style="visibility: hidden;">
+        <div id="related_fragments">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+        </div>
       </div>
-    </div>
 
-    <div id="popup" class="borderBox" style="visibility: hidden;">
-      <div id="popup_title">
-        Title
+      <div id="popup" class="border_box" style="visibility: hidden;">
+        <div id="popup_title">
+          Title
+        </div>
+        <hr />
+        <div id="popup_content">
+          Content
+        </div>
       </div>
-      <hr />
-      <div id="popup_content">
-        Content
-      </div>
-    </div>
 
-    <div id="canvasContainer"></div>
+      <div id="canvas_container"></div>
+    </div>
   </body>
 </html>
