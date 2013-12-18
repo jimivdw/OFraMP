@@ -18,7 +18,7 @@ var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 var DEFAULT_SETTINGS = {
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/",
-    version: "0.1.3"
+    version: "0.1.4"
   },
 
   zoom: {

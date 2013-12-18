@@ -20,7 +20,7 @@ BondList.prototype = {
     this.bonds = new Array();
     $ext.each(bonds, function(bond) {
       this.bonds.push(new Bond(this, bond.id, molecule.atoms.get(bond.a1),
-          molecule.atoms.get(bond.a2), bond.bond_type));
+          molecule.atoms.get(bond.a2), bond.bondType));
     }, this);
   },
 

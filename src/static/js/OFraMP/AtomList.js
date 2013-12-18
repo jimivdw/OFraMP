@@ -19,7 +19,7 @@ AtomList.prototype = {
 
     this.atoms = new Array();
     $ext.each(atoms, function(atom) {
-      this.atoms.push(new Atom(this, atom.id, atom.element, atom.element_id,
+      this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
           atom.x, atom.y));
     }, this);
   },

@@ -256,8 +256,7 @@ MoleculeViewer.prototype = {
     var _this = this;
     this.getMoleculeData(dataStr, function(md) {
       _this.showOverlay("Initializing molecule...");
-      // TODO: replace data_str in OAPoC with dataStr
-      _this.molecule = new Molecule(_this, md.atoms, md.bonds, md.data_str);
+      _this.molecule = new Molecule(_this, md.atoms, md.bonds, md.dataStr);
       _this.molecule.idealize();
       _this.hideOverlay();
     });
