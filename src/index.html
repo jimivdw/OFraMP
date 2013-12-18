@@ -105,6 +105,7 @@
           };
         }
 
+        var controlsInitialized = false;
         function initControls() {
           var controls = document.getElementById("controls");
           var toggle = document.getElementById("controls_toggle");
@@ -132,10 +133,14 @@
               toggle.innerHTML = "Controls &#8675";
             }
           });
+
+          controlsInitialized = true;
         }
 
         $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
-          initControls();
+          if(!controlsInitialized) {
+            initControls();
+          }
         });
       };
     </script>
