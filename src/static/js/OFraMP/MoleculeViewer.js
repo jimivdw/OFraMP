@@ -1,5 +1,5 @@
 function MoleculeViewer(id, parentID, settings) {
-  this.init(id, parentID, settings);
+  this.__init(id, parentID, settings);
 }
 
 MoleculeViewer.prototype = {
@@ -18,7 +18,7 @@ MoleculeViewer.prototype = {
   overlayMessage: "",
   overlayStatus: 1,
 
-  init: function(oframp, id, parentID) {
+  __init: function(oframp, id, parentID) {
     this.oframp = oframp;
     this.settings = oframp.settings;
     this.cache = new Cache();
@@ -39,13 +39,7 @@ MoleculeViewer.prototype = {
     parent.appendChild(this.canvas);
   },
 
-  initContext: function() {
-    // Fix the text alignment before every redraw
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-  },
-
-  initInteraction: function() {
+  setupInteraction: function() {
     var _this = this;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
@@ -394,12 +388,17 @@ MoleculeViewer.prototype = {
     this.redraw();
   },
 
+  resetContext: function() {
+    $ext.context.clear(this.ctx);
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+  },
+
   /*
    * Redraw the canvas.
    */
   redraw: function() {
-    $ext.context.clear(this.ctx);
-    this.initContext();
+    this.resetContext();
 
     if(this.molecule) {
       this.molecule.draw();

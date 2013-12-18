@@ -2,7 +2,7 @@
  * Data structure for a list of bonds
  */
 function BondList(molecule, bonds) {
-  this.init(molecule, bonds);
+  this.__init(molecule, bonds);
 }
 
 BondList.prototype = {
@@ -12,7 +12,7 @@ BondList.prototype = {
 
   bonds: undefined,
 
-  init: function(molecule, bonds) {
+  __init: function(molecule, bonds) {
     this.molecule = molecule;
     this.settings = molecule.settings;
     this.cache = new Cache();

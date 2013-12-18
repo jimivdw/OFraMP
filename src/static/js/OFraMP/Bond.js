@@ -2,7 +2,7 @@
  * Data structure for a bond
  */
 function Bond(list, id, a1, a2, type) {
-  this.init(list, id, a1, a2, type);
+  this.__init(list, id, a1, a2, type);
 }
 
 Bond.prototype = {
@@ -15,7 +15,8 @@ Bond.prototype = {
   a2: undefined,
   type: undefined,
 
-  init: function(list, id, a1, a2, type) {
+
+  __init: function(list, id, a1, a2, type) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
@@ -180,7 +181,7 @@ Bond.prototype = {
   /*
    * Cache the coordinates of all bond lines.
    */
-  cacheLineCoords: function() {
+  __cacheLineCoords: function() {
     if(this.cache.get('position.lines')) {
       return this.cache.get('position.lines');
     }
@@ -291,7 +292,7 @@ Bond.prototype = {
   /*
    * Cache the coordinates of the bond's connector on atom a.
    */
-  cacheConnectorCoords: function(a) {
+  __cacheConnectorCoords: function(a) {
     if(this.cache.get('position.connectors')) {
       var connectors = this.cache.get('position.connectors');
     } else {
@@ -371,7 +372,7 @@ Bond.prototype = {
   /*
    * Cache the coordinates of this bond's atom connectors.
    */
-  cacheConnectorsCoords: function() {
+  __cacheConnectorsCoords: function() {
     if(this.cache.get('position.connectors')) {
       return this.cache.get('position.connectors');
     }
@@ -384,8 +385,8 @@ Bond.prototype = {
       return [];
     }
 
-    var c1 = this.cacheConnectorCoords(this.a1);
-    var c2 = this.cacheConnectorCoords(this.a2);
+    var c1 = this.__cacheConnectorCoords(this.a1);
+    var c2 = this.__cacheConnectorCoords(this.a2);
     return $ext.merge(c1, c2, true);
   },
 
@@ -394,7 +395,7 @@ Bond.prototype = {
    */
   draw: function() {
     this.drawConnectors();
-    var lines = this.cacheLineCoords();
+    var lines = this.__cacheLineCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     var s = this.settings;
@@ -429,7 +430,7 @@ Bond.prototype = {
    * Draw this bond's connectors.
    */
   drawConnectors: function() {
-    var connectors = this.cacheConnectorsCoords();
+    var connectors = this.__cacheConnectorsCoords();
 
     var ctx = this.list.molecule.mv.ctx;
     ctx.lineWidth = this.settings.bond.connectorWidth;

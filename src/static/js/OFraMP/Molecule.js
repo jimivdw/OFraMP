@@ -1,5 +1,5 @@
 function Molecule(mv, atoms, bonds, dataStr) {
-  this.init(mv, atoms, bonds, dataStr);
+  this.__init(mv, atoms, bonds, dataStr);
 }
 
 Molecule.prototype = {
@@ -12,7 +12,7 @@ Molecule.prototype = {
   bonds: undefined,
 
 
-  init: function(mv, atoms, bonds, dataStr) {
+  __init: function(mv, atoms, bonds, dataStr) {
     this.mv = mv;
     this.settings = mv.settings;
     this.cache = new Cache();
@@ -185,9 +185,9 @@ Molecule.prototype = {
    */
   find: function(needle) {
     if(needle instanceof Molecule) {
-      var seqs = this.findOccurrences(needle);
+      var seqs = this.__findOccurrences(needle);
     } else if(needle instanceof Array) {
-      var seqs = this.findSequences(needle);
+      var seqs = this.__findSequences(needle);
     } else {
       throw "Find only works with Molecules or Arrays";
     }
@@ -204,14 +204,14 @@ Molecule.prototype = {
   /*
    * Find all occurrences of a given sequence in this molecule.
    */
-  findSequences: function(seq) {
+  __findSequences: function(seq) {
     return this.atoms.findSequences(seq);
   },
 
   /*
    * Find all occurrences of a given Molecule in this molecule.
    */
-  findOccurrences: function(molecule) {
+  __findOccurrences: function(molecule) {
     return this.atoms.findOccurrences(molecule.atoms);
   },
 
@@ -227,19 +227,19 @@ Molecule.prototype = {
     }
 
     if(this.settings.deoverlap.deoverlapAtoms) {
-      var da = this.deoverlapAtoms();
+      var da = this.__deoverlapAtoms();
     }
 
     if(this.settings.deoverlap.deoverlapBonds) {
-      var db = this.deoverlapBonds();
+      var db = this.__deoverlapBonds();
     }
 
     if(this.settings.deoverlap.decrossBonds) {
-      var dc = this.decrossBonds();
+      var dc = this.__decrossBonds();
     }
 
     if(this.settings.deoverlap.lengthenBonds) {
-      var lb = this.lengthenBonds();
+      var lb = this.__lengthenBonds();
     }
 
     return da || db || dc || lb;
@@ -250,7 +250,7 @@ Molecule.prototype = {
    * 
    * Returns true is atoms were moved and a redraw is needed.
    */
-  deoverlapAtoms: function() {
+  __deoverlapAtoms: function() {
     var changed = false;
 
     for( var i = 0; i < this.atoms.count(); i++) {
@@ -295,7 +295,7 @@ Molecule.prototype = {
    * 
    * Returns true is atoms were moved and a redraw is needed.
    */
-  deoverlapBonds: function() {
+  __deoverlapBonds: function() {
     var changed = false;
 
     for( var i = 0; i < this.atoms.count(); i++) {
@@ -338,7 +338,7 @@ Molecule.prototype = {
    * 
    * Returns true is atoms were moved and a redraw is needed.
    */
-  decrossBonds: function() {
+  __decrossBonds: function() {
     var changed = false;
 
     for( var i = 0; i < this.bonds.count(); i++) {
@@ -380,7 +380,7 @@ Molecule.prototype = {
   /*
    * Make sure each bond is at least minBondLength long.
    */
-  lengthenBonds: function() {
+  __lengthenBonds: function() {
     var changed = false;
 
     for( var i = 0; i < this.bonds.count(); i++) {

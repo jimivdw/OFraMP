@@ -1,9 +1,9 @@
 function SelectionArea(mv, x, y) {
-  this.init(mv, x, y);
+  this.__init(mv, x, y);
 }
 
 SelectionArea.prototype = {
-  init: function(mv, x, y) {
+  __init: function(mv, x, y) {
     this.mv = mv;
     this.x = x;
     this.y = y;

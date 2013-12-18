@@ -1,5 +1,5 @@
 function OFraMP(containerID, settings) {
-  this.init(containerID, settings);
+  this.__init(containerID, settings);
 }
 
 OFraMP.prototype = {
@@ -21,7 +21,7 @@ OFraMP.prototype = {
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
 
-  init: function(containerID, settings) {
+  __init: function(containerID, settings) {
     this.container = document.getElementById(containerID);
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.__initUI();
@@ -178,7 +178,7 @@ OFraMP.prototype = {
     sb.onclick = function() {
       _this.mv.showMolecule(ta.value);
       if(!_this.mv.molecule) {
-        _this.mv.initInteraction();
+        _this.mv.setupInteraction();
         _this.__initMP();
       }
       _this.container.dispatchEvent(_this.moleculeEnteredEvent);
@@ -199,7 +199,7 @@ OFraMP.prototype = {
     cb.onclick = function() {
       if(!_this.mv.molecule) {
         _this.mv.showMolecule($ext.array.randomElement(PREDEFINED_MOLECULES));
-        _this.mv.initInteraction();
+        _this.mv.setupInteraction();
         _this.__initMP();
         _this.container.dispatchEvent(_this.moleculeEnteredEvent);
       }

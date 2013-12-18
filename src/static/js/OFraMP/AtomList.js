@@ -2,7 +2,7 @@
  * Data structure for a list of atoms
  */
 function AtomList(molecule, atoms) {
-  this.init(molecule, atoms);
+  this.__init(molecule, atoms);
 }
 
 AtomList.prototype = {
@@ -12,7 +12,7 @@ AtomList.prototype = {
 
   atoms: undefined,
 
-  init: function(molecule, atoms) {
+  __init: function(molecule, atoms) {
     this.molecule = molecule;
     this.settings = molecule.settings;
     this.cache = new Cache();

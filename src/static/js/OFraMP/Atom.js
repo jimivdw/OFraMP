@@ -2,7 +2,7 @@
  * Data structure for an atom
  */
 function Atom(list, id, element, elementID, x, y, charge) {
-  this.init(list, id, element, elementID, x, y, charge);
+  this.__init(list, id, element, elementID, x, y, charge);
 }
 
 Atom.prototype = {
@@ -18,7 +18,7 @@ Atom.prototype = {
   charge: undefined,
   status: undefined,
 
-  init: function(list, id, element, elementID, x, y, charge) {
+  __init: function(list, id, element, elementID, x, y, charge) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
