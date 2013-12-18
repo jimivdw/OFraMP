@@ -45,10 +45,10 @@ $ext.extend($ext, {
 
     /*
      * Get an Event represented as an Object (fix for IE <= 8 where this
-     * strangely isn't the case).
+     * strangely isn't the case and Firefox where event objects are immutable).
      */
     eventObject: function(evt) {
-      if(evt instanceof Object) {
+      if(evt instanceof Object && !$ext.onFirefox()) {
         return evt;
       }
 
@@ -144,14 +144,20 @@ $ext.extend($ext, {
 
 
     getMouseButton: function(evt) {
-      if(!$ext.onBrokenIE()) {
+      if(!$ext.onBrokenIE() && !$ext.onFirefox()) {
         return evt.button;
       } else {
-        if(evt.button & 1) {
+        if($ext.onFirefox()) {
+          var button = evt.buttons;
+        } else {
+          var button = evt.button;
+        }
+
+        if(button & 1) {
           return 0;
-        } else if(evt.button & 2) {
+        } else if(button & 2) {
           return 2;
-        } else if(evt.button & 4) {
+        } else if(button & 4) {
           return 1;
         } else {
           return 0;

@@ -49,9 +49,13 @@ MoleculeViewer.prototype = {
     var _this = this;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
+      if(e.preventDefault) {
+        e.preventDefault();
+      } else if(e.stopPropagation) {
+        e.stopPropagation();
+      } else {
+        return false;
+      }
     });
 
     $ext.dom.onMouseMove(this.canvas, function(e) {
@@ -93,27 +97,32 @@ MoleculeViewer.prototype = {
       }
     }, 0);
 
-    $ext.dom.onMouseDrag(this.canvas, function(e) {
-      if(!_this.overlay_showing) {
-        if(!_this.selection_area) {
-          _this.selection_area = new SelectionArea(_this, e.clientX, e.clientY);
-          if(e.ctrlKey === true) {
-            window.__initial_selection = _this.molecule.atoms.getSelected();
-          }
-        } else {
-          _this.selection_area.resize(e.deltaX, e.deltaY);
-          var bb = _this.selection_area.getBB();
-          var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
-          if(e.ctrlKey === true) {
-            _this.molecule.setSelected(window.__initial_selection);
-            _this.molecule.atoms.addSelected(atoms);
-          } else {
-            _this.molecule.setSelected(atoms);
-          }
-          _this.redraw();
-        }
-      }
-    }, 2);
+    $ext.dom
+        .onMouseDrag(this.canvas,
+            function(e) {
+              if(!_this.overlay_showing) {
+                if(!_this.selection_area) {
+                  _this.selection_area = new SelectionArea(_this, e.clientX,
+                      e.clientY);
+                  if(e.ctrlKey === true) {
+                    window.__initial_selection = _this.molecule.atoms
+                        .getSelected();
+                  }
+                } else {
+                  _this.selection_area.resize(e.deltaX, e.deltaY);
+                  var bb = _this.selection_area.getBB();
+                  var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2,
+                      bb.y2);
+                  if(e.ctrlKey === true) {
+                    _this.molecule.setSelected(window.__initial_selection);
+                    _this.molecule.atoms.addSelected(atoms);
+                  } else {
+                    _this.molecule.setSelected(atoms);
+                  }
+                  _this.redraw();
+                }
+              }
+            }, 2);
 
     $ext.dom.onMouseUp(window, function(e) {
       if(!_this.overlay_showing) {

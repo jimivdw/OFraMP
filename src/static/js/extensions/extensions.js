@@ -113,5 +113,14 @@ $ext = {
    */
   onBrokenIE: function() {
     return BrowserDetect.browser === "Explorer" && BrowserDetect.version < 9;
+  },
+
+  /*
+   * Determine if the user is using Firefox.
+   * 
+   * Used to fix MouseEvent button problems.
+   */
+  onFirefox: function() {
+    return BrowserDetect.browser === "Firefox";
   }
 };
