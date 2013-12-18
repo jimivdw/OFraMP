@@ -286,11 +286,7 @@ AtomList.prototype = {
         $ext.array.toBack(this.atoms, this.indexOf(h.id));
         changed = true;
       }
-      if(h.status & ATOM_STATUSES.hover) {
-        c.style.cursor = this.settings.cursor.click;
-      } else {
-        c.style.cursor = this.settings.cursor.normal;
-      }
+      c.style.cursor = this.settings.cursor.click;
     } else {
       c.style.cursor = this.settings.cursor.drag;
     }
@@ -315,7 +311,7 @@ AtomList.prototype = {
 
     var c = this.molecule.mv.canvas;
     $ext.each(s, function(atom) {
-      if(atom.isVisible() && atom.status !== ATOM_STATUSES.selected) {
+      if(atom.isVisible() && !(atom.status & ATOM_STATUSES.selected)) {
         atom.select();
 
         // Bring to back of list to be drawn last (on top).
@@ -330,7 +326,7 @@ AtomList.prototype = {
 
   addSelected: function(s) {
     $ext.each(s, function(atom) {
-      if(atom.status === ATOM_STATUSES.selected) {
+      if(atom.status & ATOM_STATUSES.selected) {
         atom.deselect();
       } else if(atom.isVisible()) {
         atom.select();
