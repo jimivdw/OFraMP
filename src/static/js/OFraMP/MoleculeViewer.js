@@ -115,7 +115,7 @@ MoleculeViewer.prototype = {
       }
     }, 2);
 
-    $ext.dom.onMouseUp(this.canvas, function(e) {
+    $ext.dom.onMouseUp(window, function(e) {
       if(!_this.overlay_showing) {
         _this.selection_area = undefined;
         _this.redraw();
