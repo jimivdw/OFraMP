@@ -27,9 +27,9 @@ AtomList.prototype = {
   /*
    * Convert the basic data of this AtomList to JSON.
    */
-  toBasicJSON: function() {
+  getSimpleJSON: function() {
     return $ext.array.map(this.atoms, function(atom) {
-      return atom.toBasicJSON();
+      return atom.getSimpleJSON();
     });
   },
 
@@ -116,7 +116,7 @@ AtomList.prototype = {
   /*
    * Get the width of this AtomList.
    */
-  width: function() {
+  getWidth: function() {
     if(this.cache.get('position.width')) {
       return this.cache.get('position.width');
     }
@@ -132,7 +132,7 @@ AtomList.prototype = {
   /*
    * Get the height of this AtomList.
    */
-  height: function() {
+  getHeight: function() {
     if(this.cache.get('position.height')) {
       return this.cache.get('position.height');
     }
@@ -205,8 +205,8 @@ AtomList.prototype = {
       return this.cache.get('position.size');
     }
     var s = {
-      w: this.width(),
-      h: this.height()
+      w: this.getWidth(),
+      h: this.getHeight()
     };
     this.cache.set('position.size', s, [this.cache.getCache('position.width'),
         this.cache.getCache('position.height')]);
@@ -235,7 +235,7 @@ AtomList.prototype = {
   /*
    * Get the atom at position (x, y), if any.
    */
-  atomAt: function(x, y) {
+  getAtomAt: function(x, y) {
     return this.each(function(atom) {
       if(atom.touches(x, y)) {
         return atom;
@@ -397,13 +397,13 @@ AtomList.prototype = {
    * Fit the molecule in a box of size w * h and center it there.
    */
   bestFit: function(w, h) {
-    var wf = w / this.width();
-    var hf = h / this.height();
+    var wf = w / this.getWidth();
+    var hf = h / this.getHeight();
     var f = wf < hf ? wf : hf;
     this.scale(f);
 
-    var tx = w / 2 - this.width() / 2;
-    var ty = h / 2 - this.height() / 2;
+    var tx = w / 2 - this.getWidth() / 2;
+    var ty = h / 2 - this.getHeight() / 2;
     var lt = this.leftTop();
     var dx = tx - lt.x;
     var dy = ty - lt.y;

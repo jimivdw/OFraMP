@@ -35,7 +35,7 @@ Atom.prototype = {
   /*
    * Convert the basic data of this Atom to JSON.
    */
-  toBasicJSON: function() {
+  getSimpleJSON: function() {
     return {
       id: this.id,
       element: this.element

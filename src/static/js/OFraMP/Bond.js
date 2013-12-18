@@ -29,7 +29,7 @@ Bond.prototype = {
   /*
    * Convert the basic data of this Bond to JSON.
    */
-  toBasicJSON: function() {
+  getSimpleJSON: function() {
     return {
       atom1: this.a1.id,
       atom2: this.a2.id

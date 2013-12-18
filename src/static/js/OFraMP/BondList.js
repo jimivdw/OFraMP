@@ -27,9 +27,9 @@ BondList.prototype = {
   /*
    * Convert the basic data of this BondList to JSON.
    */
-  toBasicJSON: function() {
+  getSimpleJSON: function() {
     return $ext.array.map(this.bonds, function(bond) {
-      return bond.toBasicJSON();
+      return bond.getSimpleJSON();
     });
   },
 

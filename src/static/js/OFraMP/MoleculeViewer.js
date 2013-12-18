@@ -61,7 +61,7 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseMove(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         var c = $ext.mouse.getCoords(e);
-        var a = _this.molecule.atomAt(c.x, c.y);
+        var a = _this.molecule.getAtomAt(c.x, c.y);
         if(_this.molecule.setHover(a)) {
           _this.redraw();
         }
@@ -71,7 +71,7 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseClick(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         var c = $ext.mouse.getCoords(e);
-        var a = _this.molecule.atomAt(c.x, c.y);
+        var a = _this.molecule.getAtomAt(c.x, c.y);
         var s = a ? [a] : [];
         if(e.ctrlKey === true) {
           _this.molecule.atoms.addSelected(s);
@@ -97,32 +97,27 @@ MoleculeViewer.prototype = {
       }
     }, 0);
 
-    $ext.dom
-        .onMouseDrag(this.canvas,
-            function(e) {
-              if(!_this.overlayShowing) {
-                if(!_this.selectionArea) {
-                  _this.selectionArea = new SelectionArea(_this, e.clientX,
-                      e.clientY);
-                  if(e.ctrlKey === true) {
-                    window.__initialSelection = _this.molecule.atoms
-                        .getSelected();
-                  }
-                } else {
-                  _this.selectionArea.resize(e.deltaX, e.deltaY);
-                  var bb = _this.selectionArea.getBB();
-                  var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2,
-                      bb.y2);
-                  if(e.ctrlKey === true) {
-                    _this.molecule.setSelected(window.__initialSelection);
-                    _this.molecule.atoms.addSelected(atoms);
-                  } else {
-                    _this.molecule.setSelected(atoms);
-                  }
-                  _this.redraw();
-                }
-              }
-            }, 2);
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
+      if(!_this.overlayShowing) {
+        if(!_this.selectionArea) {
+          _this.selectionArea = new SelectionArea(_this, e.clientX, e.clientY);
+          if(e.ctrlKey === true) {
+            window.__initialSelection = _this.molecule.atoms.getSelected();
+          }
+        } else {
+          _this.selectionArea.resize(e.deltaX, e.deltaY);
+          var bb = _this.selectionArea.getBB();
+          var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
+          if(e.ctrlKey === true) {
+            _this.molecule.setSelected(window.__initialSelection);
+            _this.molecule.atoms.addSelected(atoms);
+          } else {
+            _this.molecule.setSelected(atoms);
+          }
+          _this.redraw();
+        }
+      }
+    }, 2);
 
     $ext.dom.onMouseUp(window, function(e) {
       if(!_this.overlayShowing) {
@@ -253,7 +248,7 @@ MoleculeViewer.prototype = {
       needle: $ext.array.map(selection, function(atom) {
         return atom.id;
       }),
-      molecule: this.molecule.toBasicJSON()
+      molecule: this.molecule.getSimpleJSON()
     });
 
     console.log(queryJSON);

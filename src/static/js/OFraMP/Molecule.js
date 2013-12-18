@@ -25,21 +25,21 @@ Molecule.prototype = {
   /*
    * Convert the basic data of this Molecule to JSON.
    */
-  toBasicJSON: function() {
+  getSimpleJSON: function() {
     return {
-      atoms: this.atoms.toBasicJSON(),
-      bonds: this.bonds.toBasicJSON()
+      atoms: this.atoms.getSimpleJSON(),
+      bonds: this.bonds.getSimpleJSON()
     };
   },
 
   /*
    * Get the width of this molecule.
    */
-  width: function() {
+  getWidth: function() {
     if(this.cache.get('position.width')) {
       return this.cache.get('position.width');
     }
-    var w = this.atoms.width();
+    var w = this.atoms.getWidth();
     this.cache.set('position.width', w, this.cache
         .getCache('appearance.radius'));
     return w;
@@ -48,11 +48,11 @@ Molecule.prototype = {
   /*
    * Get the height of this molecule.
    */
-  height: function() {
+  getHeight: function() {
     if(this.cache.get('position.height')) {
       return this.cache.get('position.height');
     }
-    var h = this.atoms.height();
+    var h = this.atoms.getHeight();
     this.cache.set('position.height', h, this.cache
         .getCache('appearance.radius'));
     return h;
@@ -61,8 +61,8 @@ Molecule.prototype = {
   /*
    * Get the atom at position (x, y), if any.
    */
-  atomAt: function(x, y) {
-    return this.atoms.atomAt(x, y);
+  getAtomAt: function(x, y) {
+    return this.atoms.getAtomAt(x, y);
   },
 
   /*
