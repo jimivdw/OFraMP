@@ -337,6 +337,12 @@ $ext.extend($ext, {
 
       function _onMouseMove(evt) {
         var dp = window.__lastDownPos;
+        if(!dp) {
+          $ext.dom.removeEventListener(elem, "mousemove", _onMouseMove,
+              useCapture);
+          return;
+        }
+
         var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
             + Math.pow(dp.clientY - evt.clientY, 2));
         if(delta > $ext.dom.MOUSE_DRAG_EPSILON) {
