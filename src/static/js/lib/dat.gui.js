@@ -2421,8 +2421,13 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
             return this.resetValues();
           }
 
-          var values = JSON.parse(localStorage.getItem(getLocalStorageHash(this, 'values.' + name)));
-          this.setValues(values);
+          var lsi = localStorage.getItem(getLocalStorageHash(this, 'values.' + name));
+          if(lsi) {
+            var values = JSON.parse(lsi);
+            this.setValues(values);
+          } else {
+            return this.resetValues();
+          }
         },
         
         deleteValues: function(name) {
@@ -2447,9 +2452,15 @@ dat.GUI = dat.gui.GUI = (function (css, saveDialogueContents, styleSheet, contro
           var _this = this;
           common.each(values, function(value, key) {
             if(typeof value === 'object') {
-              _this.__folders[key].setValues(value);
+              var folder = _this.__folders[key];
+              if(folder) {
+                folder.setValues(value);
+              }
             } else {
-              _this.getController(key).setValue(value);
+              var controller = _this.getController(key);
+              if(controller) {
+                controller.setValue(value);
+              }
             }
           });
         },
