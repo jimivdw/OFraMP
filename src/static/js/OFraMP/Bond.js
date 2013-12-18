@@ -56,16 +56,16 @@ Bond.prototype = {
   /*
    * Get the coordinates of the starting and end points of this bond.
    */
-  coords: function() {
+  getCoordinates: function() {
     if(this.cache.get('position.coords')) {
       return this.cache.get('position.coords');
     }
 
     var dx = this.a1.dx(this.a2);
     var dy = this.a1.dy(this.a2);
-    var dist = this.a1.distance(this.a2);
+    var dist = this.a1.getDistanceTo(this.a2);
 
-    if(this.a1.showLabel()) {
+    if(this.a1.isShowingLabel()) {
       var ar1 = this.a1.getRadius();
     } else {
       var ar1 = 0;
@@ -73,7 +73,7 @@ Bond.prototype = {
     var ddx1 = dx * ar1 / dist;
     var ddy1 = dy * ar1 / dist;
 
-    if(this.a2.showLabel()) {
+    if(this.a2.isShowingLabel()) {
       var ar2 = this.a2.getRadius();
     } else {
       var ar2 = 0;
@@ -95,11 +95,11 @@ Bond.prototype = {
   /*
    * Get the length of this bond.
    */
-  length: function() {
+  getLength: function() {
     if(this.cache.get('position.length')) {
       return this.cache.get('position.length');
     }
-    var c = this.coords();
+    var c = this.getCoordinates();
     var dx = c.x2 - c.x1;
     var dy = c.y2 - c.y1;
     var length = Math.sqrt(dx * dx + dy * dy);
@@ -111,7 +111,7 @@ Bond.prototype = {
   /*
    * Determine if a point (x, y) lies within the bounding box of this bond.
    */
-  inBB: function(x, y) {
+  isInBB: function(x, y) {
     return $ext.number.between(x, this.a1.x, this.a2.x)
         && $ext.number.between(y, this.a1.y, this.a2.y);
   },
@@ -119,12 +119,12 @@ Bond.prototype = {
   /*
    * Determine if a point (x, y) is on this bond.
    */
-  touches: function(x, y) {
-    if(!this.inBB(x, y)) {
+  isTouching: function(x, y) {
+    if(!this.isInBB(x, y)) {
       return false;
     }
 
-    var c = this.coords();
+    var c = this.getCoordinates();
     var br = Math.abs(c.x1 - c.x2) / Math.abs(c.y1 - c.y2);
     var tr = Math.abs(c.x1 - x) / Math.abs(c.y1 - y);
     return $ext.number.approx(br, tr);
@@ -136,13 +136,13 @@ Bond.prototype = {
    * Based on the algorithm described in:
    * http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
    */
-  intersection: function(b) {
-    if(this.length() < 10) {
+  getIntersectionWith: function(b) {
+    if(this.getLength() < 10) {
       return;
     }
 
-    var c = this.coords();
-    var d = b.coords();
+    var c = this.getCoordinates();
+    var d = b.getCoordinates();
     var p = {
       x: c.x1,
       y: c.y1
@@ -189,18 +189,18 @@ Bond.prototype = {
     var a2 = this.a2;
     var lines = Array();
 
-    if(this.a1.showLabel()) {
+    if(this.a1.isShowingLabel()) {
       var ar1 = this.a1.getRadius();
     } else {
       var ar1 = 0;
     }
-    if(this.a2.showLabel()) {
+    if(this.a2.isShowingLabel()) {
       var ar2 = this.a2.getRadius();
     } else {
       var ar2 = 0;
     }
-    if(this.isVisible() && a1.distance(a2) >= ar1 + ar2) {
-      var c = this.coords();
+    if(this.isVisible() && a1.getDistanceTo(a2) >= ar1 + ar2) {
+      var c = this.getCoordinates();
       // Inner line for single/triple bonds
       if(this.type == 1 || this.type == 3) {
         lines.push({
@@ -222,8 +222,8 @@ Bond.prototype = {
           ddy = dx * 2 * this.settings.bond.spacing / dist;
 
           // Find the center of the aromatic cycle
-          var cycle = this.a2.findCycle(true);
-          var center = new AtomList(this.list.molecule, cycle).centerPoint();
+          var cycle = this.a2.getCycle(true);
+          var center = new AtomList(this.list.molecule, cycle).getCenterPoint();
           var cdx1 = center.x - (c.x1 + ddx);
           var cdy1 = center.y - (c.y1 - ddy);
           var cdx2 = center.x - (c.x1 - ddx);
@@ -298,7 +298,7 @@ Bond.prototype = {
       var connectors = new Array();
     }
 
-    if(!a.showLabel()) {
+    if(!a.isShowingLabel()) {
       return [];
     }
 
@@ -307,7 +307,7 @@ Bond.prototype = {
       y: a.y
     };
 
-    var c = this.coords();
+    var c = this.getCoordinates();
     if(this.a1 === a) {
       var sp = {
         x: c.x1,
@@ -412,7 +412,7 @@ Bond.prototype = {
 
     // Draw the bond ID
     if(s.bond.id.show && this.isVisible()) {
-      var c = this.coords();
+      var c = this.getCoordinates();
       ctx.fillStyle = s.bond.id.bgColor;
       var r = s.bond.id.radius;
       ctx.beginPath();

@@ -243,19 +243,19 @@ OFraMP.prototype = {
     var ctx = c.getContext('2d');
 
     var sl = new AtomList(this.mv.molecule, selection);
-    var center = sl.centerPoint();
-    var s = sl.size();
+    var center = sl.getCenterPoint();
+    var size = sl.getSize();
 
     // Increase selection size when the ratio is off
-    var r = s.w / s.h;
+    var r = size.w / size.h;
     if(r > c.width / c.height) {
-      s.h *= r * c.height / c.width;
+      size.h *= r * c.height / c.width;
     } else {
-      s.w *= (1 / r) * c.width / c.height;
+      size.w *= (1 / r) * c.width / c.height;
     }
 
-    var dx = Math.max(c.width, s.w) / 2;
-    var dy = Math.max(c.height, s.h) / 2;
+    var dx = Math.max(c.width, size.w) / 2;
+    var dy = Math.max(c.height, size.h) / 2;
     var wf = c.width / (2 * dx);
     var hf = c.height / (2 * dy);
     var f = wf < hf ? wf : hf;

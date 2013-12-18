@@ -86,7 +86,7 @@ AtomList.prototype = {
    * 
    * Only take into account the atoms with aromatic bonds if arom is true.
    */
-  toTree: function(a, arom) {
+  getTree: function(a, arom) {
     if(a instanceof Atom) {
       var root = a;
     } else if(a === undefined) {
@@ -101,7 +101,7 @@ AtomList.prototype = {
     while(q.length > 0) {
       var n = q.shift();
       var p = pq.shift();
-      $ext.each(n.value.bondedAtoms(arom), function(atom) {
+      $ext.each(n.value.getBondedAtoms(arom), function(atom) {
         if(p.indexOf(atom.id) === -1) {
           q.push(n.addChild(atom.id, atom));
           pq.push(p.concat(atom.id));
@@ -120,8 +120,8 @@ AtomList.prototype = {
     if(this.cache.get('position.width')) {
       return this.cache.get('position.width');
     }
-    var lt = this.leftTop();
-    var rb = this.rightBottom();
+    var lt = this.getLeftTop();
+    var rb = this.getRightBottom();
     var width = rb.x - lt.x;
     this.cache.set('position.width', width, [
         this.cache.getCache('position.leftTop'),
@@ -136,8 +136,8 @@ AtomList.prototype = {
     if(this.cache.get('position.height')) {
       return this.cache.get('position.height');
     }
-    var lt = this.leftTop();
-    var rb = this.rightBottom();
+    var lt = this.getLeftTop();
+    var rb = this.getRightBottom();
     var height = rb.y - lt.y;
     this.cache.set('position.height', height, [
         this.cache.getCache('position.leftTop'),
@@ -148,7 +148,7 @@ AtomList.prototype = {
   /*
    * Get the coordinates of the left top of this AtomList.
    */
-  leftTop: function() {
+  getLeftTop: function() {
     if(this.cache.get('position.leftTop')) {
       return this.cache.get('position.leftTop');
     }
@@ -174,7 +174,7 @@ AtomList.prototype = {
   /*
    * Get the coordinates of the right bottom of this AtomList.
    */
-  rightBottom: function() {
+  getRightBottom: function() {
     if(this.cache.get('position.rightBottom')) {
       return this.cache.get('position.rightBottom');
     }
@@ -200,7 +200,7 @@ AtomList.prototype = {
   /*
    * Get the size (width, height) of this AtomList.
    */
-  size: function() {
+  getSize: function() {
     if(this.cache.get('position.size')) {
       return this.cache.get('position.size');
     }
@@ -216,12 +216,12 @@ AtomList.prototype = {
   /*
    * Get the coordinates of the center of this AtomList.
    */
-  centerPoint: function() {
+  getCenterPoint: function() {
     if(this.cache.get('position.centerPoint')) {
       return this.cache.get('position.centerPoint');
     }
-    var lt = this.leftTop();
-    var s = this.size();
+    var lt = this.getLeftTop();
+    var s = this.getSize();
     var cp = {
       x: lt.x + s.w / 2,
       y: lt.y + s.h / 2
@@ -237,7 +237,7 @@ AtomList.prototype = {
    */
   getAtomAt: function(x, y) {
     return this.each(function(atom) {
-      if(atom.touches(x, y)) {
+      if(atom.isTouching(x, y)) {
         return atom;
       }
     });
@@ -246,10 +246,10 @@ AtomList.prototype = {
   /*
    * Get all atoms in a bounding box from (x1, y1) to (x2, y2).
    */
-  atomsIn: function(x1, y1, x2, y2) {
+  getAtomsIn: function(x1, y1, x2, y2) {
     var r = new Array();
     this.each(function(atom) {
-      if(atom.isVisible() && atom.inBB(x1, y1, x2, y2)) {
+      if(atom.isVisible() && atom.isInBB(x1, y1, x2, y2)) {
         r.push(atom);
       }
     });
@@ -370,7 +370,7 @@ AtomList.prototype = {
    */
   center: function() {
     var cc = $ext.context.centerPoint(this.molecule.mv.ctx);
-    var mc = this.centerPoint();
+    var mc = this.getCenterPoint();
     var dx = cc.x - mc.x;
     var dy = cc.y - mc.y;
     this.move(dx, dy);
@@ -380,7 +380,7 @@ AtomList.prototype = {
    * Zoom on the center of the molecule with a factor f.
    */
   zoom: function(f) {
-    var c = this.centerPoint();
+    var c = this.getCenterPoint();
     this.zoomOn(c.x, c.y, f);
   },
 
@@ -404,7 +404,7 @@ AtomList.prototype = {
 
     var tx = w / 2 - this.getWidth() / 2;
     var ty = h / 2 - this.getHeight() / 2;
-    var lt = this.leftTop();
+    var lt = this.getLeftTop();
     var dx = tx - lt.x;
     var dy = ty - lt.y;
     this.move(dx, dy);
@@ -421,7 +421,7 @@ AtomList.prototype = {
   findSequences: function(seq) {
     var seqs = new Array();
     this.each(function(atom) {
-      var t = this.toTree(atom);
+      var t = this.getTree(atom);
       seqs = seqs.concat(t.findSequences($ext.copy(seq), function(a) {
         return a.element;
       }));
@@ -433,7 +433,7 @@ AtomList.prototype = {
    * Find all occurences of a given AtomList in this list.
    */
   findOccurrences: function(list) {
-    var seq = $ext.array.map(list.toTree().toArray(), function(atom) {
+    var seq = $ext.array.map(list.getTree().toArray(), function(atom) {
       return atom.element;
     }, null, true);
     return this.findSequences(seq);

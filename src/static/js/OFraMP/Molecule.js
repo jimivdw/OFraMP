@@ -66,6 +66,13 @@ Molecule.prototype = {
   },
 
   /*
+   * Get the atoms in the bounding box (x1, y1) to (x2, y2).
+   */
+  getAtomsIn: function(x1, y1, x2, y2) {
+    return this.atoms.getAtomsIn(x1, y1, x2, y2);
+  },
+
+  /*
    * Set the hovered atom to a (or none if a is undefined).
    */
   setHover: function(a) {
@@ -129,7 +136,7 @@ Molecule.prototype = {
    * Scale the molecule such that the shortest bond is of size minBondLength.
    */
   minimize: function() {
-    var sd = this.bonds.shortestDistance();
+    var sd = this.bonds.getShortestDistance();
     var f = this.settings.zoom.minBondLength / sd;
     this.zoom(f);
     this.center();
@@ -139,7 +146,7 @@ Molecule.prototype = {
    * Scale the molecule such that the average bond is of size idealBondLength.
    */
   idealize: function() {
-    var sd = this.bonds.averageDistance();
+    var sd = this.bonds.getAverageDistance();
     var f = this.settings.zoom.idealBondLength / sd;
     this.zoom(f);
     this.center();
@@ -149,7 +156,7 @@ Molecule.prototype = {
    * Scale the molecule such that the longest bond is of size maxBondLength.
    */
   maximize: function() {
-    var ld = this.bonds.longestDistance();
+    var ld = this.bonds.getLongestDistance();
     var f = this.settings.zoom.maxBondLength / ld;
     this.zoom(f);
     this.center();
@@ -258,15 +265,15 @@ Molecule.prototype = {
           continue;
         }
 
-        var d = a1.distance(a2);
-        var rd = a1.radiusDistance(a2);
+        var d = a1.getDistanceTo(a2);
+        var rd = a1.getRadiusDistanceTo(a2);
 
         // Prevent problems with atoms at the exact same position by slightly
         // moving one of them.
         if($ext.number.approx(d, 0)) {
           a1.move(1e-3, 1e-3);
-          d = a1.distance(a2);
-          rd = a1.radiusDistance(a2);
+          d = a1.getDistanceTo(a2);
+          rd = a1.getRadiusDistanceTo(a2);
         }
 
         if(rd < -1) {
@@ -303,18 +310,18 @@ Molecule.prototype = {
           continue;
         }
 
-        var bd = a.bondDistance(b);
+        var bd = a.getDistanceToBond(b);
 
         // Prevent problems with atoms that are exactly on a bond by slightly
         // moving them.
         if($ext.number.approx(bd, 0)) {
           a.move(1e-3, 1e-3);
-          bd = a.bondDistance(b);
+          bd = a.getDistanceToBond(b);
         }
 
         if(bd < a.getRadius() + this.settings.bond.spacing - 1) {
           var f = (a.getRadius() - bd + this.settings.bond.spacing) / bd;
-          var ba = a.bondAnchor(b);
+          var ba = a.getBondAnchor(b);
           var dx = (a.x - ba.x) * f;
           var dy = (a.y - ba.y) * f;
           a.move(dx, dy);
@@ -346,12 +353,12 @@ Molecule.prototype = {
           continue;
         }
 
-        var c = b1.intersection(b2);
+        var c = b1.getIntersectionWith(b2);
         if(c) {
-          var tds = [this.atoms.toTree(b1.a2).getChild(b1.a1.id).depth(),
-              this.atoms.toTree(b1.a1).getChild(b1.a2.id).depth(),
-              this.atoms.toTree(b2.a2).getChild(b2.a1.id).depth(),
-              this.atoms.toTree(b2.a1).getChild(b2.a2.id).depth()];
+          var tds = [this.atoms.getTree(b1.a2).getChild(b1.a1.id).depth(),
+              this.atoms.getTree(b1.a1).getChild(b1.a2.id).depth(),
+              this.atoms.getTree(b2.a2).getChild(b2.a1.id).depth(),
+              this.atoms.getTree(b2.a1).getChild(b2.a2.id).depth()];
 
           var atoms = [b1.a1, b1.a2, b2.a1, b2.a2];
           var a = atoms[tds.indexOf($ext.array.min(tds))];
@@ -382,11 +389,11 @@ Molecule.prototype = {
         continue;
       }
 
-      if(bond.length() < this.settings.zoom.minBondLength - 1) {
-        var dist = bond.a1.distance(bond.a2);
+      if(bond.getLength() < this.settings.zoom.minBondLength - 1) {
+        var dist = bond.a1.getDistanceTo(bond.a2);
         if($ext.number.approx(dist, 0)) {
           bond.a2.move(1e-3, 1e-3);
-          dist = bond.a1.distance(bond.a2);
+          dist = bond.a1.getDistanceTo(bond.a2);
         }
 
         var d = Math.abs(this.settings.zoom.minBondLength - dist) / 2;

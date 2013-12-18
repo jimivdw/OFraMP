@@ -63,7 +63,7 @@ Atom.prototype = {
   /*
    * Get this atom's label.
    */
-  label: function() {
+  getLabel: function() {
     if(this.cache.get('appearance.label')) {
       return this.cache.get('appearance.label');
     }
@@ -71,7 +71,7 @@ Atom.prototype = {
     var label = this.element;
     if(this.settings.atom.combineHLabels === true
         && this.settings.atom.showHAtoms !== true) {
-      var hs = $ext.array.filter(this.bondedAtoms(), function(atom) {
+      var hs = $ext.array.filter(this.getBondedAtoms(), function(atom) {
         return atom.element === "H";
       });
 
@@ -91,7 +91,7 @@ Atom.prototype = {
   /*
    * Determine if this atom's label should be shown.
    */
-  showLabel: function() {
+  isShowingLabel: function() {
     if(this.cache.get('appearance.showLabel')) {
       return this.cache.get('appearance.showLabel');
     }
@@ -106,7 +106,7 @@ Atom.prototype = {
    * Determine if this atom lies within the bounding box from (x1, y1) to (x2,
    * y2).
    */
-  inBB: function(x1, y1, x2, y2) {
+  isInBB: function(x1, y1, x2, y2) {
     return $ext.number.between(this.x, x1, x2)
         && $ext.number.between(this.y, y1, y2);
   },
@@ -115,7 +115,7 @@ Atom.prototype = {
    * Determine if this atom is bonded with another atom 'other'.
    */
   isBondedWith: function(other) {
-    return this.bondedAtoms().indexOf(other) !== -1;
+    return this.getBondedAtoms().indexOf(other) !== -1;
   },
 
   /*
@@ -148,7 +148,7 @@ Atom.prototype = {
    * Get the atoms with which this atom is bonded, or just those with which this
    * atom has an aromatic bond when arom is set to true.
    */
-  bondedAtoms: function(arom) {
+  getBondedAtoms: function(arom) {
     if(arom && this.cache.get('structure.aromAtoms')) {
       return this.cache.get('structure.aromAtoms');
     } else if(!arom && this.cache.get('structure.atoms')) {
@@ -170,7 +170,7 @@ Atom.prototype = {
   /*
    * Get the number of bonds this atom has, or just the aromatic ones.
    */
-  bondCount: function(arom) {
+  getBondCount: function(arom) {
     if(arom && this.cache.get('structure.aromBondCount')) {
       return this.cache.get('structure.aromBondCount');
     } else if(!arom && this.cache.get('structure.bondCount')) {
@@ -221,7 +221,7 @@ Atom.prototype = {
   /*
    * Get the distance of this atom to another atom a.
    */
-  distance: function(a) {
+  getDistanceTo: function(a) {
     return Math.sqrt(Math.pow(this.dx(a), 2) + Math.pow(this.dy(a), 2));
   },
 
@@ -229,22 +229,22 @@ Atom.prototype = {
    * Get the distance of this atom to another atom a, from the edges of their
    * radiuses.
    */
-  radiusDistance: function(a) {
-    return this.distance(a) - this.getRadius() - a.getRadius();
+  getRadiusDistanceTo: function(a) {
+    return this.getDistanceTo(a) - this.getRadius() - a.getRadius();
   },
 
   /*
    * Get the anchor of this atom on a bond b, i.e. the closest point on the bond
    * from which a perpendicular line to the atom can be drawn.
    */
-  bondAnchor: function(bond) {
+  getBondAnchor: function(bond) {
     if(bond.a1 === this || bond.a2 === this) {
       return;
     }
 
-    var a = this.distance(bond.a2);
-    var b = this.distance(bond.a1);
-    var c = bond.a1.distance(bond.a2);
+    var a = this.getDistanceTo(bond.a2);
+    var b = this.getDistanceTo(bond.a1);
+    var c = bond.a1.getDistanceTo(bond.a2);
     var cosp = (b * b + c * c - a * a) / (2 * b * c);
     var p = Math.acos(cosp);
     var d = Math.sin(p) * b;
@@ -253,7 +253,7 @@ Atom.prototype = {
     var dy = bond.a1.dy(bond.a2) * c1 / c;
     var x = bond.a1.x + dx;
     var y = bond.a1.y + dy;
-    if(bond.touches(x, y)) {
+    if(bond.isTouching(x, y)) {
       return {
         x: x,
         y: y
@@ -266,8 +266,8 @@ Atom.prototype = {
    * 
    * Returns Infinity if this atom has no bond anchor on that bond.
    */
-  bondDistance: function(bond) {
-    var a = this.bondAnchor(bond);
+  getDistanceToBond: function(bond) {
+    var a = this.getBondAnchor(bond);
     if(!a) {
       return Infinity;
     }
@@ -287,7 +287,7 @@ Atom.prototype = {
   /*
    * Determine if a point (x, y) is within this atom's radius.
    */
-  touches: function(x, y) {
+  isTouching: function(x, y) {
     var dx = this.x - x;
     var dy = this.y - y;
     return Math.sqrt(dx * dx + dy * dy) <= this.getRadius();
@@ -392,14 +392,14 @@ Atom.prototype = {
    * 
    * If arom is set to true, only aromatic cycles will be considered.
    */
-  findCycle: function(arom) {
+  getCycle: function(arom) {
     if(arom && this.cache.get('structure.aromCycle')) {
       return this.cache.get('structure.aromCycle');
     } else if(!arom && this.cache.get('structure.cycle')) {
       return this.cache.get('structure.cycle');
     }
 
-    var path = this.list.toTree(this.id, arom).findShortestPath(this.id);
+    var path = this.list.getTree(this.id, arom).findShortestPath(this.id);
     if(path && path.length > 1) {
       if(arom) {
         this.cache.set('structure.aromCycle', path);
@@ -435,7 +435,7 @@ Atom.prototype = {
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
     ctx.fill();
 
-    if(!this.showLabel()) {
+    if(!this.isShowingLabel()) {
       return;
     }
 
@@ -445,7 +445,7 @@ Atom.prototype = {
       ctx.stroke();
     }
 
-    var label = this.label();
+    var label = this.getLabel();
     if(s.atom.showID) {
       label += this.id;
     }

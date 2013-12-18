@@ -107,7 +107,7 @@ MoleculeViewer.prototype = {
         } else {
           _this.selectionArea.resize(e.deltaX, e.deltaY);
           var bb = _this.selectionArea.getBB();
-          var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
+          var atoms = _this.molecule.getAtomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
           if(e.ctrlKey === true) {
             _this.molecule.setSelected(window.__initialSelection);
             _this.molecule.atoms.addSelected(atoms);
@@ -227,7 +227,7 @@ MoleculeViewer.prototype = {
     var selectionIDs = $ext.array.map(selection, function(atom) {
       return atom.id;
     });
-    var tree = this.molecule.atoms.toTree(selection[0]);
+    var tree = this.molecule.atoms.getTree(selection[0]);
     var selectionTree = tree.filter(function(node) {
       return selectionIDs.indexOf(node.key) !== -1;
     });
@@ -365,7 +365,7 @@ MoleculeViewer.prototype = {
     }
 
     // Restrict minimum and maximum zoom
-    var ad = this.molecule.bonds.averageDistance();
+    var ad = this.molecule.bonds.getAverageDistance();
     if(f < 1 && ad < this.settings.zoom.min || f > 1
         && ad > this.settings.zoom.max) {
       return;
@@ -384,7 +384,7 @@ MoleculeViewer.prototype = {
     }
 
     // Restrict minimum and maximum zoom
-    var ad = this.molecule.bonds.averageDistance()
+    var ad = this.molecule.bonds.getAverageDistance()
     if(f < 1 && ad < this.settings.zoom.min || f > 1
         && ad > this.settings.zoom.max) {
       return;
