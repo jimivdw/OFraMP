@@ -325,5 +325,117 @@ OFraMP.prototype = {
   hideSelectionDetails: function() {
     this.atom_details.parentElement.style.visibility = "hidden";
     this.atom_details.parentElement.style.opacity = "0.0";
+  },
+
+
+  /*
+   * Move the molecule dx in the x direction and dy on the y axis.
+   */
+  move: function(dx, dy) {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.move(dx, dy);
+  },
+
+  /*
+   * Zoom on the center of the molecule with a factor f.
+   */
+  zoom: function(f) {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.zoom(f);
+  },
+
+  /*
+   * Zoom on the position (x, y) with a factor f.
+   */
+  zoomOn: function(x, y, f) {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.zoomOn(x, y, f);
+  },
+
+  /*
+   * Fit the molecule on the canvas.
+   */
+  bestFit: function() {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.molecule.bestFit(this.mv.canvas.width, this.mv.canvas.height);
+    this.redraw();
+  },
+
+  /*
+   * Show the molecule in minimum size on the canvas.
+   */
+  minimize: function() {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.molecule.minimize();
+    this.redraw();
+  },
+
+  /*
+   * Show the molecule in ideal size on the canvas.
+   */
+  idealize: function() {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.molecule.idealize();
+    this.redraw();
+  },
+
+  /*
+   * Show the molecule in maximum size on the canvas.
+   */
+  maximize: function() {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.molecule.maximize();
+    this.redraw();
+  },
+
+  /*
+   * Reset the atom positions to those obtained with OAPoC.
+   */
+  resetPositions: function() {
+    if(!this.mv || !this.mv.molecule) {
+      return;
+    }
+
+    this.mv.molecule.resetPositions();
+    this.redraw();
+  },
+
+  /*
+   * Get the molecule canvas data as a Base64 string.
+   */
+  getMoleculeDataURI: function(format) {
+    return this.mv.canvas.toDataURL(format);
+  },
+
+  /*
+   * Redraw the molecule canvas.
+   */
+  redraw: function() {
+    if(!this.mv) {
+      return;
+    }
+
+    this.mv.redraw();
   }
 };

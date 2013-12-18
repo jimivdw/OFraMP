@@ -268,9 +268,8 @@ MoleculeViewer.prototype = {
     this.getMoleculeData(data_str, function(md) {
       _this.showOverlay("Initializing molecule...");
       _this.molecule = new Molecule(_this, md.atoms, md.bonds, md.data_str);
+      _this.molecule.idealize();
       _this.hideOverlay();
-
-      _this.idealize();
     });
   },
 
@@ -322,6 +321,34 @@ MoleculeViewer.prototype = {
   },
 
   /*
+   * Fix overlapping bonds and atoms.
+   */
+  deoverlap: function() {
+    if(!this.molecule) {
+      return;
+    }
+
+    var _this = this;
+    var limit = this.settings.deoverlap.time_limit * 1000;
+    window.requestAnimationFrame(function drawLoop(ts) {
+      if(!window.__anim_start) {
+        window.__anim_start = ts;
+      }
+
+      if(ts - window.__anim_start < limit && _this.molecule.deoverlap()) {
+        _this.redraw();
+        requestAnimationFrame(drawLoop);
+      } else {
+        window.__anim_start = undefined;
+      }
+    });
+  },
+
+  clearCache: function(name) {
+    this.cache.clear(name);
+  },
+
+  /*
    * Move the molecule dx in the x direction and dy on the y axis.
    */
   move: function(dx, dy) {
@@ -369,94 +396,6 @@ MoleculeViewer.prototype = {
 
     this.molecule.zoomOn(x, y, f);
     this.redraw();
-  },
-
-  /*
-   * Fix overlapping bonds and atoms.
-   */
-  deoverlap: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    var _this = this;
-    var limit = this.settings.deoverlap.time_limit * 1000;
-    window.requestAnimationFrame(function drawLoop(ts) {
-      if(!window.__anim_start) {
-        window.__anim_start = ts;
-      }
-
-      if(ts - window.__anim_start < limit && _this.molecule.deoverlap()) {
-        _this.redraw();
-        requestAnimationFrame(drawLoop);
-      } else {
-        window.__anim_start = undefined;
-      }
-    });
-  },
-
-  /*
-   * Fit the molecule on the canvas.
-   */
-  bestFit: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    this.molecule.bestFit(this.canvas.width, this.canvas.height);
-    this.redraw();
-  },
-
-  /*
-   * Show the molecule in minimum size on the canvas.
-   */
-  minimize: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    this.molecule.minimize();
-    this.redraw();
-  },
-
-  /*
-   * Show the molecule in ideal size on the canvas.
-   */
-  idealize: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    this.molecule.idealize();
-    this.redraw();
-  },
-
-  /*
-   * Show the molecule in maximum size on the canvas.
-   */
-  maximize: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    this.molecule.maximize();
-    this.redraw();
-  },
-
-  /*
-   * Reset the atom positions to those obtained with OAPoC.
-   */
-  resetPositions: function() {
-    if(!this.molecule) {
-      return;
-    }
-
-    this.molecule.resetPositions();
-    this.redraw();
-  },
-
-  clearCache: function(name) {
-    this.cache.clear(name);
   },
 
   /*

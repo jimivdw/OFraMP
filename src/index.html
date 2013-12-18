@@ -55,29 +55,29 @@
 
         var zi = document.getElementById("zoomin");
         zi.onclick = function() {
-          oframp.mv.zoom(1.1);
+          oframp.zoom(1.1);
         };
         var zo = document.getElementById("zoomout");
         zo.onclick = function() {
-          oframp.mv.zoom(.9);
+          oframp.zoom(.9);
         };
         var zp = document.getElementById("zoom");
         zp.onclick = function(e, x, y, z) {
           switch(zp.value) {
             case 'min':
-              oframp.mv.minimize();
+              oframp.minimize();
               break;
 
             case 'max':
-              oframp.mv.maximize();
+              oframp.maximize();
               break;
 
             case 'avg':
-              oframp.mv.idealize();
+              oframp.idealize();
               break;
 
             case 'fit':
-              oframp.mv.bestFit();
+              oframp.bestFit();
               break;
           }
           zp.value = 'pre';
@@ -85,12 +85,12 @@
 
         var rp = document.getElementById("reset");
         rp.onclick = function() {
-          oframp.mv.resetPositions();
+          oframp.resetPositions();
         };
 
         var dl = document.getElementById("download");
         dl.onclick = function() {
-          var data = oframp.mv.canvas.toDataURL('image/png');
+          var data = oframp.getMoleculeDataURI('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";

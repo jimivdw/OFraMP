@@ -168,7 +168,7 @@ Molecule.prototype = {
         a.y = atom.y;
       });
 
-      _this.mv.idealize();
+      _this.idealize();
       _this.mv.hideOverlay();
     });
   },
