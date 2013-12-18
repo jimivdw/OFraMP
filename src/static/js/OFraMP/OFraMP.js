@@ -1,28 +1,28 @@
-function OFraMP(container_id, settings) {
-  this.init(container_id, settings);
+function OFraMP(containerID, settings) {
+  this.init(containerID, settings);
 }
 
 OFraMP.prototype = {
   container: undefined,
   settings: undefined,
   mv: undefined,
-  settings_ui: undefined,
+  settingsUI: undefined,
 
-  atom_details: undefined,
-  related_fragments: undefined,
+  atomDetails: undefined,
+  relatedFragments: undefined,
 
   popup: undefined,
-  popup_title: undefined,
-  popup_content: undefined,
+  popupTitle: undefined,
+  popupContent: undefined,
 
-  enter_molecule_button: undefined,
-  find_fragments_button: undefined,
+  enterMoleculeButton: undefined,
+  findFragmentsButton: undefined,
 
-  ui_initialized_event: new Event('ui_initialized'),
-  molecule_entered_event: new Event('molecule_entered'),
+  uiInitializedEvent: new Event('uiinitialized'),
+  moleculeEnteredEvent: new Event('moleculeentered'),
 
-  init: function(container_id, settings) {
-    this.container = document.getElementById(container_id);
+  init: function(containerID, settings) {
+    this.container = document.getElementById(containerID);
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.__initUI();
     this.showInsertMoleculePopup();
@@ -56,7 +56,7 @@ OFraMP.prototype = {
     emb.style.visibility = "hidden";
     this.container.appendChild(emb);
     this.__initEMB(emb);
-    this.enter_molecule_button = emb;
+    this.enterMoleculeButton = emb;
 
     var ffb = document.createElement('button');
     ffb.id = "find_fragments";
@@ -64,7 +64,7 @@ OFraMP.prototype = {
     ffb.style.visibility = "hidden";
     this.container.appendChild(ffb);
     this.__initFFB(ffb);
-    this.find_fragments_button = ffb;
+    this.findFragmentsButton = ffb;
 
     var cc = document.createElement('div');
     cc.id = "canvas_container";
@@ -75,35 +75,33 @@ OFraMP.prototype = {
       this.__initSettingsUI();
     }
 
-    this.container.dispatchEvent(this.ui_initialized_event);
+    this.container.dispatchEvent(this.uiInitializedEvent);
   },
 
   __initAtomDetails: function(container) {
     var ad = document.createElement('div');
     ad.id = "atom_details";
-    ad.appendChild(document.createTextNode("Atom details... Coming soon!"));
     container.appendChild(ad);
-    this.atom_details = ad;
+    this.atomDetails = ad;
   },
 
   __initRelatedFragments: function(container) {
     var rf = document.createElement('div');
     rf.id = "related_fragments";
-    rf.appendChild(document.createTextNode("Related frags... Coming soon!"));
     container.appendChild(rf);
-    this.related_fragments = rf;
+    this.relatedFragments = rf;
   },
 
   __initPopup: function(container) {
-    this.popup_title = document.createElement('div');
-    this.popup_title.id = "popup_title";
+    this.popupTitle = document.createElement('div');
+    this.popupTitle.id = "popup_title";
 
-    this.popup_content = document.createElement('div');
-    this.popup_content.id = "popup_content";
+    this.popupContent = document.createElement('div');
+    this.popupContent.id = "popup_content";
 
-    container.appendChild(this.popup_title);
+    container.appendChild(this.popupTitle);
     container.appendChild(document.createElement('hr'));
-    container.appendChild(this.popup_content);
+    container.appendChild(this.popupContent);
   },
 
   __initEMB: function(elem) {
@@ -128,31 +126,31 @@ OFraMP.prototype = {
   },
 
   __initSettingsUI: function() {
-    this.settings_ui = new dat.GUI({
+    this.settingsUI = new dat.GUI({
       name: 'OFraMP Settings',
       savable: true
     });
 
     var _this = this;
-    var settings_obj = $ext.extend($ext.copy(this.settings), {
+    var settingsObj = $ext.extend($ext.copy(this.settings), {
       getMV: function() {
         return _this.mv;
       }
     });
-    this.settings_ui.addAll(settings_obj, this.settings, $ext.object
+    this.settingsUI.addAll(settingsObj, this.settings, $ext.object
         .extrapolate(SETTINGS_OPTIONS));
   },
 
   __initMP: function() {
-    this.enter_molecule_button.style.visibility = "visible";
-    this.find_fragments_button.style.visibility = "visible";
+    this.enterMoleculeButton.style.visibility = "visible";
+    this.findFragmentsButton.style.visibility = "visible";
   },
 
   showPopup: function(title, content) {
-    $ext.dom.clear(this.popup_title);
-    $ext.dom.clear(this.popup_content);
-    this.popup_title.appendChild(document.createTextNode(title));
-    this.popup_content.appendChild(content);
+    $ext.dom.clear(this.popupTitle);
+    $ext.dom.clear(this.popupContent);
+    this.popupTitle.appendChild(document.createTextNode(title));
+    this.popupContent.appendChild(content);
     this.popup.style.visibility = 'visible';
   },
 
@@ -180,10 +178,10 @@ OFraMP.prototype = {
     sb.onclick = function() {
       _this.mv.showMolecule(ta.value);
       if(!_this.mv.molecule) {
-        _this.mv.init_interaction();
+        _this.mv.initInteraction();
         _this.__initMP();
       }
-      _this.container.dispatchEvent(_this.molecule_entered_event);
+      _this.container.dispatchEvent(_this.moleculeEnteredEvent);
       _this.hidePopup();
     }
     cbs.appendChild(sb);
@@ -201,9 +199,9 @@ OFraMP.prototype = {
     cb.onclick = function() {
       if(!_this.mv.molecule) {
         _this.mv.showMolecule($ext.array.randomElement(PREDEFINED_MOLECULES));
-        _this.mv.init_interaction();
+        _this.mv.initInteraction();
         _this.__initMP();
-        _this.container.dispatchEvent(_this.molecule_entered_event);
+        _this.container.dispatchEvent(_this.moleculeEnteredEvent);
       }
       _this.hidePopup();
     }
@@ -224,7 +222,7 @@ OFraMP.prototype = {
       table.appendChild(row);
     }
 
-    $ext.dom.clear(this.atom_details);
+    $ext.dom.clear(this.atomDetails);
     if(selection.length === 1) {
       var atom = selection[0];
     }
@@ -237,7 +235,7 @@ OFraMP.prototype = {
       var tn = document.createTextNode("Selection details");
     }
     ts.appendChild(tn);
-    this.atom_details.appendChild(ts);
+    this.atomDetails.appendChild(ts);
 
     var c = document.createElement('canvas');
     c.width = 228;
@@ -272,7 +270,7 @@ OFraMP.prototype = {
 
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
-    this.atom_details.appendChild(c);
+    this.atomDetails.appendChild(c);
 
     var dt = document.createElement('table');
 
@@ -296,12 +294,12 @@ OFraMP.prototype = {
       addTableRow(dt, "Total charge", $ext.array.sum(cs));
     }
 
-    this.atom_details.appendChild(dt);
+    this.atomDetails.appendChild(dt);
 
     var ffb = document.createElement('button');
     ffb.className = "border_box";
     ffb.appendChild(document.createTextNode("Find matching fragments"));
-    this.atom_details.appendChild(ffb);
+    this.atomDetails.appendChild(ffb);
     var _this = this;
     $ext.dom.onMouseClick(ffb, function() {
       _this.mv.getMatchingFragments();
@@ -312,19 +310,19 @@ OFraMP.prototype = {
       ecb.className = "border_box";
       ecb.disabled = "disabled";
       ecb.appendChild(document.createTextNode("Edit charge"));
-      this.atom_details.appendChild(ecb);
+      this.atomDetails.appendChild(ecb);
       $ext.dom.onMouseClick(ecb, function() {
         alert("TODO =)");
       }, 0);
     }
 
-    this.atom_details.parentElement.style.visibility = "visible";
-    this.atom_details.parentElement.style.opacity = "1.0";
+    this.atomDetails.parentElement.style.visibility = "visible";
+    this.atomDetails.parentElement.style.opacity = "1.0";
   },
 
   hideSelectionDetails: function() {
-    this.atom_details.parentElement.style.visibility = "hidden";
-    this.atom_details.parentElement.style.opacity = "0.0";
+    this.atomDetails.parentElement.style.visibility = "hidden";
+    this.atomDetails.parentElement.style.opacity = "0.0";
   },
 
 
@@ -424,7 +422,7 @@ OFraMP.prototype = {
   /*
    * Get the molecule canvas data as a Base64 string.
    */
-  getMoleculeDataURI: function(format) {
+  getMVDataURI: function(format) {
     return this.mv.canvas.toDataURL(format);
   },
 

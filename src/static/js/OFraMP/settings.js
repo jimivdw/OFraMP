@@ -25,18 +25,18 @@ var DEFAULT_SETTINGS = {
     factor: 1.1,
     min: 40,
     max: 300,
-    min_bond_length: 50,
-    ideal_bond_length: 70,
-    max_bond_length: 150
+    minBondLength: 50,
+    idealBondLength: 70,
+    maxBondLength: 150
   },
 
   deoverlap: {
     deoverlap: true,
-    deoverlap_atoms: true,
-    deoverlap_bonds: false,
-    decross_bonds: false,
-    lengthen_bonds: false,
-    time_limit: .5
+    deoverlapAtoms: true,
+    deoverlapBonds: false,
+    decrossBonds: false,
+    lengthenBonds: false,
+    timeLimit: .5
   },
 
   cursor: {
@@ -46,12 +46,12 @@ var DEFAULT_SETTINGS = {
   },
 
   popup: {
-    border_width: 40,
-    border_color: "rgba(0, 0, 0, 0.8)",
+    borderWidth: 40,
+    borderColor: "rgba(0, 0, 0, 0.8)",
     padding: 10,
     font: "40px Arial",
     color: "rgb( 48, 48, 48)",
-    bg_colors: {
+    bgColors: {
       1: "rgba(255, 255, 255, 0.9)",
       2: "rgba(253, 198, 137, 0.9)",
       3: "rgba(246, 150, 121, 0.9)",
@@ -61,13 +61,13 @@ var DEFAULT_SETTINGS = {
   },
 
   atom: {
-    show_circ: true,
-    show_h_atoms: false,
-    combine_h_labels: true,
-    show_c_labels: true,
-    show_id: false,
+    showCirc: true,
+    showHAtoms: false,
+    combineHLabels: true,
+    showCLabels: true,
+    showID: false,
     font: "bold 12px Arial",
-    charge_font: "9px Arial",
+    chargeFont: "9px Arial",
     colors: {
       S: "rgb(204, 166,  40)",
       O: "rgb(223,  83,  73)",
@@ -79,18 +79,18 @@ var DEFAULT_SETTINGS = {
       I: "rgb( 80, 169,  75)",
       other: "rgb( 48, 48, 48)"
     },
-    charge_color: "rgb( 48, 48, 48)",
+    chargeColor: "rgb( 48, 48, 48)",
     radius: 20,
-    radius_charged: 20,
-    charge_offset: 6,
-    border_widths: {
+    radiusCharged: 20,
+    chargeOffset: 6,
+    borderWidths: {
       0: 1,
       1: 3,
       2: 3,
       4: 3
     },
-    border_color: "rgb( 48, 48, 48)",
-    bg_colors: {
+    borderColor: "rgb( 48, 48, 48)",
+    bgColors: {
       0: "rgb(255, 255, 255)",
       1: "rgb( 80, 169,  75)",
       2: "rgb(204, 166,  40)",
@@ -101,14 +101,14 @@ var DEFAULT_SETTINGS = {
   bond: {
     width: 1,
     color: "rgb( 48, 48, 48)",
-    connector_width: 3,
-    connector_color: "rgb( 48, 48, 48)",
+    connectorWidth: 3,
+    connectorColor: "rgb( 48, 48, 48)",
     spacing: 4,
-    dash_count: 5,
+    dashCount: 5,
     id: {
       show: false,
       radius: 8,
-      bg_color: "rgb(205, 205, 205)",
+      bgColor: "rgb(205, 205, 205)",
       font: "9px Arial",
       color: "rgb( 48, 48, 48)"
     }
@@ -116,8 +116,8 @@ var DEFAULT_SETTINGS = {
 
   selection: {
     color: "rgba(44, 10, 205, .3)",
-    border_width: 1,
-    border_color: "rgba(44, 10, 205, .5)"
+    borderWidth: 1,
+    borderColor: "rgba(44, 10, 205, .5)"
   }
 };
 
@@ -132,7 +132,7 @@ var SETTINGS_OPTIONS = {
       max: 2,
       step: 0.01
     },
-    "min, max, min_bond_length, ideal_bond_length, max_bond_length": {
+    "min, max, minBondLength, idealBondLength, maxBondLength": {
       min: 0,
       max: 500,
       step: 1
@@ -140,14 +140,14 @@ var SETTINGS_OPTIONS = {
   },
 
   deoverlap: {
-    "deoverlap, deoverlap_atoms, deoverlap_bonds, decross_bonds, lengthen_bonds": {
+    "deoverlap, deoverlapAtoms, deoverlapBonds, decrossBonds, lengthenBonds": {
       onChange: function(v) {
         if(v) {
           this.__gui.getRootObject().getMV().deoverlap();
         }
       }
     },
-    time_limit: {
+    timeLimit: {
       min: .1,
       max: 10,
       step: .1
@@ -163,17 +163,17 @@ var SETTINGS_OPTIONS = {
   },
 
   popup: {
-    "border_width, padding": {
+    "borderWidth, padding": {
       min: 0,
       max: 100,
       step: 1
     },
-    "border_width, border_color, padding, font, color": {
+    "borderWidth, borderColor, padding, font, color": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
     },
-    bg_colors: {
+    bgColors: {
       "1, 2, 3, 4, 5": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
@@ -183,12 +183,12 @@ var SETTINGS_OPTIONS = {
   },
 
   atom: {
-    "radius, radius_charged, charge_offset": {
+    "radius, radiusCharged, chargeOffset": {
       min: 0,
       max: 50,
       step: 1
     },
-    show_h_atoms: {
+    showHAtoms: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
@@ -202,7 +202,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    combine_h_labels: {
+    combineHLabels: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
@@ -213,12 +213,12 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    show_c_labels: {
+    showCLabels: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
           mv.molecule.atoms.each(function(a) {
-            a.clearCache('appearance.show_label');
+            a.clearCache('appearance.showLabel');
           });
           mv.molecule.bonds.each(function(b) {
             b.clearCache('position.coords');
@@ -227,12 +227,12 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "show_circ, show_id, font, charge_font, charge_color, charge_offset, border_color": {
+    "showCirc, showID, font, chargeFont, chargeColor, chargeOffset, borderColor": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
     },
-    "radius, radius_charged": {
+    "radius, radiusCharged": {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
@@ -262,7 +262,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    border_widths: {
+    borderWidths: {
       "0, 1, 2, 4": {
         min: 0,
         max: 10,
@@ -272,7 +272,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    bg_colors: {
+    bgColors: {
       "0, 1, 2, 4": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
@@ -282,12 +282,12 @@ var SETTINGS_OPTIONS = {
   },
 
   bond: {
-    "width, connector_width, spacing": {
+    "width, connectorWidth, spacing": {
       min: 0,
       max: 10,
       step: 1
     },
-    connector_width: {
+    connectorWidth: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
         if(mv.molecule) {
@@ -310,7 +310,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    dash_count: {
+    dashCount: {
       min: 1,
       max: 20,
       step: 1,
@@ -324,7 +324,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "width, color, connector_color": {
+    "width, color, connectorColor": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
@@ -335,7 +335,7 @@ var SETTINGS_OPTIONS = {
         max: 30,
         step: 1
       },
-      "show, radius, bg_color, font, color": {
+      "show, radius, bgColor, font, color": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }

@@ -1,5 +1,5 @@
-function Molecule(mv, atoms, bonds, data_str) {
-  this.init(mv, atoms, bonds, data_str);
+function Molecule(mv, atoms, bonds, dataStr) {
+  this.init(mv, atoms, bonds, dataStr);
 }
 
 Molecule.prototype = {
@@ -7,17 +7,17 @@ Molecule.prototype = {
   settings: undefined,
   cache: undefined,
 
-  data_str: undefined,
+  dataStr: undefined,
   atoms: undefined,
   bonds: undefined,
 
 
-  init: function(mv, atoms, bonds, data_str) {
+  init: function(mv, atoms, bonds, dataStr) {
     this.mv = mv;
     this.settings = mv.settings;
     this.cache = new Cache();
 
-    this.data_str = data_str;
+    this.dataStr = dataStr;
     this.atoms = new AtomList(this, atoms);
     this.bonds = new BondList(this, bonds);
   },
@@ -126,31 +126,31 @@ Molecule.prototype = {
   },
 
   /*
-   * Scale the molecule such that the shortest bond is of size min_bond_length.
+   * Scale the molecule such that the shortest bond is of size minBondLength.
    */
   minimize: function() {
     var sd = this.bonds.shortestDistance();
-    var f = this.settings.zoom.min_bond_length / sd;
+    var f = this.settings.zoom.minBondLength / sd;
     this.zoom(f);
     this.center();
   },
 
   /*
-   * Scale the molecule such that the average bond is of size ideal_bond_length.
+   * Scale the molecule such that the average bond is of size idealBondLength.
    */
   idealize: function() {
     var sd = this.bonds.averageDistance();
-    var f = this.settings.zoom.ideal_bond_length / sd;
+    var f = this.settings.zoom.idealBondLength / sd;
     this.zoom(f);
     this.center();
   },
 
   /*
-   * Scale the molecule such that the longest bond is of size max_bond_length.
+   * Scale the molecule such that the longest bond is of size maxBondLength.
    */
   maximize: function() {
     var ld = this.bonds.longestDistance();
-    var f = this.settings.zoom.max_bond_length / ld;
+    var f = this.settings.zoom.maxBondLength / ld;
     this.zoom(f);
     this.center();
   },
@@ -160,7 +160,7 @@ Molecule.prototype = {
    */
   resetPositions: function() {
     var _this = this;
-    this.mv.getMoleculeData(this.data_str, function(md) {
+    this.mv.getMoleculeData(this.dataStr, function(md) {
       _this.mv.showOverlay("Initializing atom positions...");
       $ext.each(md.atoms, function(atom) {
         var a = _this.atoms.get(atom.id);
@@ -219,19 +219,19 @@ Molecule.prototype = {
       return;
     }
 
-    if(this.settings.deoverlap.deoverlap_atoms) {
+    if(this.settings.deoverlap.deoverlapAtoms) {
       var da = this.deoverlapAtoms();
     }
 
-    if(this.settings.deoverlap.deoverlap_bonds) {
+    if(this.settings.deoverlap.deoverlapBonds) {
       var db = this.deoverlapBonds();
     }
 
-    if(this.settings.deoverlap.decross_bonds) {
+    if(this.settings.deoverlap.decrossBonds) {
       var dc = this.decrossBonds();
     }
 
-    if(this.settings.deoverlap.lengthen_bonds) {
+    if(this.settings.deoverlap.lengthenBonds) {
       var lb = this.lengthenBonds();
     }
 
@@ -371,7 +371,7 @@ Molecule.prototype = {
   },
 
   /*
-   * Make sure each bond is at least min_bond_length long.
+   * Make sure each bond is at least minBondLength long.
    */
   lengthenBonds: function() {
     var changed = false;
@@ -382,14 +382,14 @@ Molecule.prototype = {
         continue;
       }
 
-      if(bond.length() < this.settings.zoom.min_bond_length - 1) {
+      if(bond.length() < this.settings.zoom.minBondLength - 1) {
         var dist = bond.a1.distance(bond.a2);
         if($ext.number.approx(dist, 0)) {
           bond.a2.move(1e-3, 1e-3);
           dist = bond.a1.distance(bond.a2);
         }
 
-        var d = Math.abs(this.settings.zoom.min_bond_length - dist) / 2;
+        var d = Math.abs(this.settings.zoom.minBondLength - dist) / 2;
         var dx = bond.a2.x - bond.a1.x;
         var dy = bond.a2.y - bond.a1.y;
         var ddx = d * dx / dist;

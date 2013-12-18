@@ -31,8 +31,8 @@ Bond.prototype = {
    */
   toBasicJSON: function() {
     return {
-      atom_1: this.a1.id,
-      atom_2: this.a2.id
+      atom1: this.a1.id,
+      atom2: this.a2.id
     };
   },
 
@@ -46,7 +46,7 @@ Bond.prototype = {
       return this.cache.get('position.visible');
     }
 
-    var visible = (this.settings.atom.show_h_atoms || (this.a1.element != "H" && this.a2.element != "H"))
+    var visible = (this.settings.atom.showHAtoms || (this.a1.element != "H" && this.a2.element != "H"))
         && (this.a1.isVisible() || this.a2.isVisible());
     this.cache.set('position.visible', visible, this.cache
         .getCache('appearance.visible'));
@@ -243,7 +243,7 @@ Bond.prototype = {
               y1: c.y1 + ddy,
               x2: c.x2 - ddx,
               y2: c.y2 + ddy,
-              n: this.settings.bond.dash_count
+              n: this.settings.bond.dashCount
             });
           } else {
             lines.push({
@@ -257,7 +257,7 @@ Bond.prototype = {
               y1: c.y1 - ddy,
               x2: c.x2 + ddx,
               y2: c.y2 - ddy,
-              n: this.settings.bond.dash_count
+              n: this.settings.bond.dashCount
             });
           }
         } else {
@@ -327,7 +327,7 @@ Bond.prototype = {
       alpha = -alpha;
     }
 
-    var delta = this.settings.bond.connector_width / a.getRadius() / 2;
+    var delta = this.settings.bond.connectorWidth / a.getRadius() / 2;
 
     if(this.type == 1 || this.type == 3 || this.type == 4) {
       connectors.push({
@@ -413,7 +413,7 @@ Bond.prototype = {
     // Draw the bond ID
     if(s.bond.id.show && this.isVisible()) {
       var c = this.coords();
-      ctx.fillStyle = s.bond.id.bg_color;
+      ctx.fillStyle = s.bond.id.bgColor;
       var r = s.bond.id.radius;
       ctx.beginPath();
       ctx.arc((c.x1 + c.x2) / 2, (c.y1 + c.y2) / 2, r, 0, 2 * Math.PI);
@@ -432,8 +432,8 @@ Bond.prototype = {
     var connectors = this.cacheConnectorsCoords();
 
     var ctx = this.list.molecule.mv.ctx;
-    ctx.lineWidth = this.settings.bond.connector_width;
-    ctx.strokeStyle = this.settings.bond.connector_color;
+    ctx.lineWidth = this.settings.bond.connectorWidth;
+    ctx.strokeStyle = this.settings.bond.connectorColor;
 
     $ext.each(connectors, function(c) {
       ctx.beginPath();

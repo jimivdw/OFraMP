@@ -1,5 +1,5 @@
-function MoleculeViewer(id, parent_id, settings) {
-  this.init(id, parent_id, settings);
+function MoleculeViewer(id, parentID, settings) {
+  this.init(id, parentID, settings);
 }
 
 MoleculeViewer.prototype = {
@@ -13,39 +13,39 @@ MoleculeViewer.prototype = {
 
   molecule: undefined,
 
-  selection_area: undefined,
-  overlay_showing: false,
-  overlay_message: "",
-  overlay_status: 1,
+  selectionArea: undefined,
+  overlayShowing: false,
+  overlayMessage: "",
+  overlayStatus: 1,
 
-  init: function(oframp, id, parent_id) {
+  init: function(oframp, id, parentID) {
     this.oframp = oframp;
     this.settings = oframp.settings;
     this.cache = new Cache();
 
     this.id = id;
     this.canvas = document.createElement('canvas');
-    this.init_canvas(parent_id);
+    this.__initCanvas(parentID);
 
     this.ctx = this.canvas.getContext('2d');
-    this.init_context();
   },
 
-  init_canvas: function(parent_id) {
+  __initCanvas: function(parentID) {
     this.canvas.id = this.id;
     this.canvas.width = document.documentElement.clientWidth;
     this.canvas.height = document.documentElement.clientHeight;
 
-    var parent = document.getElementById(parent_id);
+    var parent = document.getElementById(parentID);
     parent.appendChild(this.canvas);
   },
 
-  init_context: function() {
+  initContext: function() {
+    // Fix the text alignment before every redraw
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
   },
 
-  init_interaction: function() {
+  initInteraction: function() {
     var _this = this;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
@@ -59,7 +59,7 @@ MoleculeViewer.prototype = {
     });
 
     $ext.dom.onMouseMove(this.canvas, function(e) {
-      if(!_this.overlay_showing) {
+      if(!_this.overlayShowing) {
         var c = $ext.mouse.getCoords(e);
         var a = _this.molecule.atomAt(c.x, c.y);
         if(_this.molecule.setHover(a)) {
@@ -69,7 +69,7 @@ MoleculeViewer.prototype = {
     });
 
     $ext.dom.onMouseClick(this.canvas, function(e) {
-      if(!_this.overlay_showing) {
+      if(!_this.overlayShowing) {
         var c = $ext.mouse.getCoords(e);
         var a = _this.molecule.atomAt(c.x, c.y);
         var s = a ? [a] : [];
@@ -82,17 +82,17 @@ MoleculeViewer.prototype = {
 
         var selection = _this.molecule.atoms.getSelected();
         if(selection && selection.length > 0) {
-          _this.oframp.find_fragments_button.disabled = "";
+          _this.oframp.findFragmentsButton.disabled = "";
           _this.oframp.showSelectionDetails(selection);
         } else {
-          _this.oframp.find_fragments_button.disabled = "disabled";
+          _this.oframp.findFragmentsButton.disabled = "disabled";
           _this.oframp.hideSelectionDetails();
         }
       }
     }, 0);
 
     $ext.dom.onMouseDrag(this.canvas, function(e) {
-      if(!_this.overlay_showing) {
+      if(!_this.overlayShowing) {
         _this.move(e.deltaX, e.deltaY);
       }
     }, 0);
@@ -100,21 +100,21 @@ MoleculeViewer.prototype = {
     $ext.dom
         .onMouseDrag(this.canvas,
             function(e) {
-              if(!_this.overlay_showing) {
-                if(!_this.selection_area) {
-                  _this.selection_area = new SelectionArea(_this, e.clientX,
+              if(!_this.overlayShowing) {
+                if(!_this.selectionArea) {
+                  _this.selectionArea = new SelectionArea(_this, e.clientX,
                       e.clientY);
                   if(e.ctrlKey === true) {
-                    window.__initial_selection = _this.molecule.atoms
+                    window.__initialSelection = _this.molecule.atoms
                         .getSelected();
                   }
                 } else {
-                  _this.selection_area.resize(e.deltaX, e.deltaY);
-                  var bb = _this.selection_area.getBB();
+                  _this.selectionArea.resize(e.deltaX, e.deltaY);
+                  var bb = _this.selectionArea.getBB();
                   var atoms = _this.molecule.atoms.atomsIn(bb.x1, bb.y1, bb.x2,
                       bb.y2);
                   if(e.ctrlKey === true) {
-                    _this.molecule.setSelected(window.__initial_selection);
+                    _this.molecule.setSelected(window.__initialSelection);
                     _this.molecule.atoms.addSelected(atoms);
                   } else {
                     _this.molecule.setSelected(atoms);
@@ -125,23 +125,23 @@ MoleculeViewer.prototype = {
             }, 2);
 
     $ext.dom.onMouseUp(window, function(e) {
-      if(!_this.overlay_showing) {
-        _this.selection_area = undefined;
+      if(!_this.overlayShowing) {
+        _this.selectionArea = undefined;
         _this.redraw();
 
         var selection = _this.molecule.atoms.getSelected();
         if(selection && selection.length > 0) {
-          _this.oframp.find_fragments_button.disabled = "";
+          _this.oframp.findFragmentsButton.disabled = "";
           _this.oframp.showSelectionDetails(selection);
         } else {
-          _this.oframp.find_fragments_button.disabled = "disabled";
+          _this.oframp.findFragmentsButton.disabled = "disabled";
           _this.oframp.hideSelectionDetails();
         }
       }
     }, 2);
 
     $ext.dom.onMouseWheel(this.canvas, function(e) {
-      if(!_this.overlay_showing) {
+      if(!_this.overlayShowing) {
         if(e.deltaY < 0) {
           var f = _this.settings.zoom.factor;
         } else {
@@ -173,7 +173,7 @@ MoleculeViewer.prototype = {
   /*
    * Get the molecule data from OAPoC and run the success function on success.
    */
-  getMoleculeData: function(data_str, success) {
+  getMoleculeData: function(dataStr, success) {
     var _this = this;
 
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
@@ -216,7 +216,7 @@ MoleculeViewer.prototype = {
 
     xhr.open("POST", this.settings.oapoc.url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("fmt=smiles&data=" + encodeURIComponent(data_str));
+    xhr.send("fmt=smiles&data=" + encodeURIComponent(dataStr));
   },
 
   /*
@@ -229,16 +229,16 @@ MoleculeViewer.prototype = {
       return false;
     }
 
-    var selection_ids = $ext.array.map(selection, function(atom) {
+    var selectionIDs = $ext.array.map(selection, function(atom) {
       return atom.id;
     });
     var tree = this.molecule.atoms.toTree(selection[0]);
-    var selection_tree = tree.filter(function(node) {
-      return selection_ids.indexOf(node.key) !== -1;
+    var selectionTree = tree.filter(function(node) {
+      return selectionIDs.indexOf(node.key) !== -1;
     });
 
     var connected = $ext.each(selection, function(atom) {
-      var f = selection_tree.findNode(atom.id);
+      var f = selectionTree.findNode(atom.id);
       if(!f) {
         return false;
       }
@@ -261,12 +261,13 @@ MoleculeViewer.prototype = {
   },
 
   /*
-   * Load and show the molecule represented by data_str (currently in SMILES).
+   * Load and show the molecule represented by dataStr (currently in SMILES).
    */
-  showMolecule: function(data_str) {
+  showMolecule: function(dataStr) {
     var _this = this;
-    this.getMoleculeData(data_str, function(md) {
+    this.getMoleculeData(dataStr, function(md) {
       _this.showOverlay("Initializing molecule...");
+      // TODO: replace data_str in OAPoC with dataStr
       _this.molecule = new Molecule(_this, md.atoms, md.bonds, md.data_str);
       _this.molecule.idealize();
       _this.hideOverlay();
@@ -279,22 +280,22 @@ MoleculeViewer.prototype = {
    * Both msg and status will be retrieved from 'this' if they are undefined.
    */
   showOverlay: function(msg, status) {
-    if(this.overlay_showing) {
+    if(this.overlayShowing) {
       this.hideOverlay();
     }
 
-    msg = msg || this.overlay_msg;
-    status = status || this.overlay_status;
+    msg = msg || this.overlayMsg;
+    status = status || this.overlayStatus;
 
     var ctx = this.ctx;
-    var bw = this.settings.popup.border_width;
-    ctx.fillStyle = this.settings.popup.border_color;
+    var bw = this.settings.popup.borderWidth;
+    ctx.fillStyle = this.settings.popup.borderColor;
     ctx.fillRect(0, 0, this.canvas.width, bw);
     ctx.fillRect(0, bw, bw, this.canvas.height - 2 * bw);
     ctx.fillRect(this.canvas.width - bw, bw, bw, this.canvas.height - 2 * bw);
     ctx.fillRect(0, this.canvas.height - bw, this.canvas.width, bw);
 
-    ctx.fillStyle = this.settings.popup.bg_colors[status];
+    ctx.fillStyle = this.settings.popup.bgColors[status];
     ctx.fillRect(bw, bw, this.canvas.width - 2 * bw, this.canvas.height - 2
         * bw);
 
@@ -307,16 +308,16 @@ MoleculeViewer.prototype = {
 
     this.canvas.style.cursor = this.settings.cursor.normal;
 
-    this.overlay_showing = true;
-    this.overlay_msg = msg;
-    this.overlay_status = status;
+    this.overlayShowing = true;
+    this.overlayMsg = msg;
+    this.overlayStatus = status;
   },
 
   /*
    * Hide the overlay.
    */
   hideOverlay: function() {
-    this.overlay_showing = false;
+    this.overlayShowing = false;
     this.redraw();
   },
 
@@ -329,17 +330,17 @@ MoleculeViewer.prototype = {
     }
 
     var _this = this;
-    var limit = this.settings.deoverlap.time_limit * 1000;
+    var limit = this.settings.deoverlap.timeLimit * 1000;
     window.requestAnimationFrame(function drawLoop(ts) {
-      if(!window.__anim_start) {
-        window.__anim_start = ts;
+      if(!window.__animStart) {
+        window.__animStart = ts;
       }
 
-      if(ts - window.__anim_start < limit && _this.molecule.deoverlap()) {
+      if(ts - window.__animStart < limit && _this.molecule.deoverlap()) {
         _this.redraw();
         requestAnimationFrame(drawLoop);
       } else {
-        window.__anim_start = undefined;
+        window.__animStart = undefined;
       }
     });
   },
@@ -403,17 +404,17 @@ MoleculeViewer.prototype = {
    */
   redraw: function() {
     $ext.context.clear(this.ctx);
-    this.init_context();
+    this.initContext();
 
     if(this.molecule) {
       this.molecule.draw();
     }
 
-    if(this.selection_area) {
-      this.selection_area.draw();
+    if(this.selectionArea) {
+      this.selectionArea.draw();
     }
 
-    if(this.overlay_showing) {
+    if(this.overlayShowing) {
       this.showOverlay();
     }
   }

@@ -124,8 +124,8 @@ AtomList.prototype = {
     var rb = this.rightBottom();
     var width = rb.x - lt.x;
     this.cache.set('position.width', width, [
-        this.cache.getCache('position.left_top'),
-        this.cache.getCache('position.right_bottom')]);
+        this.cache.getCache('position.leftTop'),
+        this.cache.getCache('position.rightBottom')]);
     return width;
   },
 
@@ -140,8 +140,8 @@ AtomList.prototype = {
     var rb = this.rightBottom();
     var height = rb.y - lt.y;
     this.cache.set('position.height', height, [
-        this.cache.getCache('position.left_top'),
-        this.cache.getCache('position.right_bottom')]);
+        this.cache.getCache('position.leftTop'),
+        this.cache.getCache('position.rightBottom')]);
     return height;
   },
 
@@ -149,24 +149,24 @@ AtomList.prototype = {
    * Get the coordinates of the left top of this AtomList.
    */
   leftTop: function() {
-    if(this.cache.get('position.left_top')) {
-      return this.cache.get('position.left_top');
+    if(this.cache.get('position.leftTop')) {
+      return this.cache.get('position.leftTop');
     }
     var lt = {
       x: $ext.array.min(this.map(function(atom) {
-        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.showHAtoms && atom.element === "H") {
           return Infinity;
         }
         return atom.x - atom.getRadius();
       }, this)),
       y: $ext.array.min(this.map(function(atom) {
-        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.showHAtoms && atom.element === "H") {
           return Infinity;
         }
         return atom.y - atom.getRadius();
       }, this))
     };
-    this.cache.set('position.left_top', lt, this.cache
+    this.cache.set('position.leftTop', lt, this.cache
         .getCache('appearance.radius'));
     return lt;
   },
@@ -175,24 +175,24 @@ AtomList.prototype = {
    * Get the coordinates of the right bottom of this AtomList.
    */
   rightBottom: function() {
-    if(this.cache.get('position.right_bottom')) {
-      return this.cache.get('position.right_bottom');
+    if(this.cache.get('position.rightBottom')) {
+      return this.cache.get('position.rightBottom');
     }
     var rb = {
       x: $ext.array.max(this.map(function(atom) {
-        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.showHAtoms && atom.element === "H") {
           return 0;
         }
         return atom.x + atom.getRadius();
       }, this)),
       y: $ext.array.max(this.map(function(atom) {
-        if(!this.settings.atom.show_h_atoms && atom.element === "H") {
+        if(!this.settings.atom.showHAtoms && atom.element === "H") {
           return 0;
         }
         return atom.y + atom.getRadius();
       }, this))
     };
-    this.cache.set('position.right_bottom', rb, this.cache
+    this.cache.set('position.rightBottom', rb, this.cache
         .getCache('appearance.radius'));
     return rb;
   },
@@ -217,8 +217,8 @@ AtomList.prototype = {
    * Get the coordinates of the center of this AtomList.
    */
   centerPoint: function() {
-    if(this.cache.get('position.center_point')) {
-      return this.cache.get('position.center_point');
+    if(this.cache.get('position.centerPoint')) {
+      return this.cache.get('position.centerPoint');
     }
     var lt = this.leftTop();
     var s = this.size();
@@ -226,8 +226,8 @@ AtomList.prototype = {
       x: lt.x + s.w / 2,
       y: lt.y + s.h / 2
     };
-    this.cache.set('position.center_point', cp, [
-        this.cache.getCache('position.left_top'),
+    this.cache.set('position.centerPoint', cp, [
+        this.cache.getCache('position.leftTop'),
         this.cache.getCache('position.size')]);
     return cp;
   },

@@ -76,13 +76,13 @@ BondList.prototype = {
    * Get the shortest bond length.
    */
   shortestLength: function() {
-    if(this.cache.get('position.shortest_length')) {
-      return this.cache.get('position.shortest_length');
+    if(this.cache.get('position.shortestLength')) {
+      return this.cache.get('position.shortestLength');
     }
     var sl = $ext.array.min(this.map(function(b) {
       return b.length();
     }));
-    this.cache.set('position.shortest_length', sl);
+    this.cache.set('position.shortestLength', sl);
     return sl;
   },
 
@@ -90,13 +90,13 @@ BondList.prototype = {
    * Get the shortest distance between two atoms over all bonds in this list.
    */
   shortestDistance: function() {
-    if(this.cache.get('position.shortest_distance')) {
-      return this.cache.get('position.shortest_distance');
+    if(this.cache.get('position.shortestDistance')) {
+      return this.cache.get('position.shortestDistance');
     }
     var sd = $ext.array.min(this.map(function(b) {
       return b.a1.distance(b.a2);
     }));
-    this.cache.set('position.shortest_distance', sd);
+    this.cache.set('position.shortestDistance', sd);
     return sd;
   },
 
@@ -104,13 +104,13 @@ BondList.prototype = {
    * Get the average distance between two atoms over all bonds in this list.
    */
   averageDistance: function() {
-    if(this.cache.get('position.average_distance')) {
-      return this.cache.get('position.average_distance');
+    if(this.cache.get('position.averageDistance')) {
+      return this.cache.get('position.averageDistance');
     }
     var ad = $ext.array.avg(this.map(function(b) {
       return b.a1.distance(b.a2);
     }));
-    this.cache.set('position.average_distance', ad);
+    this.cache.set('position.averageDistance', ad);
     return ad;
   },
 
@@ -118,13 +118,13 @@ BondList.prototype = {
    * Get the longest distance between two atoms over all bonds in this list.
    */
   longestDistance: function() {
-    if(this.cache.get('position.longest_distance')) {
-      return this.cache.get('position.longest_distance');
+    if(this.cache.get('position.longestDistance')) {
+      return this.cache.get('position.longestDistance');
     }
     var ld = $ext.array.max(this.map(function(b) {
       return b.a1.distance(b.a2);
     }));
-    this.cache.set('position.longest_distance', ld);
+    this.cache.set('position.longestDistance', ld);
     return ld;
   },
 

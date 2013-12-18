@@ -1,8 +1,8 @@
 /**
  * Data structure for an atom
  */
-function Atom(list, id, element, element_id, x, y, charge) {
-  this.init(list, id, element, element_id, x, y, charge);
+function Atom(list, id, element, elementID, x, y, charge) {
+  this.init(list, id, element, elementID, x, y, charge);
 }
 
 Atom.prototype = {
@@ -12,20 +12,20 @@ Atom.prototype = {
 
   id: undefined,
   element: undefined,
-  element_id: undefined,
+  elementID: undefined,
   x: undefined,
   y: undefined,
   charge: undefined,
   status: undefined,
 
-  init: function(list, id, element, element_id, x, y, charge) {
+  init: function(list, id, element, elementID, x, y, charge) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
 
     this.id = id;
     this.element = element;
-    this.element_id = element_id;
+    this.elementID = elementID;
     this.x = x;
     this.y = y;
     this.charge = charge || Math.random() > .5 ? 0.123 : undefined;
@@ -51,7 +51,7 @@ Atom.prototype = {
     }
 
     var c = this.list.molecule.mv.canvas;
-    var visible = ((this.settings.atom.show_h_atoms || this.element != "H")
+    var visible = ((this.settings.atom.showHAtoms || this.element != "H")
         && this.x + this.getRadius() > 0 && this.x - this.getRadius() < c.width
         && this.y + this.getRadius() > 0 && this.y - this.getRadius() < c.height);
 
@@ -69,8 +69,8 @@ Atom.prototype = {
     }
 
     var label = this.element;
-    if(this.settings.atom.combine_h_labels === true
-        && this.settings.atom.show_h_atoms !== true) {
+    if(this.settings.atom.combineHLabels === true
+        && this.settings.atom.showHAtoms !== true) {
       var hs = $ext.array.filter(this.bondedAtoms(), function(atom) {
         return atom.element === "H";
       });
@@ -92,13 +92,13 @@ Atom.prototype = {
    * Determine if this atom's label should be shown.
    */
   showLabel: function() {
-    if(this.cache.get('appearance.show_label')) {
-      return this.cache.get('appearance.show_label');
+    if(this.cache.get('appearance.showLabel')) {
+      return this.cache.get('appearance.showLabel');
     }
 
-    var show = (this.settings.atom.show_c_labels || this.element != "C");
+    var show = (this.settings.atom.showCLabels || this.element != "C");
 
-    this.cache.set('appearance.show_label', show);
+    this.cache.set('appearance.showLabel', show);
     return show;
   },
 
@@ -123,8 +123,8 @@ Atom.prototype = {
    * when arom is set to true.
    */
   getBonds: function(arom) {
-    if(arom && this.cache.get('structure.arom_bonds')) {
-      return this.cache.get('structure.arom_bonds');
+    if(arom && this.cache.get('structure.aromBonds')) {
+      return this.cache.get('structure.aromBonds');
     } else if(!arom && this.cache.get('structure.bonds')) {
       return this.cache.get('structure.bonds');
     }
@@ -137,7 +137,7 @@ Atom.prototype = {
     }, this);
 
     if(arom) {
-      this.cache.set('structure.arom_bonds', bonds);
+      this.cache.set('structure.aromBonds', bonds);
     } else {
       this.cache.set('structure.bonds', bonds);
     }
@@ -149,41 +149,41 @@ Atom.prototype = {
    * atom has an aromatic bond when arom is set to true.
    */
   bondedAtoms: function(arom) {
-    if(arom && this.cache.get('structure.arom_atoms')) {
-      return this.cache.get('structure.arom_atoms');
+    if(arom && this.cache.get('structure.aromAtoms')) {
+      return this.cache.get('structure.aromAtoms');
     } else if(!arom && this.cache.get('structure.atoms')) {
       return this.cache.get('structure.atoms');
     }
 
-    var bonded_atoms = $ext.array.map(this.getBonds(arom), function(b) {
+    var bondedAtoms = $ext.array.map(this.getBonds(arom), function(b) {
       return b.a1 === this ? b.a2 : b.a1;
     }, this);
 
     if(arom) {
-      this.cache.set('structure.arom_atoms', bonded_atoms);
+      this.cache.set('structure.aromAtoms', bondedAtoms);
     } else {
-      this.cache.set('structure.atoms', bonded_atoms);
+      this.cache.set('structure.atoms', bondedAtoms);
     }
-    return bonded_atoms;
+    return bondedAtoms;
   },
 
   /*
    * Get the number of bonds this atom has, or just the aromatic ones.
    */
   bondCount: function(arom) {
-    if(arom && this.cache.get('structure.arom_bond_count')) {
-      return this.cache.get('structure.arom_bond_count');
-    } else if(!arom && this.cache.get('structure.bond_count')) {
-      return this.cache.get('structure.bond_count');
+    if(arom && this.cache.get('structure.aromBondCount')) {
+      return this.cache.get('structure.aromBondCount');
+    } else if(!arom && this.cache.get('structure.bondCount')) {
+      return this.cache.get('structure.bondCount');
     }
 
-    var bond_count = this.getBonds(arom).length;
+    var bondCount = this.getBonds(arom).length;
     if(arom) {
-      this.cache.get('structure.arom_bond_count', bond_count);
+      this.cache.get('structure.aromBondCount', bondCount);
     } else {
-      this.cache.get('structure.bond_count', bond_count);
+      this.cache.get('structure.bondCount', bondCount);
     }
-    return bond_count;
+    return bondCount;
   },
 
   /*
@@ -195,12 +195,12 @@ Atom.prototype = {
     }
 
     if(this.isCharged()) {
-      var radius = this.settings.atom.radius_charged;
+      var radius = this.settings.atom.radiusCharged;
     } else {
       var radius = this.settings.atom.radius;
     }
     this.cache.set('appearance.radius', radius, this.cache
-        .getCache('appearance.show_label'));
+        .getCache('appearance.showLabel'));
     return radius;
   },
 
@@ -393,8 +393,8 @@ Atom.prototype = {
    * If arom is set to true, only aromatic cycles will be considered.
    */
   findCycle: function(arom) {
-    if(arom && this.cache.get('structure.arom_cycle')) {
-      return this.cache.get('structure.arom_cycle');
+    if(arom && this.cache.get('structure.aromCycle')) {
+      return this.cache.get('structure.aromCycle');
     } else if(!arom && this.cache.get('structure.cycle')) {
       return this.cache.get('structure.cycle');
     }
@@ -402,7 +402,7 @@ Atom.prototype = {
     var path = this.list.toTree(this.id, arom).findShortestPath(this.id);
     if(path && path.length > 1) {
       if(arom) {
-        this.cache.set('structure.arom_cycle', path);
+        this.cache.set('structure.aromCycle', path);
       } else {
         this.cache.set('structure.cycle', path);
       }
@@ -430,7 +430,7 @@ Atom.prototype = {
     var s = this.settings;
 
     var status = $ext.number.msb(this.status);
-    ctx.fillStyle = s.atom.bg_colors[status];
+    ctx.fillStyle = s.atom.bgColors[status];
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
     ctx.fill();
@@ -439,24 +439,24 @@ Atom.prototype = {
       return;
     }
 
-    if(s.atom.show_circ) {
-      ctx.lineWidth = s.atom.border_widths[status];
-      ctx.strokeStyle = s.atom.border_color;
+    if(s.atom.showCirc) {
+      ctx.lineWidth = s.atom.borderWidths[status];
+      ctx.strokeStyle = s.atom.borderColor;
       ctx.stroke();
     }
 
     var label = this.label();
-    if(s.atom.show_id) {
+    if(s.atom.showID) {
       label += this.id;
     }
 
     ctx.font = s.atom.font;
     ctx.fillStyle = this.getColor();
     if(this.isCharged()) {
-      ctx.fillText(label, this.x, this.y - s.atom.charge_offset);
-      ctx.font = s.atom.charge_font;
-      ctx.fillStyle = s.atom.charge_color;
-      ctx.fillText(this.charge, this.x, this.y + s.atom.charge_offset);
+      ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
+      ctx.font = s.atom.chargeFont;
+      ctx.fillStyle = s.atom.chargeColor;
+      ctx.fillText(this.charge, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
     }

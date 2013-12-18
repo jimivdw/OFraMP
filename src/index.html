@@ -90,7 +90,7 @@
 
         var dl = document.getElementById("download");
         dl.onclick = function() {
-          var data = oframp.getMoleculeDataURI('image/png');
+          var data = oframp.getMVDataURI('image/png');
           this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           this.download = "OFraMP-" + date + ".png";
@@ -101,7 +101,7 @@
           op.remove();
         } else {
           op.onclick = function() {
-            oframp.settings_ui.toggle();
+            oframp.settingsUI.toggle();
           };
         }
 
@@ -134,7 +134,7 @@
           });
         }
 
-        $ext.dom.addEventListener(oframp.container, 'molecule_entered', function() {
+        $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
           initControls();
         });
       };
