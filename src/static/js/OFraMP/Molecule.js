@@ -129,6 +129,8 @@ Molecule.prototype = {
    * Fit the molecule in a bounding box of size w * h.
    */
   bestFit: function(w, h) {
+    w = w || this.mv.canvas.width;
+    h = h || this.mv.canvas.height;
     return this.atoms.bestFit(w, h);
   },
 

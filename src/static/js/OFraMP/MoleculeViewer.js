@@ -1,5 +1,5 @@
-function MoleculeViewer(id, parentID, settings) {
-  this.__init(id, parentID, settings);
+function MoleculeViewer(id, parentID, settings, width, height) {
+  this.__init(id, parentID, settings, width, height);
 }
 
 MoleculeViewer.prototype = {
@@ -18,22 +18,25 @@ MoleculeViewer.prototype = {
   overlayMessage: "",
   overlayStatus: 1,
 
-  __init: function(oframp, id, parentID) {
+  __init: function(oframp, id, parentID, width, height) {
     this.oframp = oframp;
     this.settings = oframp.settings;
     this.cache = new Cache();
 
     this.id = id;
     this.canvas = document.createElement('canvas');
-    this.__initCanvas(parentID);
+    this.__initCanvas(parentID, width, height);
 
     this.ctx = this.canvas.getContext('2d');
   },
 
-  __initCanvas: function(parentID) {
+  __initCanvas: function(parentID, width, height) {
+    width = width || document.documentElement.clientWidth;
+    height = height || document.documentElement.clientHeight;
+
     this.canvas.id = this.id;
-    this.canvas.width = document.documentElement.clientWidth;
-    this.canvas.height = document.documentElement.clientHeight;
+    this.canvas.width = width;
+    this.canvas.height = height;
 
     var parent = document.getElementById(parentID);
     parent.appendChild(this.canvas);
@@ -142,21 +145,21 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
+  },
 
-    window.onresize = function() {
-      _this.canvas.width = document.documentElement.clientWidth;
-      _this.canvas.height = document.documentElement.clientHeight;
+  setCanvasSize: function(width, height) {
+    _this.canvas.width = width;
+    _this.canvas.height = height;
 
-      if(_this.molecule) {
-        _this.molecule.atoms.each(function(atom) {
-          atom.cache.clear('position.visible');
-        });
-        _this.molecule.bonds.each(function(bond) {
-          bond.cache.clear('position.visible');
-        });
-        _this.redraw();
-      }
-    };
+    if(_this.molecule) {
+      _this.molecule.atoms.each(function(atom) {
+        atom.cache.clear('position.visible');
+      });
+      _this.molecule.bonds.each(function(bond) {
+        bond.cache.clear('position.visible');
+      });
+      _this.redraw();
+    }
   },
 
   /*
@@ -195,7 +198,7 @@ MoleculeViewer.prototype = {
         } else if(md.error) {
           _this.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
-          success(md);
+          success.call(_this, md);
         }
       } else if(xhr.status != 200) {
         _this
@@ -247,18 +250,28 @@ MoleculeViewer.prototype = {
 
     console.log(queryJSON);
     // TODO!!
+    var fragments = new Array();
+    var r = Math.round(Math.random() * 10);
+    for( var i = 0; i < r; i++) {
+      fragments.push("CCN");
+    }
+    this.oframp.showRelatedFragments(fragments);
   },
 
   /*
    * Load and show the molecule represented by dataStr (currently in SMILES).
+   * 
+   * Once the molecule has been loaded execute the optional success function;
    */
-  showMolecule: function(dataStr) {
-    var _this = this;
+  showMolecule: function(dataStr, success) {
     this.getMoleculeData(dataStr, function(md) {
-      _this.showOverlay("Initializing molecule...");
-      _this.molecule = new Molecule(_this, md.atoms, md.bonds, md.dataStr);
-      _this.molecule.idealize();
-      _this.hideOverlay();
+      this.showOverlay("Initializing molecule...");
+      this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
+      this.molecule.idealize();
+      this.hideOverlay();
+      if(success) {
+        success.call(this, this.molecule);
+      }
     });
   },
 

@@ -325,6 +325,39 @@ OFraMP.prototype = {
     this.atomDetails.parentElement.style.opacity = "0.0";
   },
 
+  showRelatedFragments: function(fragments) {
+    $ext.dom.clear(this.relatedFragments);
+
+    var ts = document.createElement('span');
+    ts.className = "title";
+    ts.appendChild(document.createTextNode("Found " + fragments.length
+        + " fragments"));
+    this.relatedFragments.appendChild(ts);
+
+    $ext.each(fragments, function(fragment, i) {
+      var mv = new MoleculeViewer(this, "fragment_" + i,
+          this.relatedFragments.id, 228, 130);
+      mv.showMolecule(fragment, function(molecule) {
+        molecule.bestFit();
+      });
+    }, this);
+
+    this.relatedFragments.parentElement.style.visibility = "visible";
+    this.relatedFragments.parentElement.style.opacity = "1.0";
+  },
+
+  hideRelatedFragments: function() {
+    this.relatedFragments.parentElement.style.visibility = "hidden";
+    this.relatedFragments.parentElement.style.opacity = "0.0";
+  },
+
+
+  /*
+   * Set the size of the main molecule viewer to width x height.
+   */
+  setMVSize: function(width, height) {
+    this.mv.setCanvasSize(width, height)
+  },
 
   /*
    * Move the molecule dx in the x direction and dy on the y axis.
@@ -367,7 +400,7 @@ OFraMP.prototype = {
       return;
     }
 
-    this.mv.molecule.bestFit(this.mv.canvas.width, this.mv.canvas.height);
+    this.mv.molecule.bestFit();
     this.redraw();
   },
 

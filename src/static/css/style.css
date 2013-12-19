@@ -179,7 +179,8 @@ html, body {
     top: 20px;
     bottom: 20px;
     width: 240px;
-    overflow: auto;
+    overflow-x: none;
+    overflow-y: auto;
     z-index: 2;
     font-size: 12px;
     opacity: 0;
@@ -197,6 +198,7 @@ html, body {
 
 #atom_details, #related_fragments {
     padding: 5px 5px 5px 5px;
+    overflow: hidden;
 }
 
 #atom_details span.title, #related_fragments span.title {
@@ -204,7 +206,7 @@ html, body {
     font-weight: bold;
 }
 
-#atom_details canvas {
+#atom_details canvas, #related_fragments canvas {
     border: 1px solid #AAA;
     border-radius: 2px;
     box-sizing: border-box;
@@ -252,6 +254,10 @@ html, body {
 
 #atom_details button:active {
     background-color: #DDD;
+}
+
+#related_fragments canvas {
+    margin: 1px 0;
 }
 
 #popup {
