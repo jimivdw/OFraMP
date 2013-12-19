@@ -348,9 +348,6 @@ OFraMP.prototype = {
       ab.className = "border_box";
       ab.disabled = "disabled";
       ab.appendChild(document.createTextNode("Select fragment"));
-      $ext.dom.onMouseClick(ab, function() {
-        console.log("TODO");
-      }, 0);
       fc.appendChild(ab);
 
       var _this = this;
@@ -377,6 +374,19 @@ OFraMP.prototype = {
         }, 0);
       });
       this.relatedFragmentViewers.push(mv);
+
+      $ext.dom.onMouseClick(ab, function() {
+        // TODO
+        var m = _this.mv.molecule.find(mv.molecule.dataStr.split(''))[0];
+        $ext.each(m, function(atom, i) {
+          atom.charge = mv.molecule.atoms.get(i + 1).charge;
+        });
+        _this.mv.molecule.setSelected([]);
+        _this.mv.molecule.dehighlight();
+        _this.hideSelectionDetails();
+        _this.hideRelatedFragments();
+        _this.redraw();
+      }, 0);
     }, this);
 
     this.relatedFragments.parentElement.style.visibility = "visible";
