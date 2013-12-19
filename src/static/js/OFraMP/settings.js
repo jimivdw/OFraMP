@@ -8,9 +8,9 @@ var MESSAGE_TYPES = {
 
 var ATOM_STATUSES = {
   normal: 0,
-  highlighted: 1,
-  hover: 2,
-  selected: 4
+  hover: 1,
+  selected: 2,
+  highlighted: 4
 };
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
@@ -46,10 +46,10 @@ var DEFAULT_SETTINGS = {
   },
 
   popup: {
-    borderWidth: 40,
+    borderWidth: 10,
     borderColor: "rgba(0, 0, 0, 0.8)",
     padding: 10,
-    font: "40px Arial",
+    font: "13px Arial",
     color: "rgb( 48, 48, 48)",
     bgColors: {
       1: "rgba(255, 255, 255, 0.9)",
@@ -92,9 +92,9 @@ var DEFAULT_SETTINGS = {
     borderColor: "rgb( 48, 48, 48)",
     bgColors: {
       0: "rgb(255, 255, 255)",
-      1: "rgb( 80, 169,  75)",
-      2: "rgb(204, 166,  40)",
-      4: "rgb(203,  83,  73)"
+      1: "rgb(204, 166,  40)",
+      2: "rgb(203,  83,  73)",
+      4: "rgb( 80, 169,  75)"
     }
   },
 

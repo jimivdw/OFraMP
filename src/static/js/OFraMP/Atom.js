@@ -16,6 +16,7 @@ Atom.prototype = {
   x: undefined,
   y: undefined,
   charge: undefined,
+  previewCharge: undefined,
   status: undefined,
 
   __init: function(list, id, element, elementID, x, y, charge) {
@@ -28,7 +29,7 @@ Atom.prototype = {
     this.elementID = elementID;
     this.x = x;
     this.y = y;
-    this.charge = charge || Math.random() > .5 ? 0.123 : undefined;
+    this.charge = charge || !list.molecule.mv.isInteractive && Math.random() > .5 ? 0.123 : undefined;
     this.status = ATOM_STATUSES.normal;
   },
 
@@ -452,11 +453,12 @@ Atom.prototype = {
 
     ctx.font = s.atom.font;
     ctx.fillStyle = this.getColor();
-    if(this.isCharged()) {
+    if(this.isCharged() || this.previewCharge) {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
       ctx.fillStyle = s.atom.chargeColor;
-      ctx.fillText(this.charge, this.x, this.y + s.atom.chargeOffset);
+      var sc = this.previewCharge || this.charge;
+      ctx.fillText(sc, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
     }

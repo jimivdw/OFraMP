@@ -13,6 +13,7 @@ MoleculeViewer.prototype = {
 
   molecule: undefined,
 
+  isInteractive: false,
   selectionArea: undefined,
   overlayShowing: false,
   overlayMessage: "",
@@ -44,6 +45,8 @@ MoleculeViewer.prototype = {
 
   setupInteraction: function() {
     var _this = this;
+
+    this.isInteractive = true;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
       if(e.preventDefault) {
@@ -253,7 +256,7 @@ MoleculeViewer.prototype = {
     var fragments = new Array();
     var r = Math.round(Math.random() * 10);
     for( var i = 0; i < r; i++) {
-      fragments.push("CCN");
+      fragments.push("OCO");
     }
     this.oframp.showRelatedFragments(fragments);
   },
@@ -319,6 +322,9 @@ MoleculeViewer.prototype = {
    */
   hideOverlay: function() {
     this.overlayShowing = false;
+    if(!this.isInteractive) {
+      this.canvas.style.cursor = this.settings.cursor.click;
+    }
     this.redraw();
   },
 

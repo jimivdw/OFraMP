@@ -18,6 +18,9 @@ OFraMP.prototype = {
   enterMoleculeButton: undefined,
   findFragmentsButton: undefined,
 
+  relatedFragmentViewers: undefined,
+  activeFragment: undefined,
+
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
 
@@ -327,6 +330,7 @@ OFraMP.prototype = {
 
   showRelatedFragments: function(fragments) {
     $ext.dom.clear(this.relatedFragments);
+    this.relatedFragmentViewers = new Array();
 
     var ts = document.createElement('span');
     ts.className = "title";
@@ -335,11 +339,44 @@ OFraMP.prototype = {
     this.relatedFragments.appendChild(ts);
 
     $ext.each(fragments, function(fragment, i) {
-      var mv = new MoleculeViewer(this, "fragment_" + i,
-          this.relatedFragments.id, 228, 130);
+      var fc = document.createElement('div');
+      fc.id = "fc_" + i;
+      fc.className = "fragment";
+      this.relatedFragments.appendChild(fc);
+
+      var ab = document.createElement('button');
+      ab.className = "border_box";
+      ab.disabled = "disabled";
+      ab.appendChild(document.createTextNode("Select fragment"));
+      $ext.dom.onMouseClick(ab, function() {
+        console.log("TODO");
+      }, 0);
+      fc.appendChild(ab);
+
+      var _this = this;
+      var mv = new MoleculeViewer(this, "fragment_" + i, fc.id, 228, 130);
       mv.showMolecule(fragment, function(molecule) {
         molecule.bestFit();
+
+        $ext.dom.onMouseClick(this.canvas, function() {
+          ab.disabled = "";
+
+          if(_this.activeFragment && _this.activeFragment !== molecule.mv) {
+            // Disable the currently active fragment's button
+            _this.activeFragment.canvas.parentElement
+                .getElementsByClassName("border_box")[0].disabled = "disabled";
+          }
+          _this.activeFragment = molecule.mv;
+
+          // TODO
+          var m = _this.mv.molecule.find(molecule.dataStr.split(''))[0];
+          $ext.each(m, function(atom, i) {
+            atom.previewCharge = molecule.atoms.get(i + 1).charge;
+          });
+          _this.redraw();
+        }, 0);
       });
+      this.relatedFragmentViewers.push(mv);
     }, this);
 
     this.relatedFragments.parentElement.style.visibility = "visible";
