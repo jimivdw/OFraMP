@@ -31,14 +31,14 @@ OFraMP.prototype = {
   __initUI: function() {
     var lb = document.createElement('div');
     lb.id = "leftbar";
-    lb.className = "border_box";
+    lb.className = "sidebar border_box";
     lb.style.visibility = "hidden";
     this.container.appendChild(lb);
     this.__initAtomDetails(lb);
 
     var rb = document.createElement('div');
     rb.id = "rightbar";
-    rb.className = "border_box";
+    rb.className = "sidebar border_box";
     rb.style.visibility = "hidden";
     this.container.appendChild(rb);
     this.__initRelatedFragments(rb);

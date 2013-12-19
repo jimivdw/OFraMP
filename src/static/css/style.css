@@ -174,18 +174,28 @@ html, body {
     border-bottom-right-radius: 2px !important;
 }
 
-#leftbar, #rightbar {
+.sidebar {
     position: absolute;
     top: 20px;
     bottom: 20px;
     width: 240px;
-    overflow-x: none;
+    overflow-x: hidden;
     overflow-y: auto;
     z-index: 2;
     font-size: 12px;
     opacity: 0;
     -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
     transition: opacity .2s ease-out, visibility .2s ease-out;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    width: 3px;
+    background-color: #AAA;
+    border-radius: 1px;
 }
 
 #leftbar {
@@ -198,7 +208,6 @@ html, body {
 
 #atom_details, #related_fragments {
     padding: 5px 5px 5px 5px;
-    overflow: hidden;
 }
 
 #atom_details span.title, #related_fragments span.title {
