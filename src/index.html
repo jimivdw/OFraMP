@@ -50,6 +50,10 @@
           }
         });
 
+        window.onresize = function() {
+          oframp.setMVSize(document.documentElement.clientWidth, document.documentElement.clientHeight);
+        };
+
         // ONLY for debug purposes, TODO : remove
         doframp = oframp;
 
@@ -137,8 +141,9 @@
           controlsInitialized = true;
         }
 
+
         $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
-          if(!controlsInitialized) {
+          if (!controlsInitialized) {
             initControls();
           }
         });

@@ -148,17 +148,17 @@ MoleculeViewer.prototype = {
   },
 
   setCanvasSize: function(width, height) {
-    _this.canvas.width = width;
-    _this.canvas.height = height;
+    this.canvas.width = width;
+    this.canvas.height = height;
 
-    if(_this.molecule) {
-      _this.molecule.atoms.each(function(atom) {
+    if(this.molecule) {
+      this.molecule.atoms.each(function(atom) {
         atom.cache.clear('position.visible');
       });
-      _this.molecule.bonds.each(function(bond) {
+      this.molecule.bonds.each(function(bond) {
         bond.cache.clear('position.visible');
       });
-      _this.redraw();
+      this.redraw();
     }
   },
 
