@@ -231,39 +231,10 @@ OFraMP.prototype = {
     ts.appendChild(tn);
     this.atomDetails.appendChild(ts);
 
-    var c = document.createElement('canvas');
-    c.width = 228;
-    c.height = 130;
-    var ctx = c.getContext('2d');
-
     var sl = new AtomList(this.mv.molecule, selection);
     var center = sl.getCenterPoint();
-    var size = sl.getSize();
-
-    // Increase selection size when the ratio is off
-    var r = size.w / size.h;
-    if(r > c.width / c.height) {
-      size.h *= r * c.height / c.width;
-    } else {
-      size.w *= (1 / r) * c.width / c.height;
-    }
-
-    var dx = Math.max(c.width, size.w) / 2;
-    var dy = Math.max(c.height, size.h) / 2;
-    var wf = c.width / (2 * dx);
-    var hf = c.height / (2 * dy);
-    var f = wf < hf ? wf : hf;
-
-    var id = this.mv.ctx.getImageData(center.x - dx, center.y - dy, 2 * dx,
-        2 * dy);
-
-    var tc = document.createElement('canvas');
-    tc.width = id.width;
-    tc.height = id.height;
-    tc.getContext("2d").putImageData(id, 0, 0);
-
-    ctx.scale(f, f);
-    ctx.drawImage(tc, 0, 0);
+    var s = sl.getSize();
+    var c = this.getMoleculeCutout(center.x, center.y, s.w, s.h, 228, 130);
     this.atomDetails.appendChild(c);
 
     var dt = document.createElement('table');
@@ -392,6 +363,38 @@ OFraMP.prototype = {
   hideRelatedFragments: function() {
     this.relatedFragments.parentElement.style.visibility = "hidden";
     this.relatedFragments.parentElement.style.opacity = "0.0";
+  },
+
+  getMoleculeCutout: function(x, y, sw, sh, width, height) {
+    var c = document.createElement('canvas');
+    c.width = width;
+    c.height = height;
+    var ctx = c.getContext('2d');
+
+    // Increase selection size when the ratio is off
+    var r = sw / sh;
+    if(r > width / height) {
+      sh *= r * c.height / c.width;
+    } else {
+      sw *= (1 / r) * c.width / c.height;
+    }
+
+    var dx = Math.max(width, sw) / 2;
+    var dy = Math.max(height, sh) / 2;
+    var wf = width / (2 * dx);
+    var hf = height / (2 * dy);
+    var f = wf < hf ? wf : hf;
+
+    var id = this.mv.ctx.getImageData(x - dx, y - dy, 2 * dx, 2 * dy);
+
+    var tc = document.createElement('canvas');
+    tc.width = id.width;
+    tc.height = id.height;
+    tc.getContext("2d").putImageData(id, 0, 0);
+
+    ctx.scale(f, f);
+    ctx.drawImage(tc, 0, 0);
+    return c;
   },
 
 

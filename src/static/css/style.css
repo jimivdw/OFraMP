@@ -371,6 +371,26 @@ html, body {
     float: left;
 }
 
+#molecule_cutout, #charge_details {
+    float: left;
+    width: 260px;
+    margin: 5px;
+    overflow: hidden;
+}
+
+#charge_details {
+    float: right;
+}
+
+#charge_details table {
+    width: 260px;
+    text-align: left;
+}
+
+#charge_details select, #charge_details input {
+    width: 110px;
+}
+
 #oframp > button {
     position: absolute;
     top: 10px;
