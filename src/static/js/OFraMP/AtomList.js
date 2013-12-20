@@ -19,8 +19,12 @@ AtomList.prototype = {
 
     this.atoms = new Array();
     $ext.each(atoms, function(atom) {
-      this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
-          atom.x, atom.y));
+      if(atom instanceof Atom) {
+        this.atoms.push(atom);
+      } else {
+        this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
+            atom.x, atom.y));
+      }
     }, this);
   },
 
@@ -70,6 +74,14 @@ AtomList.prototype = {
    */
   map: function(f, scope) {
     return $ext.array.map(this.atoms, f, scope);
+  },
+
+  /*
+   * Slice function for a list of atoms.
+   */
+  slice: function() {
+    return new AtomList(this.molecule, Array.prototype.slice.apply(this.atoms,
+        arguments));
   },
 
   /*

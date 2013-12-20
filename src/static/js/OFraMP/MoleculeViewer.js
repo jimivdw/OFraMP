@@ -79,15 +79,7 @@ MoleculeViewer.prototype = {
         } else if(_this.molecule.setSelected(s)) {
           _this.redraw();
         }
-
-        var selection = _this.molecule.atoms.getSelected();
-        if(selection && selection.length > 0) {
-          _this.oframp.findFragmentsButton.disabled = "";
-          _this.oframp.showSelectionDetails(selection);
-        } else {
-          _this.oframp.findFragmentsButton.disabled = "disabled";
-          _this.oframp.hideSelectionDetails();
-        }
+        _this.afterSelect();
       }
     }, 0);
 
@@ -123,15 +115,7 @@ MoleculeViewer.prototype = {
       if(!_this.overlayShowing) {
         _this.selectionArea = undefined;
         _this.redraw();
-
-        var selection = _this.molecule.atoms.getSelected();
-        if(selection && selection.length > 0) {
-          _this.oframp.findFragmentsButton.disabled = "";
-          _this.oframp.showSelectionDetails(selection);
-        } else {
-          _this.oframp.findFragmentsButton.disabled = "disabled";
-          _this.oframp.hideSelectionDetails();
-        }
+        _this.afterSelect();
       }
     }, 2);
 
@@ -148,6 +132,20 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
+  },
+
+  /*
+   * Handler to be called after a change in the atom selection.
+   */
+  afterSelect: function() {
+    var selection = this.molecule.atoms.getSelected();
+    if(selection && selection.length > 0) {
+      this.oframp.findFragmentsButton.disabled = "";
+      this.oframp.showSelectionDetails(selection);
+    } else {
+      this.oframp.findFragmentsButton.disabled = "disabled";
+      this.oframp.hideSelectionDetails();
+    }
   },
 
   setCanvasSize: function(width, height) {
@@ -326,6 +324,113 @@ MoleculeViewer.prototype = {
       this.canvas.style.cursor = this.settings.cursor.click;
     }
     this.redraw();
+  },
+
+  /*
+   * Preview the charges given as a mapping from atom IDs to charges.
+   */
+  previewCharges: function(charges) {
+    this.molecule.atoms.each(function(atom) {
+      if(charges[atom.id]) {
+        atom.previewCharge = charges[atom.id];
+        atom.highlight();
+      } else {
+        atom.previewCharge = undefined;
+        atom.dehighlight();
+      }
+    });
+    this.redraw();
+  },
+
+  /*
+   * Set the charges given as a mapping from atom IDs to charges.
+   */
+  setCharges: function(charges) {
+    this.molecule.atoms.each(function(atom, i) {
+      if(charges[atom.id]) {
+        if(atom.charge) {
+          this.__fixCharge(atom, this.molecule.atoms.slice(i + 1), charges);
+          return $ext.BREAK;
+        } else {
+          atom.charge = charges[atom.id];
+          atom.previewCharge = undefined;
+        }
+      }
+    }, this);
+    this.redraw();
+  },
+
+  __fixCharge: function(atom, rem, charges) {
+    var title = "Attempting to assign a new charge to an already charged atom";
+    var content = document.createElement('div');
+    var dt = document.createElement('table');
+    $ext.dom.addTableRow(dt, "Atom ID", atom.id);
+    $ext.dom.addTableRow(dt, "Element", atom.element);
+    $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(atom.charge,
+        1, 3));
+    $ext.dom.addTableRow(dt, "Proposed charge", $ext.number.format(
+        charges[atom.id], 1, 3));
+
+    var rc = document.createElement('input');
+    rc.disabled = "disabled";
+    rc.value = $ext.number.format(atom.charge, 1, 3);
+
+    var ss = document.createElement('select');
+    $ext.dom.addSelectOption(ss, "current", "Current value");
+    $ext.dom.addSelectOption(ss, "other", "Other value");
+    $ext.dom.addSelectOption(ss, "average", "Average value");
+    $ext.dom.addSelectOption(ss, "custom", "Custom value");
+    $ext.dom.addEventListener(ss, 'change', function() {
+      rc.disabled = "disabled";
+      switch(ss.value) {
+        case "current":
+          rc.value = atom.charge;
+          break;
+
+        case "other":
+          rc.value = charges[atom.id];
+          break;
+
+        case "average":
+          rc.value = (atom.charge + charges[atom.id]) / 2;
+          break;
+
+        case "custom":
+          rc.disabled = "";
+          break;
+      }
+    });
+
+    $ext.dom.addTableRow(dt, "Solution", ss);
+    $ext.dom.addTableRow(dt, "Resulting charge", rc);
+
+    content.appendChild(dt);
+    content.appendChild(document.createTextNode("Atom ID: " + atom.id))
+    var rb = document.createElement('button');
+    rb.appendChild(document.createTextNode("Apply charge"));
+    content.appendChild(rb);
+
+    var _this = this;
+    $ext.dom.onMouseClick(rb, function() {
+      console.log(atom, rem, charges)
+      atom.charge = rc.value;
+      atom.previewCharge = undefined;
+      _this.oframp.hidePopup();
+
+      rem.each(function(atom, i) {
+        if(charges[atom.id]) {
+          if(atom.charge) {
+            this.__fixCharge(atom, rem.slice(i + 1), charges);
+            return $ext.BREAK;
+          } else {
+            atom.charge = charges[atom.id];
+            atom.previewCharge = undefined;
+          }
+        }
+      }, _this);
+      _this.redraw();
+    }, 0);
+    this.oframp.showPopup(title, content);
   },
 
   /*

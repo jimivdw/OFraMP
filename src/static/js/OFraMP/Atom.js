@@ -29,7 +29,7 @@ Atom.prototype = {
     this.elementID = elementID;
     this.x = x;
     this.y = y;
-    this.charge = charge || !list.molecule.mv.isInteractive && Math.random() > .5 ? 0.123 : undefined;
+    this.charge = charge || list.molecule.mv.isInteractive ? undefined : Math.random();
     this.status = ATOM_STATUSES.normal;
   },
 
@@ -457,7 +457,7 @@ Atom.prototype = {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
       ctx.fillStyle = s.atom.chargeColor;
-      var sc = this.previewCharge || this.charge;
+      var sc = $ext.number.format(this.previewCharge || this.charge, 1, 3);
       ctx.fillText(sc, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);

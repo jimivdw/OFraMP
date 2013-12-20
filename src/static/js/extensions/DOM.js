@@ -14,6 +14,37 @@ $ext.extend($ext, {
       elem.textContent = "";
     },
 
+    addTableRow: function(table, label, value) {
+      var row = document.createElement('tr');
+
+      var head = document.createElement('th');
+      if(!(label instanceof Element)) {
+        label = document.createTextNode(label);
+      }
+      head.appendChild(label);
+
+      var data = document.createElement('td');
+      if(!(value instanceof Element)) {
+        value = document.createTextNode(value);
+      }
+      data.appendChild(value);
+
+      row.appendChild(head);
+      row.appendChild(data);
+      table.appendChild(row);
+    },
+
+    addSelectOption: function(select, value, label) {
+      var option = document.createElement('option');
+      option.value = value;
+      if(label) {
+        option.appendChild(document.createTextNode(label));
+      } else {
+        option.appendChild(document.createTextNode(value));
+      }
+      select.appendChild(option);
+    },
+
     /*
      * Fairly cross-browser function for adding an eventListener to an element.
      */

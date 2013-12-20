@@ -120,6 +120,8 @@ OFraMP.prototype = {
     elem.disabled = "disabled";
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
+      // Make sure the previewed charges are reset.
+      _this.mv.previewCharges({});
       _this.mv.getMatchingFragments();
     }, 0);
   },
@@ -214,17 +216,6 @@ OFraMP.prototype = {
   },
 
   showSelectionDetails: function(selection) {
-    function addTableRow(table, label, value) {
-      var row = document.createElement('tr');
-      var head = document.createElement('th');
-      head.appendChild(document.createTextNode(label));
-      var data = document.createElement('td');
-      data.appendChild(document.createTextNode(value));
-      row.appendChild(head);
-      row.appendChild(data);
-      table.appendChild(row);
-    }
-
     $ext.dom.clear(this.atomDetails);
     if(selection.length === 1) {
       var atom = selection[0];
@@ -278,9 +269,9 @@ OFraMP.prototype = {
     var dt = document.createElement('table');
 
     if(atom) {
-      addTableRow(dt, "ID", atom.id);
-      addTableRow(dt, "Element", atom.element);
-      addTableRow(dt, "Charge", atom.charge || "unknown");
+      $ext.dom.addTableRow(dt, "ID", atom.id);
+      $ext.dom.addTableRow(dt, "Element", atom.element);
+      $ext.dom.addTableRow(dt, "Charge", atom.charge || "unknown");
     } else {
       // Get the unparameterised atoms
       var uas = $ext.array.filter(selection, function(atom) {
@@ -291,10 +282,10 @@ OFraMP.prototype = {
         return atom.charge || 0;
       });
 
-      addTableRow(dt, "Selection count", selection.length);
-      addTableRow(dt, "Unparameterised", uas.length);
-      addTableRow(dt, "Parameterised", selection.length - uas.length);
-      addTableRow(dt, "Total charge", $ext.array.sum(cs));
+      $ext.dom.addTableRow(dt, "Selection count", selection.length);
+      $ext.dom.addTableRow(dt, "Unparameterised", uas.length);
+      $ext.dom.addTableRow(dt, "Parameterised", selection.length - uas.length);
+      $ext.dom.addTableRow(dt, "Total charge", $ext.array.sum(cs));
     }
 
     this.atomDetails.appendChild(dt);
@@ -367,10 +358,11 @@ OFraMP.prototype = {
 
           // TODO
           var m = _this.mv.molecule.find(molecule.dataStr.split(''))[0];
+          var charges = {};
           $ext.each(m, function(atom, i) {
-            atom.previewCharge = molecule.atoms.get(i + 1).charge;
+            charges[atom.id] = molecule.atoms.get(i + 1).charge;
           });
-          _this.redraw();
+          _this.mv.previewCharges(charges);
         }, 0);
       });
       this.relatedFragmentViewers.push(mv);
@@ -378,14 +370,18 @@ OFraMP.prototype = {
       $ext.dom.onMouseClick(ab, function() {
         // TODO
         var m = _this.mv.molecule.find(mv.molecule.dataStr.split(''))[0];
+        var charges = {};
         $ext.each(m, function(atom, i) {
-          atom.charge = mv.molecule.atoms.get(i + 1).charge;
+          charges[atom.id] = mv.molecule.atoms.get(i + 1).charge;
         });
-        _this.mv.molecule.setSelected([]);
+        _this.mv.setCharges(charges);
+
         _this.mv.molecule.dehighlight();
-        _this.hideSelectionDetails();
-        _this.hideRelatedFragments();
+        _this.mv.molecule.setSelected([]);
+        _this.mv.afterSelect();
         _this.redraw();
+
+        _this.hideRelatedFragments();
       }, 0);
     }, this);
 

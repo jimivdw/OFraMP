@@ -32,8 +32,9 @@ $ext.extend($ext, {
      * Format a number to have bl characters berfore the comma, and fl after it.
      */
     format: function(num, bl, fl) {
-      var o_str = "" + num;
+      var o_str = "" + Math.abs(num);
       var parts = o_str.split(".");
+      var sign = num < 0 ? "-" : "";
       var base = parts[0] || "";
       var frac = parts[1] || "";
       var exp = 0;
@@ -59,7 +60,7 @@ $ext.extend($ext, {
         }
       }
 
-      var f_str = base;
+      var f_str = sign + base;
       if(frac.length > 0) {
         f_str += "." + frac;
       }

@@ -223,17 +223,24 @@ html, body {
 
 #atom_details table {
     width: 230px;
+}
+
+.border_box table {
     margin: 3px 0;
     border-spacing: 0px;
     border-collapse: collapse;
 }
 
-#atom_details tr:nth-child(even) {
+.border_box tr:nth-child(even) {
     background-color: #EEE;
 }
 
-#atom_details th, #atom_details td {
+.border_box th, .border_box td {
     padding: 3px 2px;
+}
+
+.border_box th {
+    text-align: left;
 }
 
 #atom_details th {
