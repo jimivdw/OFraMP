@@ -10,7 +10,9 @@ var ATOM_STATUSES = {
   normal: 0,
   hover: 1,
   selected: 2,
-  highlighted: 4
+  info: 4,
+  warning: 8,
+  error: 16
 };
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
@@ -87,14 +89,18 @@ var DEFAULT_SETTINGS = {
       0: 1,
       1: 3,
       2: 3,
-      4: 3
+      4: 3,
+      8: 3,
+      16: 3
     },
     borderColor: "rgb( 48, 48, 48)",
     bgColors: {
       0: "rgb(255, 255, 255)",
       1: "rgb(204, 166,  40)",
       2: "rgb(203,  83,  73)",
-      4: "rgb( 80, 169,  75)"
+      4: "rgb( 80, 169,  75)",
+      8: "rgb(205, 119,  22)",
+      16: "rgb(147, 85, 126)"
     }
   },
 

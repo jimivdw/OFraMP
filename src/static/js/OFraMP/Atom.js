@@ -377,15 +377,16 @@ Atom.prototype = {
   /*
    * Highlight this atom.
    */
-  highlight: function() {
-    this.status |= ATOM_STATUSES.highlighted;
+  highlight: function(status) {
+    status = status || ATOM_STATUSES.info;
+    this.status |= status;
   },
 
   /*
    * Remove highlight from this atom.
    */
   dehighlight: function() {
-    this.status &= ~ATOM_STATUSES.highlighted;
+    this.status &= (ATOM_STATUSES.hover | ATOM_STATUSES.selected);
   },
 
   /*
