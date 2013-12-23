@@ -274,6 +274,23 @@ html, body {
     background-color: #DDD;
 }
 
+#charge_edit {
+    padding: 2px;
+    visibility: hidden;
+}
+
+#charge_edit table {
+    width: 220px;
+}
+
+#charge_edit input {
+    width: 100px;
+}
+
+#charge_edit button {
+    width: 220px;
+}
+
 .fragment button {
     position: absolute;
     width: 110px;

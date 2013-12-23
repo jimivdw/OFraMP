@@ -248,7 +248,9 @@ OFraMP.prototype = {
     if(atom) {
       $ext.dom.addTableRow(dt, "ID", atom.id);
       $ext.dom.addTableRow(dt, "Element", atom.element);
-      $ext.dom.addTableRow(dt, "Charge", atom.charge || "unknown");
+      var cc = document.createElement('span');
+      cc.appendChild(document.createTextNode(atom.charge || "unknown"));
+      $ext.dom.addTableRow(dt, "Charge", cc);
     } else {
       // Get the unparameterised atoms
       var uas = $ext.array.filter(selection, function(atom) {
@@ -270,46 +272,63 @@ OFraMP.prototype = {
     if(atom) {
       var ced = document.createElement('div');
       ced.id = "charge_edit";
+      ced.className = "border_box";
       ced.style.height = "0px";
-      ced.style.visibility = "hidden";
 
       var cet = document.createElement('table');
       $ext.dom.addTableRow(cet, "Used fragments", "TODO");
       var ceb = document.createElement('input');
       ceb.value = atom.charge || "";
       $ext.dom.addTableRow(cet, "New charge", ceb);
-      ced.appendChild(cet);
 
       var acb = document.createElement('button');
       acb.className = "border_box";
       acb.appendChild(document.createTextNode("Apply charge"));
-      ced.appendChild(acb);
-      $ext.dom.onMouseClick(acb, function() {
-        // TODO validate!
-        atom.charge = ceb.value;
-        _this.redraw();
-      });
-
-      this.atomDetails.appendChild(ced);
 
       var ecb = document.createElement('button');
       ecb.className = "border_box";
       ecb.appendChild(document.createTextNode("Edit charge"));
-      this.atomDetails.appendChild(ecb);
-      $ext.dom.onMouseClick(ecb, function() {
+
+      function toggleChargeEdit() {
         if(ced.style.visibility === "visible") {
           ced.style.height = "0px";
           ced.style.visibility = "hidden";
+          $ext.dom.clear(ecb);
+          ecb.appendChild(document.createTextNode("Edit charge"));
+          _this.atomDetails.insertBefore(ecb, ffb);
         } else {
           ced.style.height = "";
           ced.style.visibility = "visible";
+          $ext.dom.clear(ecb);
+          ecb.appendChild(document.createTextNode("Cancel"));
+          ced.appendChild(ecb);
         }
-      }, 0);
+      }
+
+      ced.appendChild(cet);
+      ced.appendChild(acb);
+      this.atomDetails.appendChild(ced);
+
+      $ext.dom.onMouseClick(acb, function() {
+        // TODO validate!
+        atom.charge = ceb.value || undefined;
+        $ext.dom.clear(cc);
+        cc.appendChild(document.createTextNode(atom.charge || "unknown"));
+        _this.redraw();
+
+        toggleChargeEdit();
+      });
     }
 
     var ffb = document.createElement('button');
     ffb.className = "border_box";
     ffb.appendChild(document.createTextNode("Find matching fragments"));
+
+    if(atom) {
+      this.atomDetails.appendChild(ecb);
+      $ext.dom.onMouseClick(ecb, toggleChargeEdit, 0);
+    }
+
     this.atomDetails.appendChild(ffb);
     $ext.dom.onMouseClick(ffb, function() {
       _this.mv.getMatchingFragments();
