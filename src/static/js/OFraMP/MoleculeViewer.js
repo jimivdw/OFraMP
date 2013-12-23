@@ -425,7 +425,6 @@ MoleculeViewer.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
-      console.log(atom, rem, charges)
       atom.charge = rc.value;
       atom.previewCharge = undefined;
       _this.oframp.hidePopup();

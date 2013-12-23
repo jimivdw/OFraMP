@@ -345,14 +345,15 @@ OFraMP.prototype = {
       $ext.dom.onMouseClick(ab, function() {
         // TODO
         var m = _this.mv.molecule.find(mv.molecule.dataStr.split(''))[0];
+        _this.mv.molecule.dehighlight();
+        _this.mv.molecule.setSelected([]);
+
         var charges = {};
         $ext.each(m, function(atom, i) {
           charges[atom.id] = mv.molecule.atoms.get(i + 1).charge;
         });
         _this.mv.setCharges(charges);
 
-        _this.mv.molecule.dehighlight();
-        _this.mv.molecule.setSelected([]);
         _this.mv.afterSelect();
         _this.redraw();
 
@@ -370,6 +371,9 @@ OFraMP.prototype = {
   },
 
   getMoleculeCutout: function(x, y, sw, sh, width, height) {
+    // Redraw first to make sure no pending changes are ignored
+    this.redraw();
+
     var c = document.createElement('canvas');
     c.width = width;
     c.height = height;
