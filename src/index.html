@@ -110,9 +110,9 @@
         }
 
         var controlsInitialized = false;
+        var controls = document.getElementById("controls");
+        var toggle = document.getElementById("controls_toggle");
         function initControls() {
-          var controls = document.getElementById("controls");
-          var toggle = document.getElementById("controls_toggle");
           toggle.style.visibility = "visible";
 
           $ext.dom.onMouseOver(controls, function() {
@@ -143,8 +143,18 @@
 
 
         $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
+          if (controlsInitialized) {
+            controls.style.display = "none";
+            toggle.style.display = "none";
+          }
+        });
+
+        $ext.dom.addEventListener(oframp.container, 'moleculedisplayed', function() {
           if (!controlsInitialized) {
             initControls();
+          } else {
+            toggle.style.display = "block";
+            controls.style.display = "block";
           }
         });
       };

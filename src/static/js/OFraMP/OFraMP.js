@@ -23,6 +23,7 @@ OFraMP.prototype = {
 
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
+  moleculeDisplayedEvent: new Event('moleculedisplayed'),
 
   __init: function(containerID, settings) {
     this.container = document.getElementById(containerID);
@@ -181,7 +182,10 @@ OFraMP.prototype = {
     var sb = document.createElement('button');
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
-      _this.mv.showMolecule(ta.value);
+      _this.mv.showMolecule(ta.value, function() {
+        _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+      });
+
       if(!_this.mv.molecule) {
         _this.mv.setupInteraction();
         _this.__initMP();
