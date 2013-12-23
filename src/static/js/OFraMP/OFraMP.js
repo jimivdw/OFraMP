@@ -220,6 +220,8 @@ OFraMP.prototype = {
   },
 
   showSelectionDetails: function(selection) {
+    var _this = this;
+
     $ext.dom.clear(this.atomDetails);
     if(selection.length === 1) {
       var atom = selection[0];
@@ -265,25 +267,53 @@ OFraMP.prototype = {
 
     this.atomDetails.appendChild(dt);
 
+    if(atom) {
+      var ced = document.createElement('div');
+      ced.id = "charge_edit";
+      ced.style.height = "0px";
+      ced.style.visibility = "hidden";
+
+      var cet = document.createElement('table');
+      $ext.dom.addTableRow(cet, "Used fragments", "TODO");
+      var ceb = document.createElement('input');
+      ceb.value = atom.charge || "";
+      $ext.dom.addTableRow(cet, "New charge", ceb);
+      ced.appendChild(cet);
+
+      var acb = document.createElement('button');
+      acb.className = "border_box";
+      acb.appendChild(document.createTextNode("Apply charge"));
+      ced.appendChild(acb);
+      $ext.dom.onMouseClick(acb, function() {
+        // TODO validate!
+        atom.charge = ceb.value;
+        _this.redraw();
+      });
+
+      this.atomDetails.appendChild(ced);
+
+      var ecb = document.createElement('button');
+      ecb.className = "border_box";
+      ecb.appendChild(document.createTextNode("Edit charge"));
+      this.atomDetails.appendChild(ecb);
+      $ext.dom.onMouseClick(ecb, function() {
+        if(ced.style.visibility === "visible") {
+          ced.style.height = "0px";
+          ced.style.visibility = "hidden";
+        } else {
+          ced.style.height = "";
+          ced.style.visibility = "visible";
+        }
+      }, 0);
+    }
+
     var ffb = document.createElement('button');
     ffb.className = "border_box";
     ffb.appendChild(document.createTextNode("Find matching fragments"));
     this.atomDetails.appendChild(ffb);
-    var _this = this;
     $ext.dom.onMouseClick(ffb, function() {
       _this.mv.getMatchingFragments();
     }, 0);
-
-    if(atom) {
-      var ecb = document.createElement('button');
-      ecb.className = "border_box";
-      ecb.disabled = "disabled";
-      ecb.appendChild(document.createTextNode("Edit charge"));
-      this.atomDetails.appendChild(ecb);
-      $ext.dom.onMouseClick(ecb, function() {
-        alert("TODO =)");
-      }, 0);
-    }
 
     this.atomDetails.parentElement.style.visibility = "visible";
     this.atomDetails.parentElement.style.opacity = "1.0";
