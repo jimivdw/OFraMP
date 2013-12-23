@@ -29,7 +29,8 @@ Atom.prototype = {
     this.elementID = elementID;
     this.x = x;
     this.y = y;
-    this.charge = charge || list.molecule.mv.isInteractive ? undefined : Math.random();
+    this.charge = charge || list.molecule.mv.isInteractive ? undefined : Math
+        .random();
     this.status = ATOM_STATUSES.normal;
   },
 
@@ -385,8 +386,12 @@ Atom.prototype = {
   /*
    * Remove highlight from this atom.
    */
-  dehighlight: function() {
-    this.status &= (ATOM_STATUSES.hover | ATOM_STATUSES.selected);
+  dehighlight: function(status) {
+    if(status) {
+      this.status &= ~status;
+    } else {
+      this.status &= (ATOM_STATUSES.hover | ATOM_STATUSES.selected);
+    }
   },
 
   /*

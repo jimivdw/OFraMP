@@ -334,7 +334,11 @@ MoleculeViewer.prototype = {
     this.molecule.atoms.each(function(atom) {
       if(charges[atom.id]) {
         atom.previewCharge = charges[atom.id];
-        atom.highlight();
+        if(atom.charge) {
+          atom.highlight(ATOM_STATUSES.warning);
+        } else {
+          atom.highlight();
+        }
       } else {
         atom.previewCharge = undefined;
         atom.dehighlight();
@@ -355,6 +359,7 @@ MoleculeViewer.prototype = {
         } else {
           atom.charge = charges[atom.id];
           atom.previewCharge = undefined;
+          atom.dehighlight();
         }
       }
     }, this);
@@ -428,6 +433,7 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseClick(rb, function() {
       atom.charge = rc.value;
       atom.previewCharge = undefined;
+      atom.dehighlight();
       _this.oframp.hidePopup();
 
       rem.each(function(atom, i) {

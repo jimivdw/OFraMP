@@ -349,9 +349,9 @@ AtomList.prototype = {
   /*
    * Dehighlight all atoms in this list.
    */
-  dehighlight: function() {
+  dehighlight: function(status) {
     this.each(function(atom) {
-      atom.dehighlight();
+      atom.dehighlight(status);
     });
   },
 

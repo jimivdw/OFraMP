@@ -86,8 +86,8 @@ Molecule.prototype = {
     return this.atoms.setSelected(a);
   },
 
-  dehighlight: function() {
-    this.atoms.dehighlight();
+  dehighlight: function(status) {
+    this.atoms.dehighlight(status);
   },
 
   /*
@@ -201,7 +201,7 @@ Molecule.prototype = {
       throw "Find only works with Molecules or Arrays";
     }
 
-    this.dehighlight();
+    this.dehighlight(ATOM_STATUSES.info);
     $ext.each($ext.array.flatten(seqs), function(atom) {
       atom.highlight();
     });
