@@ -223,10 +223,10 @@ html, body {
 
 #atom_details table {
     width: 230px;
+    margin: 3px 0;
 }
 
 .border_box table {
-    margin: 3px 0;
     border-spacing: 0px;
     border-collapse: collapse;
 }
@@ -236,7 +236,9 @@ html, body {
 }
 
 .border_box th, .border_box td {
+    height: 30px;
     padding: 3px 2px;
+    box-sizing: border-box;
 }
 
 .border_box th {
@@ -374,7 +376,6 @@ html, body {
 #molecule_cutout, #charge_details {
     float: left;
     width: 260px;
-    margin: 5px;
     overflow: hidden;
 }
 
@@ -389,6 +390,14 @@ html, body {
 
 #charge_details select, #charge_details input {
     width: 110px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#charge_details table input:disabled {
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 #oframp > button {

@@ -363,11 +363,15 @@ MoleculeViewer.prototype = {
   __fixCharge: function(atom, rem, charges) {
     var title = "Attempting to assign a new charge to an already charged atom";
     var content = document.createElement('div');
+    var id = document.createElement('div');
+    id.style.overflow = "hidden";
+    id.style.marginBottom = "10px";
+
     var cd = document.createElement('div');
     cd.id = "molecule_cutout";
     cd.appendChild(this.oframp
         .getMoleculeCutout(atom.x, atom.y, 1, 1, 280, 160));
-    content.appendChild(cd);
+    id.appendChild(cd);
 
     var dd = document.createElement('div');
     dd.id = "charge_details";
@@ -412,7 +416,8 @@ MoleculeViewer.prototype = {
     $ext.dom.addTableRow(dt, "Solution", ss);
     $ext.dom.addTableRow(dt, "Resulting charge", rc);
     dd.appendChild(dt);
-    content.appendChild(dd);
+    id.appendChild(dd);
+    content.appendChild(id);
 
     var rb = document.createElement('button');
     rb.appendChild(document.createTextNode("Apply charge"));
