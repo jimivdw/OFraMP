@@ -349,6 +349,18 @@ OFraMP.prototype = {
         + " fragments"));
     this.relatedFragments.appendChild(ts);
 
+    if(fragments.length === 0) {
+      var ep = document.createElement('p');
+      var exp = "No matching fragments have been found, please ";
+      if(this.mv.molecule.getSelected().length > 1) {
+        exp += "select fewer atoms and try again.";
+      } else {
+        exp += "try selecting a different atom and search again";
+      }
+      ep.appendChild(document.createTextNode(exp));
+      this.relatedFragments.appendChild(ep);
+    }
+
     $ext.each(fragments, function(fragment, i) {
       var fc = document.createElement('div');
       fc.id = "fc_" + i;

@@ -183,6 +183,13 @@ Molecule.prototype = {
   },
 
   /*
+   * Get the list of selected atoms.
+   */
+  getSelected: function() {
+    return this.atoms.getSelected();
+  },
+
+  /*
    * Find all occurrences of a given sequence or Molecule in this molecule.
    */
   find: function(needle) {
