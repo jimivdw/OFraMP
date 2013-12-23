@@ -202,19 +202,15 @@ OFraMP.prototype = {
     }
     cbs.appendChild(rb);
 
-    var cb = document.createElement('button');
-    cb.style.float = 'right';
-    cb.appendChild(document.createTextNode("Cancel"));
-    cb.onclick = function() {
-      if(!_this.mv.molecule) {
-        _this.mv.showMolecule($ext.array.randomElement(PREDEFINED_MOLECULES));
-        _this.mv.setupInteraction();
-        _this.__initMP();
-        _this.container.dispatchEvent(_this.moleculeEnteredEvent);
+    if(this.mv.molecule) {
+      var cb = document.createElement('button');
+      cb.style.float = 'left';
+      cb.appendChild(document.createTextNode("Cancel"));
+      cb.onclick = function() {
+        _this.hidePopup();
       }
-      _this.hidePopup();
+      cbs.appendChild(cb);
     }
-    cbs.appendChild(cb);
 
     this.showPopup(title, content);
   },

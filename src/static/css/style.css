@@ -387,7 +387,7 @@ html, body {
 }
 
 #popup_content .controls button {
-    float: left;
+    float: right;
 }
 
 #molecule_cutout, #charge_details {
