@@ -21,7 +21,7 @@ MoleculeViewer.prototype = {
 
   __init: function(oframp, id, parentID, width, height) {
     this.oframp = oframp;
-    this.settings = oframp.settings;
+    this.settings = oframp.settings.fragment;
     this.cache = new Cache();
 
     this.id = id;
@@ -46,6 +46,7 @@ MoleculeViewer.prototype = {
   setupInteraction: function() {
     var _this = this;
 
+    this.settings = this.oframp.settings;
     this.isInteractive = true;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {

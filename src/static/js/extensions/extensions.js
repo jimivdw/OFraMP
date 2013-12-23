@@ -61,7 +61,7 @@ $ext = {
         if(v !== undefined) {
           orig[k] = v;
         }
-      });
+      }, this);
       return orig;
     }
   },
@@ -77,6 +77,30 @@ $ext = {
     }
   },
 
+  /*
+   * Create a deep copy of an object.
+   */
+  deepCopy: function(obj) {
+    if(obj === null || typeof obj !== "object") {
+      return obj;
+    }
+
+    if(obj instanceof Array) {
+      var r = new Array();
+      this.each(obj, function(v, i) {
+        r[i] = this.deepCopy(v);
+      }, this);
+      return r;
+    } else if(obj instanceof Object) {
+      var r = new Object();
+      this.each(obj, function(v, k) {
+        if(obj.hasOwnProperty(k)) {
+          r[k] = this.deepCopy(v);
+        }
+      }, this);
+      return r;
+    }
+  },
 
   /*
    * Merge two objects, either destructive (modify the current object) or

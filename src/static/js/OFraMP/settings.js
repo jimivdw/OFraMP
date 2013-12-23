@@ -343,3 +343,6 @@ var SETTINGS_OPTIONS = {
     }
   }
 };
+
+DEFAULT_SETTINGS.fragment = $ext.deepCopy(DEFAULT_SETTINGS);
+SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
