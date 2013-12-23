@@ -369,6 +369,7 @@ OFraMP.prototype = {
       var mv = new MoleculeViewer(this, "fragment_" + i, fc.id, 228, 130);
       mv.showMolecule(fragment, function(molecule) {
         molecule.bestFit();
+        this.redraw();
 
         $ext.dom.onMouseClick(this.canvas, function() {
           ab.disabled = "";
