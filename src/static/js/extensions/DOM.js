@@ -396,6 +396,14 @@ $ext.extend($ext, {
           return callback(evt);
         }
       }, useCapture);
+    },
+
+    onScroll: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "scroll", function(evt) {
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
     }
   }
 });

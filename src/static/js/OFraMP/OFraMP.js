@@ -374,41 +374,45 @@ OFraMP.prototype = {
       fc.appendChild(ab);
 
       var _this = this;
-      var mv = new MoleculeViewer(this, "fragment_" + i, fc.id, 228, 130);
-      mv.showMolecule(fragment, function(molecule) {
+      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 228, 130);
+      fv.showMolecule(fragment, function(molecule) {
         molecule.bestFit();
         this.redraw();
-
-        $ext.dom.onMouseClick(this.canvas, function() {
-          ab.disabled = "";
-
-          if(_this.activeFragment && _this.activeFragment !== molecule.mv) {
-            // Disable the currently active fragment's button
-            _this.activeFragment.canvas.parentElement
-                .getElementsByClassName("border_box")[0].disabled = "disabled";
-          }
-          _this.activeFragment = molecule.mv;
-
-          // TODO
-          var m = _this.mv.molecule.find(molecule.dataStr.split(''))[0];
-          var charges = {};
-          $ext.each(m, function(atom, i) {
-            charges[atom.id] = molecule.atoms.get(i + 1).charge;
-          });
-          _this.mv.previewCharges(charges);
-        }, 0);
       });
-      this.relatedFragmentViewers.push(mv);
+      this.relatedFragmentViewers.push(fv);
+
+      $ext.dom.onMouseClick(fv.canvas, function() {
+        if(!fv.molecule) {
+          return;
+        }
+
+        ab.disabled = "";
+
+        if(_this.activeFragment && _this.activeFragment !== fv) {
+          // Disable the currently active fragment's button
+          _this.activeFragment.canvas.parentElement
+              .getElementsByClassName("border_box")[0].disabled = "disabled";
+        }
+        _this.activeFragment = fv;
+
+        // TODO
+        var m = _this.mv.molecule.find(fv.molecule.dataStr.split(''))[0];
+        var charges = {};
+        $ext.each(m, function(atom, i) {
+          charges[atom.id] = fv.molecule.atoms.get(i + 1).charge;
+        });
+        _this.mv.previewCharges(charges);
+      }, 0);
 
       $ext.dom.onMouseClick(ab, function() {
         // TODO
-        var m = _this.mv.molecule.find(mv.molecule.dataStr.split(''))[0];
+        var m = _this.mv.molecule.find(fv.molecule.dataStr.split(''))[0];
         _this.mv.molecule.dehighlight(ATOM_STATUSES.preview);
         _this.mv.molecule.setSelected([]);
 
         var charges = {};
         $ext.each(m, function(atom, i) {
-          charges[atom.id] = mv.molecule.atoms.get(i + 1).charge;
+          charges[atom.id] = fv.molecule.atoms.get(i + 1).charge;
         });
         _this.mv.setCharges(charges);
 
