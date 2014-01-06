@@ -348,50 +348,50 @@ Atom.prototype = {
   },
 
   /*
+   * Set the highlight for this atom.
+   */
+  setHighlight: function(highlight) {
+    this.status = highlight;
+  },
+
+  addHighlight: function(highlight) {
+    this.status |= highlight;
+  },
+
+  removeHighlight: function(highlight) {
+    this.status &= ~highlight;
+  },
+
+  resetHighlight: function() {
+    this.setHighlight(ATOM_STATUSES.normal);
+  },
+
+  /*
    * Hover this atom.
    */
   hover: function() {
-    this.status |= ATOM_STATUSES.hover;
+    this.addHighlight(ATOM_STATUSES.hover);
   },
 
   /*
    * Remove hover from this atom.
    */
   dehover: function() {
-    this.status &= ~ATOM_STATUSES.hover;
+    this.removeHighlight(ATOM_STATUSES.hover);
   },
 
   /*
    * Select this atom.
    */
   select: function() {
-    this.status |= ATOM_STATUSES.selected;
+    this.addHighlight(ATOM_STATUSES.selected);
   },
 
   /*
    * Deselect this atom.
    */
   deselect: function() {
-    this.status &= ~ATOM_STATUSES.selected;
-  },
-
-  /*
-   * Highlight this atom.
-   */
-  highlight: function(status) {
-    status = status || ATOM_STATUSES.info;
-    this.status |= status;
-  },
-
-  /*
-   * Remove highlight from this atom.
-   */
-  dehighlight: function(status) {
-    if(status) {
-      this.status &= ~status;
-    } else {
-      this.status &= (ATOM_STATUSES.hover | ATOM_STATUSES.selected);
-    }
+    this.removeHighlight(ATOM_STATUSES.selected);
   },
 
   /*

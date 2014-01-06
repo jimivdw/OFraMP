@@ -201,9 +201,9 @@ Molecule.prototype = {
       throw "Find only works with Molecules or Arrays";
     }
 
-    this.dehighlight(ATOM_STATUSES.info);
+    this.dehighlight(ATOM_STATUSES.preview);
     $ext.each($ext.array.flatten(seqs), function(atom) {
-      atom.highlight();
+      atom.addHighlight(ATOM_STATUSES.preview);
     });
     this.mv.redraw();
 

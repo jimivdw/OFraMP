@@ -21,7 +21,11 @@ MoleculeViewer.prototype = {
 
   __init: function(oframp, id, parentID, width, height) {
     this.oframp = oframp;
-    this.settings = oframp.settings.fragment;
+    if(oframp.mv) {
+      this.settings = oframp.settings.fragment;
+    } else {
+      this.settings = oframp.settings;
+    }
     this.cache = new Cache();
 
     this.id = id;
@@ -335,13 +339,13 @@ MoleculeViewer.prototype = {
       if(charges[atom.id]) {
         atom.previewCharge = charges[atom.id];
         if(atom.charge) {
-          atom.highlight(ATOM_STATUSES.warning);
+          atom.addHighlight(ATOM_STATUSES.conflict);
         } else {
-          atom.highlight();
+          atom.addHighlight(ATOM_STATUSES.preview);
         }
       } else {
         atom.previewCharge = undefined;
-        atom.dehighlight();
+        atom.removeHighlight(ATOM_STATUSES.preview & ATOM_STATUSES.conflict);
       }
     });
     this.redraw();
@@ -359,7 +363,7 @@ MoleculeViewer.prototype = {
         } else {
           atom.charge = charges[atom.id];
           atom.previewCharge = undefined;
-          atom.dehighlight();
+          atom.resetHighlight();
         }
       }
     }, this);
@@ -433,7 +437,7 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseClick(rb, function() {
       atom.charge = rc.value;
       atom.previewCharge = undefined;
-      atom.dehighlight();
+      atom.resetHighlight();
       _this.oframp.hidePopup();
 
       rem.each(function(atom, i) {

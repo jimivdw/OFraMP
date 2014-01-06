@@ -403,7 +403,7 @@ OFraMP.prototype = {
       $ext.dom.onMouseClick(ab, function() {
         // TODO
         var m = _this.mv.molecule.find(mv.molecule.dataStr.split(''))[0];
-        _this.mv.molecule.dehighlight(ATOM_STATUSES.info);
+        _this.mv.molecule.dehighlight(ATOM_STATUSES.preview);
         _this.mv.molecule.setSelected([]);
 
         var charges = {};

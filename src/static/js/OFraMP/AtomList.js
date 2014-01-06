@@ -351,7 +351,11 @@ AtomList.prototype = {
    */
   dehighlight: function(status) {
     this.each(function(atom) {
-      atom.dehighlight(status);
+      if(status) {
+        atom.removeHighlight(status);
+      } else {
+        atom.resetHighlight();
+      }
     });
   },
 
