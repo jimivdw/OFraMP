@@ -212,30 +212,9 @@ MoleculeViewer.prototype = {
       }
     };
 
-    // TODO consider refactoring
-    var ot = this.canvas.offsetTop;
-    var rb = document.getElementById("rightbar");
-    var ph = rb.clientHeight;
-    var pt = rb.scrollTop;
-    if(this.isInteractive || ot < ph + pt) {
-      xhr.open("POST", this.settings.oapoc.url, true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.send("fmt=smiles&data=" + encodeURIComponent(dataStr));
-    } else {
-      $ext.dom.onScroll(rb, function() {
-        if(this.molecule) {
-          return;
-        }
-
-        pt = rb.scrollTop;
-        if(ot < ph + pt) {
-          xhr.open("POST", _this.settings.oapoc.url, true);
-          xhr.setRequestHeader("Content-type",
-              "application/x-www-form-urlencoded");
-          xhr.send("fmt=smiles&data=" + encodeURIComponent(dataStr));
-        }
-      });
-    }
+    xhr.open("POST", this.settings.oapoc.url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("fmt=smiles&data=" + encodeURIComponent(dataStr));
   },
 
   /*

@@ -375,11 +375,38 @@ OFraMP.prototype = {
 
       var _this = this;
       var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 228, 130);
-      fv.showMolecule(fragment, function(molecule) {
-        molecule.bestFit();
-        this.redraw();
-      });
       this.relatedFragmentViewers.push(fv);
+
+      var load = function() {
+        fv.showMolecule(fragment, function(molecule) {
+          molecule.bestFit();
+          fv.redraw();
+        });
+      };
+
+      var ot = fv.canvas.offsetTop;
+      var rb = this.relatedFragments.parentElement;
+      var ph = rb.clientHeight;
+      var pt = rb.scrollTop;
+      if(ot < ph + pt && ot > pt) {
+        load();
+      } else {
+        var x = function() {
+          console.log("SADSADSASA");
+          if(fv.molecule) {
+            return;
+          }
+
+          pt = rb.scrollTop;
+          if(ot < ph + pt && ot > pt) {
+            load();
+          }
+        };
+        $ext.dom.onScroll(rb, x);
+        //$ext.dom.onScroll(rb, function() {
+        //  $ext.dom.removeEventListener(rb, "scroll", x);
+        //});
+      }
 
       $ext.dom.onMouseClick(fv.canvas, function() {
         if(!fv.molecule) {

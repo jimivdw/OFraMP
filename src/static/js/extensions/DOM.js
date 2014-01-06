@@ -1,5 +1,7 @@
 $ext.extend($ext, {
   dom: {
+    __listeners: {},
+
     /*
      * Remove all child elements from the given elem.
      */
@@ -12,6 +14,33 @@ $ext.extend($ext, {
         }
       });
       elem.textContent = "";
+    },
+
+    getXPath: function(elem) {
+      if(!elem) {
+        return "";
+      }
+
+      var p = elem.parentElement;
+      var xp = this.getXPath(p) + "/" + (elem.tagName || "");
+
+      if(p) {
+        var s = p.getElementsByTagName(elem.tagName);
+      } else {
+        var s = [];
+      }
+      if(s.length > 1) {
+        var i = 0;
+        $ext.each(s, function(v, k) {
+          if(v === elem) {
+            i = k;
+            return $ext.BREAK;
+          }
+        });
+        return xp + "[" + i + "]";
+      } else {
+        return xp;
+      }
     },
 
     addTableRow: function(table, label, value) {
@@ -48,9 +77,22 @@ $ext.extend($ext, {
     /*
      * Fairly cross-browser function for adding an eventListener to an element.
      */
-    addEventListener: function(elem, type, callback, useCapture) {
+    addEventListener: function(elem, type, callback, useCapture, origCallback) {
       elem = elem || window;
       useCapture = useCapture || false;
+      origCallback = origCallback || callback;
+
+      if(!elem.id) {
+        elem.id = this.getXPath(elem);
+      }
+      
+      if(!this.__listeners[elem.id]) {
+        this.__listeners[elem.id] = new Object();
+      }
+      if(!this.__listeners[elem.id][type]) {
+        this.__listeners[elem.id][type] = new Object();
+      }
+      this.__listeners[elem.id][type][origCallback] = callback;
 
       if(elem.addEventListener) {
         return elem.addEventListener(type, callback, useCapture);
@@ -67,10 +109,30 @@ $ext.extend($ext, {
       elem = elem || window;
       useCapture = useCapture || false;
 
+      var el = this.__listeners[elem.id];
+      if(el && el[type] && el[type][callback]) {
+        callback = el[type][callback];
+      }
+
       if(elem.removeEventListener) {
         return elem.removeEventListener(type, callback, useCapture);
       } else {
         return elem.detachEvent("on" + type, callback, useCapture);
+      }
+    },
+
+    /*
+     * Fairly cross-browser function for removing all eventListeners from an
+     * element.
+     */
+    removeEventListeners: function(elem, type, useCapture) {
+      elem = elem || window;
+      useCapture = useCapture || false;
+
+      if(this.__listeners[elem.id]) {
+        $ext.each(this.__listeners[elem.id][type], function(callback) {
+          this.removeEventListener(elem, type, callback, useCapture);
+        }, this);
       }
     },
 
@@ -205,7 +267,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     /*
@@ -217,7 +279,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     /*
@@ -235,7 +297,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     /*
@@ -253,7 +315,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     /*
@@ -276,7 +338,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     /*
@@ -353,7 +415,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback($ext.merge(evt, delta, true));
         }
-      }, useCapture);
+      }, useCapture, callback);
 
       function _onMouseDown(evt) {
         window.__mouseDown = true;
@@ -395,7 +457,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     },
 
     onScroll: function(elem, callback, useCapture) {
@@ -403,7 +465,7 @@ $ext.extend($ext, {
         if(callback instanceof Function) {
           return callback(evt);
         }
-      }, useCapture);
+      }, useCapture, callback);
     }
   }
 });
