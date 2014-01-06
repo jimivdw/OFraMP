@@ -3,6 +3,15 @@ $ext.extend($ext, {
     EPSILON: 1e-3,
 
     /*
+     * Check if a variable is numeric.
+     * 
+     * From: http://stackoverflow.com/a/1830844
+     */
+    isNumeric: function(num) {
+      return !isNaN(parseFloat(num)) && isFinite(num);
+    },
+
+    /*
      * Determine if a number is inbetween two other numbers.
      */
     between: function(num, a, b) {
@@ -32,6 +41,10 @@ $ext.extend($ext, {
      * Format a number to have bl characters berfore the comma, and fl after it.
      */
     format: function(num, bl, fl) {
+      if(!this.isNumeric(num)) {
+        return num;
+      }
+
       var o_str = "" + Math.abs(num);
       var parts = o_str.split(".");
       var sign = num < 0 ? "-" : "";

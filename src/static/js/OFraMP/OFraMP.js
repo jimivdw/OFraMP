@@ -245,22 +245,24 @@ OFraMP.prototype = {
       $ext.dom.addTableRow(dt, "ID", atom.id);
       $ext.dom.addTableRow(dt, "Element", atom.element);
       var cc = document.createElement('span');
-      cc.appendChild(document.createTextNode(atom.charge || "unknown"));
+      var charge = $ext.number.format(atom.charge, 1, 3);
+      cc.appendChild(document.createTextNode(charge || "unknown"));
       $ext.dom.addTableRow(dt, "Charge", cc);
     } else {
       // Get the unparameterised atoms
       var uas = $ext.array.filter(selection, function(atom) {
         return atom.charge === undefined;
       });
-      // Get the charged of all atoms
+      // Get the charge of all atoms
       var cs = $ext.array.map(selection, function(atom) {
-        return atom.charge || 0;
+        return atom.charge;
       });
 
       $ext.dom.addTableRow(dt, "Selection count", selection.length);
       $ext.dom.addTableRow(dt, "Unparameterised", uas.length);
       $ext.dom.addTableRow(dt, "Parameterised", selection.length - uas.length);
-      $ext.dom.addTableRow(dt, "Total charge", $ext.array.sum(cs));
+      var charge = $ext.number.format($ext.array.sum(cs), 1, 3);
+      $ext.dom.addTableRow(dt, "Total charge", charge || "unknown");
     }
 
     this.atomDetails.appendChild(dt);
@@ -274,7 +276,7 @@ OFraMP.prototype = {
       var cet = document.createElement('table');
       $ext.dom.addTableRow(cet, "Used fragments", "TODO");
       var ceb = document.createElement('input');
-      ceb.value = atom.charge || "";
+      ceb.value = $ext.number.format(atom.charge, 1, 3) || "";
       $ext.dom.addTableRow(cet, "New charge", ceb);
 
       var acb = document.createElement('button');
@@ -309,7 +311,8 @@ OFraMP.prototype = {
         // TODO validate!
         atom.charge = ceb.value || undefined;
         $ext.dom.clear(cc);
-        cc.appendChild(document.createTextNode(atom.charge || "unknown"));
+        var charge = $ext.number.format(atom.charge, 1, 3);
+        cc.appendChild(document.createTextNode(charge || "unknown"));
         _this.redraw();
 
         toggleChargeEdit();

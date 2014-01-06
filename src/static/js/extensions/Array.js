@@ -24,9 +24,15 @@ $ext.extend($ext, {
      * Get the sum of all values of an Array.
      */
     sum: function(arr) {
-      var sum = 0;
+      var sum;
       $ext.each(arr, function(e) {
-        sum += e;
+        if($ext.number.isNumeric(e)) {
+          if($ext.number.isNumeric(sum)) {
+            sum += e;
+          } else {
+            sum = e;
+          }
+        }
       });
       return sum;
     },

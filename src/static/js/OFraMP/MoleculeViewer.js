@@ -404,23 +404,25 @@ MoleculeViewer.prototype = {
     $ext.dom.addSelectOption(ss, "custom", "Custom value");
     $ext.dom.addEventListener(ss, 'change', function() {
       rc.disabled = "disabled";
+      var value = rc.value;
       switch(ss.value) {
         case "current":
-          rc.value = atom.charge;
+          value = atom.charge;
           break;
 
         case "other":
-          rc.value = charges[atom.id];
+          value = charges[atom.id];
           break;
 
         case "average":
-          rc.value = (atom.charge + charges[atom.id]) / 2;
+          value = (atom.charge + charges[atom.id]) / 2;
           break;
 
         case "custom":
           rc.disabled = "";
           break;
       }
+      rc.value = $ext.number.format(value, 1, 3);
     });
 
     $ext.dom.addTableRow(dt, "Solution", ss);
@@ -435,7 +437,7 @@ MoleculeViewer.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
-      atom.charge = rc.value;
+      atom.charge = parseFloat(rc.value) || undefined;
       atom.previewCharge = undefined;
       atom.resetHighlight();
       _this.oframp.hidePopup();
