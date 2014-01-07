@@ -84,7 +84,7 @@ MoleculeViewer.prototype = {
         } else if(_this.molecule.setSelected(s)) {
           _this.redraw();
         }
-        _this.afterSelect();
+        _this.oframp.selectionChanged();
       }
     }, 0);
 
@@ -120,7 +120,7 @@ MoleculeViewer.prototype = {
       if(!_this.overlayShowing) {
         _this.selectionArea = undefined;
         _this.redraw();
-        _this.afterSelect();
+        _this.oframp.selectionChanged();
       }
     }, 2);
 
@@ -137,20 +137,6 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
-  },
-
-  /*
-   * Handler to be called after a change in the atom selection.
-   */
-  afterSelect: function() {
-    var selection = this.molecule.atoms.getSelected();
-    if(selection && selection.length > 0) {
-      this.oframp.findFragmentsButton.disabled = "";
-      this.oframp.showSelectionDetails(selection);
-    } else {
-      this.oframp.findFragmentsButton.disabled = "disabled";
-      this.oframp.hideSelectionDetails();
-    }
   },
 
   setCanvasSize: function(width, height) {
@@ -218,53 +204,6 @@ MoleculeViewer.prototype = {
   },
 
   /*
-   * Get the matching fragments with the selection of the molecule.
-   */
-  getMatchingFragments: function() {
-    var selection = this.molecule.atoms.getSelected();
-    if(selection.length === 0) {
-      alert("No atoms have been selected.");
-      return false;
-    }
-
-    var selectionIDs = $ext.array.map(selection, function(atom) {
-      return atom.id;
-    });
-    var tree = this.molecule.atoms.getTree(selection[0]);
-    var selectionTree = tree.filter(function(node) {
-      return selectionIDs.indexOf(node.key) !== -1;
-    });
-
-    var connected = $ext.each(selection, function(atom) {
-      var f = selectionTree.findNode(atom.id);
-      if(!f) {
-        return false;
-      }
-    });
-
-    if(connected === false) {
-      alert("The atoms in the selection are not connected.");
-      return false;
-    }
-
-    var queryJSON = JSON.stringify({
-      needle: $ext.array.map(selection, function(atom) {
-        return atom.id;
-      }),
-      molecule: this.molecule.getSimpleJSON()
-    });
-
-    console.log(queryJSON);
-    // TODO!!
-    var fragments = new Array();
-    var r = Math.round(Math.random() * 10);
-    for( var i = 0; i < r; i++) {
-      fragments.push("OCO");
-    }
-    this.oframp.showRelatedFragments(fragments);
-  },
-
-  /*
    * Load and show the molecule represented by dataStr (currently in SMILES).
    * 
    * Once the molecule has been loaded execute the optional success function;
@@ -291,7 +230,7 @@ MoleculeViewer.prototype = {
       this.hideOverlay();
     }
 
-    msg = msg || this.overlayMsg;
+    msg = msg || this.overlayMessage;
     status = status || this.overlayStatus;
 
     var ctx = this.ctx;
@@ -316,7 +255,7 @@ MoleculeViewer.prototype = {
     this.canvas.style.cursor = this.settings.cursor.normal;
 
     this.overlayShowing = true;
-    this.overlayMsg = msg;
+    this.overlayMessage = msg;
     this.overlayStatus = status;
   },
 
@@ -358,7 +297,8 @@ MoleculeViewer.prototype = {
     this.molecule.atoms.each(function(atom, i) {
       if(charges[atom.id]) {
         if(atom.charge) {
-          this.__fixCharge(atom, this.molecule.atoms.slice(i + 1), charges);
+          this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
+              .slice(i + 1), charges);
           return $ext.BREAK;
         } else {
           atom.charge = charges[atom.id];
@@ -368,94 +308,6 @@ MoleculeViewer.prototype = {
       }
     }, this);
     this.redraw();
-  },
-
-  __fixCharge: function(atom, rem, charges) {
-    var title = "Attempting to assign a new charge to an already charged atom";
-    var content = document.createElement('div');
-    var id = document.createElement('div');
-    id.style.overflow = "hidden";
-    id.style.marginBottom = "10px";
-
-    var cd = document.createElement('div');
-    cd.id = "molecule_cutout";
-    cd.appendChild(this.oframp
-        .getMoleculeCutout(atom.x, atom.y, 1, 1, 280, 160));
-    id.appendChild(cd);
-
-    var dd = document.createElement('div');
-    dd.id = "charge_details";
-    var dt = document.createElement('table');
-    $ext.dom.addTableRow(dt, "Atom ID", atom.id);
-    $ext.dom.addTableRow(dt, "Element", atom.element);
-    $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(atom.charge,
-        1, 3));
-    $ext.dom.addTableRow(dt, "Proposed charge", $ext.number.format(
-        charges[atom.id], 1, 3));
-
-    var rc = document.createElement('input');
-    rc.disabled = "disabled";
-    rc.value = $ext.number.format(atom.charge, 1, 3);
-
-    var ss = document.createElement('select');
-    $ext.dom.addSelectOption(ss, "current", "Current value");
-    $ext.dom.addSelectOption(ss, "other", "Other value");
-    $ext.dom.addSelectOption(ss, "average", "Average value");
-    $ext.dom.addSelectOption(ss, "custom", "Custom value");
-    $ext.dom.addEventListener(ss, 'change', function() {
-      rc.disabled = "disabled";
-      var value = rc.value;
-      switch(ss.value) {
-        case "current":
-          value = atom.charge;
-          break;
-
-        case "other":
-          value = charges[atom.id];
-          break;
-
-        case "average":
-          value = (atom.charge + charges[atom.id]) / 2;
-          break;
-
-        case "custom":
-          rc.disabled = "";
-          break;
-      }
-      rc.value = $ext.number.format(value, 1, 3);
-    });
-
-    $ext.dom.addTableRow(dt, "Solution", ss);
-    $ext.dom.addTableRow(dt, "Resulting charge", rc);
-    dd.appendChild(dt);
-    id.appendChild(dd);
-    content.appendChild(id);
-
-    var rb = document.createElement('button');
-    rb.appendChild(document.createTextNode("Apply charge"));
-    content.appendChild(rb);
-
-    var _this = this;
-    $ext.dom.onMouseClick(rb, function() {
-      atom.charge = parseFloat(rc.value) || undefined;
-      atom.previewCharge = undefined;
-      atom.resetHighlight();
-      _this.oframp.hidePopup();
-
-      rem.each(function(atom, i) {
-        if(charges[atom.id]) {
-          if(atom.charge) {
-            this.__fixCharge(atom, rem.slice(i + 1), charges);
-            return $ext.BREAK;
-          } else {
-            atom.charge = charges[atom.id];
-            atom.previewCharge = undefined;
-          }
-        }
-      }, _this);
-      _this.redraw();
-    }, 0);
-    this.oframp.showPopup(title, content);
   },
 
   /*
