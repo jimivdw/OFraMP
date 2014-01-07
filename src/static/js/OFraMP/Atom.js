@@ -463,7 +463,13 @@ Atom.prototype = {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
       ctx.fillStyle = s.atom.chargeColor;
-      var sc = $ext.number.format(this.previewCharge || this.charge, 1, 3);
+      var charge = this.charge;
+      if(this.previewCharge !== undefined && this.isCharged()) {
+        charge = (this.previewCharge + this.charge) / 2;
+      } else if(this.previewCharge !== undefined) {
+        charge = this.previewCharge;
+      }
+      var sc = $ext.number.format(charge, 1, 3);
       ctx.fillText(sc, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
