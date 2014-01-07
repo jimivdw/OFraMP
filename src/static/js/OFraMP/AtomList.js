@@ -94,6 +94,15 @@ AtomList.prototype = {
   },
 
   /*
+   * Get the unparameterised atoms.
+   */
+  getUnparameterised: function() {
+    return $ext.array.filter(this.atoms, function(atom) {
+      return !atom.isCharged();
+    });
+  },
+
+  /*
    * Get the AtomList represented at a tree with Atom a as the root.
    * 
    * Only take into account the atoms with aromatic bonds if arom is true.

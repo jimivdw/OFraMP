@@ -27,9 +27,9 @@ OFraMP.prototype = {
   moleculeDisplayedEvent: new Event('moleculedisplayed'),
 
   __init: function(behavior, containerID, settings) {
-    this.behavior = new behavior(this);
     this.container = document.getElementById(containerID);
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+    this.behavior = new behavior(this);
     this.__initUI();
     this.showInsertMoleculePopup();
   },
@@ -240,8 +240,8 @@ OFraMP.prototype = {
   /*
    * Get the matching fragments with the selection of the molecule.
    */
-  getMatchingFragments: function() {
-    var selection = this.mv.molecule.getSelected();
+  getMatchingFragments: function(selection) {
+    var selection = selection || this.mv.molecule.getSelected();
     if(selection.length === 0) {
       alert("No atoms have been selected.");
       return false;

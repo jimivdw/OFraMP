@@ -5,13 +5,45 @@ function SmartBehavior(oframp) {
 SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
   name: "Smart",
 
+  __init: function(oframp) {
+    this.oframp = oframp;
+    var _this = this;
+    $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
+        function() {
+          $ext.dom.remove(document.getElementById("find_fragments"));
+          var ffb = document.createElement("button");
+          ffb.id = "find_fragments";
+          ffb.className = "border_box";
+          ffb.appendChild(document.createTextNode("Start parameterising"));
+          var cc = document.getElementById("canvas_container");
+          oframp.container.insertBefore(ffb, cc);
+
+          $ext.dom.onMouseClick(ffb, function() {
+            _this.__selectAtom();
+          }, 0);
+        });
+  },
+
   showSelectionDetails: function(selection) {
     NaiveBehavior.prototype.showSelectionDetails.call(this, selection);
+  },
+
+  __selectAtom: function() {
+    var unpar = this.oframp.mv.molecule.atoms.getUnparameterised();
+    this.oframp.getMatchingFragments([unpar[0]]);
   },
 
   showRelatedFragments: function(fragments) {
     this.__fragments = fragments;
 
+    if(document.getElementById("find_fragments")) {
+      this.__initFCD();
+    }
+
+    this.__showFragment(0);
+  },
+
+  __initFCD: function() {
     $ext.dom.remove(document.getElementById("find_fragments"));
 
     var fcd = document.createElement("div");
@@ -46,21 +78,21 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
 
       _this.oframp.selectionChanged();
       _this.oframp.redraw();
-    });
+
+      _this.__selectAtom();
+    }, 0);
 
     $ext.dom.onMouseClick(rfb, function() {
       if(!rfb.disabled) {
         _this.__showFragment(_this.__currentFragment + 1);
       }
-    });
+    }, 0);
 
     $ext.dom.onMouseClick(pfb, function() {
       if(!pfb.disabled) {
         _this.__showFragment(_this.__currentFragment - 1);
       }
-    });
-
-    this.__showFragment(0);
+    }, 0);
   },
 
   __showFragment: function(i) {
