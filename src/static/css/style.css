@@ -417,7 +417,7 @@ html, body {
     border: 0;
 }
 
-#oframp > button {
+#oframp > button, #fragment_controls {
     position: absolute;
     top: 10px;
     left: 50%;
@@ -439,7 +439,7 @@ html, body {
     background-color: #FFF !important;
 }
 
-#oframp > button:hover {
+#oframp > button:hover, #fragment_controls button:hover {
     opacity: 1;
 }
 
@@ -451,8 +451,44 @@ html, body {
     margin-left: -230px;
 }
 
-#find_fragments {
+#find_fragments, #fragment_controls {
     margin-left: 70px;
+}
+
+#fragment_controls {
+    cursor: default;
+    opacity: 1;
+}
+
+#fragment_controls button {
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    opacity: 0.5;
+    cursor: pointer;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+#accept_fragment {
+    background-color: rgb( 80, 169,  75);
+}
+#accept_fragment:active {
+    background-color: rgb( 66, 135,  41);
+}
+
+#reject_fragment {
+    background-color: rgb(203,  83,  73);
+}
+#reject_fragment:active {
+    background-color: rgb(169,  49,  39);
+}
+
+#previous_fragment {
+    background-color: rgb( 76,  81, 178);
+}
+#previous_fragment:active {
+    background-color: rgb( 42,  47, 144);
 }
 
 .border_box {

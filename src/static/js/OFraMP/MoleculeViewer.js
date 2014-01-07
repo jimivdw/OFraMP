@@ -311,6 +311,19 @@ MoleculeViewer.prototype = {
   },
 
   /*
+   * Set the charges that are currently previewed as the real charges.
+   */
+  setPreviewCharges: function() {
+    var charges = new Object();
+    this.molecule.atoms.each(function(atom, i) {
+      if(atom.previewCharge !== undefined) {
+        charges[atom.id] = atom.previewCharge;
+      }
+    }, this);
+    this.setCharges(charges);
+  },
+
+  /*
    * Fix overlapping bonds and atoms.
    */
   deoverlap: function() {

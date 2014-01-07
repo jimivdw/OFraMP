@@ -118,10 +118,12 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
       $ext.dom.onMouseClick(ecb, toggleChargeEdit, 0);
     }
 
-    this.oframp.atomDetails.appendChild(ffb);
-    $ext.dom.onMouseClick(ffb, function() {
-      _this.oframp.getMatchingFragments();
-    }, 0);
+    if(this instanceof NaiveBehavior) {
+      this.oframp.atomDetails.appendChild(ffb);
+      $ext.dom.onMouseClick(ffb, function() {
+        _this.oframp.getMatchingFragments();
+      }, 0);
+    }
 
     this.oframp.showSelectionDetails();
   },

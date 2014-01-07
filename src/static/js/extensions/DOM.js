@@ -1,6 +1,13 @@
 $ext.extend($ext, {
   dom: {
     /*
+     * Remove an element from the DOM.
+     */
+    remove: function(elem) {
+      return elem.parentNode.removeChild(elem);
+    },
+
+    /*
      * Remove all child elements from the given elem.
      */
     clear: function(elem) {
