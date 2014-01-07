@@ -30,7 +30,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
 
   __selectAtom: function() {
     var unpar = this.oframp.mv.molecule.atoms.getUnparameterised();
-    this.oframp.getMatchingFragments([unpar[0]]);
+    this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
   },
 
   showRelatedFragments: function(fragments) {
@@ -54,21 +54,24 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     var afb = document.createElement("button");
     afb.id = "accept_fragment";
     afb.className = "border_box";
-    afb.appendChild(document.createTextNode("Y"));
+    afb.title = "Accept fragment";
+    afb.appendChild(document.createTextNode("\u2713"));
     fcd.appendChild(afb);
     this.__afb = afb;
 
     var rfb = document.createElement("button");
     rfb.id = "reject_fragment";
     rfb.className = "border_box";
-    rfb.appendChild(document.createTextNode("N"));
+    rfb.title = "Reject fragment";
+    rfb.appendChild(document.createTextNode("\u2717"));
     fcd.appendChild(rfb);
     this.__rfb = rfb;
 
     var pfb = document.createElement("button");
     pfb.id = "previous_fragment";
     pfb.className = "border_box";
-    pfb.appendChild(document.createTextNode("R"));
+    pfb.title = "Previous fragment";
+    pfb.appendChild(document.createTextNode("\u238C"));
     fcd.appendChild(pfb);
     this.__pfb = pfb;
 
@@ -99,7 +102,9 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     this.__currentFragment = i;
     var fragment = this.__fragments[i];
     if(!fragment) {
-      alert("No fragments were found");
+      if(confirm("No fragments were found, select a different atom?")) {
+        this.__selectAtom();
+      }
       return;
     }
 
@@ -117,7 +122,11 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     });
 
     if(this.__currentFragment === 0) {
-      this.__rfb.disabled = "";
+      if(this.__fragments.length === 1) {
+        this.__rfb.disabled = "disabled";
+      } else {
+        this.__rfb.disabled = "";
+      }
       this.__pfb.disabled = "disabled";
     } else if(this.__currentFragment === this.__fragments.length - 1) {
       this.__rfb.disabled = "disabled";
@@ -129,6 +138,20 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
   },
 
   showChargeFixer: function(atom, rem, charges) {
-    throw "Not implemented";
+    atom.charge = (atom.charge + charges[atom.id]) / 2;
+    atom.previewCharge = undefined;
+    atom.resetHighlight();
+
+    rem.each(function(atom, i) {
+      if(charges[atom.id]) {
+        if(atom.charge) {
+          this.showChargeFixer(atom, rem.slice(i + 1), charges);
+          return $ext.BREAK;
+        } else {
+          atom.charge = charges[atom.id];
+          atom.previewCharge = undefined;
+        }
+      }
+    }, this);
   }
 });

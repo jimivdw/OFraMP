@@ -433,7 +433,7 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-#oframp > button:disabled {
+#oframp > button:disabled,  {
     opacity: 0.1 !important;
     cursor: default !important;
     background-color: #FFF !important;
@@ -466,8 +466,17 @@ html, body {
     margin: 0 5px;
     opacity: 0.5;
     cursor: pointer;
+    font-size: 26px;
+    line-height: 30px;
+    padding: 0;
+    color: #FFF;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
+}
+
+#fragment_controls button:disabled {
+    opacity: 0.1 !important;
+    cursor: default !important;
 }
 
 #accept_fragment {
@@ -480,14 +489,14 @@ html, body {
 #reject_fragment {
     background-color: rgb(203,  83,  73);
 }
-#reject_fragment:active {
+#reject_fragment:active:not(:disabled) {
     background-color: rgb(169,  49,  39);
 }
 
 #previous_fragment {
     background-color: rgb( 76,  81, 178);
 }
-#previous_fragment:active {
+#previous_fragment:active:not(:disabled) {
     background-color: rgb( 42,  47, 144);
 }
 
