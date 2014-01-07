@@ -264,12 +264,12 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
-    rc.value = $ext.number.format(atom.charge, 1, 3);
+    rc.value = $ext.number.format((atom.charge + charges[atom.id]) / 2, 1, 3);
 
     var ss = document.createElement('select');
     $ext.dom.addSelectOption(ss, "current", "Current value");
     $ext.dom.addSelectOption(ss, "other", "Other value");
-    $ext.dom.addSelectOption(ss, "average", "Average value");
+    $ext.dom.addSelectOption(ss, "average", "Average value", true);
     $ext.dom.addSelectOption(ss, "custom", "Custom value");
     $ext.dom.addEventListener(ss, 'change', function() {
       rc.disabled = "disabled";

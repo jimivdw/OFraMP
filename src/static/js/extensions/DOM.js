@@ -41,13 +41,16 @@ $ext.extend($ext, {
       table.appendChild(row);
     },
 
-    addSelectOption: function(select, value, label) {
+    addSelectOption: function(select, value, label, selected) {
       var option = document.createElement('option');
       option.value = value;
       if(label) {
         option.appendChild(document.createTextNode(label));
       } else {
         option.appendChild(document.createTextNode(value));
+      }
+      if(selected) {
+        option.selected = "selected";
       }
       select.appendChild(option);
     },
