@@ -37,12 +37,8 @@ SmartBehavior.prototype = {
   },
 
   __selectAtom: function() {
-    var unpar = this.oframp.mv.molecule.atoms.getUnparameterised();
-    if(unpar.length > 0) {
-      this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
-    } else {
-      this.parameterizationFinished();
-    }
+    var unpar = this.oframp.mv.molecule.getUnparameterized();
+    this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
   },
 
   showRelatedFragments: function(fragments) {
@@ -94,7 +90,9 @@ SmartBehavior.prototype = {
       _this.oframp.selectionChanged();
       _this.oframp.redraw();
 
-      _this.__selectAtom();
+      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+        _this.__selectAtom();
+      }
     }, 0);
 
     $ext.dom.onMouseClick(rfb, function() {
@@ -156,17 +154,24 @@ SmartBehavior.prototype = {
     atom.previewCharge = undefined;
     atom.resetHighlight();
 
+    var needsFix = false;
     rem.each(function(atom, i) {
       if(charges[atom.id]) {
         if(atom.charge) {
           this.showChargeFixer(atom, rem.slice(i + 1), charges);
+          needsFix = true;
           return $ext.BREAK;
         } else {
           atom.charge = charges[atom.id];
           atom.previewCharge = undefined;
+          atom.resetHighlight();
         }
       }
     }, this);
+
+    if(!needsFix && this.oframp.mv.molecule.getUnparameterized().length == 0) {
+      this.parameterizationFinished();
+    }
   },
 
   parameterizationFinished: function() {

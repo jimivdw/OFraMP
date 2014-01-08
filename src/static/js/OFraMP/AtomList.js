@@ -96,7 +96,7 @@ AtomList.prototype = {
   /*
    * Get the unparameterised atoms.
    */
-  getUnparameterised: function() {
+  getUnparameterized: function() {
     return $ext.array.filter(this.atoms, function(atom) {
       return !atom.isCharged();
     });

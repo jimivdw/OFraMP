@@ -190,6 +190,13 @@ Molecule.prototype = {
   },
 
   /*
+   * Get the list of unparameterised atoms.
+   */
+  getUnparameterized: function() {
+    return this.atoms.getUnparameterized();
+  },
+
+  /*
    * Find all occurrences of a given sequence or Molecule in this molecule.
    */
   find: function(needle) {

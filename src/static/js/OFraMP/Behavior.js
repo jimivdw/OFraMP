@@ -22,5 +22,9 @@ Behavior.prototype = {
 
   showChargeFixer: function(atom, rem, charges) {
     throw "Not implemented";
+  },
+
+  parameterizationFinished: function() {
+    throw "Not implemented";
   }
 };

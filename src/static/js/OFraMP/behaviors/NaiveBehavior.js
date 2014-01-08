@@ -314,10 +314,12 @@ NaiveBehavior.prototype = {
       atom.resetHighlight();
       _this.oframp.hidePopup();
 
+      var needsFix = false;
       rem.each(function(atom, i) {
         if(charges[atom.id]) {
           if(atom.charge) {
             this.showChargeFixer(atom, rem.slice(i + 1), charges);
+            needsFix = true;
             return $ext.BREAK;
           } else {
             atom.charge = charges[atom.id];
@@ -326,8 +328,17 @@ NaiveBehavior.prototype = {
         }
       }, _this);
       _this.oframp.redraw();
+
+      var unpar = _this.oframp.mv.molecule.getUnparameterized();
+      if(!needsFix && unpar.length === 0) {
+        _this.parameterizationFinished();
+      }
     }, 0);
     this.oframp.showPopup(title, content);
+  },
+
+  parameterizationFinished: function() {
+    alert("You're done! I don't know what should happen now...");
   }
 };
 

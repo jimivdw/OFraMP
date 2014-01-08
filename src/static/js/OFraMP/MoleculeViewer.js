@@ -294,11 +294,13 @@ MoleculeViewer.prototype = {
    * Set the charges given as a mapping from atom IDs to charges.
    */
   setCharges: function(charges) {
+    var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
       if(charges[atom.id]) {
         if(atom.charge) {
           this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
               .slice(i + 1), charges);
+          needsFix = true;
           return $ext.BREAK;
         } else {
           atom.charge = charges[atom.id];
@@ -308,6 +310,10 @@ MoleculeViewer.prototype = {
       }
     }, this);
     this.redraw();
+
+    if(!needsFix && this.molecule.getUnparameterized().length === 0) {
+      this.oframp.behavior.parameterizationFinished();
+    }
   },
 
   /*
