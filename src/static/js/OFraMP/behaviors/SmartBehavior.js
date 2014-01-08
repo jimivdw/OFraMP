@@ -55,7 +55,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     afb.id = "accept_fragment";
     afb.className = "border_box";
     afb.title = "Accept fragment";
-    afb.appendChild(document.createTextNode("\u2713"));
+    afb.style.backgroundImage = "url('static/img/check_mark.png')";
     fcd.appendChild(afb);
     this.__afb = afb;
 
@@ -63,7 +63,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     rfb.id = "reject_fragment";
     rfb.className = "border_box";
     rfb.title = "Reject fragment";
-    rfb.appendChild(document.createTextNode("\u2717"));
+    rfb.style.backgroundImage = "url('static/img/ballot_x.png')";
     fcd.appendChild(rfb);
     this.__rfb = rfb;
 
@@ -71,7 +71,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     pfb.id = "previous_fragment";
     pfb.className = "border_box";
     pfb.title = "Previous fragment";
-    pfb.appendChild(document.createTextNode("\u238C"));
+    pfb.style.backgroundImage = "url('static/img/undo.png')";
     fcd.appendChild(pfb);
     this.__pfb = pfb;
 

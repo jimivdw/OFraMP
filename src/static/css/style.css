@@ -469,7 +469,7 @@ html, body {
     font-size: 26px;
     line-height: 30px;
     padding: 0;
-    color: #FFF;
+    background-position: center center;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
 }
