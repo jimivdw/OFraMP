@@ -10,8 +10,16 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
-          $ext.dom.remove(document.getElementById("find_fragments"));
-          var ffb = document.createElement("button");
+          var ffb = document.getElementById("find_fragments");
+          if(ffb) {
+            $ext.dom.remove(ffb);
+          } else {
+            var fcd = document.getElementById("fragment_controls");
+            if(fcd) {
+              $ext.dom.remove(fcd);
+            }
+          }
+          ffb = document.createElement("button");
           ffb.id = "find_fragments";
           ffb.className = "border_box";
           ffb.appendChild(document.createTextNode("Start parameterising"));
@@ -33,8 +41,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     if(unpar.length > 0) {
       this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
     } else {
-      $ext.dom.remove(document.getElementById("fragment_controls"));
-      alert("You're done! I don't know what should happen now...");
+      this.parameterizationFinished();
     }
   },
 
@@ -109,6 +116,8 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     if(!fragment) {
       if(confirm("No fragments were found, select a different atom?")) {
         this.__selectAtom();
+      } else {
+        this.parameterizationFinished();
       }
       return;
     }
@@ -158,5 +167,10 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
         }
       }
     }, this);
+  },
+
+  parameterizationFinished: function() {
+    $ext.dom.remove(document.getElementById("fragment_controls"));
+    alert("You're done! I don't know what should happen now...");
   }
 });
