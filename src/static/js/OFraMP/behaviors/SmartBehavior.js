@@ -2,7 +2,7 @@ function SmartBehavior(oframp) {
   this.__init(oframp);
 }
 
-SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
+SmartBehavior.prototype = {
   name: "Smart",
 
   __init: function(oframp) {
@@ -173,4 +173,7 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     $ext.dom.remove(document.getElementById("fragment_controls"));
     alert("You're done! I don't know what should happen now...");
   }
-});
+};
+
+SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype),
+    SmartBehavior.prototype);

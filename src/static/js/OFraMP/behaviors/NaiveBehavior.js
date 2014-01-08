@@ -2,7 +2,7 @@ function NaiveBehavior(oframp) {
   this.__init(oframp);
 }
 
-NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
+NaiveBehavior.prototype = {
   name: "Naive",
 
   showSelectionDetails: function(selection) {
@@ -163,7 +163,8 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
       fc.appendChild(ab);
 
       var _this = this;
-      var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id, 228, 130);
+      var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
+          228, 130);
       this.oframp.relatedFragmentViewers.push(fv);
 
       var load = function() {
@@ -209,7 +210,8 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
         _this.oframp.activeFragment = fv;
 
         // TODO
-        var m = _this.oframp.mv.molecule.find(fv.molecule.dataStr.split(''))[0];
+        var m = _this.oframp.mv.molecule
+            .find(fv.molecule.dataStr.split(''))[0];
         var charges = {};
         $ext.each(m, function(atom, i) {
           charges[atom.id] = fv.molecule.atoms.get(i + 1).charge;
@@ -219,7 +221,8 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
 
       $ext.dom.onMouseClick(ab, function() {
         // TODO
-        var m = _this.oframp.mv.molecule.find(fv.molecule.dataStr.split(''))[0];
+        var m = _this.oframp.mv.molecule.find(fv.molecule.dataStr
+            .split(''))[0];
         _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
         _this.oframp.mv.molecule.setSelected([]);
 
@@ -326,4 +329,7 @@ NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
     }, 0);
     this.oframp.showPopup(title, content);
   }
-});
+};
+
+NaiveBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype),
+    NaiveBehavior.prototype);
