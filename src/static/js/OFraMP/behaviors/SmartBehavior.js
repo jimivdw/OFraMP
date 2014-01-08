@@ -30,7 +30,12 @@ SmartBehavior.prototype = $ext.extend($ext.copy(Behavior.prototype), {
 
   __selectAtom: function() {
     var unpar = this.oframp.mv.molecule.atoms.getUnparameterised();
-    this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
+    if(unpar.length > 0) {
+      this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
+    } else {
+      $ext.dom.remove(document.getElementById("fragment_controls"));
+      alert("You're done! I don't know what should happen now...");
+    }
   },
 
   showRelatedFragments: function(fragments) {
