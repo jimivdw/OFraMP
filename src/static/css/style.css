@@ -433,7 +433,7 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-#oframp > button:disabled,  {
+#oframp > button:disabled {
     opacity: 0.1 !important;
     cursor: default !important;
     background-color: #FFF !important;
