@@ -150,8 +150,7 @@ SmartBehavior.prototype = {
   },
 
   showChargeFixer: function(atom, rem, charges) {
-    atom.charge = (atom.charge + charges[atom.id]) / 2;
-    atom.previewCharge = undefined;
+    atom.setCharge((atom.charge + charges[atom.id]) / 2, "TODO");
     atom.resetHighlight();
 
     var needsFix = false;
@@ -162,8 +161,7 @@ SmartBehavior.prototype = {
           needsFix = true;
           return $ext.BREAK;
         } else {
-          atom.charge = charges[atom.id];
-          atom.previewCharge = undefined;
+          atom.setCharge(charges[atom.id], "TODO");
           atom.resetHighlight();
         }
       }

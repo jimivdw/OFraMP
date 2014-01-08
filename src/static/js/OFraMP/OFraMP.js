@@ -217,6 +217,38 @@ OFraMP.prototype = {
     this.showPopup(title, content);
   },
 
+  showUsedFragments: function(fragments) {
+    var _this = this;
+
+    var title = "Used molecule fragments";
+
+    var content = document.createElement('div');
+
+    var frags = document.createElement('div');
+    frags.style.overflow = 'hidden';
+    $ext.each(fragments, function(fragment) {
+      var fc = document.createElement('div');
+      fc.className = 'border_box';
+      fc.style.width = '260px';
+      fc.style.height = '100px';
+      fc.style.float = 'left';
+      fc.appendChild(document.createTextNode("TODO"));
+      frags.appendChild(fc);
+    });
+    content.appendChild(frags);
+
+    var cb = document.createElement('button');
+    cb.className = 'border_box';
+    cb.appendChild(document.createTextNode("Close"));
+    content.appendChild(cb);
+
+    $ext.dom.onMouseClick(cb, function() {
+      _this.hidePopup();
+    }, 0);
+
+    this.showPopup(title, content);
+  },
+
   showSelectionDetails: function() {
     this.atomDetails.parentElement.style.visibility = "visible";
     this.atomDetails.parentElement.style.opacity = "1.0";

@@ -17,6 +17,7 @@ Atom.prototype = {
   y: undefined,
   charge: undefined,
   previewCharge: undefined,
+  usedFragments: undefined,
   status: undefined,
 
   __init: function(list, id, element, elementID, x, y, charge) {
@@ -31,6 +32,7 @@ Atom.prototype = {
     this.y = y;
     this.charge = charge || list.molecule.mv.isInteractive ? undefined : Math
         .random();
+    this.usedFragments = new Array();
     this.status = ATOM_STATUSES.normal;
   },
 
@@ -284,6 +286,15 @@ Atom.prototype = {
    */
   isCharged: function() {
     return this.charge !== undefined;
+  },
+
+  /*
+   * Set ths charge of this atom to the given value.
+   */
+  setCharge: function(charge, fragment) {
+    this.charge = charge;
+    this.previewCharge = undefined;
+    this.usedFragments.push(fragment);
   },
 
   /*

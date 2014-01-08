@@ -64,8 +64,22 @@ NaiveBehavior.prototype = {
       ced.style.height = "0px";
 
       var cet = document.createElement('table');
-      $ext.dom.addTableRow(cet, "Used fragments", "TODO");
+      if(atom.isCharged()) {
+        var ufb = document.createElement('button');
+        ufb.id = "show_used_fragments";
+        ufb.className = "border_box";
+        ufb.appendChild(document.createTextNode("(" + atom.usedFragments.length
+            + ") Show"));
+
+        $ext.dom.onMouseClick(ufb, function() {
+          _this.oframp.showUsedFragments(atom.usedFragments);
+        }, 0);
+      } else {
+        var ufb = "-";
+      }
+      $ext.dom.addTableRow(cet, "Used fragments", ufb);
       var ceb = document.createElement('input');
+      ceb.className = "border_box";
       ceb.value = $ext.number.format(atom.charge, 1, 3) || "";
       $ext.dom.addTableRow(cet, "New charge", ceb);
 
@@ -309,8 +323,7 @@ NaiveBehavior.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
-      atom.charge = parseFloat(rc.value) || undefined;
-      atom.previewCharge = undefined;
+      atom.setCharge(parseFloat(rc.value) || undefined, "TODO");
       atom.resetHighlight();
       _this.oframp.hidePopup();
 
@@ -322,8 +335,7 @@ NaiveBehavior.prototype = {
             needsFix = true;
             return $ext.BREAK;
           } else {
-            atom.charge = charges[atom.id];
-            atom.previewCharge = undefined;
+            atom.setCharge(charges[atom.id], "TODO");
           }
         }
       }, _this);

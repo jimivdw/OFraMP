@@ -275,7 +275,9 @@ html, body {
 }
 
 #charge_edit {
-    padding: 2px;
+    width: 230px;
+    box-sizing: border-box;
+    padding: 4px;
     visibility: hidden;
 }
 
@@ -283,11 +285,14 @@ html, body {
     width: 220px;
 }
 
-#charge_edit input {
+#charge_edit input, #charge_edit table button {
     width: 100px;
+    height: 25px;
+    box-sizing: border-box;
+    padding: 0 5px;
 }
 
-#charge_edit button {
+#charge_edit > button {
     width: 220px;
 }
 

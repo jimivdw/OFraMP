@@ -303,8 +303,7 @@ MoleculeViewer.prototype = {
           needsFix = true;
           return $ext.BREAK;
         } else {
-          atom.charge = charges[atom.id];
-          atom.previewCharge = undefined;
+          atom.setCharge(charges[atom.id], "TODO");
           atom.resetHighlight();
         }
       }
