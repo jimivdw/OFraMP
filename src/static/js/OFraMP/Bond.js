@@ -38,6 +38,18 @@ Bond.prototype = {
   },
 
   /*
+   * Get all data of this Bond as a JSON object.
+   */
+  getJSON: function() {
+    return {
+      id: this.id,
+      a1: this.a1.id,
+      a2: this.a2.id,
+      bondType: this.type
+    };
+  },
+
+  /*
    * Determine if this bond is currently visible.
    * 
    * Depends on both position and appearance, so track both in cache.

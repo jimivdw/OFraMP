@@ -1,8 +1,10 @@
 /**
  * Data structure for an atom
  */
-function Atom(list, id, element, elementID, x, y, charge) {
-  this.__init(list, id, element, elementID, x, y, charge);
+function Atom(list, id, element, elementID, x, y, charge, previewCharge,
+    usedFragments, status) {
+  this.__init(list, id, element, elementID, x, y, charge, previewCharge,
+      usedFragments, status);
 }
 
 Atom.prototype = {
@@ -20,7 +22,8 @@ Atom.prototype = {
   usedFragments: undefined,
   status: undefined,
 
-  __init: function(list, id, element, elementID, x, y, charge) {
+  __init: function(list, id, element, elementID, x, y, charge, previewCharge,
+      usedFragments, status) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
@@ -30,10 +33,11 @@ Atom.prototype = {
     this.elementID = elementID;
     this.x = x;
     this.y = y;
-    this.charge = charge || list.molecule.mv.isInteractive ? undefined : Math
-        .random();
-    this.usedFragments = new Array();
-    this.status = ATOM_STATUSES.normal;
+    this.charge = charge
+        || (list.molecule.mv.isInteractive ? undefined : Math.random());
+    this.previewCharge = previewCharge;
+    this.usedFragments = usedFragments || new Array();
+    this.status = status || ATOM_STATUSES.normal;
   },
 
   /*
@@ -43,6 +47,23 @@ Atom.prototype = {
     return {
       id: this.id,
       element: this.element
+    };
+  },
+
+  /*
+   * Get all data of this Atom as a JSON object.
+   */
+  getJSON: function() {
+    return {
+      id: this.id,
+      element: this.element,
+      elementID: this.elementID,
+      x: this.x,
+      y: this.y,
+      charge: this.charge,
+      previewCharge: this.previewCharge,
+      usedFragments: this.usedFragments,
+      status: this.status
     };
   },
 

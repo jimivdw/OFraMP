@@ -103,6 +103,15 @@
           this.download = "OFraMP-" + date + ".png";
         };
 
+        var sv = document.getElementById("save");
+        sv.onclick = function() {
+          var data = oframp.getDataURI();
+          this.href = data;
+          var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
+          this.type = "application/json";
+          this.download = "OFraMP-" + date + ".oss";
+        };
+
         var op = document.getElementById("opti");
         if ($ext.onBrokenIE()) {
           op.remove();
@@ -198,6 +207,10 @@
 
       <div class="bgroup">
         <a id="download" class="border_box" href="">Download</a>
+      </div>
+
+      <div class="bgroup">
+        <a id="save" class="border_box" href="">Save</a>
       </div>
 
       <div class="bgroup">

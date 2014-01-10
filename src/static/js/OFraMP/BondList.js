@@ -34,6 +34,15 @@ BondList.prototype = {
   },
 
   /*
+   * Get all data of this BondList as a JSON object.
+   */
+  getJSON: function() {
+    return $ext.array.map(this.bonds, function(bond) {
+      return bond.getJSON();
+    });
+  },
+
+  /*
    * Get the bond with the given ID.
    */
   get: function(id) {

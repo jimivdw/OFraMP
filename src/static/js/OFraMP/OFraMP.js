@@ -204,6 +204,46 @@ OFraMP.prototype = {
     }
     cbs.appendChild(rb);
 
+    var ossi = document.createElement("input");
+    ossi.type = "file";
+    ossi.style.display = "none";
+    ossi.accept = ".oss";
+    ossi.onchange = function() {
+      var oss = this.files[0];
+      if(!oss.name.match(/.*\.oss$/)) {
+        alert("Only OFraMP Structure Storage (.oss) files are allowed.");
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          var data = JSON.parse(atob(evt.target.result));
+          if(!_this.mv.molecule) {
+            _this.mv.setupInteraction();
+            _this.__initMP();
+          }
+
+          _this.container.dispatchEvent(_this.moleculeEnteredEvent);
+          _this.mv.loadMolecule(data);
+          _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+
+          _this.hidePopup();
+        } catch(err) {
+          alert("Unable to parse the OSS file. Please try a different file.");
+        }
+      };
+      reader.readAsBinaryString(oss);
+    };
+    cbs.appendChild(ossi);
+
+    var lb = document.createElement('button');
+    lb.appendChild(document.createTextNode("Load from OSS file"));
+    lb.onclick = function() {
+      ossi.click();
+    }
+    cbs.appendChild(lb);
+
     if(this.mv.molecule) {
       var cb = document.createElement('button');
       cb.style.float = 'left';
@@ -468,6 +508,14 @@ OFraMP.prototype = {
    */
   getMVDataURI: function(format) {
     return this.mv.canvas.toDataURL(format);
+  },
+
+  /*
+   * Get the molecule data as a Base64 string.
+   */
+  getDataURI: function() {
+    var data = JSON.stringify(this.mv.molecule.getJSON());
+    return "data:application/octet-stream:base64," + btoa(data);
   },
 
   /*

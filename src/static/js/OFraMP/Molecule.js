@@ -33,6 +33,17 @@ Molecule.prototype = {
   },
 
   /*
+   * Get all data of this Molecule as a JSON object.
+   */
+  getJSON: function() {
+    return {
+      dataStr: this.dataStr,
+      atoms: this.atoms.getJSON(),
+      bonds: this.bonds.getJSON()
+    };
+  },
+
+  /*
    * Get the width of this molecule.
    */
   getWidth: function() {
