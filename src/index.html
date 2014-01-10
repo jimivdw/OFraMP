@@ -176,9 +176,13 @@
           }
 
           if(evt.keyCode === 26) {
-            oframp.previousCheckpoint();
+            if(oframp.activeCheckpoint > 0) {
+              oframp.previousCheckpoint();
+            }
           } else if(evt.keyCode === 25) {
-            oframp.nextCheckpoint();
+            if(oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
+              oframp.nextCheckpoint();
+            }
           }
         });
       };
