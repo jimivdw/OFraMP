@@ -342,8 +342,11 @@ NaiveBehavior.prototype = {
       _this.oframp.redraw();
 
       var unpar = _this.oframp.mv.molecule.getUnparameterized();
-      if(!needsFix && unpar.length === 0) {
-        _this.parameterizationFinished();
+      if(!needsFix) {
+        _this.oframp.checkpoint();
+        if(unpar.length === 0) {
+          _this.parameterizationFinished();
+        }
       }
     }, 0);
     this.oframp.showPopup(title, content);

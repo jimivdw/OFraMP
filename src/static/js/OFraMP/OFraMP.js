@@ -401,7 +401,7 @@ OFraMP.prototype = {
     }
 
     if(this.activeCheckpoint !== this.checkpoints.length - 1) {
-      this.checkpoints.splice(this.activeCheckpoint);
+      this.checkpoints.splice(this.activeCheckpoint + 1);
     }
 
     this.checkpoints.push(this.mv.molecule.getJSON());

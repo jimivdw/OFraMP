@@ -169,6 +169,18 @@
             controls.style.display = "block";
           }
         });
+
+        $ext.dom.addEventListener(window, 'keypress', function(evt) {
+          if(!evt.ctrlKey) {
+            return;
+          }
+
+          if(evt.keyCode === 26) {
+            oframp.previousCheckpoint();
+          } else if(evt.keyCode === 25) {
+            oframp.nextCheckpoint();
+          }
+        });
       };
     </script>
   </head>

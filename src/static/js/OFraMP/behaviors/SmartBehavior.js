@@ -167,8 +167,11 @@ SmartBehavior.prototype = {
       }
     }, this);
 
-    if(!needsFix && this.oframp.mv.molecule.getUnparameterized().length == 0) {
-      this.parameterizationFinished();
+    if(!needsFix) {
+      this.oframp.checkpoint();
+      if(this.oframp.mv.molecule.getUnparameterized().length == 0) {
+        this.parameterizationFinished();
+      }
     }
   },
 

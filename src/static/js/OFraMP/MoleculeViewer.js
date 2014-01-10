@@ -50,7 +50,6 @@ MoleculeViewer.prototype = {
   setupInteraction: function() {
     var _this = this;
 
-    this.settings = this.oframp.settings;
     this.isInteractive = true;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
@@ -316,8 +315,11 @@ MoleculeViewer.prototype = {
     }, this);
     this.redraw();
 
-    if(!needsFix && this.molecule.getUnparameterized().length === 0) {
-      this.oframp.behavior.parameterizationFinished();
+    if(!needsFix) {
+      this.oframp.checkpoint();
+      if(this.molecule.getUnparameterized().length === 0) {
+        this.oframp.behavior.parameterizationFinished();
+      }
     }
   },
 
