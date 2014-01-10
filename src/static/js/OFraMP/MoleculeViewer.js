@@ -90,6 +90,12 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.move(e.deltaX, e.deltaY);
+
+        var now = Date.now();
+        if(!window.__lastDragTime || now - window.__lastDragTime > 1000) {
+          _this.oframp.checkpoint();
+          window.__lastDragTime = now;
+        }
       }
     }, 0);
 
@@ -132,6 +138,12 @@ MoleculeViewer.prototype = {
         }
         var c = $ext.mouse.getCoords(e);
         _this.zoomOn(c.x, c.y, f);
+
+        var now = Date.now();
+        if(!window.__lastZoomTime || now - window.__lastZoomTime > 1000) {
+          _this.oframp.checkpoint();
+          window.__lastZoomTime = now;
+        }
 
         return false;
       }
@@ -221,7 +233,6 @@ MoleculeViewer.prototype = {
 
   loadMolecule: function(data) {
     this.molecule = new Molecule(this, data.atoms, data.bonds, data.dataStr);
-    this.molecule.idealize();
     this.hideOverlay();
   },
 
