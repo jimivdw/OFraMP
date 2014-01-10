@@ -221,7 +221,6 @@ MoleculeViewer.prototype = {
   },
 
   loadMolecule: function(data) {
-    __data = data;
     this.molecule = new Molecule(this, data.atoms, data.bonds, data.dataStr);
     this.molecule.idealize();
     this.hideOverlay();

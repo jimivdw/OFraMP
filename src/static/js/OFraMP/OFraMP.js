@@ -22,6 +22,9 @@ OFraMP.prototype = {
   relatedFragmentViewers: undefined,
   activeFragment: undefined,
 
+  checkpoints: undefined,
+  activeCheckpoint: undefined,
+
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
   moleculeDisplayedEvent: new Event('moleculedisplayed'),
@@ -185,6 +188,7 @@ OFraMP.prototype = {
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.mv.showMolecule(ta.value, function() {
+        _this.checkpoint();
         _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
       });
 
@@ -226,6 +230,7 @@ OFraMP.prototype = {
 
           _this.container.dispatchEvent(_this.moleculeEnteredEvent);
           _this.mv.loadMolecule(data);
+          _this.checkpoint();
           _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
 
           _this.hidePopup();
@@ -353,20 +358,6 @@ OFraMP.prototype = {
     this.behavior.showRelatedFragments(fragments);
   },
 
-  /*
-   * Handler to be called after a change in the atom selection.
-   */
-  selectionChanged: function() {
-    var selection = this.mv.molecule.getSelected();
-    if(selection && selection.length > 0) {
-      this.findFragmentsButton.disabled = "";
-      this.behavior.showSelectionDetails(selection);
-    } else {
-      this.findFragmentsButton.disabled = "disabled";
-      this.hideSelectionDetails();
-    }
-  },
-
   getMoleculeCutout: function(x, y, sw, sh, width, height) {
     // Redraw first to make sure no pending changes are ignored
     this.redraw();
@@ -400,6 +391,53 @@ OFraMP.prototype = {
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
     return c;
+  },
+
+  checkpoint: function() {
+    if(!this.checkpoints) {
+      this.checkpoints = [this.mv.molecule.getJSON()];
+      this.activeCheckpoint = 0;
+      return;
+    }
+
+    if(this.activeCheckpoint !== this.checkpoints.length - 1) {
+      this.checkpoints.splice(this.activeCheckpoint);
+    }
+
+    this.checkpoints.push(this.mv.molecule.getJSON());
+    this.activeCheckpoint += 1;
+  },
+
+  loadCheckpoint: function(i) {
+    if(i < 0 || i >= this.checkpoints.length) {
+      alert("Cannot load checkpoint " + i + ": does not exist.");
+      return;
+    }
+
+    this.mv.loadMolecule(this.checkpoints[i]);
+    this.activeCheckpoint = i;
+  },
+
+  previousCheckpoint: function() {
+    this.loadCheckpoint(this.activeCheckpoint - 1);
+  },
+
+  nextCheckpoint: function() {
+    this.loadCheckpoint(this.activeCheckpoint + 1);
+  },
+
+  /*
+   * Handler to be called after a change in the atom selection.
+   */
+  selectionChanged: function() {
+    var selection = this.mv.molecule.getSelected();
+    if(selection && selection.length > 0) {
+      this.findFragmentsButton.disabled = "";
+      this.behavior.showSelectionDetails(selection);
+    } else {
+      this.findFragmentsButton.disabled = "disabled";
+      this.hideSelectionDetails();
+    }
   },
 
 
