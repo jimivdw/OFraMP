@@ -225,13 +225,10 @@ OFraMP.prototype = {
     var content = document.createElement('div');
 
     var frags = document.createElement('div');
-    frags.style.overflow = 'hidden';
+    frags.id = "used_fragments";
     $ext.each(fragments, function(fragment) {
       var fc = document.createElement('div');
-      fc.className = 'border_box';
-      fc.style.width = '260px';
-      fc.style.height = '100px';
-      fc.style.float = 'left';
+      fc.className = 'used_fragment border_box';
       fc.appendChild(document.createTextNode("TODO"));
       frags.appendChild(fc);
     });

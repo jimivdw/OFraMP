@@ -188,11 +188,11 @@ html, body {
     transition: opacity .2s ease-out, visibility .2s ease-out;
 }
 
-.sidebar::-webkit-scrollbar {
+.border_box::-webkit-scrollbar, #popup_content::-webkit-scrollbar {
     width: 3px;
 }
 
-.sidebar::-webkit-scrollbar-thumb {
+.border_box::-webkit-scrollbar-thumb, #popup_content::-webkit-scrollbar-thumb {
     width: 3px;
     background-color: #AAA;
     border-radius: 1px;
@@ -420,6 +420,19 @@ html, body {
     margin: 0;
     padding: 0;
     border: 0;
+}
+
+#used_fragments {
+    overflow: hidden;
+    width: 564px;
+    margin: 0 auto;
+}
+
+.used_fragment {
+    width: 260px;
+    height: 100px;
+    float: left;
+    margin: 10px;
 }
 
 #oframp > button, #fragment_controls {
