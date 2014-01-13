@@ -92,10 +92,19 @@ MoleculeViewer.prototype = {
         _this.move(e.deltaX, e.deltaY);
 
         var now = Date.now();
-        if(!window.__lastDragTime || now - window.__lastDragTime > 1000) {
+        if(!window.__lastDragTime) {
+          window.__lastDragTime = now;
+        }
+        if(now - window.__lastDragTime > 1000) {
           _this.oframp.checkpoint();
           window.__lastDragTime = now;
         }
+      }
+    }, 0);
+
+    $ext.dom.onMouseUp(window, function(e) {
+      if(!_this.overlayShowing) {
+        _this.oframp.checkpoint();
       }
     }, 0);
 
