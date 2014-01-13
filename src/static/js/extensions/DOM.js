@@ -239,8 +239,9 @@ $ext.extend($ext, {
      * Attach a callback to the mouseover event on a given elem.
      */
     onMouseOver: function(elem, callback, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "mouseover", function(evt) {
-        evt = $ext.dom.eventObject(evt);
+        evt = _this.eventObject(evt);
         if(callback instanceof Function) {
           return callback(evt);
         }
@@ -251,8 +252,9 @@ $ext.extend($ext, {
      * Attach a callback to the mouseout event on a given elem.
      */
     onMouseOut: function(elem, callback, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "mouseout", function(evt) {
-        evt = $ext.dom.eventObject(evt);
+        evt = _this.eventObject(evt);
         if(callback instanceof Function) {
           return callback(evt);
         }
@@ -263,9 +265,10 @@ $ext.extend($ext, {
      * Attach a callback to the mousedown event on a given elem.
      */
     onMouseDown: function(elem, callback, button, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "mousedown", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
+        evt = _this.eventObject(evt);
+        evt.button = _this.getMouseButton(evt);
         if(button !== undefined && evt.button !== button) {
           return;
         }
@@ -280,9 +283,10 @@ $ext.extend($ext, {
      * Attach a callback to the mouseup event on a given elem.
      */
     onMouseUp: function(elem, callback, button, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "mouseup", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
+        evt = _this.eventObject(evt);
+        evt.button = _this.getMouseButton(evt);
         if(button !== undefined && evt.button !== button) {
           return;
         }
@@ -328,6 +332,7 @@ $ext.extend($ext, {
      * is not dragging.
      */
     onMouseClick: function(elem, callback, button, useCapture) {
+      var _this = this;
       var lastDownPos = undefined;
 
       this.onMouseDown(elem, function(evt) {
@@ -344,7 +349,7 @@ $ext.extend($ext, {
 
         var delta = Math.sqrt(Math.pow(lastDownPos.clientX - evt.clientX, 2)
             + Math.pow(lastDownPos.clientY - evt.clientY, 2));
-        if(lastDownPos && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
+        if(lastDownPos && delta < _this.MOUSE_DRAG_EPSILON) {
           return callback(evt);
         }
         lastDownPos = undefined;
@@ -439,9 +444,10 @@ $ext.extend($ext, {
     },
 
     onMouseDragEnd: function(elem, callback, button, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "mousedragend", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
+        evt = _this.eventObject(evt);
+        evt.button = _this.getMouseButton(evt);
         if(button !== undefined && evt.button !== button) {
           return;
         }
@@ -453,9 +459,10 @@ $ext.extend($ext, {
     },
 
     onContextMenu: function(elem, callback, button, useCapture) {
+      var _this = this;
       this.addEventListener(elem, "contextmenu", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
+        evt = _this.eventObject(evt);
+        evt.button = _this.getMouseButton(evt);
         if(button !== undefined && evt.button !== button) {
           return;
         }
