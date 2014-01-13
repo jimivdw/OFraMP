@@ -175,12 +175,16 @@
             return;
           }
 
-          if(evt.keyCode === 26) {
+          var keyCode = evt.keyCode || evt.charCode;
+          if(keyCode > 26) {
+            keyCode -= 96;
+          }
+          if(keyCode === 26) {
             if(oframp.activeCheckpoint > 0) {
               oframp.previousCheckpoint();
             }
-          } else if(evt.keyCode === 25) {
-            if(oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
+          } else if(keyCode === 25) {
+            if(oframp.checkpoints && oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
               oframp.nextCheckpoint();
             }
           }
