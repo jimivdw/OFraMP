@@ -102,7 +102,7 @@ MoleculeViewer.prototype = {
       }
     }, $ext.mouse.LEFT);
 
-    $ext.dom.onMouseUp(window, function(e) {
+    $ext.dom.onMouseDragEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.oframp.checkpoint();
       }
@@ -130,7 +130,7 @@ MoleculeViewer.prototype = {
       }
     }, $ext.mouse.RIGHT);
 
-    $ext.dom.onMouseUp(window, function(e) {
+    $ext.dom.onMouseDragEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.selectionArea = undefined;
         _this.redraw();

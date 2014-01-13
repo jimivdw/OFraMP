@@ -56,6 +56,12 @@ $ext.extend($ext, {
     },
 
     /*
+     * Custom mouse events.
+     */
+    mouseDragEndEvent: new Event('mousedragend'),
+    mouseWheelEndEvent: new Event('mousewheelend'),
+
+    /*
      * Fairly cross-browser function for adding an eventListener to an element.
      */
     addEventListener: function(elem, type, callback, useCapture) {
@@ -326,10 +332,18 @@ $ext.extend($ext, {
      */
     onMouseDrag: function(elem, callback, button, useCapture) {
       this.onMouseDown(elem, _onMouseDown, button, useCapture);
-      this.onMouseUp(window, function() {
+      this.onMouseUp(window, function(evt) {
+        if(window.__mouseDragged !== true) {
+          return;
+        }
+
         window.__lastDragPos = null;
         window.__mouseDragged = null;
         $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
+
+        var mdee = $ext.dom.mouseDragEndEvent;
+        mdee.button = evt.button;
+        elem.dispatchEvent(mdee);
       }, button, useCapture);
 
       this.addEventListener(elem, "mousemove", function(evt) {
@@ -392,6 +406,20 @@ $ext.extend($ext, {
               useCapture);
         }
       }
+    },
+
+    onMouseDragEnd: function(elem, callback, button, useCapture) {
+      this.addEventListener(elem, "mousedragend", function(evt) {
+        evt = $ext.dom.eventObject(evt);
+        evt.button = $ext.dom.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button) {
+          return;
+        }
+
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
     },
 
     onContextMenu: function(elem, callback, button, useCapture) {
