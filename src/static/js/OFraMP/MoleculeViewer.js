@@ -85,7 +85,7 @@ MoleculeViewer.prototype = {
         }
         _this.oframp.selectionChanged();
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
@@ -100,13 +100,13 @@ MoleculeViewer.prototype = {
           window.__lastDragTime = now;
         }
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseUp(window, function(e) {
       if(!_this.overlayShowing) {
         _this.oframp.checkpoint();
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
@@ -128,7 +128,7 @@ MoleculeViewer.prototype = {
           _this.redraw();
         }
       }
-    }, 2);
+    }, $ext.mouse.RIGHT);
 
     $ext.dom.onMouseUp(window, function(e) {
       if(!_this.overlayShowing) {
@@ -136,7 +136,7 @@ MoleculeViewer.prototype = {
         _this.redraw();
         _this.oframp.selectionChanged();
       }
-    }, 2);
+    }, $ext.mouse.RIGHT);
 
     $ext.dom.onMouseWheel(this.canvas, function(e) {
       if(!_this.overlayShowing) {

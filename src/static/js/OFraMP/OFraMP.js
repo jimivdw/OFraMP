@@ -118,7 +118,7 @@ OFraMP.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
       _this.showInsertMoleculePopup();
-    }, 0);
+    }, $ext.mouse.LEFT);
   },
 
   __initFFB: function(elem) {
@@ -129,7 +129,7 @@ OFraMP.prototype = {
       // Make sure the previewed charges are reset.
       _this.mv.previewCharges({});
       _this.getMatchingFragments();
-    }, 0);
+    }, $ext.mouse.LEFT);
   },
 
   __initMainViewer: function(container) {
@@ -286,7 +286,7 @@ OFraMP.prototype = {
 
     $ext.dom.onMouseClick(cb, function() {
       _this.hidePopup();
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     this.showPopup(title, content);
   },

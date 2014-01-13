@@ -28,7 +28,7 @@ SmartBehavior.prototype = {
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
-          }, 0);
+          }, $ext.mouse.LEFT);
         });
   },
 
@@ -93,19 +93,19 @@ SmartBehavior.prototype = {
       if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
         _this.__selectAtom();
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseClick(rfb, function() {
       if(!rfb.disabled) {
         _this.__showFragment(_this.__currentFragment + 1);
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseClick(pfb, function() {
       if(!pfb.disabled) {
         _this.__showFragment(_this.__currentFragment - 1);
       }
-    }, 0);
+    }, $ext.mouse.LEFT);
   },
 
   __showFragment: function(i) {

@@ -1,6 +1,13 @@
 $ext.extend($ext, {
   mouse: {
     /*
+     * Mouse button codes
+     */
+    LEFT: 0,
+    RIGHT: 2,
+    MIDDLE: 1,
+
+    /*
      * Get the proper x coordinate of a MouseEvent.
      */
     getX: function(evt) {
