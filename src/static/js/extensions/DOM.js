@@ -350,79 +350,83 @@ $ext.extend($ext, {
      * Note the difference between this event and the regular onDrag event.
      */
     onMouseDrag: function(elem, callback, button, useCapture) {
+      var _this = this;
+
+      var mouseDown = false;
+      var mouseDragged = false;
+      var lastDownPos = undefined;
+      var lastDragPos = undefined;
+
       this.onMouseDown(elem, _onMouseDown, button, useCapture);
-      this.onMouseUp(window, function(evt) {
-        if(window.__mouseDragged !== true) {
+      this.onMouseUp(window, _onMouseUp, button, useCapture);
+
+      function _onMouseDown(evt) {
+        mouseDown = true;
+        lastDownPos = {
+          clientX: evt.clientX,
+          clientY: evt.clientY
+        };
+
+        _this.addEventListener(elem, "mousemove", _onMouseMove, useCapture);
+      }
+
+      function _onMouseMove(evt) {
+        var delta = Math.sqrt(Math.pow(lastDownPos.clientX - evt.clientX, 2)
+            + Math.pow(lastDownPos.clientY - evt.clientY, 2));
+        if(delta > _this.MOUSE_DRAG_EPSILON) {
+          mouseDragged = true;
+          _this.removeEventListener(elem, "mousemove", _onMouseMove);
+
+          _this.addEventListener(elem, "mousemove", _onMouseDrag, useCapture);
+        }
+      }
+
+      function _onMouseUp(evt) {
+        mouseDown = false;
+        lastDragPos = undefined;
+        lastDownPos = undefined;
+        _this.removeEventListener(elem, "mousemove", _onMouseMove);
+        _this.removeEventListener(elem, "mousemove", _onMouseDrag);
+
+        if(mouseDragged !== true) {
           return;
         }
-
-        window.__lastDragPos = null;
-        window.__mouseDragged = null;
-        $ext.dom.removeEventListener(window, "mousemove", _onMouseMove);
-
-        var mdee = $ext.dom.mouseDragEndEvent;
+        mouseDragged = false;
+        var mdee = _this.mouseDragEndEvent;
         mdee.button = evt.button;
         elem.dispatchEvent(mdee);
-      }, button, useCapture);
+      }
 
-      this.addEventListener(elem, "mousemove", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button
-            || window.__mouseDragged !== true || window.__mouseDown !== true) {
+      function _onMouseDrag(evt) {
+        evt = _this.eventObject(evt);
+        evt.button = _this.getMouseButton(evt);
+        if(button !== undefined && evt.button !== button || !mouseDragged
+            || !mouseDown) {
           return;
         }
 
-        if(window.__lastDragPos) {
+        if(lastDragPos) {
           var delta = {
-            deltaX: evt.clientX - window.__lastDragPos.clientX,
-            deltaY: evt.clientY - window.__lastDragPos.clientY
+            deltaX: evt.clientX - lastDragPos.clientX,
+            deltaY: evt.clientY - lastDragPos.clientY
           };
         } else {
           var delta = {
-            deltaX: evt.clientX - window.__lastDownPos.clientX,
-            deltaY: evt.clientY - window.__lastDownPos.clientY
+            deltaX: evt.clientX - lastDownPos.clientX,
+            deltaY: evt.clientY - lastDownPos.clientY
           };
         }
         $ext.merge(delta, {
           type: "mousedrag"
         });
 
-        window.__lastDragPos = {
+        lastDragPos = {
           clientX: evt.clientX,
           clientY: evt.clientY
         };
 
         if(callback instanceof Function) {
           return callback($ext.merge(evt, delta, true));
-        }
-      }, useCapture);
-
-      function _onMouseDown(evt) {
-        window.__mouseDown = true;
-        window.__mouseDragged = false;
-        window.__lastDownPos = {
-          clientX: evt.clientX,
-          clientY: evt.clientY
-        };
-
-        $ext.dom.addEventListener(elem, "mousemove", _onMouseMove, useCapture);
-      }
-
-      function _onMouseMove(evt) {
-        var dp = window.__lastDownPos;
-        if(!dp) {
-          $ext.dom.removeEventListener(elem, "mousemove", _onMouseMove,
-              useCapture);
-          return;
-        }
-
-        var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
-            + Math.pow(dp.clientY - evt.clientY, 2));
-        if(delta > $ext.dom.MOUSE_DRAG_EPSILON) {
-          window.__mouseDragged = true;
-          $ext.dom.removeEventListener(elem, "mousemove", _onMouseMove,
-              useCapture);
         }
       }
     },
