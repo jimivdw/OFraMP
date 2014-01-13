@@ -129,6 +129,10 @@ $ext.extend($ext, {
      * https://developer.mozilla.org/en-US/docs/Web/Reference/Events/wheel
      */
     onMouseWheel: function(elem, callback, useCapture) {
+      var _this = this;
+
+      var wheelEndTimeout = undefined;
+
       _onWheel(elem, this.wheelEventName, callback, useCapture);
       if(this.wheelEventName === "DOMMouseScroll") {
         _onWheel(elem, "MozMousePixelScroll", callback, useCapture);
@@ -136,9 +140,9 @@ $ext.extend($ext, {
 
       function _onWheel(elem, wf, callback, useCapture) {
         if(wf === "wheel") {
-          $ext.dom.addEventListener(elem, wf, callback, useCapture);
+          _this.addEventListener(elem, wf, callback, useCapture);
         } else {
-          $ext.dom.addEventListener(elem, wf, function(originalEvent) {
+          _this.addEventListener(elem, wf, function(originalEvent) {
             if(!originalEvent) {
               originalEvent = window.event;
             }
@@ -159,9 +163,9 @@ $ext.extend($ext, {
               screenY: originalEvent.screenY || 0,
               clientX: originalEvent.clientX || 0,
               clientY: originalEvent.clientY || 0,
-              button: $ext.dom.getMouseButton(originalEvent),
+              button: _this.getMouseButton(originalEvent),
               buttons: originalEvent.buttons,
-              deltaMode: originalEvent.type == "MozMousePixelScroll" ? 0 : 1,
+              deltaMode: originalEvent.type === "MozMousePixelScroll" ? 0 : 1,
               deltaX: 0,
               deltaY: 0,
               deltaZ: 0,
@@ -182,13 +186,13 @@ $ext.extend($ext, {
               event.deltaY = originalEvent.detail;
             }
 
-            if(window.__wheelEndTimeout) {
-              window.clearTimeout(window.__wheelEndTimeout);
+            if(wheelEndTimeout) {
+              window.clearTimeout(wheelEndTimeout);
             }
-            window.__wheelEndTimeout = window.setTimeout(function() {
-              elem.dispatchEvent($ext.dom.mouseWheelEndEvent);
-              window.__wheelEndTimeout = undefined;
-            }, $ext.dom.MOUSE_WHEEL_TIMEOUT);
+            wheelEndTimeout = window.setTimeout(function() {
+              elem.dispatchEvent(_this.mouseWheelEndEvent);
+              wheelEndTimeout = undefined;
+            }, _this.MOUSE_WHEEL_TIMEOUT);
 
             // it's time to fire the callback
             return callback(event);
@@ -266,7 +270,6 @@ $ext.extend($ext, {
           return;
         }
 
-        window.__mouseDown = true;
         if(callback instanceof Function) {
           return callback(evt);
         }
@@ -284,7 +287,6 @@ $ext.extend($ext, {
           return;
         }
 
-        window.__mouseDown = null;
         if(callback instanceof Function) {
           return callback(evt);
         }
@@ -297,14 +299,18 @@ $ext.extend($ext, {
      * Note that, in this implementation, this event will only be fired when the
      * mouse is moved but NOT down, i.e. the user is not dragging.
      */
-    onMouseMove: function(elem, callback, button, useCapture) {
-      this.onMouseDown(elem, null, button);
-      this.onMouseUp(elem, null, button);
+    onMouseMove: function(elem, callback, useCapture) {
+      var mouseDown = false;
+
+      this.onMouseDown(elem, function() {
+        mouseDown = true;
+      });
+      this.onMouseUp(elem, function() {
+        mouseDown = false;
+      });
+
       this.addEventListener(elem, "mousemove", function(evt) {
-        evt = $ext.dom.eventObject(evt);
-        evt.button = $ext.dom.getMouseButton(evt);
-        if(window.__mouseDown === true || button !== undefined
-            && evt.button !== button) {
+        if(mouseDown) {
           return;
         }
 
@@ -322,25 +328,26 @@ $ext.extend($ext, {
      * is not dragging.
      */
     onMouseClick: function(elem, callback, button, useCapture) {
+      var lastDownPos = undefined;
+
       this.onMouseDown(elem, function(evt) {
-        window.__lastDownPos = {
+        lastDownPos = {
           clientX: evt.clientX,
           clientY: evt.clientY
         };
       }, button, useCapture);
 
       this.onMouseUp(elem, function(evt) {
-        var dp = window.__lastDownPos;
-        if(!dp) {
+        if(!lastDownPos) {
           return;
         }
 
-        var delta = Math.sqrt(Math.pow(dp.clientX - evt.clientX, 2)
-            + Math.pow(dp.clientY - evt.clientY, 2));
-        if(dp && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
+        var delta = Math.sqrt(Math.pow(lastDownPos.clientX - evt.clientX, 2)
+            + Math.pow(lastDownPos.clientY - evt.clientY, 2));
+        if(lastDownPos && delta < $ext.dom.MOUSE_DRAG_EPSILON) {
           return callback(evt);
         }
-        window.__lastDownPos = null;
+        lastDownPos = undefined;
       }, button, useCapture);
     },
 
