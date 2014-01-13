@@ -405,7 +405,7 @@ $ext.extend($ext, {
         }
         mouseDragged = false;
         var mdee = _this.mouseDragEndEvent;
-        mdee.button = evt.button;
+        mdee.button = _this.getMouseButton(evt);
         elem.dispatchEvent(mdee);
       }
 
@@ -447,7 +447,6 @@ $ext.extend($ext, {
       var _this = this;
       this.addEventListener(elem, "mousedragend", function(evt) {
         evt = _this.eventObject(evt);
-        evt.button = _this.getMouseButton(evt);
         if(button !== undefined && evt.button !== button) {
           return;
         }
