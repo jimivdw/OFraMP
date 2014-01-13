@@ -458,15 +458,9 @@ $ext.extend($ext, {
       }, useCapture);
     },
 
-    onContextMenu: function(elem, callback, button, useCapture) {
+    onContextMenu: function(elem, callback, useCapture) {
       var _this = this;
       this.addEventListener(elem, "contextmenu", function(evt) {
-        evt = _this.eventObject(evt);
-        evt.button = _this.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button) {
-          return;
-        }
-
         if(callback instanceof Function) {
           return callback(evt);
         }
