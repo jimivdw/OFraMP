@@ -119,6 +119,9 @@ $ext.extend($ext, {
       }
     })(),
 
+    // Time in miliseconds until the mousewheelend event is fired.
+    MOUSE_WHEEL_TIMEOUT: 500,
+
     /*
      * Bind a callback to the wheel event on a given element.
      * 
@@ -179,11 +182,27 @@ $ext.extend($ext, {
               event.deltaY = originalEvent.detail;
             }
 
+            if(window.__wheelEndTimeout) {
+              window.clearTimeout(window.__wheelEndTimeout);
+            }
+            window.__wheelEndTimeout = window.setTimeout(function() {
+              elem.dispatchEvent($ext.dom.mouseWheelEndEvent);
+              window.__wheelEndTimeout = undefined;
+            }, $ext.dom.MOUSE_WHEEL_TIMEOUT);
+
             // it's time to fire the callback
             return callback(event);
           }, useCapture);
         }
       }
+    },
+
+    onMouseWheelEnd: function(elem, callback, useCapture) {
+      this.addEventListener(elem, "mousewheelend", function(evt) {
+        if(callback instanceof Function) {
+          return callback(evt);
+        }
+      }, useCapture);
     },
 
     // Minimal distance a mouse should move before a click becomes a drag.
