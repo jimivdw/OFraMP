@@ -97,6 +97,13 @@ Molecule.prototype = {
     return this.atoms.setSelected(a);
   },
 
+  /*
+   * Add the atom a to the current selection.
+   */
+  addSelected: function(a) {
+    return this.atoms.addSelected(a);
+  },
+
   dehighlight: function(status) {
     this.atoms.dehighlight(status);
   },

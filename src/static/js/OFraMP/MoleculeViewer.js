@@ -87,17 +87,18 @@ MoleculeViewer.prototype = {
       }
     }, $ext.mouse.LEFT);
 
+    var lastDragTime = undefined;
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.move(e.deltaX, e.deltaY);
 
         var now = Date.now();
-        if(!window.__lastDragTime) {
-          window.__lastDragTime = now;
+        if(!lastDragTime) {
+          lastDragTime = now;
         }
-        if(now - window.__lastDragTime > 1000) {
+        if(now - lastDragTime > 1000) {
           _this.oframp.checkpoint();
-          window.__lastDragTime = now;
+          lastDragTime = now;
         }
       }
     }, $ext.mouse.LEFT);
@@ -105,23 +106,24 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseDragEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.oframp.checkpoint();
-        window.__lastDragTime = undefined;
+        lastDragTime = undefined;
       }
     }, $ext.mouse.LEFT);
 
+    var initialSelection = [];
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         if(!_this.selectionArea) {
           _this.selectionArea = new SelectionArea(_this, e.clientX, e.clientY);
           if(e.ctrlKey === true) {
-            window.__initialSelection = _this.molecule.atoms.getSelected();
+            initialSelection = _this.molecule.getSelected();
           }
         } else {
           _this.selectionArea.resize(e.deltaX, e.deltaY);
           var bb = _this.selectionArea.getBB();
           var atoms = _this.molecule.getAtomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
           if(e.ctrlKey === true) {
-            _this.molecule.setSelected(window.__initialSelection);
+            _this.molecule.setSelected(initialSelection);
             _this.molecule.atoms.addSelected(atoms);
           } else {
             _this.molecule.setSelected(atoms);
@@ -139,6 +141,7 @@ MoleculeViewer.prototype = {
       }
     }, $ext.mouse.RIGHT);
 
+    var lastZoomTime = undefined;
     $ext.dom.onMouseWheel(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         if(e.deltaY < 0) {
@@ -150,12 +153,12 @@ MoleculeViewer.prototype = {
         _this.zoomOn(c.x, c.y, f);
 
         var now = Date.now();
-        if(!window.__lastZoomTime) {
-          window.__lastZoomTime = now;
+        if(!lastZoomTime) {
+          lastZoomTime = now;
         }
-        if(now - window.__lastZoomTime > 1000) {
+        if(now - lastZoomTime > 1000) {
           _this.oframp.checkpoint();
-          window.__lastZoomTime = now;
+          lastZoomTime = now;
         }
 
         return false;
@@ -165,7 +168,7 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseWheelEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         _this.oframp.checkpoint();
-        window.__lastZoomTime = undefined;
+        lastZoomTime = undefined;
       }
     });
   },
@@ -377,16 +380,17 @@ MoleculeViewer.prototype = {
 
     var _this = this;
     var limit = this.settings.deoverlap.timeLimit * 1000;
+    var animStart = undefined;
     window.requestAnimationFrame(function drawLoop(ts) {
-      if(!window.__animStart) {
-        window.__animStart = ts;
+      if(!animStart) {
+        animStart = ts;
       }
 
-      if(ts - window.__animStart < limit && _this.molecule.deoverlap()) {
+      if(ts - animStart < limit && _this.molecule.deoverlap()) {
         _this.redraw();
         requestAnimationFrame(drawLoop);
       } else {
-        window.__animStart = undefined;
+        animStart = undefined;
       }
     });
   },
