@@ -123,6 +123,22 @@ NaiveBehavior.prototype = {
       }, $ext.mouse.LEFT);
     }
 
+    var msb = document.createElement('button');
+    msb.className = "border_box";
+    toggleSelectionEdit();
+    toggleSelectionEdit();
+    function toggleSelectionEdit() {
+      if(_this.oframp.mv.isModifyingSelection) {
+        _this.oframp.mv.isModifyingSelection = false;
+        $ext.dom.clear(msb);
+        msb.appendChild(document.createTextNode("Modify selection"));
+      } else {
+        _this.oframp.mv.isModifyingSelection = true;
+        $ext.dom.clear(msb);
+        msb.appendChild(document.createTextNode("Stop modifying selection"));
+      }
+    }
+
     var ffb = document.createElement('button');
     ffb.className = "border_box";
     ffb.appendChild(document.createTextNode("Find matching fragments"));
@@ -131,6 +147,9 @@ NaiveBehavior.prototype = {
       this.oframp.atomDetails.appendChild(ecb);
       $ext.dom.onMouseClick(ecb, toggleChargeEdit, $ext.mouse.LEFT);
     }
+
+    this.oframp.atomDetails.appendChild(msb);
+    $ext.dom.onMouseClick(msb, toggleSelectionEdit, $ext.mouse.LEFT);
 
     if(this instanceof NaiveBehavior) {
       this.oframp.atomDetails.appendChild(ffb);

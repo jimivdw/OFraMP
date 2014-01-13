@@ -15,6 +15,7 @@ MoleculeViewer.prototype = {
 
   isInteractive: false,
   selectionArea: undefined,
+  isModifyingSelection: false,
   overlayShowing: false,
   overlayMessage: "",
   overlayStatus: 1,
@@ -77,7 +78,7 @@ MoleculeViewer.prototype = {
         var c = $ext.mouse.getCoords(e);
         var a = _this.molecule.getAtomAt(c.x, c.y);
         var s = a ? [a] : [];
-        if(e.ctrlKey === true) {
+        if(e.ctrlKey === true || _this.isModifyingSelection) {
           _this.molecule.atoms.addSelected(s);
           _this.redraw();
         } else if(_this.molecule.setSelected(s)) {
@@ -115,14 +116,14 @@ MoleculeViewer.prototype = {
       if(!_this.overlayShowing) {
         if(!_this.selectionArea) {
           _this.selectionArea = new SelectionArea(_this, e.clientX, e.clientY);
-          if(e.ctrlKey === true) {
+          if(e.ctrlKey === true || _this.isModifyingSelection) {
             initialSelection = _this.molecule.getSelected();
           }
         } else {
           _this.selectionArea.resize(e.deltaX, e.deltaY);
           var bb = _this.selectionArea.getBB();
           var atoms = _this.molecule.getAtomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
-          if(e.ctrlKey === true) {
+          if(e.ctrlKey === true || _this.isModifyingSelection) {
             _this.molecule.setSelected(initialSelection);
             _this.molecule.atoms.addSelected(atoms);
           } else {
