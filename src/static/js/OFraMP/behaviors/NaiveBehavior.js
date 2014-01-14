@@ -184,6 +184,18 @@ NaiveBehavior.prototype = {
     }
 
     $ext.each(fragments, function(fragment, i) {
+      var atoms = $ext.array.map(fragment.atoms, function(atom) {
+        var orig = this.oframp.mv.molecule.atoms.get(atom.id);
+        atom.element = orig.element;
+        atom.x = orig.x;
+        atom.y = orig.y;
+        return atom;
+      }, this);
+
+      var bonds = $ext.array.map(fragment.bonds, function(bond) {
+        return this.oframp.mv.molecule.bonds.get(bond.id).getJSON();
+      }, this);
+
       var fc = document.createElement('div');
       fc.id = "fc_" + i;
       fc.className = "fragment";
@@ -201,10 +213,9 @@ NaiveBehavior.prototype = {
       this.oframp.relatedFragmentViewers.push(fv);
 
       var load = function() {
-        fv.showMolecule(fragment, function(molecule) {
-          molecule.bestFit();
-          fv.redraw();
-        });
+        fv.molecule = new Molecule(fv, atoms, bonds, "TODO?");
+        fv.molecule.bestFit();
+        fv.redraw();
       };
 
       var ot = fv.canvas.offsetTop;
@@ -242,27 +253,21 @@ NaiveBehavior.prototype = {
         }
         _this.oframp.activeFragment = fv;
 
-        // TODO
-        var m = _this.oframp.mv.molecule
-            .find(fv.molecule.dataStr.split(''))[0];
         var charges = {};
-        $ext.each(m, function(atom, i) {
-          charges[atom.id] = fv.molecule.atoms.get(i + 1).charge;
-        });
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
+        }, this);
         _this.oframp.mv.previewCharges(charges);
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ab, function() {
-        // TODO
-        var m = _this.oframp.mv.molecule.find(fv.molecule.dataStr
-            .split(''))[0];
         _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
         _this.oframp.mv.molecule.setSelected([]);
 
         var charges = {};
-        $ext.each(m, function(atom, i) {
-          charges[atom.id] = fv.molecule.atoms.get(i + 1).charge;
-        });
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
+        }, this);
         _this.oframp.mv.setCharges(charges);
 
         _this.oframp.selectionChanged();

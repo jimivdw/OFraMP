@@ -315,6 +315,8 @@ OFraMP.prototype = {
    * Get the matching fragments with the selection of the molecule.
    */
   getMatchingFragments: function(selection) {
+    var _this = this;
+
     var selection = selection || this.mv.molecule.getSelected();
     if(selection.length === 0) {
       alert("No atoms have been selected.");
@@ -348,14 +350,35 @@ OFraMP.prototype = {
       molecule: this.mv.molecule.getSimpleJSON()
     });
 
-    console.log(queryJSON);
-    // TODO!!
-    var fragments = new Array();
-    var r = Math.round(Math.random() * 10);
-    for( var i = 0; i < r; i++) {
-      fragments.push("OCO");
-    }
-    this.behavior.showRelatedFragments(fragments);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4 && xhr.status == 200) {
+        var fd = JSON.parse(xhr.responseText);
+        console.log("fd", fd);
+
+        var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+            fd.version);
+        if(vc == -1) {
+          var msg = "OMFraF version too old." + "\n\nRequired version: "
+              + _this.settings.omfraf.version + "\nCurrent version: "
+              + fd.version;
+          _this.mv.showOverlay(msg, MESSAGE_TYPES.error);
+        } else if(vc == 1) {
+          var msg = "OMFraF version too new." + "\n\nRequired version: "
+              + _this.settings.omfraf.version + "\nCurrent version: "
+              + fd.version;
+          _this.mv.showOverlay(msg, MESSAGE_TYPES.error);
+        } else if(fd.error) {
+          _this.mv.showOverlay(fd.error, MESSAGE_TYPES.error);
+        } else if(fd.fragments) {
+          _this.behavior.showRelatedFragments(fd.fragments);
+        }
+      }
+    };
+
+    xhr.open("POST", this.settings.omfraf.url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("data=" + encodeURIComponent(queryJSON));
   },
 
   getMoleculeCutout: function(x, y, sw, sh, width, height) {
