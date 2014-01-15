@@ -293,7 +293,7 @@ OFraMP.prototype = {
       frags.appendChild(fc);
 
       var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
-      fv.molecule = new Molecule(fv, atoms, bonds, "TODO?");
+      fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
       fv.redraw();
     }, this);

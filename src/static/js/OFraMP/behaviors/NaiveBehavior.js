@@ -218,7 +218,7 @@ NaiveBehavior.prototype = {
       this.oframp.relatedFragmentViewers.push(fv);
 
       var load = function() {
-        fv.molecule = new Molecule(fv, atoms, bonds, "TODO?");
+        fv.molecule = new Molecule(fv, atoms, bonds);
         fv.molecule.bestFit();
         fv.redraw();
       };
