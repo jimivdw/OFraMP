@@ -541,11 +541,12 @@ Atom.prototype = {
 
     ctx.font = s.atom.font;
     ctx.fillStyle = this.getColor();
-    if(this.isCharged() || this.previewCharge) {
+    var cl = this.getChargeLabel();
+    if(cl) {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
       ctx.fillStyle = s.atom.chargeColor;
-      ctx.fillText(this.getChargeLabel(), this.x, this.y + s.atom.chargeOffset);
+      ctx.fillText(cl, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
     }
