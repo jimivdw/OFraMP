@@ -273,7 +273,7 @@ NaiveBehavior.prototype = {
         $ext.each(atoms, function(atom) {
           charges[atom.id] = atom.charge;
         }, this);
-        _this.oframp.mv.setCharges(charges);
+        _this.oframp.mv.setCharges(charges, fragment);
 
         _this.oframp.selectionChanged();
         _this.oframp.redraw();
@@ -285,7 +285,7 @@ NaiveBehavior.prototype = {
     this.oframp.showRelatedFragments();
   },
 
-  showChargeFixer: function(atom, rem, charges) {
+  showChargeFixer: function(atom, rem, charges, fragment) {
     var title = "Attempting to assign a new charge to an already charged atom";
     var content = document.createElement('div');
     var id = document.createElement('div');
@@ -352,7 +352,7 @@ NaiveBehavior.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
-      atom.setCharge(parseFloat(rc.value) || undefined, "TODO");
+      atom.setCharge(parseFloat(rc.value) || undefined, fragment);
       atom.resetHighlight();
       _this.oframp.hidePopup();
 
@@ -360,11 +360,11 @@ NaiveBehavior.prototype = {
       rem.each(function(atom, i) {
         if(charges[atom.id]) {
           if(atom.charge) {
-            this.showChargeFixer(atom, rem.slice(i + 1), charges);
+            this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
             needsFix = true;
             return $ext.BREAK;
           } else {
-            atom.setCharge(charges[atom.id], "TODO");
+            atom.setCharge(charges[atom.id], fragment);
           }
         }
       }, _this);

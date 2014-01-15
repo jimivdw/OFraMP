@@ -333,17 +333,17 @@ MoleculeViewer.prototype = {
   /*
    * Set the charges given as a mapping from atom IDs to charges.
    */
-  setCharges: function(charges) {
+  setCharges: function(charges, fragment) {
     var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
       if(charges[atom.id]) {
         if(atom.charge) {
           this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
-              .slice(i + 1), charges);
+              .slice(i + 1), charges, fragment);
           needsFix = true;
           return $ext.BREAK;
         } else {
-          atom.setCharge(charges[atom.id], "TODO");
+          atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();
         }
       }
@@ -361,14 +361,14 @@ MoleculeViewer.prototype = {
   /*
    * Set the charges that are currently previewed as the real charges.
    */
-  setPreviewCharges: function() {
+  setPreviewCharges: function(fragment) {
     var charges = new Object();
     this.molecule.atoms.each(function(atom, i) {
       if(atom.previewCharge !== undefined) {
         charges[atom.id] = atom.previewCharge;
       }
     }, this);
-    this.setCharges(charges);
+    this.setCharges(charges, fragment);
   },
 
   /*

@@ -268,16 +268,35 @@ OFraMP.prototype = {
     var title = "Used molecule fragments";
 
     var content = document.createElement('div');
+    this.showPopup(title, content);
 
     var frags = document.createElement('div');
     frags.id = "used_fragments";
-    $ext.each(fragments, function(fragment) {
-      var fc = document.createElement('div');
-      fc.className = 'used_fragment border_box';
-      fc.appendChild(document.createTextNode("TODO"));
-      frags.appendChild(fc);
-    });
     content.appendChild(frags);
+
+    $ext.each(fragments, function(fragment, i) {
+      var atoms = $ext.array.map(fragment.atoms, function(atom) {
+        var orig = this.mv.molecule.atoms.get(atom.id);
+        atom.element = orig.element;
+        atom.x = orig.x;
+        atom.y = orig.y;
+        return atom;
+      }, this);
+
+      var bonds = $ext.array.map(fragment.bonds, function(bond) {
+        return this.mv.molecule.bonds.get(bond.id).getJSON();
+      }, this);
+
+      var fc = document.createElement('div');
+      fc.id = "ufc_" + i;
+      fc.className = 'used_fragment border_box';
+      frags.appendChild(fc);
+
+      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
+      fv.molecule = new Molecule(fv, atoms, bonds, "TODO?");
+      fv.molecule.bestFit();
+      fv.redraw();
+    }, this);
 
     var cb = document.createElement('button');
     cb.className = 'border_box';
@@ -287,8 +306,6 @@ OFraMP.prototype = {
     $ext.dom.onMouseClick(cb, function() {
       _this.hidePopup();
     }, $ext.mouse.LEFT);
-
-    this.showPopup(title, content);
   },
 
   showSelectionDetails: function() {

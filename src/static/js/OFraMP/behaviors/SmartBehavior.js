@@ -85,7 +85,8 @@ SmartBehavior.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(afb, function() {
-      _this.oframp.mv.setPreviewCharges();
+      var cf = _this.__fragments[_this.__currentFragment];
+      _this.oframp.mv.setPreviewCharges(cf);
 
       _this.oframp.selectionChanged();
       _this.oframp.redraw();
@@ -149,19 +150,19 @@ SmartBehavior.prototype = {
     }
   },
 
-  showChargeFixer: function(atom, rem, charges) {
-    atom.setCharge((atom.charge + charges[atom.id]) / 2, "TODO");
+  showChargeFixer: function(atom, rem, charges, fragment) {
+    atom.setCharge((atom.charge + charges[atom.id]) / 2, fragment);
     atom.resetHighlight();
 
     var needsFix = false;
     rem.each(function(atom, i) {
       if(charges[atom.id]) {
         if(atom.charge) {
-          this.showChargeFixer(atom, rem.slice(i + 1), charges);
+          this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
           needsFix = true;
           return $ext.BREAK;
         } else {
-          atom.setCharge(charges[atom.id], "TODO");
+          atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();
         }
       }
