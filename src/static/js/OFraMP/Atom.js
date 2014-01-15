@@ -100,14 +100,10 @@ Atom.prototype = {
   /*
    * Get this atom's label.
    */
-  getLabel: function() {
-    if(this.cache.get('appearance.label')) {
-      return this.cache.get('appearance.label');
-    }
-
+  getLabel: function(withHs) {
     var label = this.element;
-    if(this.settings.atom.combineHLabels === true
-        && this.settings.atom.showHAtoms !== true) {
+    if(withHs
+        || (this.settings.atom.combineHLabels === true && this.settings.atom.showHAtoms !== true)) {
       var hs = $ext.array.filter(this.getBondedAtoms(), function(atom) {
         return atom.element === "H";
       });
@@ -119,9 +115,6 @@ Atom.prototype = {
         }
       }
     }
-
-    this.cache.set('appearance.label', label, this.cache
-        .getCache('appearance.visible'));
     return label;
   },
 
@@ -202,6 +195,15 @@ Atom.prototype = {
       this.cache.set('structure.atoms', bondedAtoms);
     }
     return bondedAtoms;
+  },
+
+  /*
+   * Get the hydrogen atoms bonded with this atom.
+   */
+  getHydrogenAtoms: function() {
+    return $ext.array.filter(this.getBondedAtoms(), function(atom) {
+      return atom.element === "H";
+    });
   },
 
   /*

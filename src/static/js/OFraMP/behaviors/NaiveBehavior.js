@@ -23,6 +23,11 @@ NaiveBehavior.prototype = {
     ts.appendChild(tn);
     this.oframp.atomDetails.appendChild(ts);
 
+    $ext.each(selection, function(atom) {
+      $ext.each(atom.getHydrogenAtoms(), function(hatom) {
+        selection.push(hatom);
+      });
+    });
     var sl = new AtomList(this.oframp.mv.molecule, selection);
     var cntr = sl.getCenterPoint();
     var s = sl.getSize();
@@ -33,7 +38,7 @@ NaiveBehavior.prototype = {
 
     if(atom) {
       $ext.dom.addTableRow(dt, "ID", atom.id);
-      $ext.dom.addTableRow(dt, "Element", atom.element);
+      $ext.dom.addTableRow(dt, "Element", atom.getLabel(true));
       var cc = document.createElement('span');
       var charge = $ext.number.format(atom.charge, 1, 3);
       cc.appendChild(document.createTextNode(charge || "unknown"));
@@ -41,7 +46,7 @@ NaiveBehavior.prototype = {
     } else {
       // Get the unparameterised atoms
       var uas = $ext.array.filter(selection, function(atom) {
-        return atom.charge === undefined;
+        return !atom.isCharged();
       });
       // Get the charge of all atoms
       var cs = $ext.array.map(selection, function(atom) {
