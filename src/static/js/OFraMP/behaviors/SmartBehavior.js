@@ -38,6 +38,11 @@ SmartBehavior.prototype = {
 
   __selectAtom: function() {
     var unpar = this.oframp.mv.molecule.getUnparameterized();
+    if(!unpar) {
+      alert("Could not find any more unparameterised atoms.");
+      return;
+    }
+
     var needle = $ext.array.randomElement(unpar);
     if(this.__fragments && this.__fragments.length > 0) {
       var fragment = this.__fragments[this.__currentFragment];
@@ -56,6 +61,7 @@ SmartBehavior.prototype = {
         needle = ua;
       }
     }
+    this.oframp.mv.molecule.centerOnAtom(needle);
     this.oframp.getMatchingFragments([needle]);
   },
 
@@ -197,6 +203,7 @@ SmartBehavior.prototype = {
 
   parameterizationFinished: function() {
     $ext.dom.remove(document.getElementById("fragment_controls"));
+    this.oframp.mv.molecule.center();
     alert("You're done! I don't know what should happen now...");
   }
 };

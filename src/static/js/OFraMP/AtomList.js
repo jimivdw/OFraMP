@@ -419,11 +419,25 @@ AtomList.prototype = {
    * Center the list of atoms.
    */
   center: function() {
-    var cc = $ext.context.centerPoint(this.molecule.mv.ctx);
     var mc = this.getCenterPoint();
-    var dx = cc.x - mc.x;
-    var dy = cc.y - mc.y;
+    this.centerOn(mc.x, mc.y);
+  },
+
+  /*
+   * Center the list of atoms on the given (x, y) position.
+   */
+  centerOn: function(x, y) {
+    var cc = $ext.context.centerPoint(this.molecule.mv.ctx);
+    var dx = cc.x - x;
+    var dy = cc.y - y;
     this.move(dx, dy);
+  },
+
+  /*
+   * Center the list of atoms on the position of the given atom.
+   */
+  centerOnAtom: function(atom) {
+    this.centerOn(atom.x, atom.y);
   },
 
   /*
