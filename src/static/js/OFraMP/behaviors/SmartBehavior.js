@@ -38,7 +38,25 @@ SmartBehavior.prototype = {
 
   __selectAtom: function() {
     var unpar = this.oframp.mv.molecule.getUnparameterized();
-    this.oframp.getMatchingFragments([$ext.array.randomElement(unpar)]);
+    var needle = $ext.array.randomElement(unpar);
+    if(this.__fragments && this.__fragments.length > 0) {
+      var fragment = this.__fragments[this.__currentFragment];
+      var ua = $ext.each(fragment.atoms, function(atom) {
+        var orig = this.oframp.mv.molecule.atoms.get(atom.id);
+        var ua = $ext.each(orig.getBondedAtoms(), function(ba) {
+          if(unpar.indexOf(ba) !== -1) {
+            return ba;
+          }
+        });
+        if(ua) {
+          return ua;
+        }
+      }, this);
+      if(ua) {
+        needle = ua;
+      }
+    }
+    this.oframp.getMatchingFragments([needle]);
   },
 
   showRelatedFragments: function(fragments) {

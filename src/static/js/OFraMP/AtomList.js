@@ -108,7 +108,7 @@ AtomList.prototype = {
    */
   getUnparameterized: function() {
     return $ext.array.filter(this.atoms, function(atom) {
-      return !atom.isCharged();
+      return !atom.isCharged() && atom.element !== "H";
     });
   },
 
