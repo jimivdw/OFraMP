@@ -328,9 +328,13 @@ Atom.prototype = {
   },
 
   /*
-   * Set ths charge of this atom to the given value.
+   * Set the charge of this atom to the given value.
    */
   setCharge: function(charge, fragment) {
+    if(this.element === "H") {
+      return;
+    }
+
     this.charge = charge;
     this.previewCharge = undefined;
     this.usedFragments.push(fragment);
