@@ -33,8 +33,7 @@ Atom.prototype = {
     this.elementID = elementID;
     this.x = x;
     this.y = y;
-    this.charge = charge
-        || (list.molecule.mv.isInteractive ? undefined : Math.random());
+    this.charge = charge;
     this.previewCharge = previewCharge;
     this.usedFragments = usedFragments || new Array();
     this.status = status || ATOM_STATUSES.normal;
@@ -65,6 +64,19 @@ Atom.prototype = {
       usedFragments: this.usedFragments,
       status: this.status
     };
+  },
+
+  /*
+   * Get the base of a hydrogen atom.
+   * 
+   * Returns the atom itself if it is not a hydrogen atom.
+   */
+  getBase: function() {
+    if(this.element === "H") {
+      return this.getBondedAtoms()[0];
+    }
+
+    return this;
   },
 
   /*
@@ -306,6 +318,10 @@ Atom.prototype = {
    * Returns whether the charge of this atom is set or not.
    */
   isCharged: function() {
+    if(this.element === "H") {
+      return this.getBase().isCharged();
+    }
+
     return this.charge !== undefined;
   },
 
@@ -338,6 +354,38 @@ Atom.prototype = {
     var color = c || this.settings.atom.colors["other"];
     this.cache.set('appearance.color', color);
     return color;
+  },
+
+  /*
+   * Get the status of this atom.
+   */
+  getStatus: function() {
+    if(this.element === "H") {
+      return this.getBase().getStatus();
+    }
+
+    return this.status;
+  },
+
+  /*
+   * Get the displayed charge label for this atom.
+   */
+  getChargeLabel: function() {
+    if(!this.isVisible()) {
+      return;
+    }
+
+    if(this.element === "H") {
+      return this.getBase().getChargeLabel();
+    }
+
+    var charge = this.charge;
+    if(this.previewCharge !== undefined && this.isCharged()) {
+      charge = (this.previewCharge + this.charge) / 2;
+    } else if(this.previewCharge !== undefined) {
+      charge = this.previewCharge;
+    }
+    return $ext.number.format(charge, 1, 3);
   },
 
   /*
@@ -468,7 +516,7 @@ Atom.prototype = {
     var ctx = this.list.molecule.mv.ctx;
     var s = this.settings;
 
-    var status = $ext.number.msb(this.status);
+    var status = $ext.number.msb(this.getStatus());
     ctx.fillStyle = s.atom.bgColors[status];
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
@@ -495,14 +543,7 @@ Atom.prototype = {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
       ctx.fillStyle = s.atom.chargeColor;
-      var charge = this.charge;
-      if(this.previewCharge !== undefined && this.isCharged()) {
-        charge = (this.previewCharge + this.charge) / 2;
-      } else if(this.previewCharge !== undefined) {
-        charge = this.previewCharge;
-      }
-      var sc = $ext.number.format(charge, 1, 3);
-      ctx.fillText(sc, this.x, this.y + s.atom.chargeOffset);
+      ctx.fillText(this.getChargeLabel(), this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
     }
