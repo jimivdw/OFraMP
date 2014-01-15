@@ -324,7 +324,7 @@ MoleculeViewer.prototype = {
         }
       } else {
         atom.previewCharge = undefined;
-        atom.removeHighlight(ATOM_STATUSES.preview & ATOM_STATUSES.conflict);
+        atom.removeHighlight(ATOM_STATUSES.preview | ATOM_STATUSES.conflict);
       }
     });
     this.redraw();
