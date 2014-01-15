@@ -27,9 +27,9 @@ html, body {
     background-color: #FFF;
 }
 
-#header {
+#logo {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     left: 50%;
     width: 100px;
     margin-left: -50px;
@@ -43,11 +43,11 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-#header:hover {
+#logo:hover {
     opacity: 1;
 }
 
-#header span {
+#logo span {
     font-family: "Century Gothic", "Avant Garde Gothic", "Avant Garde", "URW Gothic L", Helvetica, sans-serif;
     font-variant: small-caps;
     font-weight: bold;
@@ -82,19 +82,32 @@ html, body {
     user-select: none;
 }
 
+#controls {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 600px;
+    height: 30px;
+    box-sizing: border-box;
+    margin-left: -300px;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+    visibility: hidden;
+}
+
 #controls_toggle {
     position: absolute;
+    left: 0px;
     bottom: 0px;
-    font-size: 12px;
+    font-size: 10px;
     color: #FFF;
     background-color: #333;
-    padding: 1px 5px;
-    border-radius: 5px 5px 0 0;
-    left: 50%;
-    width: 80px;
+    padding: 2px 3px 2px 10px;
+    border-radius: 0 5px 0 0;
+    width: 100px;
     box-sizing: border-box;
-    text-align: center;
-    margin-left: -40px;
+    text-align: left;
     cursor: pointer;
     -webkit-user-select: none;
     user-select: none;
@@ -102,33 +115,34 @@ html, body {
     transition: bottom .2s ease-out, opacity .2s ease-out;
     opacity: 0.5;
     visibility: hidden;
+    z-index: 10;
 }
 
 #controls_toggle:hover, #controls_toggle.hover {
     opacity: 1;
 }
 
-#controls {
+#extra_controls {
     position: absolute;
     bottom: 0px;
-    left: 50%;
-    width: 600px;
+    left: 0px;
+    width: 450px;
     height: 0px;
     box-sizing: border-box;
-    margin-left: -300px;
     padding: 5px;
-    text-align: center;
+    text-align: left;
     background-color: #333;
-    border-radius: 5px 5px 0 0;
+    border-radius: 0 5px 0 0;
     -webkit-user-select: none;
     user-select: none;
     -webkit-transition: height .2s ease-out, opacity .2s ease-out, visibility .2s ease-out;
     transition: height .2s ease-out, opacity .2s ease-out, visibility .2s ease-out;
     opacity: 0.5;
     visibility: hidden;
+    z-index: 10;
 }
 
-#controls:hover, #controls_toggle:hover + #controls {
+#extra_controls:hover, #controls_toggle:hover + #extra_controls {
     opacity: 1;
 }
 
@@ -144,7 +158,7 @@ html, body {
     padding: 6px;
     border-right-width: 0 !important;
     border-radius: 0 !important;
-    color: #888;
+    color: #333;
     cursor: pointer;
     font-size: 12px;
     text-decoration: none;
@@ -153,10 +167,6 @@ html, body {
 .bgroup > select {
     /* Fix for weird padding */
     padding: 5px;
-}
-
-.bgroup > *:hover {
-    color: #333;
 }
 
 .bgroup > *:active {
@@ -435,14 +445,7 @@ html, body {
     margin: 10px;
 }
 
-#oframp > button, #fragment_controls {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    width: 160px;
-    height: 30px;
-    padding: 0;
-    text-align: center;
+#controls button, #controls a {
     -webkit-user-select: none;
     user-select: none;
     opacity: 0.5;
@@ -451,50 +454,27 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-#oframp > button:disabled {
+#controls button:disabled, #controls a:disabled {
     opacity: 0.1 !important;
     cursor: default !important;
     background-color: #FFF !important;
 }
 
-#oframp > button:hover, #fragment_controls button:hover {
+#controls button:hover, #controls a:hover {
     opacity: 1;
 }
 
-#oframp > button:active {
+#controls button:active, #controls a:active {
     background-color: #DDD;
 }
 
-#enter_molecule {
-    margin-left: -230px;
-}
-
-#find_fragments, #fragment_controls {
-    margin-left: 70px;
-}
-
-#fragment_controls {
-    cursor: default;
-    opacity: 1;
-}
-
-#fragment_controls button {
-    width: 30px;
+#accept_fragment, #reject_fragment, #previous_fragment {
+    width: 34px;
     height: 30px;
-    margin: 0 5px;
-    opacity: 0.5;
-    cursor: pointer;
     font-size: 26px;
     line-height: 30px;
     padding: 0;
     background-position: center center;
-    -webkit-transition: opacity .2s ease-out;
-    transition: opacity .2s ease-out;
-}
-
-#fragment_controls button:disabled {
-    opacity: 0.1 !important;
-    cursor: default !important;
 }
 
 #accept_fragment {

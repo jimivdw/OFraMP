@@ -16,7 +16,6 @@ OFraMP.prototype = {
   popupTitle: undefined,
   popupContent: undefined,
 
-  enterMoleculeButton: undefined,
   findFragmentsButton: undefined,
 
   relatedFragmentViewers: undefined,
@@ -59,19 +58,8 @@ OFraMP.prototype = {
     this.container.appendChild(this.popup);
     this.__initPopup(this.popup);
 
-    var emb = document.createElement('button');
-    emb.id = "enter_molecule";
-    emb.className = "border_box";
-    emb.style.visibility = "hidden";
-    this.container.appendChild(emb);
-    this.__initEMB(emb);
-    this.enterMoleculeButton = emb;
-
-    var ffb = document.createElement('button');
-    ffb.id = "find_fragments";
-    ffb.className = "border_box";
-    ffb.style.visibility = "hidden";
-    this.container.appendChild(ffb);
+    var ffb = document.getElementById("find_fragments");
+    $ext.dom.clear(ffb);
     this.__initFFB(ffb);
     this.findFragmentsButton = ffb;
 
@@ -113,16 +101,8 @@ OFraMP.prototype = {
     container.appendChild(this.popupContent);
   },
 
-  __initEMB: function(elem) {
-    elem.appendChild(document.createTextNode("Submit a new molecule"));
-    var _this = this;
-    $ext.dom.onMouseClick(elem, function() {
-      _this.showInsertMoleculePopup();
-    }, $ext.mouse.LEFT);
-  },
-
   __initFFB: function(elem) {
-    elem.appendChild(document.createTextNode("Find matching fragments"));
+    elem.appendChild(document.createTextNode("Find fragments"));
     elem.disabled = "disabled";
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
@@ -150,11 +130,6 @@ OFraMP.prototype = {
     });
     this.settingsUI.addAll(settingsObj, this.settings, $ext.object
         .extrapolate(SETTINGS_OPTIONS));
-  },
-
-  __initMP: function() {
-    this.enterMoleculeButton.style.visibility = "visible";
-    this.findFragmentsButton.style.visibility = "visible";
   },
 
   showPopup: function(title, content) {
@@ -194,7 +169,6 @@ OFraMP.prototype = {
 
       if(!_this.mv.molecule) {
         _this.mv.setupInteraction();
-        _this.__initMP();
       }
       _this.container.dispatchEvent(_this.moleculeEnteredEvent);
       _this.hidePopup();
@@ -225,7 +199,6 @@ OFraMP.prototype = {
           var data = JSON.parse(atob(evt.target.result));
           if(!_this.mv.molecule) {
             _this.mv.setupInteraction();
-            _this.__initMP();
           }
 
           _this.container.dispatchEvent(_this.moleculeEnteredEvent);
@@ -243,6 +216,7 @@ OFraMP.prototype = {
     cbs.appendChild(ossi);
 
     var lb = document.createElement('button');
+    lb.id = "load_oss";
     lb.appendChild(document.createTextNode("Load from OSS file"));
     lb.onclick = function() {
       ossi.click();

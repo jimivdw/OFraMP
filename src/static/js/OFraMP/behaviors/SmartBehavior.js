@@ -11,20 +11,20 @@ SmartBehavior.prototype = {
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
           var ffb = document.getElementById("find_fragments");
+          var pe = ffb.parentElement;
           if(ffb) {
             $ext.dom.remove(ffb);
           } else {
             var fcd = document.getElementById("fragment_controls");
             if(fcd) {
-              $ext.dom.remove(fcd);
+              $ext.dom.clear(fcd);
             }
           }
           ffb = document.createElement("button");
           ffb.id = "find_fragments";
           ffb.className = "border_box";
           ffb.appendChild(document.createTextNode("Start parameterising"));
-          var cc = document.getElementById("canvas_container");
-          oframp.container.insertBefore(ffb, cc);
+          pe.appendChild(ffb);
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
@@ -78,11 +78,7 @@ SmartBehavior.prototype = {
   __initFCD: function() {
     $ext.dom.remove(document.getElementById("find_fragments"));
 
-    var fcd = document.createElement("div");
-    fcd.id = "fragment_controls";
-    var cc = document.getElementById("canvas_container");
-    this.oframp.container.insertBefore(fcd, cc);
-
+    var fcd = document.getElementById("fragment_controls");
     var afb = document.createElement("button");
     afb.id = "accept_fragment";
     afb.className = "border_box";
