@@ -121,18 +121,19 @@ SmartBehavior.prototype = {
       return;
     }
 
-    // TODO!!
-    var fv = new MoleculeViewer(this.oframp, "fragment_x", "atom_details", 228,
-        130);
-    var _this = this;
-    fv.showMolecule(fragment, function(molecule) {
-      var m = _this.oframp.mv.molecule.find(molecule.dataStr.split(''))[0];
-      var charges = {};
-      $ext.each(m, function(atom, i) {
-        charges[atom.id] = molecule.atoms.get(i + 1).charge;
-      });
-      _this.oframp.mv.previewCharges(charges);
-    });
+    var atoms = $ext.array.map(fragment.atoms, function(atom) {
+      var orig = this.oframp.mv.molecule.atoms.get(atom.id);
+      atom.element = orig.element;
+      atom.x = orig.x;
+      atom.y = orig.y;
+      return atom;
+    }, this);
+
+    var charges = {};
+    $ext.each(atoms, function(atom) {
+      charges[atom.id] = atom.charge;
+    }, this);
+    this.oframp.mv.previewCharges(charges);
 
     if(this.__currentFragment === 0) {
       if(this.__fragments.length === 1) {
