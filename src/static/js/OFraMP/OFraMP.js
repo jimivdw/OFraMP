@@ -342,6 +342,32 @@ OFraMP.prototype = {
       molecule: this.mv.molecule.getSimpleJSON()
     });
 
+    $ext.dom.clear(this.relatedFragments);
+    var ts = document.createElement('span');
+    ts.className = "title";
+    ts.appendChild(document.createTextNode("Looking for fragments"));
+    this.relatedFragments.appendChild(ts);
+
+    var ep = document.createElement('p');
+    var exp = "Please stand by as the fragments are being loaded.";
+    ep.appendChild(document.createTextNode(exp));
+    this.relatedFragments.appendChild(ep);
+    this.showRelatedFragments();
+
+    function showError(msg) {
+      $ext.dom.clear(ts);
+      $ext.dom.clear(ep);
+      ts.appendChild(document.createTextNode("An error has occured"));
+      ep.appendChild(document.createTextNode(msg));
+
+      var cb = document.createElement("button");
+      cb.appendChild(document.createTextNode("Close"));
+      $ext.dom.onMouseClick(cb, function() {
+        _this.hideRelatedFragments();
+      }, $ext.mouse.LEFT);
+      _this.relatedFragments.appendChild(cb);
+    }
+
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4 && xhr.status == 200) {
@@ -354,17 +380,21 @@ OFraMP.prototype = {
           var msg = "OMFraF version too old." + "\n\nRequired version: "
               + _this.settings.omfraf.version + "\nCurrent version: "
               + fd.version;
-          _this.mv.showOverlay(msg, MESSAGE_TYPES.error);
+          showError(msg);
         } else if(vc == 1) {
           var msg = "OMFraF version too new." + "\n\nRequired version: "
               + _this.settings.omfraf.version + "\nCurrent version: "
               + fd.version;
-          _this.mv.showOverlay(msg, MESSAGE_TYPES.error);
+          showError(msg);
         } else if(fd.error) {
-          _this.mv.showOverlay(fd.error, MESSAGE_TYPES.error);
+          showError(fd.error);
         } else if(fd.fragments) {
+          _this.hideRelatedFragments();
           _this.behavior.showRelatedFragments(fd.fragments);
         }
+      } else if(xhr.readyState > 1 && xhr.status != 200) {
+        var msg = "Could not connect to the OMFraF server."
+        showError(msg);
       }
     };
 
