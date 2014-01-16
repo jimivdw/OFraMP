@@ -151,6 +151,7 @@
         var controls = document.getElementById("controls");
         var extraControls = document.getElementById("extra_controls");
         var toggle = document.getElementById("controls_toggle");
+        var close = document.getElementById("controls_close");
         function initControls() {
           controls.style.visibility = "visible";
           toggle.style.visibility = "visible";
@@ -163,20 +164,20 @@
           });
 
           $ext.dom.onMouseClick(toggle, function() {
-            if (extraControls.style.visibility === "visible") {
-              extraControls.style.height = "0px";
-              extraControls.style.padding = "0px";
-              extraControls.style.visibility = "hidden";
-              toggle.style.bottom = "0px";
-              toggle.innerHTML = "Extra controls &#8673";
-            } else {
-              extraControls.style.visibility = "visible";
-              extraControls.style.height = "40px";
-              extraControls.style.padding = "5px";
-              toggle.style.bottom = "40px";
-              toggle.innerHTML = "Extra controls &#8675";
-            }
-          });
+            controls.style.bottom = "34px";
+            extraControls.style.visibility = "visible";
+            extraControls.style.height = "34px";
+            extraControls.style.padding = "2px";
+            toggle.style.visibility = "hidden";
+          }, $ext.mouse.LEFT);
+
+          $ext.dom.onMouseClick(close, function() {
+            controls.style.bottom = "12px";
+            extraControls.style.height = "0px";
+            extraControls.style.padding = "0px";
+            extraControls.style.visibility = "hidden";
+            toggle.style.visibility = "visible";
+          }, $ext.mouse.LEFT);
 
           controlsInitialized = true;
         }
@@ -264,10 +265,12 @@
     </div>
 
     <div id="controls_toggle">
-      Extra controls &#8673;
+      &#8896; &#8896;
     </div>
 
     <div id="extra_controls">
+      <div id="controls_close">&#8897; &#8897;</div>
+
       <div class="bgroup">
         <button id="zoomin" class="border_box">
           Zoom +
@@ -291,7 +294,7 @@
       </div>
 
       <div class="bgroup">
-        <a id="download" class="border_box" href="">Download</a>
+        <a id="download" class="border_box" href="">Download molecule image</a>
       </div>
     </div>
 
