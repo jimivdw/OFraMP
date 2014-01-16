@@ -27,6 +27,7 @@ OFraMP.prototype = {
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
   moleculeDisplayedEvent: new Event('moleculedisplayed'),
+  historyChangedEvent: new Event('historychanged'),
 
   __init: function(behavior, containerID, settings) {
     this.container = document.getElementById(containerID);
@@ -411,6 +412,7 @@ OFraMP.prototype = {
     if(!this.checkpoints) {
       this.checkpoints = [this.mv.molecule.getJSON()];
       this.activeCheckpoint = 0;
+      this.container.dispatchEvent(this.historyChangedEvent);
       return;
     }
 
@@ -420,6 +422,7 @@ OFraMP.prototype = {
 
     this.checkpoints.push(this.mv.molecule.getJSON());
     this.activeCheckpoint += 1;
+    this.container.dispatchEvent(this.historyChangedEvent);
   },
 
   loadCheckpoint: function(i) {
@@ -430,6 +433,7 @@ OFraMP.prototype = {
 
     this.mv.loadMolecule(this.checkpoints[i]);
     this.activeCheckpoint = i;
+    this.container.dispatchEvent(this.historyChangedEvent);
   },
 
   previousCheckpoint: function() {

@@ -130,12 +130,12 @@
 
         var ub = document.getElementById("undo");
         $ext.dom.onMouseClick(ub, function() {
-          oframp.previousCheckpoint();
+          undo();
         });
 
         var rb = document.getElementById("redo");
         $ext.dom.onMouseClick(rb, function() {
-          oframp.nextCheckpoint();
+          redo();
         });
 
         var op = document.getElementById("opti");
@@ -145,6 +145,26 @@
           $ext.dom.onMouseClick(op, function() {
             oframp.settingsUI.toggle();
           }, $ext.mouse.LEFT);
+        }
+
+        function undo() {
+          if(!oframp.checkpoints) {
+            return;
+          }
+
+          if(oframp.activeCheckpoint > 0) {
+            oframp.previousCheckpoint();
+          }
+        }
+
+        function redo() {
+          if(!oframp.checkpoints) {
+            return;
+          }
+
+          if(oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
+            oframp.nextCheckpoint();
+          }
         }
 
         var controlsInitialized = false;
@@ -201,6 +221,20 @@
           }
         });
 
+        $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
+          if(oframp.activeCheckpoint === 0) {
+            ub.disabled = "disabled";
+          } else {
+            ub.disabled = "";
+          }
+
+          if(oframp.activeCheckpoint === oframp.checkpoints.length - 1) {
+            rb.disabled = "disabled";
+          } else {
+            rb.disabled = "";
+          }
+        });
+
         $ext.dom.addEventListener(window, 'keypress', function(evt) {
           if(!evt.ctrlKey) {
             return;
@@ -211,13 +245,9 @@
             keyCode -= 96;
           }
           if(keyCode === 26) {
-            if(oframp.activeCheckpoint > 0) {
-              oframp.previousCheckpoint();
-            }
+            undo();
           } else if(keyCode === 25) {
-            if(oframp.checkpoints && oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
-              oframp.nextCheckpoint();
-            }
+            redo();
           }
         });
       };
