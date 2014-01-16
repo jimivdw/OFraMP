@@ -69,7 +69,7 @@ NaiveBehavior.prototype = {
       ced.style.height = "0px";
 
       var cet = document.createElement('table');
-      if(atom.isCharged()) {
+      if(atom.usedFragments.length > 0) {
         var ufb = document.createElement('button');
         ufb.id = "show_used_fragments";
         ufb.className = "border_box";
@@ -117,12 +117,21 @@ NaiveBehavior.prototype = {
       this.oframp.atomDetails.appendChild(ced);
 
       $ext.dom.onMouseClick(acb, function() {
-        // TODO validate!
-        atom.charge = ceb.value || undefined;
-        $ext.dom.clear(cc);
-        var charge = $ext.number.format(atom.charge, 1, 3);
-        cc.appendChild(document.createTextNode(charge || "unknown"));
-        _this.oframp.redraw();
+        if(ceb.value && !$ext.number.isNumeric(ceb.value)) {
+          alert("Only numeric values are allowed for the atom charge.");
+          return;
+        }
+
+        var oldCharge = atom.charge;
+        var newCharge = parseFloat(ceb.value) || undefined;
+        atom.setCharge(newCharge);
+        if(oldCharge !== newCharge) {
+          $ext.dom.clear(cc);
+          var charge = $ext.number.format(atom.charge, 1, 3);
+          cc.appendChild(document.createTextNode(charge || "unknown"));
+          _this.oframp.redraw();
+          _this.oframp.checkpoint();
+        }
 
         toggleChargeEdit();
       }, $ext.mouse.LEFT);

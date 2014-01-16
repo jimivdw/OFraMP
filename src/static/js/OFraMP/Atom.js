@@ -337,7 +337,9 @@ Atom.prototype = {
 
     this.charge = charge;
     this.previewCharge = undefined;
-    this.usedFragments.push(fragment);
+    if(fragment) {
+      this.usedFragments.push(fragment);
+    }
   },
 
   /*
