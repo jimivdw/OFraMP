@@ -307,6 +307,7 @@ html, body {
     margin: 95px 0 0 60px;
     cursor: pointer;
     opacity: 0.5;
+    z-index: 10;
     -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
     transition: opacity .2s ease-out, visibility .2s ease-out;
 }
