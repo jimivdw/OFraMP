@@ -235,17 +235,21 @@
           }
         });
 
-        $ext.dom.addEventListener(window, 'keypress', function(evt) {
+        $ext.dom.addEventListener(window, 'keydown', function(evt) {
           if(!evt.ctrlKey) {
             return;
           }
 
           var keyCode = evt.keyCode || evt.charCode;
           if(keyCode > 26) {
-            keyCode -= 96;
+            keyCode -= 64;
           }
           if(keyCode === 26) {
-            undo();
+            if(evt.shiftKey) {
+              redo();
+            } else {
+              undo();
+            }
           } else if(keyCode === 25) {
             redo();
           }
