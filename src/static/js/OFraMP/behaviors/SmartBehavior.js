@@ -179,8 +179,7 @@ SmartBehavior.prototype = {
 
     $ext.dom.onMouseClick(pfb, function() {
       if(!pfb.disabled) {
-        _this.__showFragment(_this.__currentFragment - 1);
-        _this.oframp.checkpoint();
+        _this.oframp.previousCheckpoint();
       }
     }, $ext.mouse.LEFT);
   },
