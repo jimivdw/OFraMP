@@ -14,14 +14,14 @@ SmartBehavior.prototype = {
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
+          _this.__fcd = document.getElementById("fragment_controls");
           var ffb = document.getElementById("find_fragments");
           var pe = ffb.parentElement;
           if(ffb) {
             $ext.dom.remove(ffb);
           } else {
-            var fcd = document.getElementById("fragment_controls");
-            if(fcd) {
-              $ext.dom.clear(fcd);
+            if(_this.__fcd) {
+              $ext.dom.clear(_this.__fcd);
             }
           }
           ffb = document.createElement("button");
@@ -29,7 +29,6 @@ SmartBehavior.prototype = {
           ffb.className = "border_box";
           ffb.appendChild(document.createTextNode("Start parameterising"));
           pe.appendChild(ffb);
-          _this.__ffb = ffb;
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
@@ -37,27 +36,21 @@ SmartBehavior.prototype = {
         });
 
     $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
-      if(!_this.__ffb || !_this.__afb || !_this.__rfb || !_this.__pfb) {
+      if(!_this.__fcd || !_this.__fad) {
         return;
       }
 
       if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
         if(_this.__needle === undefined) {
-          _this.__ffb.style.display = "inline-block";
-          _this.__afb.style.display = "none";
-          _this.__rfb.style.display = "none";
-          _this.__pfb.style.display = "none";
+          _this.__fcd.style.display = "inline-block";
+          _this.__fad.style.display = "none";
         } else {
-          _this.__ffb.style.display = "none";
-          _this.__afb.style.display = "inline-block";
-          _this.__rfb.style.display = "inline-block";
-          _this.__pfb.style.display = "inline-block";
+          _this.__fcd.style.display = "none";
+          _this.__fad.style.display = "inline-block";
         }
       } else {
-        _this.__ffb.style.display = "none";
-        _this.__afb.style.display = "none";
-        _this.__rfb.style.display = "none";
-        _this.__pfb.style.display = "none";
+        _this.__fcd.style.display = "none";
+        _this.__fad.style.display = "none";
       }
     });
   },
@@ -122,7 +115,7 @@ SmartBehavior.prototype = {
   showRelatedFragments: function(fragments) {
     this.__fragments = fragments;
 
-    if(this.__ffb.style.display !== "none") {
+    if(this.__fcd.style.display !== "none") {
       this.__initFCD();
     }
 
@@ -133,9 +126,15 @@ SmartBehavior.prototype = {
   },
 
   __initFCD: function() {
-    this.__ffb.style.display = "none";
+    this.__fcd.style.display = "none";
 
-    var fcd = document.getElementById("fragment_controls");
+    var cd = document.getElementById("controls");
+    var fcd = document.createElement("div");
+    fcd.id = "fragment_accept";
+    fcd.className = "bgroup";
+    cd.insertBefore(fcd, this.__fcd);
+    this.__fad = fcd;
+
     var afb = document.createElement("button");
     afb.id = "accept_fragment";
     afb.className = "border_box";
