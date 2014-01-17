@@ -268,7 +268,7 @@ AtomList.prototype = {
    */
   getAtomAt: function(x, y) {
     return this.each(function(atom) {
-      if(atom.isTouching(x, y)) {
+      if(atom.isVisible() && atom.isTouching(x, y)) {
         return atom;
       }
     });
