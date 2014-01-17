@@ -76,13 +76,13 @@ SmartBehavior.prototype = {
     this.__currentFragment = data.currentFragment;
 
     if(this.__needle !== undefined) {
-      this.oframp.mv.molecule.centerOnAtom(this.__needle);
       if(this.__currentFragment !== undefined) {
         this.__showFragment(this.__currentFragment);
       }
     } else {
       this.oframp.mv.molecule.center();
     }
+    this.oframp.redraw();
   },
 
   showSelectionDetails: function(selection) {
