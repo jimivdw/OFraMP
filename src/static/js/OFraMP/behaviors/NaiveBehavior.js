@@ -5,6 +5,9 @@ function NaiveBehavior(oframp) {
 NaiveBehavior.prototype = {
   name: "Naive",
 
+  relatedFragmentViewers: undefined,
+  activeFragment: undefined,
+
   showSelectionDetails: function(selection) {
     var _this = this;
 
@@ -177,7 +180,7 @@ NaiveBehavior.prototype = {
 
   showRelatedFragments: function(fragments) {
     $ext.dom.clear(this.oframp.relatedFragments);
-    this.oframp.relatedFragmentViewers = new Array();
+    this.relatedFragmentViewers = new Array();
 
     var ts = document.createElement('span');
     ts.className = "title";
@@ -224,7 +227,7 @@ NaiveBehavior.prototype = {
       var _this = this;
       var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
           228, 130);
-      this.oframp.relatedFragmentViewers.push(fv);
+      this.relatedFragmentViewers.push(fv);
 
       var load = function() {
         fv.molecule = new Molecule(fv, atoms, bonds);
@@ -260,12 +263,12 @@ NaiveBehavior.prototype = {
 
         ab.disabled = "";
 
-        if(_this.oframp.activeFragment && _this.oframp.activeFragment !== fv) {
+        if(_this.activeFragment && _this.activeFragment !== fv) {
           // Disable the currently active fragment's button
-          _this.oframp.activeFragment.canvas.parentElement
+          _this.activeFragment.canvas.parentElement
               .getElementsByClassName("border_box")[0].disabled = "disabled";
         }
-        _this.oframp.activeFragment = fv;
+        _this.activeFragment = fv;
 
         var charges = {};
         $ext.each(atoms, function(atom) {
@@ -282,7 +285,9 @@ NaiveBehavior.prototype = {
         $ext.each(atoms, function(atom) {
           charges[atom.id] = atom.charge;
         }, this);
-        _this.oframp.mv.setCharges(charges, fragment);
+        if(_this.oframp.mv.setCharges(charges, fragment)) {
+          _this.oframp.checkpoint();
+        }
 
         _this.oframp.selectionChanged();
         _this.oframp.redraw();

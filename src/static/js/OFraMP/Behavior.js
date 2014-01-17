@@ -12,6 +12,14 @@ Behavior.prototype = {
     console.log("Initializing", this.name, "behaviour...");
   },
 
+  getJSON: function() {
+    return {};
+  },
+
+  loadJSON: function(data) {
+    return;
+  },
+
   showSelectionDetails: function(selection) {
     throw "Not implemented";
   },

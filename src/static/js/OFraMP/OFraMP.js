@@ -18,9 +18,6 @@ OFraMP.prototype = {
 
   findFragmentsButton: undefined,
 
-  relatedFragmentViewers: undefined,
-  activeFragment: undefined,
-
   checkpoints: undefined,
   activeCheckpoint: undefined,
 
@@ -439,8 +436,13 @@ OFraMP.prototype = {
   },
 
   checkpoint: function() {
+    var checkpoint = {
+      molecule: this.mv.molecule.getJSON(),
+      behavior: this.behavior.getJSON()
+    };
+
     if(!this.checkpoints) {
-      this.checkpoints = [this.mv.molecule.getJSON()];
+      this.checkpoints = [checkpoint];
       this.activeCheckpoint = 0;
       this.container.dispatchEvent(this.historyChangedEvent);
       return;
@@ -450,7 +452,7 @@ OFraMP.prototype = {
       this.checkpoints.splice(this.activeCheckpoint + 1);
     }
 
-    this.checkpoints.push(this.mv.molecule.getJSON());
+    this.checkpoints.push(checkpoint);
     this.activeCheckpoint += 1;
     this.container.dispatchEvent(this.historyChangedEvent);
   },
@@ -461,7 +463,8 @@ OFraMP.prototype = {
       return;
     }
 
-    this.mv.loadMolecule(this.checkpoints[i]);
+    this.mv.loadMolecule(this.checkpoints[i].molecule);
+    this.behavior.loadJSON(this.checkpoints[i].behavior);
     this.activeCheckpoint = i;
     this.container.dispatchEvent(this.historyChangedEvent);
   },

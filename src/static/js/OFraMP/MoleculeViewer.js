@@ -332,6 +332,8 @@ MoleculeViewer.prototype = {
 
   /*
    * Set the charges given as a mapping from atom IDs to charges.
+   * 
+   * Returns true if all went well, false if any conflicting charges were found
    */
   setCharges: function(charges, fragment) {
     var needsFix = false;
@@ -350,11 +352,13 @@ MoleculeViewer.prototype = {
     }, this);
     this.redraw();
 
-    if(!needsFix) {
-      this.oframp.checkpoint();
+    if(needsFix) {
+      return false;
+    } else {
       if(this.molecule.getUnparameterized().length === 0) {
         this.oframp.behavior.parameterizationFinished();
       }
+      return true;
     }
   },
 
@@ -368,7 +372,7 @@ MoleculeViewer.prototype = {
         charges[atom.id] = atom.previewCharge;
       }
     }, this);
-    this.setCharges(charges, fragment);
+    return this.setCharges(charges, fragment);
   },
 
   /*

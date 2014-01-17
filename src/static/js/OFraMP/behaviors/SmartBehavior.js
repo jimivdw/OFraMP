@@ -5,6 +5,10 @@ function SmartBehavior(oframp) {
 SmartBehavior.prototype = {
   name: "Smart",
 
+  __needle: undefined,
+  __fragments: undefined,
+  __currentFragment: undefined,
+
   __init: function(oframp) {
     this.oframp = oframp;
     var _this = this;
@@ -25,11 +29,60 @@ SmartBehavior.prototype = {
           ffb.className = "border_box";
           ffb.appendChild(document.createTextNode("Start parameterising"));
           pe.appendChild(ffb);
+          _this.__ffb = ffb;
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
           }, $ext.mouse.LEFT);
         });
+
+    $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
+      if(!_this.__ffb || !_this.__afb || !_this.__rfb || !_this.__pfb) {
+        return;
+      }
+
+      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+        if(_this.__needle === undefined) {
+          _this.__ffb.style.display = "inline-block";
+          _this.__afb.style.display = "none";
+          _this.__rfb.style.display = "none";
+          _this.__pfb.style.display = "none";
+        } else {
+          _this.__ffb.style.display = "none";
+          _this.__afb.style.display = "inline-block";
+          _this.__rfb.style.display = "inline-block";
+          _this.__pfb.style.display = "inline-block";
+        }
+      } else {
+        _this.__ffb.style.display = "none";
+        _this.__afb.style.display = "none";
+        _this.__rfb.style.display = "none";
+        _this.__pfb.style.display = "none";
+      }
+    });
+  },
+
+  getJSON: function() {
+    return {
+      needle: this.__needle,
+      fragments: this.__fragments,
+      currentFragment: this.__currentFragment
+    };
+  },
+
+  loadJSON: function(data) {
+    this.__needle = data.needle;
+    this.__fragments = data.fragments;
+    this.__currentFragment = data.currentFragment;
+
+    if(this.__needle !== undefined) {
+      this.oframp.mv.molecule.centerOnAtom(this.__needle);
+      if(this.__currentFragment !== undefined) {
+        this.__showFragment(this.__currentFragment);
+      }
+    } else {
+      this.oframp.mv.molecule.center();
+    }
   },
 
   showSelectionDetails: function(selection) {
@@ -61,6 +114,7 @@ SmartBehavior.prototype = {
         needle = ua;
       }
     }
+    this.__needle = needle;
     this.oframp.mv.molecule.centerOnAtom(needle);
     this.oframp.getMatchingFragments([needle]);
   },
@@ -68,15 +122,18 @@ SmartBehavior.prototype = {
   showRelatedFragments: function(fragments) {
     this.__fragments = fragments;
 
-    if(document.getElementById("find_fragments")) {
+    if(this.__ffb.style.display !== "none") {
       this.__initFCD();
     }
 
     this.__showFragment(0);
+    if(this.__fragments.length > 0) {
+      this.oframp.checkpoint();
+    }
   },
 
   __initFCD: function() {
-    $ext.dom.remove(document.getElementById("find_fragments"));
+    this.__ffb.style.display = "none";
 
     var fcd = document.getElementById("fragment_controls");
     var afb = document.createElement("button");
@@ -108,9 +165,6 @@ SmartBehavior.prototype = {
       var cf = _this.__fragments[_this.__currentFragment];
       _this.oframp.mv.setPreviewCharges(cf);
 
-      _this.oframp.selectionChanged();
-      _this.oframp.redraw();
-
       if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
         _this.__selectAtom();
       }
@@ -119,12 +173,14 @@ SmartBehavior.prototype = {
     $ext.dom.onMouseClick(rfb, function() {
       if(!rfb.disabled) {
         _this.__showFragment(_this.__currentFragment + 1);
+        _this.oframp.checkpoint();
       }
     }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseClick(pfb, function() {
       if(!pfb.disabled) {
         _this.__showFragment(_this.__currentFragment - 1);
+        _this.oframp.checkpoint();
       }
     }, $ext.mouse.LEFT);
   },
@@ -190,7 +246,6 @@ SmartBehavior.prototype = {
     }, this);
 
     if(!needsFix) {
-      this.oframp.checkpoint();
       if(this.oframp.mv.molecule.getUnparameterized().length == 0) {
         this.parameterizationFinished();
       }
@@ -198,8 +253,11 @@ SmartBehavior.prototype = {
   },
 
   parameterizationFinished: function() {
-    $ext.dom.remove(document.getElementById("fragment_controls"));
+    this.__needle = undefined;
+    this.__fragments = undefined;
+    this.__currentFragment = undefined;
     this.oframp.mv.molecule.center();
+    this.oframp.checkpoint();
     alert("You're done! I don't know what should happen now...");
   }
 };
