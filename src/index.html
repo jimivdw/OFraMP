@@ -170,33 +170,24 @@
         var controlsInitialized = false;
         var controls = document.getElementById("controls");
         var extraControls = document.getElementById("extra_controls");
-        var toggle = document.getElementById("controls_toggle");
-        var close = document.getElementById("controls_close");
+        var toggle = document.getElementById("extra_controls_toggle");
         function initControls() {
           controls.style.visibility = "visible";
-          toggle.style.visibility = "visible";
-
-          $ext.dom.onMouseOver(extraControls, function() {
-            toggle.className = "hover";
-          });
-          $ext.dom.onMouseOut(extraControls, function() {
-            toggle.className = "";
-          });
 
           $ext.dom.onMouseClick(toggle, function() {
-            controls.style.bottom = "34px";
-            extraControls.style.visibility = "visible";
-            extraControls.style.height = "34px";
-            extraControls.style.padding = "2px";
-            toggle.style.visibility = "hidden";
-          }, $ext.mouse.LEFT);
-
-          $ext.dom.onMouseClick(close, function() {
-            controls.style.bottom = "12px";
-            extraControls.style.height = "0px";
-            extraControls.style.padding = "0px";
-            extraControls.style.visibility = "hidden";
-            toggle.style.visibility = "visible";
+            if(extraControls.style.visibility === "visible") {
+              controls.style.bottom = "12px";
+              extraControls.style.height = "0px";
+              extraControls.style.padding = "0px";
+              extraControls.style.visibility = "hidden";
+              toggle.style.backgroundImage = "url('static/img/open.png')";
+            } else {
+              controls.style.bottom = "34px";
+              extraControls.style.visibility = "visible";
+              extraControls.style.height = "34px";
+              extraControls.style.padding = "2px";
+              toggle.style.backgroundImage = "url('static/img/close.png')";
+            }
           }, $ext.mouse.LEFT);
 
           controlsInitialized = true;
@@ -206,7 +197,6 @@
         $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
           if (controlsInitialized) {
             controls.style.display = "none";
-            toggle.style.display = "none";
             extraControls.style.display = "none";
           }
         });
@@ -216,7 +206,6 @@
             initControls();
           } else {
             controls.style.display = "block";
-            toggle.style.display = "block";
             extraControls.style.display = "block";
           }
         });
@@ -296,15 +285,15 @@
           Find fragments
         </button>
       </div>
-    </div>
 
-    <div id="controls_toggle">
-      &#8896; &#8896;
+      <div class="bgroup">
+        <button id="extra_controls_toggle" class="border_box">
+          &nbsp;
+        </button>
+      </div>
     </div>
 
     <div id="extra_controls">
-      <div id="controls_close">&#8897; &#8897;</div>
-
       <div class="bgroup">
         <button id="zoomin" class="border_box">
           Zoom +

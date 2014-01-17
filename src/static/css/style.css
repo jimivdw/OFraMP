@@ -98,46 +98,6 @@ html, body {
     visibility: hidden;
 }
 
-#controls_toggle {
-    position: absolute;
-    left: 50%;
-    bottom: 0px;
-    font-size: 8px;
-    border: 1px solid #AAA;
-    border-bottom-width: 0;
-    border-radius: 5px 5px 0 0;
-    width: 50px;
-    margin-left: -25px;
-    box-sizing: border-box;
-    text-align: center;
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
-    transition: opacity .2s ease-out, visibility .2s ease-out;
-    opacity: 0.5;
-    visibility: hidden;
-}
-
-#controls_toggle:hover, #controls_toggle.hover {
-    opacity: 1;
-}
-
-#controls_close {
-    position: absolute;
-    right: 10px;
-    height: 30px;
-    font-size: 8px;
-    line-height: 30px;
-    color: #333;
-    cursor: pointer;
-    opacity: 0.5;
-}
-
-#controls_close:hover {
-    opacity: 1;
-}
-
 #extra_controls {
     bottom: 0px;
     height: 0px;
@@ -443,6 +403,7 @@ html, body {
 .bgroup button, .bgroup a, .bgroup select {
     -webkit-user-select: none;
     user-select: none;
+    font-weight: bold;
     opacity: 0.5;
     cursor: pointer;
     -webkit-transition: opacity .2s ease-out;
@@ -491,6 +452,13 @@ html, body {
 }
 #previous_fragment:active:not(:disabled) {
     background-color: rgb( 42,  47, 144);
+}
+
+#extra_controls_toggle {
+    width: 30px;
+    background-image: url('../img/open.png');
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .border_box {
