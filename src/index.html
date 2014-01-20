@@ -47,6 +47,7 @@
     <script type="text/javascript" src="static/js/OFraMP/behaviors/SmartBehavior.js"></script>
     <script>
       window.onload = function() {
+        log("system.load.page", "OFraMP loaded");
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/" : "http://127.0.0.1:8001/";
 

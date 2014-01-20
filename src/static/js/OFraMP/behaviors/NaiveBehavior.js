@@ -393,10 +393,13 @@ NaiveBehavior.prototype = {
       }
     }, $ext.mouse.LEFT);
     this.oframp.showPopup(title, content);
+    log("system.show.charge_conflict", "Shown conflicting charge for atom " + atom.id);
   },
 
   parameterizationFinished: function() {
+    log("system.finish.parameterization", "Finished parameterisation");
     alert("You're done! I don't know what should happen now...");
+    log("system.finish.oframp", "Completely finished");
   }
 };
 

@@ -32,6 +32,7 @@ OFraMP.prototype = {
     this.behavior = new behavior(this);
     this.__initUI();
     this.showInsertMoleculePopup();
+    log("system.init.oframp", "Initialized");
   },
 
   __initUI: function() {
@@ -194,6 +195,7 @@ OFraMP.prototype = {
       var reader = new FileReader();
       reader.onload = function(evt) {
         try {
+          log("system.load.oss_file", "Loaded " + oss.name);
           var data = JSON.parse(atob(evt.target.result));
           if(!_this.mv.molecule) {
             _this.mv.setupInteraction();
@@ -203,6 +205,7 @@ OFraMP.prototype = {
           _this.mv.loadMolecule(data);
           _this.checkpoint();
           _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+          log("system.show.molecule", "Shown from OSS");
 
           _this.hidePopup();
         } catch(err) {
@@ -387,6 +390,7 @@ OFraMP.prototype = {
         } else if(fd.error) {
           showError(fd.error);
         } else if(fd.fragments) {
+          log("system.load.fragments", "Loaded " + fd.fragments.length + " fragments");
           _this.hideRelatedFragments();
           _this.behavior.showRelatedFragments(fd.fragments);
         }

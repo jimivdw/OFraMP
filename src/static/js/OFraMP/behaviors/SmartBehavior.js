@@ -227,6 +227,7 @@ SmartBehavior.prototype = {
 
   showChargeFixer: function(atom, rem, charges, fragment) {
     atom.setCharge((atom.charge + charges[atom.id]) / 2, fragment);
+    log("system.action.solve_conflict", "Solved conflict for atom " + atom.id);
     atom.resetHighlight();
 
     var needsFix = false;
@@ -256,7 +257,9 @@ SmartBehavior.prototype = {
     this.__currentFragment = undefined;
     this.oframp.mv.molecule.center();
     this.oframp.checkpoint();
+    log("system.finish.parameterization", "Finished parameterisation");
     alert("You're done! I don't know what should happen now...");
+    log("system.finish.oframp", "Completely finished");
   }
 };
 

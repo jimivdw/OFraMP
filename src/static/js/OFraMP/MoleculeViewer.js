@@ -34,6 +34,9 @@ MoleculeViewer.prototype = {
     this.__initCanvas(parentID, width, height);
 
     this.ctx = this.canvas.getContext('2d');
+    if(this.settings.fragment) {
+      log("system.init.mv", "Initialized");
+    }
   },
 
   __initCanvas: function(parentID, width, height) {
@@ -225,6 +228,7 @@ MoleculeViewer.prototype = {
         } else if(md.error) {
           _this.showOverlay(md.error, MESSAGE_TYPES.error);
         } else if(md.atoms && md.bonds) {
+          log("system.load.molecule", "Loaded " + dataStr);
           success.call(_this, md);
         }
       } else if(xhr.status != 200) {
@@ -252,6 +256,7 @@ MoleculeViewer.prototype = {
       if(success) {
         success.call(this, this.molecule);
       }
+      log("system.show.molecule", "Shown " + dataStr);
     });
   },
 
