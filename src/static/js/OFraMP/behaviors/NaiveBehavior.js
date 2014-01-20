@@ -80,6 +80,8 @@ NaiveBehavior.prototype = {
             + ") Show"));
 
         $ext.dom.onMouseClick(ufb, function() {
+          log("user.click.used_fragments",
+              "Clicked show used fragments for atom " + atom.id);
           _this.oframp.showUsedFragments(atom.usedFragments);
         }, $ext.mouse.LEFT);
       } else {
@@ -101,12 +103,16 @@ NaiveBehavior.prototype = {
 
       function toggleChargeEdit() {
         if(ced.style.visibility === "visible") {
+          log("user.click.cancel_edit", "Clicked cancel charge edit for atom " +
+              atom.id);
           ced.style.height = "0px";
           ced.style.visibility = "hidden";
           $ext.dom.clear(ecb);
           ecb.appendChild(document.createTextNode("Edit charge"));
           _this.oframp.atomDetails.insertBefore(ecb, ffb);
         } else {
+          log("user.click.edit_charge", "Clicked edit charge for atom " +
+              atom.id);
           ced.style.height = "";
           ced.style.visibility = "visible";
           $ext.dom.clear(ecb);
@@ -125,6 +131,9 @@ NaiveBehavior.prototype = {
           return;
         }
 
+        log("user.click.apply_charge", "Clicked apply charge for atom " +
+            atom.id);
+
         var oldCharge = atom.charge;
         var newCharge = parseFloat(ceb.value) || undefined;
         atom.setCharge(newCharge);
@@ -134,6 +143,8 @@ NaiveBehavior.prototype = {
           cc.appendChild(document.createTextNode(charge || "unknown"));
           _this.oframp.redraw();
           _this.oframp.checkpoint();
+          log("user.action.charge_edit", "Set charge of atom " + atom.id +
+              " to " + charge);
         }
 
         toggleChargeEdit();
@@ -142,14 +153,18 @@ NaiveBehavior.prototype = {
 
     var msb = document.createElement('button');
     msb.className = "border_box";
-    toggleSelectionEdit();
-    toggleSelectionEdit();
+    _this.oframp.mv.isModifyingSelection = false;
+    $ext.dom.clear(msb);
+    msb.appendChild(document.createTextNode("Modify selection"));
     function toggleSelectionEdit() {
       if(_this.oframp.mv.isModifyingSelection) {
+        log("user.click.modify_selection_stop",
+            "Clicked stop modifying selection");
         _this.oframp.mv.isModifyingSelection = false;
         $ext.dom.clear(msb);
         msb.appendChild(document.createTextNode("Modify selection"));
       } else {
+        log("user.click.modify_selection", "Clicked modify selection");
         _this.oframp.mv.isModifyingSelection = true;
         $ext.dom.clear(msb);
         msb.appendChild(document.createTextNode("Stop modifying selection"));
@@ -171,6 +186,7 @@ NaiveBehavior.prototype = {
     if(this instanceof NaiveBehavior) {
       this.oframp.atomDetails.appendChild(ffb);
       $ext.dom.onMouseClick(ffb, function() {
+        log("user.click.find_fragments", "Clicked find fragments in details");
         _this.oframp.getMatchingFragments();
       }, $ext.mouse.LEFT);
     }
@@ -355,6 +371,8 @@ NaiveBehavior.prototype = {
           break;
       }
       rc.value = $ext.number.format(value, 1, 3);
+      log("user.click.solution_method", "Changed solution method to " +
+          ss.value);
     });
 
     $ext.dom.addTableRow(dt, "Solution", ss);
@@ -370,6 +388,8 @@ NaiveBehavior.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
       atom.setCharge(parseFloat(rc.value) || undefined, fragment);
+      log("user.click.apply_solution", "Solved charge of atom " + atom.id +
+          " to " + atom.charge);
       atom.resetHighlight();
       _this.oframp.hidePopup();
 
@@ -396,7 +416,8 @@ NaiveBehavior.prototype = {
       }
     }, $ext.mouse.LEFT);
     this.oframp.showPopup(title, content);
-    log("system.show.charge_conflict", "Shown conflicting charge for atom " + atom.id);
+    log("system.show.charge_conflict", "Shown conflicting charge for atom " +
+        atom.id);
   },
 
   parameterizationFinished: function() {
