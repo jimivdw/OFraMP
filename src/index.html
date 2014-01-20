@@ -263,34 +263,34 @@
 
     <div id="controls">
       <div class="bgroup">
-        <button id="new" class="border_box">
+        <button id="new" class="border_box" title="Submit another molecule (Alt+N)">
           New molecule
         </button>
-        <button id="open" class="border_box">
+        <button id="open" class="border_box" title="Open a saved molecule (Alt+O)">
           Open
         </button>
-        <a id="save" class="border_box" href="#">
+        <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
           Save
         </a>
       </div>
 
       <div class="bgroup">
-        <button id="undo" class="border_box">
+        <button id="undo" class="border_box" title="Undo last action (Alt+Z)">
           Undo
         </button>
-        <button id="redo" class="border_box">
+        <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
           Redo
         </button>
       </div>
 
       <div class="bgroup" id="fragment_controls">
-        <button id="find_fragments" class="border_box">
+        <button id="find_fragments" class="border_box" title="Find matching fragments">
           Find fragments
         </button>
       </div>
 
       <div class="bgroup">
-        <button id="extra_controls_toggle" class="border_box">
+        <button id="extra_controls_toggle" class="border_box" title="Show/Hide advanced controls">
           &nbsp;
         </button>
       </div>
@@ -298,13 +298,13 @@
 
     <div id="extra_controls">
       <div class="bgroup">
-        <button id="zoomin" class="border_box">
+        <button id="zoomin" class="border_box" title="Zoom in">
           Zoom +
         </button>
-        <button id="zoomout" class="border_box">
+        <button id="zoomout" class="border_box" title="Zoom out">
           Zoom -
         </button>
-        <select id="zoom" class="border_box">
+        <select id="zoom" class="border_box" title="Zoom to a predefined level">
           <option value="pre" disabled="disabled" selected="selected">Predefined</option>
           <option value="min">Minimal</option>
           <option value="avg">Ideal</option>
@@ -314,17 +314,19 @@
       </div>
 
       <div class="bgroup">
-        <button id="reset" class="border_box">
+        <button id="reset" class="border_box" title="Reset the atom positions">
           Reset positions
         </button>
       </div>
 
       <div class="bgroup">
-        <a id="download" class="border_box" href="">Download as image</a>
+        <a id="download" class="border_box" href="" title="Download the molecule as an image">
+          Download as image
+        </a>
       </div>
 
       <div class="bgroup">
-        <button id="opti" class="border_box">
+        <button id="opti" class="border_box" title="Settings">
           Settings
         </button>
       </div>
