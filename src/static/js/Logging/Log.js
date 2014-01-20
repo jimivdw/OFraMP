@@ -26,14 +26,34 @@ function log(type, desc) {
   console.log(type, desc);
 }
 
-function getCSVLog() {
-  var csvl = new Array();
+function getOrderedLog() {
+  var ol = new Array();
   $ext.each(__log, function(v, type) {
     $ext.each(v, function(entry) {
-      csvl.push("" + entry.time + ";" + type + ";" + entry.msg + ";");
+      ol.push({
+        time: entry.time,
+        type: type,
+        msg: entry.msg
+      });
     });
   }, undefined, true);
-  return csvl.sort();
+  return ol.sort(function(a, b) {
+    return a.time > b.time;
+  });
+}
+
+function getCSVLog() {
+  var ol = getOrderedLog();
+  var csvl = "Time;TimeDelta;Type;Message;\n";
+  var fe = ol[0];
+  var le = ol[0];
+  $ext.each(ol, function(entry) {
+    var time = (entry.time - fe.time) / 1000.;
+    var timeDlt = (entry.time - le.time) / 1000.;
+    csvl += time + ";" + timeDlt + ";" + entry.type + ";" + entry.msg + ";\n";
+    le = entry;
+  });
+  return csvl;
 }
 
 log("system.init.logger", "Logger created");
