@@ -232,6 +232,7 @@ OFraMP.prototype = {
     }
 
     this.showPopup(title, content);
+    ta.focus();
   },
 
   showUsedFragments: function(fragments) {
