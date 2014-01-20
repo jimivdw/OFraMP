@@ -31,6 +31,7 @@ SmartBehavior.prototype = {
           pe.appendChild(ffb);
 
           $ext.dom.onMouseClick(ffb, function() {
+            log("user.click.start", "Clicked start parameterising");
             _this.__selectAtom();
           }, $ext.mouse.LEFT);
         });
@@ -161,6 +162,8 @@ SmartBehavior.prototype = {
 
     var _this = this;
     $ext.dom.onMouseClick(afb, function() {
+      log("user.click.accept", "Clicked accept fragment for fragment "
+          + _this.__currentFragment);
       var cf = _this.__fragments[_this.__currentFragment];
       _this.oframp.mv.setPreviewCharges(cf);
 
@@ -171,6 +174,8 @@ SmartBehavior.prototype = {
 
     $ext.dom.onMouseClick(rfb, function() {
       if(!rfb.disabled) {
+        log("user.click.reject", "Clicked reject fragment for fragment "
+            + _this.__currentFragment);
         _this.__showFragment(_this.__currentFragment + 1);
         _this.oframp.checkpoint();
       }
@@ -178,6 +183,8 @@ SmartBehavior.prototype = {
 
     $ext.dom.onMouseClick(pfb, function() {
       if(!pfb.disabled) {
+        log("user.click.previous", "Clicked previous fragment for fragment "
+            + _this.__currentFragment);
         _this.oframp.previousCheckpoint();
       }
     }, $ext.mouse.LEFT);
