@@ -82,7 +82,7 @@ NaiveBehavior.prototype = {
         $ext.dom.onMouseClick(ufb, function() {
           log("user.click.used_fragments",
               "Clicked show used fragments for atom " + atom.id);
-          _this.oframp.showUsedFragments(atom.usedFragments);
+          _this.oframp.showUsedFragments(atom);
         }, $ext.mouse.LEFT);
       } else {
         var ufb = "-";
