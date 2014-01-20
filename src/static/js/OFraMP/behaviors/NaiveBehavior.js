@@ -80,7 +80,7 @@ NaiveBehavior.prototype = {
             + ") Show"));
 
         $ext.dom.onMouseClick(ufb, function() {
-          _this.oframp.showUsedFragments(atom.usedFragments);
+          _this.oframp.showUsedFragments(atom);
         }, $ext.mouse.LEFT);
       } else {
         var ufb = "-";

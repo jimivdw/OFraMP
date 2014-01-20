@@ -235,7 +235,7 @@ OFraMP.prototype = {
     ta.focus();
   },
 
-  showUsedFragments: function(fragments) {
+  showUsedFragments: function(atom) {
     var _this = this;
 
     var title = "Used molecule fragments";
@@ -247,7 +247,7 @@ OFraMP.prototype = {
     frags.id = "used_fragments";
     content.appendChild(frags);
 
-    $ext.each(fragments, function(fragment, i) {
+    $ext.each(atom.usedFragments, function(fragment, i) {
       var atoms = $ext.array.map(fragment.atoms, function(atom) {
         var orig = this.mv.molecule.atoms.get(atom.id);
         atom.element = orig.element;
@@ -268,6 +268,7 @@ OFraMP.prototype = {
       var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
       fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
+      fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
       fv.redraw();
     }, this);
 
