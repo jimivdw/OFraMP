@@ -23,6 +23,7 @@ function log(type, desc) {
     msg: desc
   };
   cl.push(lo);
+  console.log(type, desc);
 }
 
 function getCSVLog() {

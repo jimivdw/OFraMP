@@ -406,6 +406,9 @@ $ext.extend($ext, {
         mouseDragged = false;
         var mdee = _this.mouseDragEndEvent;
         mdee.button = _this.getMouseButton(evt);
+        mdee.ctrlKey = evt.ctrlKey;
+        mdee.altKey = evt.altKey;
+        mdee.shiftKey = evt.shiftKey;
         elem.dispatchEvent(mdee);
       }
 

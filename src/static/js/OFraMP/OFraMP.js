@@ -32,7 +32,7 @@ OFraMP.prototype = {
     this.behavior = new behavior(this);
     this.__initUI();
     this.showInsertMoleculePopup();
-    log("system.init.oframp", "Initialized");
+    log("system.init.oframp", "Initialized OFraMP");
   },
 
   __initUI: function() {
@@ -105,6 +105,7 @@ OFraMP.prototype = {
     elem.disabled = "disabled";
     var _this = this;
     $ext.dom.onMouseClick(elem, function() {
+      log("user.click.find", "Clicked regular find fragments button");
       // Make sure the previewed charges are reset.
       _this.mv.previewCharges({});
       _this.getMatchingFragments();
@@ -161,6 +162,7 @@ OFraMP.prototype = {
     var sb = document.createElement('button');
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
+      log("user.click.submit", "Submitted mds: " + ta.value);
       _this.mv.showMolecule(ta.value, function() {
         _this.checkpoint();
         _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
@@ -178,10 +180,12 @@ OFraMP.prototype = {
     rb.appendChild(document.createTextNode("Random molecule"));
     rb.onclick = function() {
       ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
+      log("user.click.random", "Set random molecule: " + ta.value);
     }
     cbs.appendChild(rb);
 
     var ossi = document.createElement("input");
+    ossi.id = "input_oss";
     ossi.type = "file";
     ossi.style.display = "none";
     ossi.accept = ".oss";
@@ -220,6 +224,7 @@ OFraMP.prototype = {
     lb.id = "load_oss";
     lb.appendChild(document.createTextNode("Load from OSS file"));
     lb.onclick = function() {
+      log("user.click.load_oss", "Load from OSS clicked");
       ossi.click();
     }
     cbs.appendChild(lb);
@@ -475,11 +480,21 @@ OFraMP.prototype = {
   },
 
   previousCheckpoint: function() {
+    if(this.activeCheckpoint === 0) {
+      alert("Previous checkpoint does not exist.");
+      return;
+    }
     this.loadCheckpoint(this.activeCheckpoint - 1);
+    log("system.action.history_back", "Stepped back in history");
   },
 
   nextCheckpoint: function() {
+    if(this.activeCheckpoint === this.checkpoints.length - 1) {
+      alert("Next checkpoint does not exist.");
+      return;
+    }
     this.loadCheckpoint(this.activeCheckpoint + 1);
+    log("system.action.history_forward", "Stepped forward in history");
   },
 
   /*

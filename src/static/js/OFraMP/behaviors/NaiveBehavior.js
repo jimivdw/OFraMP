@@ -261,6 +261,8 @@ NaiveBehavior.prototype = {
           return;
         }
 
+        log("user.click.fragment", "Clicked on fragment " + i);
+
         ab.disabled = "";
 
         if(_this.activeFragment && _this.activeFragment !== fv) {
@@ -278,6 +280,7 @@ NaiveBehavior.prototype = {
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ab, function() {
+        log("user.click.select_fragment", "Selected fragment " + i);
         _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
         _this.oframp.mv.molecule.setSelected([]);
 

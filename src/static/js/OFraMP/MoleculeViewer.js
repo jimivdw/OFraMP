@@ -35,7 +35,7 @@ MoleculeViewer.prototype = {
 
     this.ctx = this.canvas.getContext('2d');
     if(this.settings.fragment) {
-      log("system.init.mv", "Initialized");
+      log("system.init.mv", "Initialized MoleculeViewer");
     }
   },
 
@@ -83,8 +83,16 @@ MoleculeViewer.prototype = {
         var s = a ? [a] : [];
         if(e.ctrlKey === true || _this.isModifyingSelection) {
           _this.molecule.atoms.addSelected(s);
+          if(a) {
+            log("user.select.atom_add", "Added atom " + a.id + " to selection");
+          }
           _this.redraw();
         } else if(_this.molecule.setSelected(s)) {
+          if(a) {
+            log("user.select.atom", "Atom " + a.id + " selected");
+          } else {
+            log("user.select.clear", "Cleared selection");
+          }
           _this.redraw();
         }
         _this.oframp.selectionChanged();
@@ -109,6 +117,7 @@ MoleculeViewer.prototype = {
 
     $ext.dom.onMouseDragEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
+        log("user.action.move", "Moved the molecule");
         _this.oframp.checkpoint();
         lastDragTime = undefined;
       }
@@ -139,6 +148,14 @@ MoleculeViewer.prototype = {
 
     $ext.dom.onMouseDragEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
+        var sids = $ext.array.map(_this.molecule.getSelected(), function(atom) {
+          return atom.id;
+        });
+        if(e.ctrlKey === true || _this.isModifyingSelection) {
+          log("user.select.atoms_add", "Added atoms to selection: " + sids);
+        } else {
+          log("user.select.atoms", "Atoms " + sids + " selected");
+        }
         _this.selectionArea = undefined;
         _this.redraw();
         _this.oframp.selectionChanged();
@@ -171,6 +188,7 @@ MoleculeViewer.prototype = {
 
     $ext.dom.onMouseWheelEnd(this.canvas, function(e) {
       if(!_this.overlayShowing) {
+        log("user.action.zoom", "Zoomed the molecule");
         _this.oframp.checkpoint();
         lastZoomTime = undefined;
       }
