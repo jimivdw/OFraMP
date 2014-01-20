@@ -193,6 +193,32 @@
             }
           }, $ext.mouse.LEFT);
 
+          $ext.dom.addEventListener(window, 'keydown', function(evt) {
+            if(!evt.altKey) {
+              return;
+            }
+
+            var keyCode = evt.keyCode || evt.charCode;
+            if(keyCode > 26) {
+              keyCode -= 64;
+            }
+            if(keyCode === 26) {
+              if(evt.shiftKey) {
+                redo();
+              } else {
+                undo();
+              }
+            } else if(keyCode === 25) {
+              redo();
+            } else if(keyCode === 14) {
+              newMolecule();
+            } else if(keyCode === 15) {
+              openFile();
+            } else if(keyCode === 19) {
+              saveMolecule();
+            }
+          });
+
           controlsInitialized = true;
         }
 
@@ -224,32 +250,6 @@
             rb.disabled = "disabled";
           } else {
             rb.disabled = "";
-          }
-        });
-
-        $ext.dom.addEventListener(window, 'keydown', function(evt) {
-          if(!evt.altKey) {
-            return;
-          }
-
-          var keyCode = evt.keyCode || evt.charCode;
-          if(keyCode > 26) {
-            keyCode -= 64;
-          }
-          if(keyCode === 26) {
-            if(evt.shiftKey) {
-              redo();
-            } else {
-              undo();
-            }
-          } else if(keyCode === 25) {
-            redo();
-          } else if(keyCode === 14) {
-            newMolecule();
-          } else if(keyCode === 15) {
-            openFile();
-          } else if(keyCode === 19) {
-            saveMolecule();
           }
         });
       };
