@@ -110,25 +110,28 @@
         };
 
         var nm = document.getElementById("new");
-        $ext.dom.onMouseClick(nm, function() {
+        $ext.dom.onMouseClick(nm, newMolecule, $ext.mouse.LEFT);
+        function newMolecule() {
           oframp.showInsertMoleculePopup();
-        }, $ext.mouse.LEFT);
+        }
 
         var of = document.getElementById("open");
-        $ext.dom.onMouseClick(of, function() {
+        $ext.dom.onMouseClick(of, openFile, $ext.mouse.LEFT);
+        function openFile() {
           oframp.showInsertMoleculePopup();
           var lb = document.getElementById("load_oss");
           lb.click();
-        }, $ext.mouse.LEFT);
+        }
 
         var sv = document.getElementById("save");
-        $ext.dom.onMouseClick(sv, function() {
+        $ext.dom.onMouseClick(sv, saveMolecule, $ext.mouse.LEFT);
+        function saveMolecule() {
           var data = oframp.getDataURI();
           sv.href = data;
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           sv.type = "application/json";
           sv.download = "OFraMP-" + date + ".oss";
-        }, $ext.mouse.LEFT);
+        }
 
         var ub = document.getElementById("undo");
         $ext.dom.onMouseClick(ub, function() {
@@ -227,7 +230,7 @@
         });
 
         $ext.dom.addEventListener(window, 'keydown', function(evt) {
-          if(!evt.ctrlKey) {
+          if(!evt.altKey) {
             return;
           }
 
@@ -243,6 +246,12 @@
             }
           } else if(keyCode === 25) {
             redo();
+          } else if(keyCode === 14) {
+            newMolecule();
+          } else if(keyCode === 15) {
+            openFile();
+          } else if(keyCode === 19) {
+            saveMolecule();
           }
         });
       };
