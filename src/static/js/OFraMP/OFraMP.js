@@ -184,21 +184,7 @@ OFraMP.prototype = {
 
       var reader = new FileReader();
       reader.onload = function(evt) {
-        try {
-          var data = JSON.parse(atob(evt.target.result));
-          if(!_this.mv.molecule) {
-            _this.mv.setupInteraction();
-          }
-
-          _this.container.dispatchEvent(_this.moleculeEnteredEvent);
-          _this.mv.loadMolecule(data);
-          _this.checkpoint();
-          _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
-
-          _this.hidePopup();
-        } catch(err) {
-          alert("Unable to parse the OSS file. Please try a different file.");
-        }
+        _this.loadOSS(evt.target.result);
       };
       reader.readAsBinaryString(oss);
     };
@@ -227,6 +213,7 @@ OFraMP.prototype = {
   },
 
   submitMDS: function(mds) {
+    console.log("THIS", this);
     var _this = this;
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
@@ -238,6 +225,24 @@ OFraMP.prototype = {
     }
     this.container.dispatchEvent(this.moleculeEnteredEvent);
     this.hidePopup();
+  },
+
+  loadOSS: function(oss) {
+    try {
+      var data = JSON.parse(atob(oss));
+      if(!this.mv.molecule) {
+        this.mv.setupInteraction();
+      }
+
+      this.container.dispatchEvent(this.moleculeEnteredEvent);
+      this.mv.loadMolecule(data);
+      this.checkpoint();
+      this.container.dispatchEvent(this.moleculeDisplayedEvent);
+
+      this.hidePopup();
+    } catch(err) {
+      alert("Unable to parse the OSS file. Please try a different file.");
+    }
   },
 
   showUsedFragments: function(atom) {
