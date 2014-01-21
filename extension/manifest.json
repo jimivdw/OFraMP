@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "ATB OFraMP linker",
+  "description": "Include an import link to OFraMP in the ATB",
+  "version": "0.1",
+  "icons": {
+    "48": "icon48.png"
+  },
+
+  "converted_from_user_script": true,
+  "content_scripts": [{
+    "exclude_globs": [],
+    "include_globs": ["*"],
+    "js": ["oframp.user.js"],
+    "matches": ["http://compbio.biosci.uq.edu.au/atb/molecule.py*"],
+    "run_at": "document_end"
+  }]
+}
