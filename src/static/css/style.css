@@ -461,6 +461,19 @@ html, body {
     background-repeat: no-repeat;
 }
 
+#instruction_overlay {
+    position: absolute;
+    z-index: 100;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.highlighted {
+    border: 5px solid #333 !important;
+    border-radius: 4px !important;
+}
+
 .border_box {
     border: 1px solid #AAA;
     border-radius: 2px;
