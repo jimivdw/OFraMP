@@ -329,8 +329,10 @@
 
         if(URLParams) {
           if(URLParams.mds) {
+            log("system.laod.url_mds", "Submitting the MDS from the URL");
             oframp.submitMDS(URLParams.mds);
           } else if(URLParams.oss) {
+            log("system.laod.url_oss", "Loading the OSS from the URL");
             oframp.loadOSS(URLParams.oss);
           }
         }
