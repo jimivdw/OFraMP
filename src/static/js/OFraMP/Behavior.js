@@ -9,7 +9,6 @@ Behavior.prototype = {
 
   __init: function(oframp) {
     this.oframp = oframp;
-    console.log("Initializing", this.name, "behaviour...");
   },
 
   getJSON: function() {

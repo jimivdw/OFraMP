@@ -213,7 +213,6 @@ OFraMP.prototype = {
   },
 
   submitMDS: function(mds) {
-    console.log("THIS", this);
     var _this = this;
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
@@ -381,8 +380,6 @@ OFraMP.prototype = {
     xhr.onreadystatechange = function() {
       if(xhr.readyState == 4 && xhr.status == 200) {
         var fd = JSON.parse(xhr.responseText);
-        console.log("fd", fd);
-
         var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
             fd.version);
         if(vc == -1) {

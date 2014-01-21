@@ -208,8 +208,6 @@ MoleculeViewer.prototype = {
         _this.showOverlay("Loading molecule data...\nProcessing request...");
       } else if(xhr.readyState == 4 && xhr.status == 200) {
         var md = JSON.parse(xhr.responseText);
-        console.log("md", md);
-
         var vc = $ext.string.versionCompare(_this.settings.oapoc.version,
             md.version);
         if(vc == -1) {
