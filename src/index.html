@@ -132,6 +132,47 @@
           sv.download = "OFraMP-" + date + ".oss";
         }
 
+        var sb = document.getElementById("share");
+        $ext.dom.onMouseClick(sb, function(e) {
+          shareLink();
+          e.preventDefault();
+        }, $ext.mouse.LEFT);
+        function shareLink() {
+          var data = oframp.getDataURI();
+          var oss = data.replace(/^data:application\/octet-stream:base64,/, '');
+          sb.href = "?oss=";
+
+          var title = "URL to the current state, copy to share (Ctrl+C)";
+          var content = document.createElement('div');
+
+          var lta = document.createElement('textarea');
+          lta.appendChild(document.createTextNode(sb.href + encodeURIComponent(oss)));
+          sb.href = "#";
+          content.appendChild(lta);
+          lta.onfocus = function() {
+            lta.select();
+
+            // Work around Chrome's little problem
+            lta.onmouseup = function() {
+              // Prevent further mouseup intervention
+              lta.onmouseup = null;
+              return false;
+            };
+          };
+
+          var cb = document.createElement('button');
+          cb.className = "border_box controls";
+          cb.appendChild(document.createTextNode("Cancel"));
+          cb.onclick = function() {
+            oframp.hidePopup();
+          };
+          content.appendChild(cb);
+
+          oframp.showPopup(title, content);
+          // Weird bug in Chrome messes up document height upon focus call..
+          // lta.focus();
+        }
+
         var ub = document.getElementById("undo");
         $ext.dom.onMouseClick(ub, function() {
           undo();
@@ -230,6 +271,8 @@
             } else if(keyCode === 19) {
               saveMolecule();
               sv.click();
+            } else if(keyCode === 12) {
+              shareLink();
             }
           });
 
@@ -278,6 +321,9 @@
         </button>
         <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
           Save
+        </a>
+        <a id="share" class="border_box" href="#" title="Share a link to the current state (Alt+L)">
+          Share
         </a>
       </div>
 
