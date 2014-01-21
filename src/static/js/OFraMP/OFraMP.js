@@ -8,6 +8,7 @@ OFraMP.prototype = {
   settings: undefined,
   mv: undefined,
   settingsUI: undefined,
+  demo: undefined,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -31,6 +32,7 @@ OFraMP.prototype = {
     this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.behavior = new behavior(this);
     this.__initUI();
+    this.demo = new Demo(this);
     this.showInsertMoleculePopup();
   },
 
@@ -164,6 +166,7 @@ OFraMP.prototype = {
     }
     cbs.appendChild(sb);
 
+    // Only for debug purposes, TODO: remove
     var rb = document.createElement('button');
     rb.appendChild(document.createTextNode("Random molecule"));
     rb.onclick = function() {
