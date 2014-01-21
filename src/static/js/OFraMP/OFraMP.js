@@ -160,16 +160,7 @@ OFraMP.prototype = {
     var sb = document.createElement('button');
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
-      _this.mv.showMolecule(ta.value, function() {
-        _this.checkpoint();
-        _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
-      });
-
-      if(!_this.mv.molecule) {
-        _this.mv.setupInteraction();
-      }
-      _this.container.dispatchEvent(_this.moleculeEnteredEvent);
-      _this.hidePopup();
+      _this.submitMDS(ta.value);
     }
     cbs.appendChild(sb);
 
@@ -233,6 +224,20 @@ OFraMP.prototype = {
 
     this.showPopup(title, content);
     ta.focus();
+  },
+
+  submitMDS: function(mds) {
+    var _this = this;
+    this.mv.showMolecule(mds, function() {
+      _this.checkpoint();
+      _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+    });
+
+    if(!this.mv.molecule) {
+      this.mv.setupInteraction();
+    }
+    this.container.dispatchEvent(this.moleculeEnteredEvent);
+    this.hidePopup();
   },
 
   showUsedFragments: function(atom) {

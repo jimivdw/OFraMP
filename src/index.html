@@ -13,6 +13,7 @@
 
     <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
     <script type="text/javascript" src="static/js/lib/dat.gui.js"></script>
+    <script type="text/javascript" src="static/js/lib/URLParams.js"></script>
 
     <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
     <script type="text/javascript" src="static/js/extensions/Array.js"></script>
@@ -135,21 +136,6 @@
         $ext.dom.onMouseClick(ub, function() {
           undo();
         });
-
-        var rb = document.getElementById("redo");
-        $ext.dom.onMouseClick(rb, function() {
-          redo();
-        });
-
-        var op = document.getElementById("opti");
-        if ($ext.onBrokenIE()) {
-          op.remove();
-        } else {
-          $ext.dom.onMouseClick(op, function() {
-            oframp.settingsUI.toggle();
-          }, $ext.mouse.LEFT);
-        }
-
         function undo() {
           if(!oframp.checkpoints) {
             return;
@@ -160,6 +146,10 @@
           }
         }
 
+        var rb = document.getElementById("redo");
+        $ext.dom.onMouseClick(rb, function() {
+          redo();
+        });
         function redo() {
           if(!oframp.checkpoints) {
             return;
@@ -167,6 +157,51 @@
 
           if(oframp.activeCheckpoint < oframp.checkpoints.length - 1) {
             oframp.nextCheckpoint();
+          }
+        }
+
+        var op = document.getElementById("opti");
+        if ($ext.onBrokenIE()) {
+          op.remove();
+        } else {
+          $ext.dom.onMouseClick(op, function() {
+            oframp.settingsUI.toggle();
+          }, $ext.mouse.LEFT);
+        }
+
+        $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
+          if (controlsInitialized) {
+            controls.style.display = "none";
+            extraControls.style.display = "none";
+          }
+        });
+
+        $ext.dom.addEventListener(oframp.container, 'moleculedisplayed', function() {
+          if (!controlsInitialized) {
+            initControls();
+          } else {
+            controls.style.display = "block";
+            extraControls.style.display = "block";
+          }
+        });
+
+        $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
+          if(oframp.activeCheckpoint === 0) {
+            ub.disabled = "disabled";
+          } else {
+            ub.disabled = "";
+          }
+
+          if(oframp.activeCheckpoint === oframp.checkpoints.length - 1) {
+            rb.disabled = "disabled";
+          } else {
+            rb.disabled = "";
+          }
+        });
+
+        if(URLParams) {
+          if(URLParams.mds) {
+            oframp.submitMDS(URLParams.mds);
           }
         }
 
@@ -222,37 +257,6 @@
 
           controlsInitialized = true;
         }
-
-
-        $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
-          if (controlsInitialized) {
-            controls.style.display = "none";
-            extraControls.style.display = "none";
-          }
-        });
-
-        $ext.dom.addEventListener(oframp.container, 'moleculedisplayed', function() {
-          if (!controlsInitialized) {
-            initControls();
-          } else {
-            controls.style.display = "block";
-            extraControls.style.display = "block";
-          }
-        });
-
-        $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
-          if(oframp.activeCheckpoint === 0) {
-            ub.disabled = "disabled";
-          } else {
-            ub.disabled = "";
-          }
-
-          if(oframp.activeCheckpoint === oframp.checkpoints.length - 1) {
-            rb.disabled = "disabled";
-          } else {
-            rb.disabled = "";
-          }
-        });
       };
     </script>
   </head>
