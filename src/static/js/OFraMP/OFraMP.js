@@ -163,16 +163,7 @@ OFraMP.prototype = {
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       log("user.click.submit", "Submitted mds: " + ta.value);
-      _this.mv.showMolecule(ta.value, function() {
-        _this.checkpoint();
-        _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
-      });
-
-      if(!_this.mv.molecule) {
-        _this.mv.setupInteraction();
-      }
-      _this.container.dispatchEvent(_this.moleculeEnteredEvent);
-      _this.hidePopup();
+      _this.submitMDS(ta.value);
     }
     cbs.appendChild(sb);
 
@@ -198,23 +189,8 @@ OFraMP.prototype = {
 
       var reader = new FileReader();
       reader.onload = function(evt) {
-        try {
-          log("system.load.oss_file", "Loaded " + oss.name);
-          var data = JSON.parse(atob(evt.target.result));
-          if(!_this.mv.molecule) {
-            _this.mv.setupInteraction();
-          }
-
-          _this.container.dispatchEvent(_this.moleculeEnteredEvent);
-          _this.mv.loadMolecule(data);
-          _this.checkpoint();
-          _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
-          log("system.show.molecule", "Shown from OSS");
-
-          _this.hidePopup();
-        } catch(err) {
-          alert("Unable to parse the OSS file. Please try a different file.");
-        }
+        log("system.load.oss_file", "Loaded " + oss.name);
+        _this.loadOSS(evt.target.result);
       };
       reader.readAsBinaryString(oss);
     };
@@ -241,6 +217,39 @@ OFraMP.prototype = {
 
     this.showPopup(title, content);
     ta.focus();
+  },
+
+  submitMDS: function(mds) {
+    var _this = this;
+    this.mv.showMolecule(mds, function() {
+      _this.checkpoint();
+      _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+    });
+
+    if(!this.mv.molecule) {
+      this.mv.setupInteraction();
+    }
+    this.container.dispatchEvent(this.moleculeEnteredEvent);
+    this.hidePopup();
+  },
+
+  loadOSS: function(oss) {
+    try {
+      var data = JSON.parse(atob(oss));
+      if(!this.mv.molecule) {
+        this.mv.setupInteraction();
+      }
+
+      this.container.dispatchEvent(this.moleculeEnteredEvent);
+      this.mv.loadMolecule(data);
+      this.checkpoint();
+      this.container.dispatchEvent(this.moleculeDisplayedEvent);
+      log("system.show.molecule", "Shown from OSS");
+
+      this.hidePopup();
+    } catch(err) {
+      alert("Unable to parse the OSS file. Please try a different file.");
+    }
   },
 
   showUsedFragments: function(atom) {
@@ -396,7 +405,8 @@ OFraMP.prototype = {
         } else if(fd.error) {
           showError(fd.error);
         } else if(fd.fragments) {
-          log("system.load.fragments", "Loaded " + fd.fragments.length + " fragments");
+          log("system.load.fragments", "Loaded " + fd.fragments.length
+              + " fragments");
           _this.hideRelatedFragments();
           _this.behavior.showRelatedFragments(fd.fragments);
         }

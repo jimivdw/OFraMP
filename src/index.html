@@ -13,6 +13,7 @@
 
     <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
     <script type="text/javascript" src="static/js/lib/dat.gui.js"></script>
+    <script type="text/javascript" src="static/js/lib/URLParams.js"></script>
 
     <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
     <script type="text/javascript" src="static/js/extensions/Array.js"></script>
@@ -151,27 +152,52 @@
           sv.download = "OFraMP-" + date + ".oss";
         }
 
+        var sb = document.getElementById("share");
+        $ext.dom.onMouseClick(sb, function(e) {
+          shareLink();
+          e.preventDefault();
+        }, $ext.mouse.LEFT);
+        function shareLink() {
+          var data = oframp.getDataURI();
+          var oss = data.replace(/^data:application\/octet-stream:base64,/, '');
+          sb.href = "?oss=";
+
+          var title = "URL to the current state, copy to share (Ctrl+C)";
+          var content = document.createElement('div');
+
+          var lta = document.createElement('textarea');
+          lta.appendChild(document.createTextNode(sb.href + encodeURIComponent(oss)));
+          sb.href = "#";
+          content.appendChild(lta);
+          lta.onfocus = function() {
+            lta.select();
+
+            // Work around Chrome's little problem
+            lta.onmouseup = function() {
+              // Prevent further mouseup intervention
+              lta.onmouseup = null;
+              return false;
+            };
+          };
+
+          var cb = document.createElement('button');
+          cb.className = "border_box controls";
+          cb.appendChild(document.createTextNode("Cancel"));
+          cb.onclick = function() {
+            oframp.hidePopup();
+          };
+          content.appendChild(cb);
+
+          oframp.showPopup(title, content);
+          // Weird bug in Chrome messes up document height upon focus call..
+          // lta.focus();
+        }
+
         var ub = document.getElementById("undo");
         $ext.dom.onMouseClick(ub, function() {
           log("user.click.undo", "Undo clicked");
           undo();
         });
-
-        var rb = document.getElementById("redo");
-        $ext.dom.onMouseClick(rb, function() {
-          log("user.click.redo", "Redo clicked");
-          redo();
-        });
-
-        var op = document.getElementById("opti");
-        if ($ext.onBrokenIE()) {
-          op.remove();
-        } else {
-          $ext.dom.onMouseClick(op, function() {
-            log("user.click.settings", "Settings clicked");
-            oframp.settingsUI.toggle();
-          }, $ext.mouse.LEFT);
-        }
 
         function undo() {
           if(!oframp.checkpoints) {
@@ -183,6 +209,11 @@
           }
         }
 
+        var rb = document.getElementById("redo");
+        $ext.dom.onMouseClick(rb, function() {
+          log("user.click.redo", "Redo clicked");
+          redo();
+        });
         function redo() {
           if(!oframp.checkpoints) {
             return;
@@ -192,6 +223,30 @@
             oframp.nextCheckpoint();
           }
         }
+
+        var op = document.getElementById("opti");
+        if ($ext.onBrokenIE()) {
+          op.remove();
+        } else {
+          $ext.dom.onMouseClick(op, function() {
+            log("user.click.settings", "Settings clicked");
+            oframp.settingsUI.toggle();
+          }, $ext.mouse.LEFT);
+        }
+
+        $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
+          if(oframp.activeCheckpoint === 0) {
+            ub.disabled = "disabled";
+          } else {
+            ub.disabled = "";
+          }
+
+          if(oframp.activeCheckpoint === oframp.checkpoints.length - 1) {
+            rb.disabled = "disabled";
+          } else {
+            rb.disabled = "";
+          }
+        });
 
         var controlsInitialized = false;
         var controls = document.getElementById("controls");
@@ -248,12 +303,13 @@
               log("user.press.save", "Save (Alt+S) pressed");
               saveMolecule();
               sv.click();
+            } else if(keyCode === 12) {
+              shareLink();
             }
           });
 
           controlsInitialized = true;
         }
-
 
         $ext.dom.addEventListener(oframp.container, 'moleculeentered', function() {
           if (controlsInitialized) {
@@ -271,19 +327,13 @@
           }
         });
 
-        $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
-          if(oframp.activeCheckpoint === 0) {
-            ub.disabled = "disabled";
-          } else {
-            ub.disabled = "";
+        if(URLParams) {
+          if(URLParams.mds) {
+            oframp.submitMDS(URLParams.mds);
+          } else if(URLParams.oss) {
+            oframp.loadOSS(URLParams.oss);
           }
-
-          if(oframp.activeCheckpoint === oframp.checkpoints.length - 1) {
-            rb.disabled = "disabled";
-          } else {
-            rb.disabled = "";
-          }
-        });
+        }
       };
     </script>
   </head>
@@ -303,6 +353,9 @@
         </button>
         <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
           Save
+        </a>
+        <a id="share" class="border_box" href="#" title="Share a link to the current state (Alt+L)">
+          Share
         </a>
       </div>
 
