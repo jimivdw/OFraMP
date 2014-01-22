@@ -1,6 +1,27 @@
 $ext.extend($ext, {
   dom: {
     /*
+     * Add a class to the given elem.
+     */
+    addClass: function(elem, className) {
+      elem.className += className;
+    },
+
+    /*
+     * Remove a class from the given elem.
+     */
+    removeClass: function(elem, className) {
+      elem.className = elem.className.replace(className, "");
+    },
+
+    /*
+     * Add a text node containing the given text to the given elem.
+     */
+    addText: function(elem, text) {
+      elem.appendChild(document.createTextNode(text));
+    },
+
+    /*
      * Remove an element from the DOM.
      */
     remove: function(elem) {

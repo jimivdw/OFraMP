@@ -161,6 +161,7 @@ OFraMP.prototype = {
     content.appendChild(cbs);
 
     var sb = document.createElement('button');
+    sb.id = "mds_submit";
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.submitMDS(ta.value);
