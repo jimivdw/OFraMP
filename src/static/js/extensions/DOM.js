@@ -216,7 +216,9 @@ $ext.extend($ext, {
             }, _this.MOUSE_WHEEL_TIMEOUT);
 
             // it's time to fire the callback
-            return callback(event);
+            if(callback instanceof Function) {
+              return callback(event);
+            }
           }, useCapture);
         }
       }

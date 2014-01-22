@@ -109,10 +109,72 @@ Demo.prototype = {
     }
   },
 
+  step3: function() {
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    $ext.dom.addEventListener(this.oframp.container, "moleculedisplayed",
+        moleculeDisplayed);
+
+    var _this = this;
+    function moleculeDisplayed() {
+      $ext.dom.removeEventListener(_this.oframp.container, "moleculedisplayed",
+          moleculeDisplayed);
+
+      _this.overlay.style.top = "30px";
+      _this.overlay.style.left = "30px";
+      _this.overlay.style.width = "220px";
+      _this.overlay.style.paddingBottom = "30px";
+      _this.overlay.style.background = "url('static/img/demo/mouse_drag_left.png') bottom center no-repeat";
+
+      $ext.dom.addText(_this.overlay,
+          "You can now move around the molecule by "
+              + "holding down the left mouse button and dragging it");
+
+      $ext.dom.onMouseDrag(_this.oframp.container, null, $ext.mouse.LEFT);
+      $ext.dom.onMouseDragEnd(_this.oframp.container, moleculeMoved,
+          $ext.mouse.LEFT);
+    }
+
+    function moleculeMoved() {
+      if(_this.currentStep !== 3) {
+        // TODO: check if we can remove the listener rather than doing this.
+        return;
+      }
+
+      _this.nextStep();
+    }
+  },
+
+  step4: function() {
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    this.overlay.style.top = "30px";
+    this.overlay.style.right = "30px";
+    this.overlay.style.width = "220px";
+
+    $ext.dom.addText(this.overlay, "You can now zoom the molecule by "
+        + "using your mouse's scrollwheel");
+
+    $ext.dom.onMouseWheel(this.oframp.container, null);
+    $ext.dom.onMouseWheelEnd(this.oframp.container, moleculeZoomed);
+
+    var _this = this;
+    function moleculeZoomed() {
+      if(_this.currentStep !== 4) {
+        // TODO: check if we can remove the listener rather than doing this.
+        return;
+      }
+
+      _this.nextStep();
+    }
+  },
+
   end: function() {
     this.isActive = false;
     $ext.dom.clear(this.overlay);
     this.overlay.style.cssText = "";
-    alert("End of demo!");
+    console.log("End of demo!");
   }
 };
