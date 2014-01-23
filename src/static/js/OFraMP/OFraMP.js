@@ -153,7 +153,7 @@ OFraMP.prototype = {
 
     var ta = document.createElement('textarea');
     ta.id = "mds_input";
-    ta.placeholder = "Insert SMILES / InChI string here";
+    ta.placeholder = "Insert PDB / SMILES / InChI string here";
     content.appendChild(ta);
 
     var cbs = document.createElement('div');
