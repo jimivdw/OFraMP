@@ -337,9 +337,9 @@ AtomList.prototype = {
    */
   setSelected: function(s) {
     // Make sure only hydrogen bases are selected
-    s = $ext.array.map(s, function(atom) {
-      return atom.getBase();
-    });
+    s = $ext.array.flatten($ext.array.map(s, function(atom) {
+      return atom.getHydrogenAtoms().concat(atom.getBase());
+    }));
 
     var changed = false;
     this.each(function(a) {
@@ -352,7 +352,7 @@ AtomList.prototype = {
 
     var c = this.molecule.mv.canvas;
     $ext.each(s, function(atom) {
-      if(atom.isVisible() && !(atom.status & ATOM_STATUSES.selected)) {
+      if(!(atom.status & ATOM_STATUSES.selected)) {
         atom.select();
 
         // Bring to back of list to be drawn last (on top).
