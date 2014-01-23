@@ -301,6 +301,10 @@ html, body {
     opacity: 1.0;
 }
 
+.fragment canvas.overlapping {
+    background-color: #FC9;
+}
+
 #popup {
     position: absolute;
     left: 50%;

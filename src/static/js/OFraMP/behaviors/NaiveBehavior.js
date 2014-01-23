@@ -228,6 +228,9 @@ NaiveBehavior.prototype = {
       var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
           228, 130);
       this.relatedFragmentViewers.push(fv);
+      if(fragment.hasOverlap) {
+        fv.canvas.className += "overlapping";
+      }
 
       var load = function() {
         fv.molecule = new Molecule(fv, atoms, bonds);
