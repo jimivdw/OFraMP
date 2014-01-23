@@ -400,8 +400,28 @@ OFraMP.prototype = {
         } else if(fd.error) {
           showError(fd.error);
         } else if(fd.fragments) {
+          var fragments = new Array();
+          var overlappingFragments = new Array();
+
+          $ext.each(fd.fragments, function(fragment) {
+            var hasOverlap = $ext.each(fragment.atoms, function(atom) {
+              var orig = this.mv.molecule.atoms.get(atom.id);
+              if(orig.isCharged()) {
+                return true;
+              }
+            }, this);
+
+            if(hasOverlap === true) {
+              fragment.hasOverlap = true;
+              overlappingFragments.push(fragment);
+            } else {
+              fragments.push(fragment);
+            }
+          }, _this);
+
+          fragments = fragments.concat(overlappingFragments);
           _this.hideRelatedFragments();
-          _this.behavior.showRelatedFragments(fd.fragments);
+          _this.behavior.showRelatedFragments(fragments);
         }
       } else if(xhr.readyState > 1 && xhr.status != 200) {
         var msg = "Could not connect to the OMFraF server."
