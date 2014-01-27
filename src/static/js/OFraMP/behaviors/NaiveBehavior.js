@@ -209,9 +209,15 @@ NaiveBehavior.prototype = {
         return atom;
       }, this);
 
-      var bonds = $ext.array.map(fragment.bonds, function(bond) {
-        return this.oframp.mv.molecule.bonds.get(bond.id).getJSON();
-      }, this);
+      var aids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.id;
+      });
+      var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
+        return aids.indexOf(bond.a1.id) !== -1 && aids.indexOf(bond.a2.id) !== -1;
+      });
+      var bonds = $ext.array.map(abs, function(bond) {
+        return bond.getJSON();
+      });
 
       var fc = document.createElement('div');
       fc.id = "fc_" + i;

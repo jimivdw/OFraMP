@@ -82,6 +82,13 @@ BondList.prototype = {
   },
 
   /*
+   * Filter function for the list of bonds.
+   */
+  filter: function(f, scope) {
+    return $ext.array.filter(this.bonds, f, scope);
+  },
+
+  /*
    * Get the shortest bond length.
    */
   getShortestLength: function() {
