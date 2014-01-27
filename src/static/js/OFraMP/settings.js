@@ -25,7 +25,7 @@ var DEFAULT_SETTINGS = {
 
   omfraf: {
     url: "http://vps955.directvps.nl/OMFraF/",
-    version: "0.0.3"
+    version: "0.0.4"
   },
 
   zoom: {
