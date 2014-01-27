@@ -317,6 +317,65 @@ OFraMP.prototype = {
   },
 
   /*
+   * Instruct OMFraF to generate the molecule fragments.
+   */
+  generateMoleculeFragments: function(queryJSON) {
+    var _this = this;
+
+    function showError(msg) {
+      $ext.dom.clear(_this.relatedFragments);
+      var ts = document.createElement('span');
+      ts.className = "title";
+      ts.appendChild(document.createTextNode("An error has occured"));
+      _this.relatedFragments.appendChild(ts);
+
+      var ep = document.createElement('p');
+      ep.appendChild(document.createTextNode(msg));
+      _this.relatedFragments.appendChild(ep);
+
+      var cb = document.createElement("button");
+      cb.appendChild(document.createTextNode("Close"));
+      $ext.dom.onMouseClick(cb, function() {
+        _this.hideRelatedFragments();
+      }, $ext.mouse.LEFT);
+      _this.relatedFragments.appendChild(cb);
+
+      _this.showRelatedFragments();
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4 && xhr.status == 200) {
+        var fd = JSON.parse(xhr.responseText);
+        var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+            fd.version);
+        if(vc == -1) {
+          var msg = "OMFraF version too old." + "\n\nRequired version: "
+              + _this.settings.omfraf.version + "\nCurrent version: "
+              + fd.version;
+          showError(msg);
+        } else if(vc == 1) {
+          var msg = "OMFraF version too new." + "\n\nRequired version: "
+              + _this.settings.omfraf.version + "\nCurrent version: "
+              + fd.version;
+          showError(msg);
+        } else if(fd.error) {
+          showError(fd.error);
+        } else if(fd.ffid) {
+          console.log("Related fragments generated:", fd.ffid);
+        }
+      } else if(xhr.readyState > 1 && xhr.status != 200) {
+        var msg = "Could not connect to the OMFraF server."
+        showError(msg);
+      }
+    };
+
+    xhr.open("POST", this.settings.omfraf.generateUrl, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("data=" + encodeURIComponent(queryJSON));
+  },
+
+  /*
    * Get the matching fragments with the selection of the molecule.
    */
   getMatchingFragments: function(selection) {

@@ -245,6 +245,10 @@ MoleculeViewer.prototype = {
     this.getMoleculeData(dataStr, function(md) {
       this.showOverlay("Initializing molecule...");
       this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
+
+      var mj = JSON.stringify({molecule: this.molecule.getSimpleJSON()});
+      this.oframp.generateMoleculeFragments(mj);
+
       this.molecule.idealize();
       this.hideOverlay();
       if(success) {
