@@ -214,8 +214,8 @@ Bond.prototype = {
     }
     if(this.isVisible() && a1.getDistanceTo(a2) >= ar1 + ar2) {
       var c = this.getCoordinates();
-      // Inner line for single/triple bonds
-      if(this.type == 1 || this.type == 3) {
+      // Inner line for single/triple/arom bonds (or amide/dummy/unknown ones)
+      if([1, 3, 4, 5, 6, 7].indexOf(this.type) !== -1) {
         lines.push({
           x1: c.x1,
           y1: c.y1,
@@ -225,12 +225,13 @@ Bond.prototype = {
       }
 
       // Outer lines for double/triple/aromatic bonds
-      if(this.type > 1) {
+      if([2, 3, 5].indexOf(this.type) !== -1) {
         dx = c.x2 - c.x1;
         dy = c.y2 - c.y1;
         dist = Math.sqrt(dx * dx + dy * dy);
 
-        if(this.type == 4) {
+        // Dotted line for aromatic bonds
+        if(this.type == 5) {
           ddx = dy * 2 * this.settings.bond.spacing / dist;
           ddy = dx * 2 * this.settings.bond.spacing / dist;
 
@@ -246,12 +247,6 @@ Bond.prototype = {
 
           if(cdist1 > cdist2) {
             lines.push({
-              x1: c.x1,
-              y1: c.y1,
-              x2: c.x2,
-              y2: c.y2
-            });
-            lines.push({
               x1: c.x1 - ddx,
               y1: c.y1 + ddy,
               x2: c.x2 - ddx,
@@ -259,12 +254,6 @@ Bond.prototype = {
               n: this.settings.bond.dashCount
             });
           } else {
-            lines.push({
-              x1: c.x1,
-              y1: c.y1,
-              x2: c.x2,
-              y2: c.y2
-            });
             lines.push({
               x1: c.x1 + ddx,
               y1: c.y1 - ddy,
@@ -342,7 +331,7 @@ Bond.prototype = {
 
     var delta = this.settings.bond.connectorWidth / a.getRadius() / 2;
 
-    if(this.type == 1 || this.type == 3 || this.type == 4) {
+    if([1, 3, 4, 5, 6, 7].indexOf(this.type) !== -1) {
       connectors.push({
         x: a.x,
         y: a.y,
@@ -352,8 +341,8 @@ Bond.prototype = {
       });
     }
 
-    // For double/triple/aromatic bonds
-    if(this.type > 1 && this.type != 4) {
+    // For double/triple bonds
+    if([2, 3].indexOf(this.type) !== -1) {
       var beta = Math.acos((2 * r2 - Math.pow(this.settings.bond.spacing, 2))
           / (2 * r2));
 

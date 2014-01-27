@@ -161,7 +161,7 @@ Atom.prototype = {
 
     var bonds = Array();
     this.list.molecule.bonds.each(function(bond) {
-      if((this === bond.a1 || this === bond.a2) && (!arom || bond.type == 4)) {
+      if((this === bond.a1 || this === bond.a2) && (!arom || bond.type == 5)) {
         bonds.push(bond);
       }
     }, this);
