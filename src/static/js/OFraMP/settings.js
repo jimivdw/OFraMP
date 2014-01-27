@@ -19,7 +19,7 @@ var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 var DEFAULT_SETTINGS = {
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/generate/",
-    load_url: "http://vps955.directvps.nl/OAPoC/loadATB/",
+    loadUrl: "http://vps955.directvps.nl/OAPoC/loadATB/",
     version: "0.4.0"
   },
 

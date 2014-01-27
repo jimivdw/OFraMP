@@ -48,11 +48,13 @@
     <script>
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
+        var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/" : "http://127.0.0.1:8001/";
 
         var oframp = new OFraMP(NaiveBehavior, "oframp", {
           oapoc : {
-            url : OAPoC_URL
+            url : OAPoC_URL,
+            loadUrl : OAPoC_LOAD_URL
           },
           omfraf: {
             url: OMFraF_URL
