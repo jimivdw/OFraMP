@@ -224,8 +224,14 @@ NaiveBehavior.prototype = {
       fc.className = "fragment";
       this.oframp.relatedFragments.appendChild(fc);
 
+      var ob = document.createElement('button');
+      ob.className = "show_original border_box";
+      ob.disabled = "disabled";
+      ob.appendChild(document.createTextNode("Show molecule"));
+      fc.appendChild(ob);
+
       var ab = document.createElement('button');
-      ab.className = "border_box";
+      ab.className = "select_fragment border_box";
       ab.disabled = "disabled";
       ab.appendChild(document.createTextNode("Select fragment"));
       fc.appendChild(ab);
@@ -270,12 +276,15 @@ NaiveBehavior.prototype = {
           return;
         }
 
+        ob.disabled = "";
         ab.disabled = "";
 
         if(_this.activeFragment && _this.activeFragment !== fv) {
-          // Disable the currently active fragment's button
+          // Disable the currently active fragment's buttons
           _this.activeFragment.canvas.parentElement
-              .getElementsByClassName("border_box")[0].disabled = "disabled";
+          .getElementsByClassName("border_box")[0].disabled = "disabled";
+          _this.activeFragment.canvas.parentElement
+          .getElementsByClassName("border_box")[1].disabled = "disabled";
         }
         _this.activeFragment = fv;
 
@@ -284,6 +293,37 @@ NaiveBehavior.prototype = {
           charges[atom.id] = atom.charge;
         }, this);
         _this.oframp.mv.previewCharges(charges);
+      }, $ext.mouse.LEFT);
+
+      var oids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.other_id;
+      });
+      $ext.dom.onMouseClick(ob, function() {
+        var title = "Fragment molecule";
+        var content = document.createElement('div');
+
+        var ov = new MoleculeViewer(_this.oframp, "original_" + i, content,
+            580, 400);
+        ov.showMolecule(fragment.atb_id, function() {
+          this.setupInteraction();
+          this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
+          var oas = $ext.array.map(oids, function(oid) {
+            return this.molecule.atoms.get(oid);
+          }, this);
+          this.molecule.setSelected(oas);
+          this.redraw();
+        }, true);
+        ov.canvas.className = "border_box";
+
+        var cb = document.createElement('button');
+        cb.appendChild(document.createTextNode("Close"));
+        content.appendChild(cb);
+
+        $ext.dom.onMouseClick(cb, function() {
+          _this.oframp.hidePopup();
+        }, $ext.mouse.LEFT);
+
+        _this.oframp.showPopup(title, content);
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ab, function() {

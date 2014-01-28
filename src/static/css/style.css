@@ -264,12 +264,20 @@ html, body {
     position: absolute;
     width: 110px;
     height: 30px;
-    margin: 95px 0 0 60px;
+    margin-top: 95px;
     cursor: pointer;
     opacity: 0.5;
     z-index: 10;
     -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
     transition: opacity .2s ease-out, visibility .2s ease-out;
+}
+
+.fragment .show_original {
+    margin-left: 5px;
+}
+
+.fragment .select_fragment {
+    margin-left: 115px;
 }
 
 .fragment button:disabled {

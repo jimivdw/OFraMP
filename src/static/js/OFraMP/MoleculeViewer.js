@@ -44,7 +44,11 @@ MoleculeViewer.prototype = {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    var parent = document.getElementById(parentID);
+    if(parentID instanceof Element) {
+      var parent = parentID;
+    } else {
+      var parent = document.getElementById(parentID);
+    }
     parent.appendChild(this.canvas);
   },
 
@@ -191,8 +195,10 @@ MoleculeViewer.prototype = {
 
   /*
    * Get the molecule data from OAPoC and run the success function on success.
+   * 
+   * If fromATB is true, the molecule will be retrieved from ATB.
    */
-  getMoleculeData: function(dataStr, success) {
+  getMoleculeData: function(dataStr, success, fromATB) {
     var _this = this;
 
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
@@ -231,9 +237,16 @@ MoleculeViewer.prototype = {
       }
     };
 
-    xhr.open("POST", this.settings.oapoc.url, true);
+    if(fromATB) {
+      var url = "http://127.0.0.1:8000/loadATB/";//this.settings.oapoc.loadUrl;
+      var data = "molid=" + encodeURIComponent(dataStr);
+    } else {
+      var url = this.settings.oapoc.url;
+      var data = "data=" + encodeURIComponent(dataStr);
+    }
+    xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("data=" + encodeURIComponent(dataStr));
+    xhr.send(data);
   },
 
   /*
@@ -241,20 +254,24 @@ MoleculeViewer.prototype = {
    * 
    * Once the molecule has been loaded execute the optional success function;
    */
-  showMolecule: function(dataStr, success) {
+  showMolecule: function(dataStr, success, fromATB) {
     this.getMoleculeData(dataStr, function(md) {
       this.showOverlay("Initializing molecule...");
       this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
 
-      var mj = JSON.stringify({molecule: this.molecule.getSimpleJSON()});
-      this.oframp.generateMoleculeFragments(mj);
+      if(!fromATB) {
+        var mj = JSON.stringify({
+          molecule: this.molecule.getSimpleJSON()
+        });
+        this.oframp.generateMoleculeFragments(mj);
+      }
 
       this.molecule.idealize();
       this.hideOverlay();
       if(success) {
         success.call(this, this.molecule);
       }
-    });
+    }, fromATB);
   },
 
   loadMolecule: function(data) {

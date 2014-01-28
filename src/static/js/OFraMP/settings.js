@@ -20,7 +20,7 @@ var DEFAULT_SETTINGS = {
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/generate/",
     loadUrl: "http://vps955.directvps.nl/OAPoC/loadATB/",
-    version: "0.4.1"
+    version: "0.4.2"
   },
 
   omfraf: {
