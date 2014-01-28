@@ -49,7 +49,7 @@
       window.onload = function() {
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
         var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
-        var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/" : "http://127.0.0.1:8001/";
+        var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";
         var OMFraF_GENERATE_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/generate/" : "http://127.0.0.1:8001/generate/";
 
         var oframp = new OFraMP(NaiveBehavior, "oframp", {

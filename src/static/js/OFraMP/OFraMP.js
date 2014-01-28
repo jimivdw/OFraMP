@@ -9,6 +9,7 @@ OFraMP.prototype = {
   mv: undefined,
   settingsUI: undefined,
   demo: undefined,
+  ffid: undefined,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -25,6 +26,7 @@ OFraMP.prototype = {
   uiInitializedEvent: new Event('uiinitialized'),
   moleculeEnteredEvent: new Event('moleculeentered'),
   moleculeDisplayedEvent: new Event('moleculedisplayed'),
+  fragmentsGeneratedEvent: new Event('fragmentsgenerated'),
   historyChangedEvent: new Event('historychanged'),
 
   __init: function(behavior, containerID, settings) {
@@ -363,6 +365,9 @@ OFraMP.prototype = {
           showError(fd.error);
         } else if(fd.ffid) {
           console.log("Related fragments generated:", fd.ffid);
+
+          _this.ffid = fd.ffid;
+          _this.container.dispatchEvent(_this.fragmentsGeneratedEvent);
         }
       } else if(xhr.readyState > 1 && xhr.status != 200) {
         var msg = "Could not connect to the OMFraF server."
@@ -408,10 +413,10 @@ OFraMP.prototype = {
     }
 
     var queryJSON = JSON.stringify({
+      ffid: this.ffid,
       needle: $ext.array.map(selection, function(atom) {
         return atom.id;
-      }),
-      molecule: this.mv.molecule.getSimpleJSON()
+      })
     });
 
     $ext.dom.clear(this.relatedFragments);
