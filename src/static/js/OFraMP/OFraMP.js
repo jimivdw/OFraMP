@@ -9,7 +9,7 @@ OFraMP.prototype = {
   mv: undefined,
   settingsUI: undefined,
   demo: undefined,
-  ffid: undefined,
+  off: undefined,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -363,10 +363,10 @@ OFraMP.prototype = {
           showError(msg);
         } else if(fd.error) {
           showError(fd.error);
-        } else if(fd.ffid) {
-          console.log("Related fragments generated:", fd.ffid);
+        } else if(fd.off) {
+          console.log("Related fragments generated:", fd.off);
 
-          _this.ffid = fd.ffid;
+          _this.off = fd.off;
           _this.container.dispatchEvent(_this.fragmentsGeneratedEvent);
         }
       } else if(xhr.readyState > 1 && xhr.status != 200) {
@@ -413,7 +413,7 @@ OFraMP.prototype = {
     }
 
     var queryJSON = JSON.stringify({
-      ffid: this.ffid,
+      off: this.off,
       needle: $ext.array.map(selection, function(atom) {
         return atom.id;
       })
