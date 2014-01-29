@@ -33,7 +33,8 @@ Bond.prototype = {
   getSimpleJSON: function() {
     return {
       a1: this.a1.id,
-      a2: this.a2.id
+      a2: this.a2.id,
+      bondType: this.type
     };
   },
 
