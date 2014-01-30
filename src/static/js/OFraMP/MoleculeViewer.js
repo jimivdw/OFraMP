@@ -119,7 +119,8 @@ MoleculeViewer.prototype = {
     $ext.dom.onMouseDrag(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         if(!_this.selectionArea) {
-          _this.selectionArea = new SelectionArea(_this, e.clientX, e.clientY);
+          _this.selectionArea = new SelectionArea(_this, $ext.mouse.getX(e),
+              $ext.mouse.getY(e));
           if(e.ctrlKey === true || _this.isModifyingSelection) {
             initialSelection = _this.molecule.getSelected();
           }
