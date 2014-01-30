@@ -8,6 +8,25 @@ NaiveBehavior.prototype = {
   relatedFragmentViewers: undefined,
   activeFragment: undefined,
 
+  __init: function(oframp) {
+    this.oframp = oframp;
+
+    var _this = this;
+    $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
+        function() {
+          var ffb = document.getElementById("find_fragments");
+          $ext.dom.clear(ffb);
+          ffb.appendChild(document.createTextNode("Find fragments"));
+          oframp.selectionChanged();
+
+          $ext.dom.onMouseClick(ffb, function() {
+            // Make sure the previewed charges are reset.
+            oframp.mv.previewCharges({});
+            oframp.getMatchingFragments();
+          }, $ext.mouse.LEFT);
+        });
+  },
+
   showSelectionDetails: function(selection) {
     var _this = this;
 

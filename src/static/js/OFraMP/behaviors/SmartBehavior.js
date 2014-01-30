@@ -27,12 +27,25 @@ SmartBehavior.prototype = {
           ffb = document.createElement("button");
           ffb.id = "find_fragments";
           ffb.className = "border_box";
-          ffb.appendChild(document.createTextNode("Start parameterising"));
+          if(_this.oframp.off) {
+            ffb.appendChild(document.createTextNode("Start parameterising"));
+          } else {
+            ffb.disabled = "disbled";
+            ffb.appendChild(document.createTextNode("Loading fragments..."));
+          }
           pe.appendChild(ffb);
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
           }, $ext.mouse.LEFT);
+        });
+
+    $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
+        function() {
+          var ffb = document.getElementById("find_fragments");
+          $ext.dom.clear(ffb);
+          ffb.appendChild(document.createTextNode("Start parameterising"));
+          ffb.disabled = "";
         });
 
     $ext.dom.addEventListener(oframp.container, 'historychanged', function() {

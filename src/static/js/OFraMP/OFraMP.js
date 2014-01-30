@@ -108,14 +108,18 @@ OFraMP.prototype = {
   },
 
   __initFFB: function(elem) {
-    elem.appendChild(document.createTextNode("Find fragments"));
-    elem.disabled = "disabled";
     var _this = this;
-    $ext.dom.onMouseClick(elem, function() {
-      // Make sure the previewed charges are reset.
-      _this.mv.previewCharges({});
-      _this.getMatchingFragments();
-    }, $ext.mouse.LEFT);
+    elem.disabled = "disabled";
+    if(this.off) {
+      elem.appendChild(document.createTextNode("Find fragments"));
+      $ext.dom.onMouseClick(elem, function() {
+        // Make sure the previewed charges are reset.
+        _this.mv.previewCharges({});
+        _this.getMatchingFragments();
+      }, $ext.mouse.LEFT);
+    } else {
+      elem.appendChild(document.createTextNode("Loading fragments..."));
+    }
   },
 
   __initMainViewer: function(container) {
@@ -233,6 +237,8 @@ OFraMP.prototype = {
     if(!this.mv.molecule) {
       this.mv.setupInteraction();
     }
+    this.off = undefined;
+    this.selectionChanged();
     this.container.dispatchEvent(this.moleculeEnteredEvent);
     this.hidePopup();
   },
@@ -583,9 +589,15 @@ OFraMP.prototype = {
    * Handler to be called after a change in the atom selection.
    */
   selectionChanged: function() {
-    var selection = this.mv.molecule.getSelected();
+    if(this.mv.molecule) {
+      var selection = this.mv.molecule.getSelected();
+    }
+    var ffbState = "";
+    if(!this.off) {
+      ffbState = "disabled";
+    }
     if(selection && selection.length > 0) {
-      this.findFragmentsButton.disabled = "";
+      this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
     } else {
       this.findFragmentsButton.disabled = "disabled";
