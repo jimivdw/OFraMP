@@ -30,8 +30,12 @@ OFraMP.prototype = {
   historyChangedEvent: new Event('historychanged'),
 
   __init: function(behavior, containerID, settings) {
+    settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+    settings.fragment = $ext.deepCopy(settings);
+    SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
+    this.settings = settings;
+
     this.container = document.getElementById(containerID);
-    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.behavior = new behavior(this);
     this.__initUI();
     this.demo = new Demo(this);
