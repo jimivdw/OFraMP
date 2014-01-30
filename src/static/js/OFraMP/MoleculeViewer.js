@@ -238,7 +238,7 @@ MoleculeViewer.prototype = {
     };
 
     if(fromATB) {
-      var url = "http://127.0.0.1:8000/loadATB/";//this.settings.oapoc.loadUrl;
+      var url = this.settings.oapoc.loadUrl;
       var data = "molid=" + encodeURIComponent(dataStr);
     } else {
       var url = this.settings.oapoc.url;
