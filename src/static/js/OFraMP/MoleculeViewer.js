@@ -52,9 +52,11 @@ MoleculeViewer.prototype = {
     parent.appendChild(this.canvas);
   },
 
-  setupInteraction: function() {
-    var _this = this;
+  isMainViewer: function() {
+    return this.settings.fragment !== undefined;
+  },
 
+  setupInteraction: function() {
     this.isInteractive = true;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
@@ -66,6 +68,46 @@ MoleculeViewer.prototype = {
         return false;
       }
     });
+
+    if(this.isMainViewer()) {
+      this.setupFullInteraction();
+    } else {
+      this.setupBasicInteraction();
+    }
+  },
+
+  setupBasicInteraction: function() {
+    var _this = this;
+
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
+      if(!_this.overlayShowing) {
+        _this.move(e.deltaX, e.deltaY);
+      }
+    }, $ext.mouse.LEFT);
+
+    $ext.dom.onMouseWheel(this.canvas, function(e) {
+      if(!_this.overlayShowing) {
+        if(e.deltaY < 0) {
+          var f = _this.settings.zoom.factor;
+        } else {
+          var f = 1 / _this.settings.zoom.factor;
+        }
+        var c = $ext.mouse.getCoords(e);
+        _this.zoomOn(c.x, c.y, f);
+
+        if(e.preventDefault) {
+          e.preventDefault();
+        } else if(e.stopPropagation) {
+          e.stopPropagation();
+        } else {
+          return false;
+        }
+      }
+    });
+  },
+
+  setupFullInteraction: function() {
+    var _this = this;
 
     $ext.dom.onMouseMove(this.canvas, function(e) {
       if(!_this.overlayShowing) {
@@ -324,7 +366,9 @@ MoleculeViewer.prototype = {
    */
   hideOverlay: function() {
     this.overlayShowing = false;
-    if(!this.isInteractive) {
+    if(this.isInteractive) {
+      this.canvas.style.cursor = this.settings.cursor.drag;
+    } else {
       this.canvas.style.cursor = this.settings.cursor.click;
     }
     this.redraw();

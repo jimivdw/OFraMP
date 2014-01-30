@@ -331,6 +331,7 @@ NaiveBehavior.prototype = {
             return this.molecule.atoms.get(oid);
           }, this);
           this.molecule.setSelected(oas);
+          this.hideOverlay();
           this.redraw();
         }, true);
         ov.canvas.className = "border_box";
