@@ -12,10 +12,10 @@ $ext.extend($ext, {
      */
     getX: function(evt) {
       if(evt.target) {
-        return evt.clientX - evt.target.offsetLeft
+        return evt.clientX - $ext.dom.totalOffsetLeft(evt.target)
             + document.documentElement.scrollLeft;
       } else if(evt.srcElement) {
-        return evt.clientX - evt.srcElement.offsetLeft
+        return evt.clientX - $ext.dom.totalOffsetLeft(evt.srcElement)
             + document.documentElement.scrollLeft;
       } else {
         return evt.clientX + document.documentElement.scrollLeft;
@@ -27,10 +27,10 @@ $ext.extend($ext, {
      */
     getY: function(evt) {
       if(evt.target) {
-        return evt.clientY - evt.target.offsetTop
+        return evt.clientY - $ext.dom.totalOffsetTop(evt.target)
             + document.documentElement.scrollTop;
       } else if(evt.srcElement) {
-        return evt.clientY - evt.srcElement.offsetTop
+        return evt.clientY - $ext.dom.totalOffsetTop(evt.srcElement)
             + document.documentElement.scrollTop;
       } else {
         return evt.clientY + document.documentElement.scrollTop;

@@ -250,7 +250,7 @@ NaiveBehavior.prototype = {
         fv.redraw();
       };
 
-      var ot = fv.canvas.offsetTop;
+      var ot = $ext.dom.totalOffsetTop(fv.canvas);
       var rb = this.oframp.relatedFragments.parentElement;
       var ph = rb.clientHeight;
       var pt = rb.scrollTop;
@@ -262,6 +262,7 @@ NaiveBehavior.prototype = {
             return;
           }
 
+          ph = rb.clientHeight;
           pt = rb.scrollTop;
           if(ot < ph + pt && ot > pt) {
             load();

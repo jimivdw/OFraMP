@@ -42,6 +42,24 @@ $ext.extend($ext, {
       elem.textContent = "";
     },
 
+    totalOffsetLeft: function(elem) {
+      var ol = elem.offsetLeft;
+      while(elem.offsetParent) {
+        elem = elem.offsetParent;
+        ol += elem.offsetLeft;
+      }
+      return ol;
+    },
+
+    totalOffsetTop: function(elem) {
+      var ol = elem.offsetTop;
+      while(elem.offsetParent) {
+        elem = elem.offsetParent;
+        ol += elem.offsetTop;
+      }
+      return ol;
+    },
+
     addTableRow: function(table, label, value) {
       var row = document.createElement('tr');
 
