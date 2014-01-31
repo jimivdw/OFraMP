@@ -240,6 +240,8 @@ OFraMP.prototype = {
     this.off = undefined;
     this.selectionChanged();
     this.container.dispatchEvent(this.moleculeEnteredEvent);
+    this.hideSelectionDetails();
+    this.hideRelatedFragments();
     this.hidePopup();
   },
 
@@ -251,6 +253,8 @@ OFraMP.prototype = {
       }
 
       this.container.dispatchEvent(this.moleculeEnteredEvent);
+      this.hideSelectionDetails();
+      this.hideRelatedFragments();
       this.mv.loadMolecule(data);
       this.checkpoint();
       this.container.dispatchEvent(this.moleculeDisplayedEvent);
