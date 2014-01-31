@@ -203,8 +203,12 @@ NaiveBehavior.prototype = {
 
     var ts = document.createElement('span');
     ts.className = "title";
-    ts.appendChild(document.createTextNode("Found " + fragments.length
-        + " fragments"));
+    if(fragments.length > 100) {
+      var title = "Found 100+ fragments";
+    } else {
+      var title = "Found " + fragments.length + " fragments";
+    }
+    ts.appendChild(document.createTextNode(title));
     this.oframp.relatedFragments.appendChild(ts);
 
     if(fragments.length === 0) {
@@ -272,11 +276,9 @@ NaiveBehavior.prototype = {
         fv.redraw();
       };
 
-      var ot = $ext.dom.totalOffsetTop(fv.canvas);
       var rb = this.oframp.relatedFragments.parentElement;
       var ph = rb.clientHeight;
-      var pt = rb.scrollTop;
-      if(ot < ph + pt && ot > pt) {
+      if(i * 150 < ph) {
         load();
       } else {
         var callback = function() {
@@ -284,8 +286,9 @@ NaiveBehavior.prototype = {
             return;
           }
 
-          ph = rb.clientHeight;
-          pt = rb.scrollTop;
+          var ot = $ext.dom.totalOffsetTop(fv.canvas);
+          var ph = rb.clientHeight;
+          var pt = rb.scrollTop;
           if(ot < ph + pt && ot > pt) {
             load();
             $ext.dom.removeEventListener(rb, "scroll", callback);
@@ -367,6 +370,11 @@ NaiveBehavior.prototype = {
 
         _this.oframp.hideRelatedFragments();
       }, $ext.mouse.LEFT);
+
+      // It makes no sense to show more than 100 fragments
+      if(i === 100) {
+        return $ext.BREAK;
+      }
     }, this);
 
     this.oframp.showRelatedFragments();
