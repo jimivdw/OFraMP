@@ -57,6 +57,10 @@ MoleculeViewer.prototype = {
   },
 
   setupInteraction: function() {
+    if(this.isInteractive) {
+      return;
+    }
+
     this.isInteractive = true;
 
     $ext.dom.onContextMenu(this.canvas, function(e) {
@@ -241,8 +245,10 @@ MoleculeViewer.prototype = {
    * 
    * If fromATB is true, the molecule will be retrieved from ATB.
    */
-  getMoleculeData: function(dataStr, success, fromATB) {
+  getMoleculeData: function(dataStr, success, failure, fromATB) {
     var _this = this;
+    success = success || function() {};
+    failure = failure || function() {};
 
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
 
@@ -264,19 +270,24 @@ MoleculeViewer.prototype = {
               + _this.settings.oapoc.version + "\nCurrent version: "
               + md.version;
           _this.showOverlay(msg, MESSAGE_TYPES.error);
+          failure.call(_this, msg);
         } else if(vc == 1) {
           var msg = "OAPoC version too new." + "\n\nRequired version: "
               + _this.settings.oapoc.version + "\nCurrent version: "
               + md.version;
           _this.showOverlay(msg, MESSAGE_TYPES.error);
+          failure.call(_this, msg);
         } else if(md.error) {
-          _this.showOverlay(md.error, MESSAGE_TYPES.error);
+          var msg = "An error has occured:\n" + md.error;
+          _this.showOverlay(msg, MESSAGE_TYPES.error);
+          failure.call(_this, msg);
         } else if(md.atoms && md.bonds) {
           success.call(_this, md);
         }
       } else if(xhr.status != 200) {
-        _this
-            .showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
+        var msg = "Could not connect to server";
+        _this.showOverlay(msg, MESSAGE_TYPES.critical);
+        failure.call(_this, msg);
       }
     };
 
@@ -297,7 +308,7 @@ MoleculeViewer.prototype = {
    * 
    * Once the molecule has been loaded execute the optional success function;
    */
-  showMolecule: function(dataStr, success, fromATB) {
+  showMolecule: function(dataStr, success, failure, fromATB) {
     this.getMoleculeData(dataStr, function(md) {
       this.showOverlay("Initializing molecule...");
       this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
@@ -313,6 +324,10 @@ MoleculeViewer.prototype = {
       this.hideOverlay();
       if(success) {
         success.call(this, this.molecule);
+      }
+    }, function(msg) {
+      if(failure) {
+        failure.call(this, msg);
       }
     }, fromATB);
   },

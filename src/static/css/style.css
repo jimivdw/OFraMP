@@ -82,7 +82,7 @@ html, body {
     user-select: none;
 }
 
-#controls, #extra_controls {
+#controls, #extra_controls, #error_controls {
     position: absolute;
     bottom: 12px;
     left: 50%;
@@ -102,6 +102,13 @@ html, body {
     bottom: 0px;
     height: 0px;
     z-index: 10;
+}
+
+#error_controls {
+    width: 160px;
+    margin-left: -80px;
+    -webkit-transition: none;
+    transition: none;
 }
 
 .bgroup {

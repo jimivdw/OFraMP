@@ -204,6 +204,9 @@ Molecule.prototype = {
 
       _this.idealize();
       _this.mv.hideOverlay();
+    }, function(msg) {
+      alert("Could not reset positions:\n" + msg);
+      _this.mv.hideOverlay();
     });
   },
 

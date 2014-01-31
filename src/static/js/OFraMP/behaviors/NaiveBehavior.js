@@ -333,7 +333,7 @@ NaiveBehavior.prototype = {
           this.molecule.setSelected(oas);
           this.hideOverlay();
           this.redraw();
-        }, true);
+        }, null, true);
         ov.canvas.className = "border_box";
 
         var cb = document.createElement('button');

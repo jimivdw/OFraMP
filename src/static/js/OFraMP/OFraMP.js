@@ -13,6 +13,7 @@ OFraMP.prototype = {
 
   atomDetails: undefined,
   relatedFragments: undefined,
+  errorControls: undefined,
 
   popup: undefined,
   popupTitle: undefined,
@@ -69,6 +70,12 @@ OFraMP.prototype = {
     this.__initFFB(ffb);
     this.findFragmentsButton = ffb;
 
+    var ecd = document.createElement('div');
+    ecd.id = "error_controls";
+    this.__initECD(ecd);
+    this.container.appendChild(ecd);
+    this.errorControls = ecd;
+
     var cc = document.createElement('div');
     cc.id = "canvas_container";
     this.container.appendChild(cc);
@@ -120,6 +127,26 @@ OFraMP.prototype = {
     } else {
       elem.appendChild(document.createTextNode("Loading fragments..."));
     }
+  },
+
+  __initECD: function(elem) {
+    var _this = this;
+    elem.style.visibility = "hidden";
+
+    var rgd = document.createElement('div');
+    rgd.className = "bgroup";
+
+    var rnb = document.createElement('button');
+    rnb.id = "retry_new";
+    rnb.className = "border_box";
+    $ext.dom.addText(rnb, "Enter a new molecule");
+    rgd.appendChild(rnb);
+
+    $ext.dom.onMouseClick(rnb, function() {
+      _this.showInsertMoleculePopup();
+    }, $ext.mouse.LEFT);
+
+    elem.appendChild(rgd);
   },
 
   __initMainViewer: function(container) {
@@ -232,6 +259,9 @@ OFraMP.prototype = {
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
       _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+      _this.errorControls.style.visibility = "hidden";
+    }, function(msg) {
+      _this.errorControls.style.visibility = "visible";
     });
 
     if(!this.mv.molecule) {
@@ -258,6 +288,7 @@ OFraMP.prototype = {
       this.mv.loadMolecule(data);
       this.checkpoint();
       this.container.dispatchEvent(this.moleculeDisplayedEvent);
+      _this.errorControls.style.visibility = "hidden";
 
       this.hidePopup();
     } catch(err) {
