@@ -189,6 +189,9 @@ NaiveBehavior.prototype = {
 
     if(this instanceof NaiveBehavior) {
       this.oframp.atomDetails.appendChild(ffb);
+      if(!this.oframp.off) {
+        ffb.disabled = "disabled";
+      }
       $ext.dom.onMouseClick(ffb, function() {
         _this.oframp.getMatchingFragments();
       }, $ext.mouse.LEFT);
