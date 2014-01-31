@@ -223,6 +223,8 @@ NaiveBehavior.prototype = {
       this.oframp.relatedFragments.appendChild(ep);
     }
 
+    var rightBar = this.oframp.relatedFragments.parentElement;
+    var barHeight = rightBar.clientHeight;
     $ext.each(fragments, function(fragment, i) {
       var atoms = $ext.array.map(fragment.atoms, function(atom) {
         var orig = this.oframp.mv.molecule.atoms.get(atom.id);
@@ -276,9 +278,7 @@ NaiveBehavior.prototype = {
         fv.redraw();
       };
 
-      var rb = this.oframp.relatedFragments.parentElement;
-      var ph = rb.clientHeight;
-      if(i * 150 < ph) {
+      if(i * 150 < barHeight) {
         load();
       } else {
         var callback = function() {
@@ -287,14 +287,14 @@ NaiveBehavior.prototype = {
           }
 
           var ot = $ext.dom.totalOffsetTop(fv.canvas);
-          var ph = rb.clientHeight;
-          var pt = rb.scrollTop;
+          var ph = rightBar.clientHeight;
+          var pt = rightBar.scrollTop;
           if(ot < ph + pt && ot > pt) {
             load();
-            $ext.dom.removeEventListener(rb, "scroll", callback);
+            $ext.dom.removeEventListener(rightBar, "scroll", callback);
           }
         };
-        $ext.dom.onScroll(rb, callback);
+        $ext.dom.onScroll(rightBar, callback);
       }
 
       $ext.dom.onMouseClick(fv.canvas, function() {
