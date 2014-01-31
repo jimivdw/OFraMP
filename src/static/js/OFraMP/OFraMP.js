@@ -625,7 +625,10 @@ OFraMP.prototype = {
    */
   selectionChanged: function() {
     if(this.mv.molecule) {
-      var selection = this.mv.molecule.getSelected();
+      var selection = $ext.array.filter(this.mv.molecule.getSelected(),
+          function(atom) {
+            return atom.element !== "H";
+          });
     }
     var ffbState = "";
     if(!this.off) {
