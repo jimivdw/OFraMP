@@ -13,10 +13,10 @@ $ext.extend($ext, {
     getX: function(evt) {
       if(evt.target) {
         return evt.clientX - $ext.dom.totalOffsetLeft(evt.target)
-            + document.documentElement.scrollLeft;
+            + $ext.dom.totalScrollLeft(evt.target);
       } else if(evt.srcElement) {
         return evt.clientX - $ext.dom.totalOffsetLeft(evt.srcElement)
-            + document.documentElement.scrollLeft;
+            + $ext.dom.totalScrollLeft(evt.srcElement);
       } else {
         return evt.clientX + document.documentElement.scrollLeft;
       }
@@ -28,10 +28,10 @@ $ext.extend($ext, {
     getY: function(evt) {
       if(evt.target) {
         return evt.clientY - $ext.dom.totalOffsetTop(evt.target)
-            + document.documentElement.scrollTop;
+            + $ext.dom.totalScrollTop(evt.target);
       } else if(evt.srcElement) {
         return evt.clientY - $ext.dom.totalOffsetTop(evt.srcElement)
-            + document.documentElement.scrollTop;
+            + $ext.dom.totalScrollTop(evt.srcElement);
       } else {
         return evt.clientY + document.documentElement.scrollTop;
       }

@@ -43,21 +43,39 @@ $ext.extend($ext, {
     },
 
     totalOffsetLeft: function(elem) {
-      var ol = elem.offsetLeft;
+      var o = elem.offsetLeft;
       while(elem.offsetParent) {
         elem = elem.offsetParent;
-        ol += elem.offsetLeft;
+        o += elem.offsetLeft;
       }
-      return ol;
+      return o;
     },
 
     totalOffsetTop: function(elem) {
-      var ol = elem.offsetTop;
+      var o = elem.offsetTop;
       while(elem.offsetParent) {
         elem = elem.offsetParent;
-        ol += elem.offsetTop;
+        o += elem.offsetTop;
       }
-      return ol;
+      return o;
+    },
+
+    totalScrollLeft: function(elem) {
+      var s = elem.scrollLeft;
+      while(elem.parentElement) {
+        elem = elem.parentElement;
+        s += elem.scrollLeft;
+      }
+      return s;
+    },
+
+    totalScrollTop: function(elem) {
+      var s = elem.scrollTop;
+      while(elem.parentElement) {
+        elem = elem.parentElement;
+        s += elem.scrollTop;
+      }
+      return s;
     },
 
     addTableRow: function(table, label, value) {
