@@ -323,7 +323,7 @@ NaiveBehavior.prototype = {
         var content = document.createElement('div');
 
         var ov = new MoleculeViewer(_this.oframp, "original_" + i, content,
-            580, 400);
+            580, _this.oframp.popup.clientHeight - 100);
         ov.showMolecule(fragment.atb_id, function() {
           this.setupInteraction();
           this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
