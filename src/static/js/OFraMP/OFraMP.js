@@ -459,9 +459,7 @@ OFraMP.prototype = {
 
     var queryJSON = JSON.stringify({
       off: this.off,
-      needle: $ext.array.map(selection, function(atom) {
-        return atom.id;
-      })
+      needle: selectionIDs
     });
 
     $ext.dom.clear(this.relatedFragments);
@@ -530,7 +528,7 @@ OFraMP.prototype = {
 
           fragments = fragments.concat(overlappingFragments);
           _this.hideRelatedFragments();
-          _this.behavior.showRelatedFragments(fragments);
+          _this.behavior.showRelatedFragments(fragments, selectionIDs);
         }
       } else if(xhr.readyState > 1 && xhr.status != 200) {
         var msg = "Could not connect to the OMFraF server."

@@ -197,7 +197,7 @@ NaiveBehavior.prototype = {
     this.oframp.showSelectionDetails();
   },
 
-  showRelatedFragments: function(fragments) {
+  showRelatedFragments: function(fragments, selectionIDs) {
     $ext.dom.clear(this.oframp.relatedFragments);
     this.relatedFragmentViewers = new Array();
 
@@ -265,6 +265,9 @@ NaiveBehavior.prototype = {
 
       var load = function() {
         fv.molecule = new Molecule(fv, atoms, bonds);
+        fv.molecule.setSelected($ext.array.map(selectionIDs, function(id) {
+          return fv.molecule.atoms.get(id);
+        }));
         fv.molecule.bestFit();
         fv.redraw();
       };
