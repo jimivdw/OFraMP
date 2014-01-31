@@ -225,24 +225,6 @@ html, body {
     width: 230px;
     margin: 3px 0;
     height: 30px;
-    cursor: pointer;
-    opacity: 0.5;
-    -webkit-transition: opacity .2s ease-out;
-    transition: opacity .2s ease-out;
-}
-
-#atom_details button:disabled {
-    opacity: 0.1 !important;
-    cursor: default !important;
-    background-color: #FFF !important;
-}
-
-#atom_details button:hover {
-    opacity: 1.0;
-}
-
-#atom_details button:active {
-    background-color: #DDD;
 }
 
 #charge_edit {
@@ -272,9 +254,8 @@ html, body {
     width: 110px;
     height: 30px;
     margin-top: 95px;
-    cursor: pointer;
-    opacity: 0.5;
     z-index: 10;
+    font-weight: normal !important;
     -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
     transition: opacity .2s ease-out, visibility .2s ease-out;
 }
@@ -290,14 +271,6 @@ html, body {
 .fragment button:disabled {
     visibility: hidden;
     opacity: 0.0 !important;
-}
-
-.fragment button:hover {
-    opacity: 1.0;
-}
-
-.fragment button:active {
-    background-color: #DDD;
 }
 
 .fragment canvas {
@@ -378,17 +351,6 @@ html, body {
 #popup_content .controls button {
     float: right;
     height: 28px;
-    box-sizing: border-box;
-    border: 1px solid #AAA;
-    border-radius: 2px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .1), 0 -1px 2px rgba(0, 0, 0, .1);
-    background-color: #FFF;
-    cursor: pointer;
-}
-
-#popup_content .controls button:hover {
-    border-color: #888;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 -1px 2px rgba(0, 0, 0, .3);
 }
 
 #molecule_cutout, #charge_details {
@@ -447,7 +409,7 @@ html, body {
     opacity: 1;
 }
 
-.bgroup button, .bgroup a, .bgroup select {
+button.border_box, a.border_box, select.border_box {
     -webkit-user-select: none;
     user-select: none;
     font-weight: bold;
@@ -457,17 +419,17 @@ html, body {
     transition: opacity .2s ease-out;
 }
 
-.bgroup button:disabled, .bgroup a:disabled, .bgroup select:disabled {
+button.border_box:disabled, a.border_box:disabled, select.border_box:disabled {
     opacity: 0.1 !important;
     cursor: default !important;
 }
 
-.bgroup button:hover, .bgroup a:hover, .bgroup select:hover {
+button.border_box:hover, a.border_box:hover, select.border_box:hover {
     opacity: 1;
 }
 
-.bgroup button:active:not(:disabled), .bgroup a:active:not(:disabled),
-        .bgroup select:active:not(:disabled) {
+button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
+        select.border_box:active:not(:disabled) {
     background-color: #DDD;
 }
 

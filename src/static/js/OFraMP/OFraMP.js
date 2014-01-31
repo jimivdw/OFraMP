@@ -199,6 +199,7 @@ OFraMP.prototype = {
 
     var sb = document.createElement('button');
     sb.id = "mds_submit";
+    sb.className = "border_box";
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.submitMDS(ta.value);
@@ -207,6 +208,7 @@ OFraMP.prototype = {
 
     // Only for debug purposes, TODO: remove
     var rb = document.createElement('button');
+    rb.className = "border_box";
     rb.appendChild(document.createTextNode("Random molecule"));
     rb.onclick = function() {
       ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
@@ -234,6 +236,7 @@ OFraMP.prototype = {
 
     var lb = document.createElement('button');
     lb.id = "load_oss";
+    lb.className = "border_box";
     lb.appendChild(document.createTextNode("Load from OSS file"));
     lb.onclick = function() {
       ossi.click();
@@ -243,6 +246,7 @@ OFraMP.prototype = {
     if(this.mv.molecule) {
       var cb = document.createElement('button');
       cb.style.float = 'left';
+      cb.className = "border_box";
       cb.appendChild(document.createTextNode("Cancel"));
       cb.onclick = function() {
         _this.hidePopup();
