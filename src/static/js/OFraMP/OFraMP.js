@@ -317,20 +317,63 @@ OFraMP.prototype = {
         return atom;
       }, this);
 
-      var bonds = $ext.array.map(fragment.bonds, function(bond) {
-        return this.mv.molecule.bonds.get(bond.id).getJSON();
-      }, this);
+      var aids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.id;
+      });
+      var abs = this.mv.molecule.bonds.filter(function(bond) {
+        return aids.indexOf(bond.a1.id) !== -1 && aids.indexOf(bond.a2.id) !== -1;
+      });
+      var bonds = $ext.array.map(abs, function(bond) {
+        return bond.getJSON();
+      });
 
       var fc = document.createElement('div');
       fc.id = "ufc_" + i;
       fc.className = 'used_fragment border_box';
       frags.appendChild(fc);
 
+      var ob = document.createElement('button');
+      ob.className = "show_original border_box";
+      ob.appendChild(document.createTextNode("Show molecule"));
+      fc.appendChild(ob);
+
       var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
       fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
       fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
       fv.redraw();
+
+      var oids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.other_id;
+      });
+      $ext.dom.onMouseClick(ob, function() {
+        var title = "Fragment molecule";
+        var content = document.createElement('div');
+
+        var ov = new MoleculeViewer(_this, "original_" + i, content,
+            580, _this.popup.clientHeight - 100);
+        ov.showMolecule(fragment.atb_id, function() {
+          this.setupInteraction();
+          this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
+          var oas = $ext.array.map(oids, function(oid) {
+            return this.molecule.atoms.get(oid);
+          }, this);
+          this.molecule.setSelected(oas);
+          this.hideOverlay();
+          this.redraw();
+        }, null, true);
+        ov.canvas.className = "border_box";
+
+        var cb = document.createElement('button');
+        cb.appendChild(document.createTextNode("Close"));
+        content.appendChild(cb);
+
+        $ext.dom.onMouseClick(cb, function() {
+          _this.showUsedFragments(atom);
+        }, $ext.mouse.LEFT);
+
+        _this.showPopup(title, content);
+      }, $ext.mouse.LEFT);
     }, this);
 
     var cb = document.createElement('button');

@@ -431,6 +431,22 @@ html, body {
     margin: 10px;
 }
 
+.used_fragment .show_original {
+    position: absolute;
+    width: 110px;
+    height: 30px;
+    margin: 95px 0 0 75px;
+    cursor: pointer;
+    opacity: 0.5;
+    z-index: 10;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+.used_fragment .show_original:hover {
+    opacity: 1;
+}
+
 .bgroup button, .bgroup a, .bgroup select {
     -webkit-user-select: none;
     user-select: none;
