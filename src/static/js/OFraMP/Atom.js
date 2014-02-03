@@ -378,7 +378,7 @@ Atom.prototype = {
     } else if(previewCharge !== undefined) {
       charge = previewCharge;
     }
-    return $ext.number.format(charge, 1, 3);
+    return $ext.number.format(charge, 1, 3, 9);
   },
 
   /*

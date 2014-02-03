@@ -62,7 +62,7 @@ NaiveBehavior.prototype = {
       $ext.dom.addTableRow(dt, "ID", atom.id);
       $ext.dom.addTableRow(dt, "Element", atom.getLabel(true));
       var cc = document.createElement('span');
-      var charge = $ext.number.format(atom.getCharge(), 1, 3);
+      var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
       cc.appendChild(document.createTextNode(charge || "unknown"));
       $ext.dom.addTableRow(dt, "Charge", cc);
     } else {
@@ -78,7 +78,7 @@ NaiveBehavior.prototype = {
       $ext.dom.addTableRow(dt, "Selection count", selection.length);
       $ext.dom.addTableRow(dt, "Unparameterised", uas.length);
       $ext.dom.addTableRow(dt, "Parameterised", selection.length - uas.length);
-      var charge = $ext.number.format($ext.array.sum(cs), 1, 3);
+      var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
       $ext.dom.addTableRow(dt, "Total charge", charge || "unknown");
     }
 
@@ -107,7 +107,7 @@ NaiveBehavior.prototype = {
       $ext.dom.addTableRow(cet, "Used fragments", ufb);
       var ceb = document.createElement('input');
       ceb.className = "border_box";
-      ceb.value = $ext.number.format(atom.charge, 1, 3) || "";
+      ceb.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
       $ext.dom.addTableRow(cet, "New charge", ceb);
 
       var acb = document.createElement('button');
@@ -149,7 +149,7 @@ NaiveBehavior.prototype = {
         atom.setCharge(newCharge);
         if(oldCharge !== newCharge) {
           $ext.dom.clear(cc);
-          var charge = $ext.number.format(atom.getCharge(), 1, 3);
+          var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
           cc.appendChild(document.createTextNode(charge || "unknown"));
           _this.oframp.redraw();
           _this.oframp.checkpoint();
@@ -402,14 +402,14 @@ NaiveBehavior.prototype = {
     $ext.dom.addTableRow(dt, "Atom ID", atom.id);
     $ext.dom.addTableRow(dt, "Element", atom.element);
     $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(
-        atom.getCharge(), 1, 3));
+        atom.getCharge(), 1, 3, 9));
     $ext.dom.addTableRow(dt, "Proposed charge", $ext.number.format(
-        atom.getPreviewCharge(), 1, 3));
+        atom.getPreviewCharge(), 1, 3, 9));
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
     rc.value = $ext.number.format(
-        (atom.getCharge() + atom.getPreviewCharge()) / 2, 1, 3);
+        (atom.getCharge() + atom.getPreviewCharge()) / 2, 1, 3, 9);
 
     var ss = document.createElement('select');
     $ext.dom.addSelectOption(ss, "current", "Current value");
@@ -439,7 +439,7 @@ NaiveBehavior.prototype = {
           rc.disabled = "";
           break;
       }
-      rc.value = $ext.number.format(value, 1, 3);
+      rc.value = $ext.number.format(value, 1, 3, 9);
     });
 
     $ext.dom.addTableRow(dt, "Solution", ss);
