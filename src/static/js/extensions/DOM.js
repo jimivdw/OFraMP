@@ -33,13 +33,15 @@ $ext.extend($ext, {
      */
     clear: function(elem) {
       // Make a copy of the children to not mess with the foreach loop.
-      var children = $ext.copy(elem.children);
+      var children = $ext.copy(elem.childNodes);
       $ext.each(children, function(child) {
         if(child instanceof Element) {
           elem.removeChild(child);
         }
       });
-      elem.textContent = "";
+      if(elem.textContent) {
+        elem.textContent = "";
+      }
     },
 
     totalOffsetLeft: function(elem) {
