@@ -358,6 +358,7 @@ html, body {
 #popup_content .controls button {
     float: right;
     height: 28px;
+    margin: 0 2px;
 }
 
 #molecule_cutout, #charge_details {
