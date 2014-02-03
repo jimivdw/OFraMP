@@ -328,7 +328,7 @@ NaiveBehavior.prototype = {
         return atom.other_id;
       });
       $ext.dom.onMouseClick(ob, function() {
-        var title = "Fragment molecule";
+        var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
         var content = document.createElement('div');
 
         var ov = new MoleculeViewer(_this.oframp, "original_" + i, content,
