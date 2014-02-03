@@ -396,7 +396,7 @@ MoleculeViewer.prototype = {
     this.molecule.atoms.each(function(atom) {
       if(charges[atom.id]) {
         atom.previewCharge = charges[atom.id];
-        if(atom.charge) {
+        if(atom.isCharged()) {
           atom.addHighlight(ATOM_STATUSES.conflict);
         } else {
           atom.addHighlight(ATOM_STATUSES.preview);
@@ -418,11 +418,13 @@ MoleculeViewer.prototype = {
     var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
       if(charges[atom.id]) {
-        if(atom.charge) {
-          this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
-              .slice(i + 1), charges, fragment);
-          needsFix = true;
-          return $ext.BREAK;
+        if(atom.isCharged()) {
+          if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
+            this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
+                .slice(i + 1), charges, fragment);
+            needsFix = true;
+            return $ext.BREAK;
+          }
         } else {
           atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();

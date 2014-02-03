@@ -62,7 +62,7 @@ NaiveBehavior.prototype = {
       $ext.dom.addTableRow(dt, "ID", atom.id);
       $ext.dom.addTableRow(dt, "Element", atom.getLabel(true));
       var cc = document.createElement('span');
-      var charge = $ext.number.format(atom.charge, 1, 3);
+      var charge = $ext.number.format(atom.getCharge(), 1, 3);
       cc.appendChild(document.createTextNode(charge || "unknown"));
       $ext.dom.addTableRow(dt, "Charge", cc);
     } else {
@@ -72,7 +72,7 @@ NaiveBehavior.prototype = {
       });
       // Get the charge of all atoms
       var cs = $ext.array.map(selection, function(atom) {
-        return atom.charge;
+        return atom.getCharge();
       });
 
       $ext.dom.addTableRow(dt, "Selection count", selection.length);
@@ -149,7 +149,7 @@ NaiveBehavior.prototype = {
         atom.setCharge(newCharge);
         if(oldCharge !== newCharge) {
           $ext.dom.clear(cc);
-          var charge = $ext.number.format(atom.charge, 1, 3);
+          var charge = $ext.number.format(atom.getCharge(), 1, 3);
           cc.appendChild(document.createTextNode(charge || "unknown"));
           _this.oframp.redraw();
           _this.oframp.checkpoint();
@@ -401,34 +401,38 @@ NaiveBehavior.prototype = {
     var dt = document.createElement('table');
     $ext.dom.addTableRow(dt, "Atom ID", atom.id);
     $ext.dom.addTableRow(dt, "Element", atom.element);
-    $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(atom.charge,
-        1, 3));
+    $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(
+        atom.getCharge(), 1, 3));
     $ext.dom.addTableRow(dt, "Proposed charge", $ext.number.format(
-        charges[atom.id], 1, 3));
+        atom.getPreviewCharge(), 1, 3));
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
-    rc.value = $ext.number.format((atom.charge + charges[atom.id]) / 2, 1, 3);
+    rc.value = $ext.number.format(
+        (atom.getCharge() + atom.getPreviewCharge()) / 2, 1, 3);
 
     var ss = document.createElement('select');
     $ext.dom.addSelectOption(ss, "current", "Current value");
     $ext.dom.addSelectOption(ss, "other", "Other value");
     $ext.dom.addSelectOption(ss, "average", "Average value", true);
-    $ext.dom.addSelectOption(ss, "custom", "Custom value");
+    if(this.oframp.settings.atom.showHAtoms ||
+        atom.getHydrogenAtoms().length === 0) {
+      $ext.dom.addSelectOption(ss, "custom", "Custom value");
+    } // TODO maybe add some slider-like thing for old:new ratio otherwise?
     $ext.dom.addEventListener(ss, 'change', function() {
       rc.disabled = "disabled";
       var value = rc.value;
       switch(ss.value) {
         case "current":
-          value = atom.charge;
+          value = atom.getCharge();
           break;
 
         case "other":
-          value = charges[atom.id];
+          value = atom.getPreviewCharge();
           break;
 
         case "average":
-          value = (atom.charge + charges[atom.id]) / 2;
+          value = (atom.getCharge() + atom.getPreviewCharge()) / 2;
           break;
 
         case "custom":
@@ -448,19 +452,44 @@ NaiveBehavior.prototype = {
     rb.appendChild(document.createTextNode("Apply charge"));
     content.appendChild(rb);
 
+    function getResultingCharge(atom, method) {
+      var value = rc.value;
+      switch(method) {
+        case "current":
+          value = atom.charge;
+          break;
+
+        case "other":
+          value = atom.previewCharge;
+          break;
+
+        case "average":
+          value = (atom.charge + atom.previewCharge) / 2;
+          break;
+      }
+      return parseFloat(value) || undefined;
+    }
+
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
-      atom.setCharge(parseFloat(rc.value) || undefined, fragment);
+      atom.setCharge(getResultingCharge(atom, ss.value), fragment);
+      if(!_this.oframp.settings.atom.showHAtoms) {
+        $ext.each(atom.getHydrogenAtoms(), function(a) {
+          a.setCharge(getResultingCharge(a, ss.value), fragment);
+        });
+      }
       atom.resetHighlight();
       _this.oframp.hidePopup();
 
       var needsFix = false;
       rem.each(function(atom, i) {
         if(charges[atom.id]) {
-          if(atom.charge) {
-            this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
-            needsFix = true;
-            return $ext.BREAK;
+          if(atom.isCharged()) {
+            if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
+              this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
+              needsFix = true;
+              return $ext.BREAK;
+            }
           } else {
             atom.setCharge(charges[atom.id], fragment);
           }

@@ -320,10 +320,6 @@ Atom.prototype = {
    * Returns whether the charge of this atom is set or not.
    */
   isCharged: function() {
-    if(this.element === "H") {
-      return this.getBase().isCharged();
-    }
-
     return this.charge !== undefined;
   },
 
@@ -331,10 +327,6 @@ Atom.prototype = {
    * Set the charge of this atom to the given value.
    */
   setCharge: function(charge, fragment) {
-    if(this.element === "H") {
-      return;
-    }
-
     this.charge = charge;
     this.previewCharge = undefined;
     if(fragment) {
@@ -379,21 +371,40 @@ Atom.prototype = {
    * Get the displayed charge label for this atom.
    */
   getChargeLabel: function() {
-    if(!this.isVisible()) {
-      return;
-    }
-
-    if(this.element === "H") {
-      return this.getBase().getChargeLabel();
-    }
-
-    var charge = this.charge;
-    if(this.previewCharge !== undefined && this.isCharged()) {
-      charge = (this.previewCharge + this.charge) / 2;
-    } else if(this.previewCharge !== undefined) {
-      charge = this.previewCharge;
+    var charge = this.getCharge();
+    var previewCharge = this.getPreviewCharge();
+    if(previewCharge !== undefined && this.isCharged()) {
+      charge = (previewCharge + charge) / 2;
+    } else if(previewCharge !== undefined) {
+      charge = previewCharge;
     }
     return $ext.number.format(charge, 1, 3);
+  },
+
+  /*
+   * Get the total charge of this atom.
+   */
+  getCharge: function() {
+    var charge = this.charge;
+    if(charge !== undefined && !this.settings.atom.showHAtoms) {
+      $ext.each(this.getHydrogenAtoms(), function(atom) {
+        charge += atom.charge;
+      });
+    }
+    return charge;
+  },
+
+  /*
+   * Get the total preview charge of this atom.
+   */
+  getPreviewCharge: function() {
+    var charge = this.previewCharge;
+    if(charge !== undefined && !this.settings.atom.showHAtoms) {
+      $ext.each(this.getHydrogenAtoms(), function(atom) {
+        charge += atom.previewCharge;
+      });
+    }
+    return charge;
   },
 
   /*

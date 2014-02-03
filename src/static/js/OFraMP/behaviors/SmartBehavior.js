@@ -239,16 +239,23 @@ SmartBehavior.prototype = {
   },
 
   showChargeFixer: function(atom, rem, charges, fragment) {
-    atom.setCharge((atom.charge + charges[atom.id]) / 2, fragment);
+    atom.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
+    if(!_this.oframp.settings.atom.showHAtoms) {
+      $ext.each(atom.getHydrogenAtoms(), function(a) {
+        a.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
+      });
+    }
     atom.resetHighlight();
 
     var needsFix = false;
     rem.each(function(atom, i) {
       if(charges[atom.id]) {
-        if(atom.charge) {
-          this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
-          needsFix = true;
-          return $ext.BREAK;
+        if(atom.isCharged()) {
+          if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
+            this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
+            needsFix = true;
+            return $ext.BREAK;
+          }
         } else {
           atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();
