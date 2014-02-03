@@ -88,6 +88,7 @@ html, body {
     left: 50%;
     width: 600px;
     height: 30px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     margin-left: -300px;
     text-align: center;
@@ -189,6 +190,7 @@ html, body {
 #atom_details canvas, #related_fragments canvas {
     border: 1px solid #AAA;
     border-radius: 2px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
@@ -209,6 +211,7 @@ html, body {
 .border_box th, .border_box td {
     height: 30px;
     padding: 3px 2px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
@@ -229,6 +232,7 @@ html, body {
 
 #charge_edit {
     width: 230px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 4px;
     visibility: hidden;
@@ -241,6 +245,7 @@ html, body {
 #charge_edit input, #charge_edit table button {
     width: 100px;
     height: 25px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 0 5px;
 }
@@ -321,6 +326,7 @@ html, body {
     width: 600px;
     overflow-x: hidden;
     overflow-y: auto;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 10px;
     text-align: center;
@@ -333,6 +339,7 @@ html, body {
     right: 0;
     bottom: 30px;
     left: 0;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 580px;
     margin: 10px;
@@ -371,6 +378,7 @@ html, body {
 #charge_details select, #charge_details input {
     width: 110px;
     margin: 0;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
