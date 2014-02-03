@@ -554,9 +554,6 @@ OFraMP.prototype = {
         } else if(fd.error) {
           showError(fd.error);
         } else if(fd.fragments) {
-          var fragments = new Array();
-          var overlappingFragments = new Array();
-
           $ext.each(fd.fragments, function(fragment) {
             var hasOverlap = $ext.each(fragment.atoms, function(atom) {
               var orig = this.mv.molecule.atoms.get(atom.id);
@@ -567,13 +564,13 @@ OFraMP.prototype = {
 
             if(hasOverlap === true) {
               fragment.hasOverlap = true;
-              overlappingFragments.push(fragment);
-            } else {
-              fragments.push(fragment);
+              fragment.score /= 2;
             }
           }, _this);
 
-          fragments = fragments.concat(overlappingFragments);
+          fragments = fd.fragments.sort(function(a, b) {
+            return b.score - a.score;
+          });
           _this.hideRelatedFragments();
           _this.behavior.showRelatedFragments(fragments, selectionIDs);
         }
