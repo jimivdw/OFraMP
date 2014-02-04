@@ -381,7 +381,7 @@ NaiveBehavior.prototype = {
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ob, function() {
-        _this.oframp.showOriginal(fragments);
+        _this.oframp.showOriginal(fragment);
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ab, function() {
