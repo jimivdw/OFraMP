@@ -230,25 +230,26 @@
         });
 
         var controlsInitialized = false;
+        var header = document.getElementById("header");
         var controls = document.getElementById("controls");
         var extraControls = document.getElementById("extra_controls");
+        var fragmentControls = document.getElementById("fragment_controls");
         var toggle = document.getElementById("extra_controls_toggle");
+        var extraControlsVisible = false;
         function initControls() {
-          controls.style.visibility = "visible";
+          controls.style.display = "inline-block";
+          extraControls.style.display = "inline-block";
+          fragmentControls.style.display = "block";
 
           $ext.dom.onMouseClick(toggle, function() {
-            if(extraControls.style.visibility === "visible") {
-              controls.style.bottom = "12px";
-              extraControls.style.height = "0px";
-              extraControls.style.padding = "0px";
-              extraControls.style.visibility = "hidden";
-              toggle.style.backgroundImage = "url('static/img/open.png')";
-            } else {
-              controls.style.bottom = "34px";
-              extraControls.style.visibility = "visible";
-              extraControls.style.height = "34px";
-              extraControls.style.padding = "2px";
+            if(extraControlsVisible) {
+              header.style.height = "30px";
               toggle.style.backgroundImage = "url('static/img/close.png')";
+              extraControlsVisible = false;
+            } else {
+              header.style.height = "70px";
+              toggle.style.backgroundImage = "url('static/img/open.png')";
+              extraControlsVisible = true;
             }
           }, $ext.mouse.LEFT);
 
@@ -288,6 +289,7 @@
           if (controlsInitialized) {
             controls.style.display = "none";
             extraControls.style.display = "none";
+            fragmentControls.style.display = "none";
           }
         });
 
@@ -295,8 +297,9 @@
           if (!controlsInitialized) {
             initControls();
           } else {
-            controls.style.display = "block";
-            extraControls.style.display = "block";
+            controls.style.display = "inline-block";
+            extraControls.style.display = "inline-block";
+            fragmentControls.style.display = "block";
           }
         });
 
@@ -312,82 +315,84 @@
   </head>
 
   <body>
-    <div id="logo">
-      <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+    <div id="header">
+      <div id="logo">
+        <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+      </div>
+
+      <div id="controls">
+        <div class="bgroup">
+          <button id="new" class="border_box" title="Submit another molecule (Alt+N)">
+            New molecule
+          </button>
+          <button id="open" class="border_box" title="Open a saved molecule (Alt+O)">
+            Open
+          </button>
+          <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
+            Save
+          </a>
+          <a id="share" class="border_box" href="#" title="Share a link to the current state (Alt+L)">
+            Share
+          </a>
+        </div>
+
+        <div class="bgroup">
+          <button id="undo" class="border_box" title="Undo last action (Alt+Z)">
+            Undo
+          </button>
+          <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
+            Redo
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <button id="extra_controls_toggle" class="border_box" title="Show/Hide advanced controls">
+            &nbsp;
+          </button>
+        </div>
+      </div>
+
+      <div id="extra_controls">
+        <div class="bgroup">
+          <button id="zoomin" class="border_box" title="Zoom in">
+            Zoom +
+          </button>
+          <button id="zoomout" class="border_box" title="Zoom out">
+            Zoom -
+          </button>
+          <select id="zoom" class="border_box" title="Zoom to a predefined level">
+            <option value="pre" disabled="disabled" selected="selected">Predefined</option>
+            <option value="min">Minimal</option>
+            <option value="avg">Ideal</option>
+            <option value="max">Maximal</option>
+            <option value="fit">Best fit</option>
+          </select>
+        </div>
+
+        <div class="bgroup">
+          <button id="reset" class="border_box" title="Reset the atom positions">
+            Reset positions
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <a id="download" class="border_box" href="" title="Download the molecule as an image">
+            Download
+          </a>
+        </div>
+
+        <div class="bgroup">
+          <button id="opti" class="border_box" title="Settings">
+            Settings
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div id="controls">
-      <div class="bgroup">
-        <button id="new" class="border_box" title="Submit another molecule (Alt+N)">
-          New molecule
-        </button>
-        <button id="open" class="border_box" title="Open a saved molecule (Alt+O)">
-          Open
-        </button>
-        <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
-          Save
-        </a>
-        <a id="share" class="border_box" href="#" title="Share a link to the current state (Alt+L)">
-          Share
-        </a>
-      </div>
-
-      <div class="bgroup">
-        <button id="undo" class="border_box" title="Undo last action (Alt+Z)">
-          Undo
-        </button>
-        <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
-          Redo
-        </button>
-      </div>
-
-      <div class="bgroup" id="fragment_controls">
-        <button id="find_fragments" class="border_box" title="Find matching fragments">
-          Find fragments
-        </button>
-      </div>
-
-      <div class="bgroup">
-        <button id="extra_controls_toggle" class="border_box" title="Show/Hide advanced controls">
-          &nbsp;
-        </button>
-      </div>
-    </div>
-
-    <div id="extra_controls">
-      <div class="bgroup">
-        <button id="zoomin" class="border_box" title="Zoom in">
-          Zoom +
-        </button>
-        <button id="zoomout" class="border_box" title="Zoom out">
-          Zoom -
-        </button>
-        <select id="zoom" class="border_box" title="Zoom to a predefined level">
-          <option value="pre" disabled="disabled" selected="selected">Predefined</option>
-          <option value="min">Minimal</option>
-          <option value="avg">Ideal</option>
-          <option value="max">Maximal</option>
-          <option value="fit">Best fit</option>
-        </select>
-      </div>
-
-      <div class="bgroup">
-        <button id="reset" class="border_box" title="Reset the atom positions">
-          Reset positions
-        </button>
-      </div>
-
-      <div class="bgroup">
-        <a id="download" class="border_box" href="" title="Download the molecule as an image">
-          Download as image
-        </a>
-      </div>
-
-      <div class="bgroup">
-        <button id="opti" class="border_box" title="Settings">
-          Settings
-        </button>
-      </div>
+    <div id="fragment_controls">
+      <button id="find_fragments" class="border_box" title="Find matching fragments">
+        Find fragments
+      </button>
     </div>
 
     <div id="copyright">

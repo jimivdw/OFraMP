@@ -27,14 +27,27 @@ html, body {
     background-color: #FFF;
 }
 
-#logo {
+#header {
     position: absolute;
     top: 10px;
     left: 50%;
-    width: 100px;
-    margin-left: -50px;
+    width: 500px;
+    height: 30px;
+    margin-left: -250px;
     overflow: hidden;
     text-align: center;
+    -webkit-transition: height .2s ease-out;
+    transition: height .2s ease-out;
+}
+
+#logo {
+    display: inline-block;
+    width: 100px;
+    height: 30px;
+    margin: 0 5px;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
     -webkit-user-select: none;
     user-select: none;
     opacity: 0.5;
@@ -82,39 +95,38 @@ html, body {
     user-select: none;
 }
 
-#controls, #extra_controls, #error_controls {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    width: 600px;
-    height: 30px;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    margin-left: -300px;
+#controls, #extra_controls {
+    display: none;
+    margin: 0 5px;
     text-align: center;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-transition: bottom .2s ease-out, height .2s ease-out, visibility .2s ease-out;
-    transition: bottom .2s ease-out, height .2s ease-out, visibility .2s ease-out;
-    visibility: hidden;
 }
 
 #extra_controls {
-    bottom: 0px;
-    height: 0px;
-    z-index: 10;
+    margin-top: 5px;
 }
 
-#error_controls {
-    width: 160px;
-    margin-left: -80px;
-    -webkit-transition: none;
-    transition: none;
+#fragment_controls, #error_controls {
+    display: none;
+}
+
+#fragment_controls button, #error_controls button {
+    height: 35px;
+    font-size: 16px;
+}
+
+#find_fragments, #retry_new {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    width: 180px;
+    margin-left: -90px;
 }
 
 .bgroup {
     display: inline-block;
-    margin: 0 10px;
+    margin: 0 2px;
 }
 
 .bgroup > * {

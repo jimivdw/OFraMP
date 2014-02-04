@@ -131,22 +131,16 @@ OFraMP.prototype = {
 
   __initECD: function(elem) {
     var _this = this;
-    elem.style.visibility = "hidden";
-
-    var rgd = document.createElement('div');
-    rgd.className = "bgroup";
 
     var rnb = document.createElement('button');
     rnb.id = "retry_new";
     rnb.className = "border_box";
     $ext.dom.addText(rnb, "Enter a new molecule");
-    rgd.appendChild(rnb);
+    elem.appendChild(rnb);
 
     $ext.dom.onMouseClick(rnb, function() {
       _this.showInsertMoleculePopup();
     }, $ext.mouse.LEFT);
-
-    elem.appendChild(rgd);
   },
 
   __initMainViewer: function(container) {
@@ -263,9 +257,9 @@ OFraMP.prototype = {
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
       _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
-      _this.errorControls.style.visibility = "hidden";
+      _this.errorControls.style.display = "none";
     }, function(msg) {
-      _this.errorControls.style.visibility = "visible";
+      _this.errorControls.style.display = "block";
     });
 
     if(!this.mv.molecule) {
@@ -292,7 +286,7 @@ OFraMP.prototype = {
       this.mv.loadMolecule(data);
       this.checkpoint();
       this.container.dispatchEvent(this.moleculeDisplayedEvent);
-      _this.errorControls.style.visibility = "hidden";
+      _this.errorControls.style.display = "none";
 
       this.hidePopup();
     } catch(err) {
