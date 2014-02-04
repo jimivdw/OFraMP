@@ -116,12 +116,37 @@ html, body {
     font-size: 16px;
 }
 
-#find_fragments, #retry_new {
+#find_fragments, #retry_new, #accept_fragment, #reject_fragment, #view_original {
     position: absolute;
     bottom: 12px;
     left: 50%;
     width: 180px;
     margin-left: -90px;
+}
+
+#accept_fragment, #reject_fragment {
+    background-position: left center;
+    background-repeat: no-repeat;
+    color: #EEE;
+}
+
+#accept_fragment {
+    background-color: rgb( 80, 169,  75);
+}
+#accept_fragment:active {
+    background-color: rgb( 66, 135,  41);
+}
+
+#reject_fragment {
+    margin-left: 100px;
+    background-color: rgb(203,  83,  73);
+}
+#reject_fragment:active:not(:disabled) {
+    background-color: rgb(169,  49,  39);
+}
+
+#view_original {
+    margin-left: -280px;
 }
 
 .bgroup {
@@ -468,36 +493,6 @@ button.border_box:hover, a.border_box:hover, select.border_box:hover {
 button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
         select.border_box:active:not(:disabled) {
     background-color: #DDD;
-}
-
-#accept_fragment, #reject_fragment, #previous_fragment {
-    width: 34px;
-    height: 30px;
-    font-size: 26px;
-    line-height: 30px;
-    padding: 0;
-    background-position: center center;
-}
-
-#accept_fragment {
-    background-color: rgb( 80, 169,  75);
-}
-#accept_fragment:active {
-    background-color: rgb( 66, 135,  41);
-}
-
-#reject_fragment {
-    background-color: rgb(203,  83,  73);
-}
-#reject_fragment:active:not(:disabled) {
-    background-color: rgb(169,  49,  39);
-}
-
-#previous_fragment {
-    background-color: rgb( 76,  81, 178);
-}
-#previous_fragment:active:not(:disabled) {
-    background-color: rgb( 42,  47, 144);
 }
 
 #extra_controls_toggle {

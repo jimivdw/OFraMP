@@ -14,14 +14,13 @@ SmartBehavior.prototype = {
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
-          _this.__fcd = document.getElementById("fragment_controls");
+          var fcd = document.getElementById("fragment_controls");
           var ffb = document.getElementById("find_fragments");
-          var pe = ffb.parentElement;
           if(ffb) {
             $ext.dom.remove(ffb);
           } else {
-            if(_this.__fcd) {
-              $ext.dom.clear(_this.__fcd);
+            if(fcd) {
+              $ext.dom.clear(fcd);
             }
           }
           ffb = document.createElement("button");
@@ -30,10 +29,13 @@ SmartBehavior.prototype = {
           if(_this.oframp.off) {
             ffb.appendChild(document.createTextNode("Start parameterising"));
           } else {
-            ffb.disabled = "disbled";
+            ffb.disabled = "disabled";
             ffb.appendChild(document.createTextNode("Loading fragments..."));
           }
-          pe.appendChild(ffb);
+          fcd.appendChild(ffb);
+
+          _this.__fcd = fcd;
+          _this.__ffb = ffb;
 
           $ext.dom.onMouseClick(ffb, function() {
             _this.__selectAtom();
@@ -49,21 +51,26 @@ SmartBehavior.prototype = {
         });
 
     $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
-      if(!_this.__fcd || !_this.__fad) {
+      if(!_this.__fcd || !_this.__ffb || !_this.__afb || !_this.__rfb
+          || !_this.__vob) {
         return;
       }
 
       if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+        _this.__fcd.style.display = "block";
         if(_this.__needle === undefined) {
-          _this.__fcd.style.display = "inline-block";
-          _this.__fad.style.display = "none";
+          _this.__ffb.style.display = "block";
+          _this.__afb.style.display = "none";
+          _this.__rfb.style.display = "none";
+          _this.__vob.style.display = "none";
         } else {
-          _this.__fcd.style.display = "none";
-          _this.__fad.style.display = "inline-block";
+          _this.__ffb.style.display = "none";
+          _this.__afb.style.display = "block";
+          _this.__rfb.style.display = "block";
+          _this.__vob.style.display = "block";
         }
       } else {
         _this.__fcd.style.display = "none";
-        _this.__fad.style.display = "none";
       }
     });
   },
@@ -128,7 +135,7 @@ SmartBehavior.prototype = {
   showRelatedFragments: function(fragments) {
     this.__fragments = fragments;
 
-    if(this.__fcd.style.display !== "none") {
+    if(this.__ffb.style.display !== "none") {
       this.__initFCD();
     }
 
@@ -139,21 +146,15 @@ SmartBehavior.prototype = {
   },
 
   __initFCD: function() {
-    this.__fcd.style.display = "none";
-
-    var cd = document.getElementById("controls");
-    var fcd = document.createElement("div");
-    fcd.id = "fragment_accept";
-    fcd.className = "bgroup";
-    cd.insertBefore(fcd, this.__fcd);
-    this.__fad = fcd;
+    this.__ffb.style.display = "none";
 
     var afb = document.createElement("button");
     afb.id = "accept_fragment";
     afb.className = "border_box";
     afb.title = "Accept fragment";
     afb.style.backgroundImage = "url('static/img/check_mark.png')";
-    fcd.appendChild(afb);
+    $ext.dom.addText(afb, "Accept");
+    this.__fcd.appendChild(afb);
     this.__afb = afb;
 
     var rfb = document.createElement("button");
@@ -161,16 +162,17 @@ SmartBehavior.prototype = {
     rfb.className = "border_box";
     rfb.title = "Reject fragment";
     rfb.style.backgroundImage = "url('static/img/ballot_x.png')";
-    fcd.appendChild(rfb);
+    $ext.dom.addText(rfb, "Reject");
+    this.__fcd.appendChild(rfb);
     this.__rfb = rfb;
 
-    var pfb = document.createElement("button");
-    pfb.id = "previous_fragment";
-    pfb.className = "border_box";
-    pfb.title = "Previous fragment";
-    pfb.style.backgroundImage = "url('static/img/undo.png')";
-    fcd.appendChild(pfb);
-    this.__pfb = pfb;
+    var vob = document.createElement("button");
+    vob.id = "view_original";
+    vob.className = "border_box";
+    vob.title = "View fragment in original molecule";
+    $ext.dom.addText(vob, "View original");
+    this.__fcd.appendChild(vob);
+    this.__vob = vob;
 
     var _this = this;
     $ext.dom.onMouseClick(afb, function() {
@@ -186,12 +188,6 @@ SmartBehavior.prototype = {
       if(!rfb.disabled) {
         _this.__showFragment(_this.__currentFragment + 1);
         _this.oframp.checkpoint();
-      }
-    }, $ext.mouse.LEFT);
-
-    $ext.dom.onMouseClick(pfb, function() {
-      if(!pfb.disabled) {
-        _this.oframp.previousCheckpoint();
       }
     }, $ext.mouse.LEFT);
   },
@@ -228,13 +224,10 @@ SmartBehavior.prototype = {
       } else {
         this.__rfb.disabled = "";
       }
-      this.__pfb.disabled = "disabled";
     } else if(this.__currentFragment === this.__fragments.length - 1) {
       this.__rfb.disabled = "disabled";
-      this.__pfb.disabled = "";
     } else {
       this.__rfb.disabled = "";
-      this.__pfb.disabled = "";
     }
   },
 
@@ -275,6 +268,7 @@ SmartBehavior.prototype = {
     this.__needle = undefined;
     this.__fragments = undefined;
     this.__currentFragment = undefined;
+    this.__fcd.style.display = "none";
     this.oframp.mv.molecule.center();
     this.oframp.checkpoint();
     alert("You're done! I don't know what should happen now...");
