@@ -200,7 +200,7 @@ html, body {
 }
 
 #atom_details table ul {
-    margin: 0;
+    margin: 0 0 8px 0;
     padding: 0;
     list-style: none;
 }
@@ -238,10 +238,19 @@ html, body {
 
 #atom_details table input, #atom_details table button {
     width: 100px;
-    height: 25px;
+    height: 24px;
+    margin: -4px 0;
+    padding: 0 5px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    padding: 0 5px;
+}
+
+#selected_atom_details, #selected_atom_details th, #selected_atom_details input {
+    text-align: center;
+}
+
+#selected_atom_details input, #selected_atom_details button {
+    width: 80px !important;
 }
 
 #charge_edit {
@@ -389,10 +398,11 @@ html, body {
     box-sizing: border-box;
 }
 
-#charge_details table input:disabled {
+.border_box input:disabled {
     margin: 0;
     padding: 0;
     border: 0;
+    background: none;
 }
 
 #used_fragments {

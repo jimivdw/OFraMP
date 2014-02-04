@@ -386,8 +386,11 @@ Atom.prototype = {
    */
   getCharge: function() {
     var charge = this.charge;
-    if(charge !== undefined && !this.settings.atom.showHAtoms) {
+    if(!this.settings.atom.showHAtoms) {
       $ext.each(this.getHydrogenAtoms(), function(atom) {
+        if(!charge) {
+          charge = 0;
+        }
         charge += atom.charge;
       });
     }

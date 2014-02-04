@@ -52,14 +52,15 @@ NaiveBehavior.prototype = {
     this.oframp.atomDetails.appendChild(c);
 
     var dt = document.createElement('table');
+    this.oframp.atomDetails.appendChild(dt);
 
     if(atom) {
-      $ext.dom.addTableRow(dt, "ID", atom.id);
-      $ext.dom.addTableRow(dt, "Element", atom.getLabel());
+      $ext.dom.addTableRow(dt, atom.id, "ID");
+      $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
       var cc = document.createElement('span');
       var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
       cc.appendChild(document.createTextNode(charge || "unknown"));
-      $ext.dom.addTableRow(dt, "Charge", cc);
+      $ext.dom.addTableRow(dt, cc, "Charge");
     } else {
       // Get the unparameterised atoms
       var uas = $ext.array.filter(selection, function(atom) {
@@ -70,44 +71,74 @@ NaiveBehavior.prototype = {
         return atom.charge;
       });
       var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
-      // Get the labels for the selection details display
-      var sdls = $ext.array.map(selection, function(atom) {
-        var l = atom.element + " (" + atom.id + ")";
-        if(atom.isCharged()) {
-          l += " : " + atom.charge;
-        }
-        return l;
-      });
-      var sadl = document.createElement("ul");
+      var cc = document.createElement("span");
+      $ext.dom.addText(cc, charge || "unknown");
+
+      $ext.dom.addTableRow(dt, selection.length, "Selection count");
+      $ext.dom.addTableRow(dt, uas.length, "Unparameterised");
+      $ext.dom.addTableRow(dt, selection.length - uas.length, "Parameterised");
+      $ext.dom.addTableRow(dt, cc, "Total charge");
+
+      var sadl = document.createElement("table");
+      sadl.id = "selected_atom_details";
       sadl.style.display = "none";
-      $ext.each(sdls, function(sdl) {
-        $ext.dom.addListItem(sadl, sdl);
+      $ext.dom.addTableRow(sadl, [], ["Elem", "ID", "Charge", ""]);
+      $ext.each(selection, function(atom) {
+        var cei = document.createElement('input');
+        cei.disabled = "disabled";
+        cei.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
+
+        var ceb = document.createElement("button");
+        ceb.className = "border_box";
+        $ext.dom.addText(ceb, "Edit");
+        $ext.dom.onMouseClick(ceb, function() {
+          $ext.dom.clear(ceb);
+          if(cei.disabled) {
+            cei.disabled = "";
+            $ext.dom.addText(ceb, "Apply");
+          } else {
+            if(cei.value && !$ext.number.isNumeric(cei.value)) {
+              alert("Only numeric values are allowed for the atom charge.");
+              return;
+            }
+
+            var oldCharge = atom.charge;
+            var newCharge = parseFloat(cei.value) || undefined;
+            atom.setCharge(newCharge);
+            if(oldCharge !== newCharge) {
+              var cs = $ext.array.map(selection, function(atom) {
+                return atom.charge;
+              });
+              var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+              $ext.dom.clear(cc);
+              $ext.dom.addText(cc, charge || "undefined");
+              _this.oframp.redraw();
+              _this.oframp.checkpoint();
+            }
+            cei.disabled = "disabled";
+            $ext.dom.addText(ceb, "Edit");
+          }
+        }, $ext.mouse.LEFT);
+
+        $ext.dom.addTableRow(sadl, [atom.element, atom.id, cei, ceb]);
       });
+      this.oframp.atomDetails.appendChild(sadl);
+
       var satb = document.createElement("button");
       satb.className = "border_box";
       $ext.dom.addText(satb, "Show");
       $ext.dom.onMouseClick(satb, function() {
         $ext.dom.clear(satb);
-        if(sadl.style.display === "block") {
+        if(sadl.style.display === "table") {
           sadl.style.display = "none";
           $ext.dom.addText(satb, "Show");
         } else {
-          sadl.style.display = "block";
+          sadl.style.display = "table";
           $ext.dom.addText(satb, "Hide");
         }
-      });
-      var sadd = document.createElement("div");
-      sadd.appendChild(satb);
-      sadd.appendChild(sadl);
-
-      $ext.dom.addTableRow(dt, "Selection count", selection.length);
-      $ext.dom.addTableRow(dt, "Selected atoms", sadd);
-      $ext.dom.addTableRow(dt, "Unparameterised", uas.length);
-      $ext.dom.addTableRow(dt, "Parameterised", selection.length - uas.length);
-      $ext.dom.addTableRow(dt, "Total charge", charge || "unknown");
+      }, $ext.mouse.LEFT);
+      $ext.dom.addTableRow(dt, satb, "Selected atoms");
     }
-
-    this.oframp.atomDetails.appendChild(dt);
 
     if(atom) {
       var ced = document.createElement('div');
@@ -129,11 +160,11 @@ NaiveBehavior.prototype = {
       } else {
         var ufb = "-";
       }
-      $ext.dom.addTableRow(cet, "Used fragments", ufb);
+      $ext.dom.addTableRow(cet, ufb, "Used fragments");
       var ceb = document.createElement('input');
       ceb.className = "border_box";
       ceb.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
-      $ext.dom.addTableRow(cet, "New charge", ceb);
+      $ext.dom.addTableRow(cet, ceb, "New charge");
 
       var acb = document.createElement('button');
       acb.className = "border_box";
@@ -424,12 +455,12 @@ NaiveBehavior.prototype = {
     var dd = document.createElement('div');
     dd.id = "charge_details";
     var dt = document.createElement('table');
-    $ext.dom.addTableRow(dt, "Atom ID", atom.id);
-    $ext.dom.addTableRow(dt, "Element", atom.element);
-    $ext.dom.addTableRow(dt, "Current charge", $ext.number.format(
-        atom.getCharge(), 1, 3, 9));
-    $ext.dom.addTableRow(dt, "Proposed charge", $ext.number.format(
-        atom.getPreviewCharge(), 1, 3, 9));
+    $ext.dom.addTableRow(dt, atom.id, "Atom ID");
+    $ext.dom.addTableRow(dt, atom.element, "Element");
+    $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
+        "Current charge");
+    $ext.dom.addTableRow(dt, $ext.number.format(
+        atom.getPreviewCharge(), 1, 3, 9), "Proposed charge");
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
@@ -467,8 +498,8 @@ NaiveBehavior.prototype = {
       rc.value = $ext.number.format(value, 1, 3, 9);
     });
 
-    $ext.dom.addTableRow(dt, "Solution", ss);
-    $ext.dom.addTableRow(dt, "Resulting charge", rc);
+    $ext.dom.addTableRow(dt, ss, "Solution");
+    $ext.dom.addTableRow(dt, rc, "Resulting charge");
     dd.appendChild(dt);
     id.appendChild(dd);
     content.appendChild(id);

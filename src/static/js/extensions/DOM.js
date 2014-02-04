@@ -91,23 +91,39 @@ $ext.extend($ext, {
       list.appendChild(li);
     },
 
-    addTableRow: function(table, label, value) {
+    addTableRow: function(table, values, headers) {
+      if(values === undefined) {
+        values = [];
+      } else if(!(values instanceof Array)) {
+        values = [values];
+      }
+
+      if(headers === undefined) {
+        headers = [];
+      } else if(!(headers instanceof Array)) {
+        headers = [headers];
+      }
+
       var row = document.createElement('tr');
 
-      var head = document.createElement('th');
-      if(!(label instanceof Element)) {
-        label = document.createTextNode(label);
-      }
-      head.appendChild(label);
+      $ext.each(headers, function(header) {
+        var head = document.createElement('th');
+        if(!(header instanceof Element)) {
+          header = document.createTextNode(header);
+        }
+        head.appendChild(header);
+        row.appendChild(head);
+      });
 
-      var data = document.createElement('td');
-      if(!(value instanceof Element)) {
-        value = document.createTextNode(value);
-      }
-      data.appendChild(value);
+      $ext.each(values, function(value) {
+        var data = document.createElement('td');
+        if(!(value instanceof Element)) {
+          value = document.createTextNode(value);
+        }
+        data.appendChild(value);
+        row.appendChild(data);
+      });
 
-      row.appendChild(head);
-      row.appendChild(data);
       table.appendChild(row);
     },
 
