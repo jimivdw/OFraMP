@@ -243,6 +243,7 @@ SmartBehavior.prototype = {
     if(!_this.oframp.settings.atom.showHAtoms) {
       $ext.each(atom.getHydrogenAtoms(), function(a) {
         a.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
+        a.resetHighlight();
       });
     }
     atom.resetHighlight();

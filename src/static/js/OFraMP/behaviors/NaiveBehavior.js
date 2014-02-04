@@ -471,6 +471,7 @@ NaiveBehavior.prototype = {
       if(!_this.oframp.settings.atom.showHAtoms) {
         $ext.each(atom.getHydrogenAtoms(), function(a) {
           a.setCharge(getResultingCharge(a, ss.value), fragment);
+          a.resetHighlight();
         });
       }
       atom.resetHighlight();
