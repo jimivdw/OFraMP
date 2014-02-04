@@ -199,6 +199,12 @@ html, body {
     margin: 3px 0;
 }
 
+#atom_details table ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .border_box table {
     border-spacing: 0px;
     border-collapse: collapse;
@@ -209,8 +215,8 @@ html, body {
 }
 
 .border_box th, .border_box td {
-    height: 30px;
-    padding: 3px 2px;
+    padding: 6px 2px;
+    vertical-align: baseline;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
@@ -230,6 +236,14 @@ html, body {
     height: 30px;
 }
 
+#atom_details table input, #atom_details table button {
+    width: 100px;
+    height: 25px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 5px;
+}
+
 #charge_edit {
     width: 230px;
     -moz-box-sizing: border-box;
@@ -240,14 +254,6 @@ html, body {
 
 #charge_edit table {
     width: 220px;
-}
-
-#charge_edit input, #charge_edit table button {
-    width: 100px;
-    height: 25px;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 0 5px;
 }
 
 #charge_edit > button {

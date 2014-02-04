@@ -69,11 +69,41 @@ NaiveBehavior.prototype = {
       var cs = $ext.array.map(selection, function(atom) {
         return atom.charge;
       });
+      var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+      // Get the labels for the selection details display
+      var sdls = $ext.array.map(selection, function(atom) {
+        var l = atom.element + " (" + atom.id + ")";
+        if(atom.isCharged()) {
+          l += " : " + atom.charge;
+        }
+        return l;
+      });
+      var sadl = document.createElement("ul");
+      sadl.style.display = "none";
+      $ext.each(sdls, function(sdl) {
+        $ext.dom.addListItem(sadl, sdl);
+      });
+      var satb = document.createElement("button");
+      satb.className = "border_box";
+      $ext.dom.addText(satb, "Show");
+      $ext.dom.onMouseClick(satb, function() {
+        $ext.dom.clear(satb);
+        if(sadl.style.display === "block") {
+          sadl.style.display = "none";
+          $ext.dom.addText(satb, "Show");
+        } else {
+          sadl.style.display = "block";
+          $ext.dom.addText(satb, "Hide");
+        }
+      });
+      var sadd = document.createElement("div");
+      sadd.appendChild(satb);
+      sadd.appendChild(sadl);
 
       $ext.dom.addTableRow(dt, "Selection count", selection.length);
+      $ext.dom.addTableRow(dt, "Selected atoms", sadd);
       $ext.dom.addTableRow(dt, "Unparameterised", uas.length);
       $ext.dom.addTableRow(dt, "Parameterised", selection.length - uas.length);
-      var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
       $ext.dom.addTableRow(dt, "Total charge", charge || "unknown");
     }
 

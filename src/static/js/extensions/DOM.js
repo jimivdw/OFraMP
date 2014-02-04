@@ -80,6 +80,17 @@ $ext.extend($ext, {
       return s;
     },
 
+    addListItem: function(list, item) {
+      var li = document.createElement('li');
+
+      if(!(item instanceof Element)) {
+        item = document.createTextNode(item);
+      }
+      li.appendChild(item);
+
+      list.appendChild(li);
+    },
+
     addTableRow: function(table, label, value) {
       var row = document.createElement('tr');
 
