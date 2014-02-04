@@ -16,30 +16,40 @@ SmartBehavior.prototype = {
         function() {
           var fcd = document.getElementById("fragment_controls");
           var ffb = document.getElementById("find_fragments");
-          if(ffb) {
+          if(!_this.__ffb) {
             $ext.dom.remove(ffb);
-          } else {
-            if(fcd) {
-              $ext.dom.clear(fcd);
+            ffb = document.createElement("button");
+            ffb.id = "find_fragments";
+            ffb.className = "border_box";
+            if(_this.oframp.off) {
+              ffb.appendChild(document.createTextNode("Start parameterising"));
+            } else {
+              ffb.disabled = "disabled";
+              ffb.appendChild(document.createTextNode("Loading fragments..."));
             }
-          }
-          ffb = document.createElement("button");
-          ffb.id = "find_fragments";
-          ffb.className = "border_box";
-          if(_this.oframp.off) {
-            ffb.appendChild(document.createTextNode("Start parameterising"));
+            fcd.appendChild(ffb);
+
+            _this.__fcd = fcd;
+            _this.__ffb = ffb;
+
+            $ext.dom.onMouseClick(ffb, function() {
+              _this.__selectAtom();
+            }, $ext.mouse.LEFT);
           } else {
-            ffb.disabled = "disabled";
-            ffb.appendChild(document.createTextNode("Loading fragments..."));
+            var ffb = _this.__ffb;
+            $ext.dom.clear(ffb);
+            if(_this.oframp.off) {
+              ffb.appendChild(document.createTextNode("Start parameterising"));
+            } else {
+              ffb.disabled = "disabled";
+              ffb.appendChild(document.createTextNode("Loading fragments..."));
+            }
+
+            ffb.style.display = "block";
+            _this.__afb.style.display = "none";
+            _this.__rfb.style.display = "none";
+            _this.__vob.style.display = "none";
           }
-          fcd.appendChild(ffb);
-
-          _this.__fcd = fcd;
-          _this.__ffb = ffb;
-
-          $ext.dom.onMouseClick(ffb, function() {
-            _this.__selectAtom();
-          }, $ext.mouse.LEFT);
         });
 
     $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
