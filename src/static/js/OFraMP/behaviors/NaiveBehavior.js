@@ -380,36 +380,8 @@ NaiveBehavior.prototype = {
         _this.oframp.mv.previewCharges(charges);
       }, $ext.mouse.LEFT);
 
-      var oids = $ext.array.map(fragment.atoms, function(atom) {
-        return atom.other_id;
-      });
       $ext.dom.onMouseClick(ob, function() {
-        var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
-        var content = document.createElement('div');
-
-        var ov = new MoleculeViewer(_this.oframp, "original_" + i, content,
-            580, _this.oframp.popup.clientHeight - 100);
-        ov.showMolecule(fragment.atb_id, function() {
-          this.setupInteraction();
-          this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
-          var oas = $ext.array.map(oids, function(oid) {
-            return this.molecule.atoms.get(oid);
-          }, this);
-          this.molecule.setSelected(oas);
-          this.hideOverlay();
-          this.redraw();
-        }, null, true);
-        ov.canvas.className = "border_box";
-
-        var cb = document.createElement('button');
-        cb.appendChild(document.createTextNode("Close"));
-        content.appendChild(cb);
-
-        $ext.dom.onMouseClick(cb, function() {
-          _this.oframp.hidePopup();
-        }, $ext.mouse.LEFT);
-
-        _this.oframp.showPopup(title, content);
+        _this.oframp.showOriginal(fragments);
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ab, function() {

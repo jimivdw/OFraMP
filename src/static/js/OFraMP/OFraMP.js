@@ -319,7 +319,8 @@ OFraMP.prototype = {
         return atom.id;
       });
       var abs = this.mv.molecule.bonds.filter(function(bond) {
-        return aids.indexOf(bond.a1.id) !== -1 && aids.indexOf(bond.a2.id) !== -1;
+        return aids.indexOf(bond.a1.id) !== -1
+            && aids.indexOf(bond.a2.id) !== -1;
       });
       var bonds = $ext.array.map(abs, function(bond) {
         return bond.getJSON();
@@ -348,8 +349,8 @@ OFraMP.prototype = {
         var title = "Fragment molecule";
         var content = document.createElement('div');
 
-        var ov = new MoleculeViewer(_this, "original_" + i, content,
-            580, _this.popup.clientHeight - 100);
+        var ov = new MoleculeViewer(_this, "original_" + i, content, 580,
+            _this.popup.clientHeight - 100);
         ov.showMolecule(fragment.atb_id, function() {
           this.setupInteraction();
           this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
@@ -613,6 +614,39 @@ OFraMP.prototype = {
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
     return c;
+  },
+
+  showOriginal: function(fragment) {
+    var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
+    var content = document.createElement('div');
+
+    var oids = $ext.array.map(fragment.atoms, function(atom) {
+      return atom.other_id;
+    });
+    var ov = new MoleculeViewer(this, "original_" + fragment.atb_id, content,
+        580, this.popup.clientHeight - 100);
+    ov.showMolecule(fragment.atb_id, function() {
+      this.setupInteraction();
+      this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
+      var oas = $ext.array.map(oids, function(oid) {
+        return this.molecule.atoms.get(oid);
+      }, this);
+      this.molecule.setSelected(oas);
+      this.hideOverlay();
+      this.redraw();
+    }, null, true);
+    ov.canvas.className = "border_box";
+
+    var cb = document.createElement('button');
+    cb.appendChild(document.createTextNode("Close"));
+    content.appendChild(cb);
+
+    var _this = this;
+    $ext.dom.onMouseClick(cb, function() {
+      _this.hidePopup();
+    }, $ext.mouse.LEFT);
+
+    this.showPopup(title, content);
   },
 
   checkpoint: function() {

@@ -190,6 +190,10 @@ SmartBehavior.prototype = {
         _this.oframp.checkpoint();
       }
     }, $ext.mouse.LEFT);
+
+    $ext.dom.onMouseClick(vob, function() {
+      _this.oframp.showOriginal(_this.__fragments[_this.__currentFragment]);
+    }, $ext.mouse.LEFT);
   },
 
   __showFragment: function(i) {
