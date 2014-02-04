@@ -306,6 +306,8 @@
         if(URLParams) {
           if(URLParams.mds) {
             oframp.submitMDS(URLParams.mds);
+          } else if(URLParams.atb_id) {
+            oframp.submitMDS(URLParams.atb_id);
           } else if(URLParams.oss) {
             oframp.loadOSS(URLParams.oss);
           }
