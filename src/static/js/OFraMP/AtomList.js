@@ -297,11 +297,6 @@ AtomList.prototype = {
       return;
     }
 
-    // Set hover on the hydrogen base (or the atom itself if it is not an H)
-    if(h) {
-      h = h.getBase();
-    }
-
     var changed = false;
 
     // Unset hover from the currently hovered atom
@@ -336,10 +331,12 @@ AtomList.prototype = {
    * Returns true if the selection was changed and a redraw is needed.
    */
   setSelected: function(s) {
-    // Make sure only hydrogen bases are selected
-    s = $ext.array.flatten($ext.array.map(s, function(atom) {
-      return atom.getHydrogenAtoms().concat(atom.getBase());
-    }));
+    if(!this.settings.atom.showHAtoms) {
+      // Make sure only hydrogen bases are selected
+      s = $ext.array.flatten($ext.array.map(s, function(atom) {
+        return atom.getHydrogenAtoms().concat([atom, atom.getBase()]);
+      }));
+    }
 
     var changed = false;
     this.each(function(a) {

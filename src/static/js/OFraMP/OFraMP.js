@@ -555,16 +555,17 @@ OFraMP.prototype = {
           showError(fd.error);
         } else if(fd.fragments) {
           $ext.each(fd.fragments, function(fragment) {
-            var hasOverlap = $ext.each(fragment.atoms, function(atom) {
+            var overlapCount = 0;
+            $ext.each(fragment.atoms, function(atom) {
               var orig = this.mv.molecule.atoms.get(atom.id);
               if(orig.isCharged()) {
-                return true;
+                overlapCount += 1;
               }
             }, this);
 
-            if(hasOverlap === true) {
+            if(overlapCount > 0) {
               fragment.hasOverlap = true;
-              fragment.score /= 2;
+              fragment.score -= overlapCount;
             }
           }, _this);
 
@@ -667,10 +668,7 @@ OFraMP.prototype = {
    */
   selectionChanged: function() {
     if(this.mv.molecule) {
-      var selection = $ext.array.filter(this.mv.molecule.getSelected(),
-          function(atom) {
-            return atom.element !== "H";
-          });
+      var selection = this.mv.molecule.getSelected();
     }
     var ffbState = "";
     if(!this.off) {

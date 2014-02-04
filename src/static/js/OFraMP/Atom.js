@@ -360,7 +360,7 @@ Atom.prototype = {
    * Get the status of this atom.
    */
   getStatus: function() {
-    if(this.element === "H") {
+    if(!this.settings.atom.showHAtoms && this.element === "H") {
       return this.getBase().getStatus();
     }
 
