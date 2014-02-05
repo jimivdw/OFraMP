@@ -497,7 +497,7 @@ button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
 
 #extra_controls_toggle {
     width: 30px;
-    background-image: url('../img/open.png');
+    background-image: url('../img/double_arrow_down.png');
     background-position: center center;
     background-repeat: no-repeat;
 }
