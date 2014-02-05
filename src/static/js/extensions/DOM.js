@@ -366,12 +366,7 @@ $ext.extend($ext, {
       if(!$ext.onBrokenIE() && !$ext.onFirefox()) {
         return evt.button;
       } else {
-        if($ext.onFirefox()) {
-          var button = evt.buttons;
-        } else {
-          var button = evt.button;
-        }
-
+        var button = evt.buttons;
         if(button & 1) {
           return 0;
         } else if(button & 2) {
