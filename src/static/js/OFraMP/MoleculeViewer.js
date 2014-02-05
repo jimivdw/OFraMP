@@ -33,7 +33,7 @@ MoleculeViewer.prototype = {
     this.canvas = document.createElement('canvas');
     this.__initCanvas(parentID, width, height);
 
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = $ext.context.getContext(this.canvas, '2d');
   },
 
   __initCanvas: function(parentID, width, height) {
