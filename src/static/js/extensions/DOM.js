@@ -144,8 +144,35 @@ $ext.extend($ext, {
     /*
      * Custom mouse events.
      */
-    mouseDragEndEvent: new Event('mousedragend'),
-    mouseWheelEndEvent: new Event('mousewheelend'),
+    mouseDragEndEvent: 'mousedragend',
+    mouseWheelEndEvent: 'mousewheelend',
+
+    STANDARD_EVENTS: {
+      // <body> and <frameset> Events
+      onload: 1,
+      onunload: 1,
+      // Form Events
+      onblur: 1,
+      onchange: 1,
+      onfocus: 1,
+      onreset: 1,
+      onselect: 1,
+      onsubmit: 1,
+      // Image Events
+      onabort: 1,
+      // Keyboard Events
+      onkeydown: 1,
+      onkeypress: 1,
+      onkeyup: 1,
+      // Mouse Events
+      onclick: 1,
+      ondblclick: 1,
+      onmousedown: 1,
+      onmousemove: 1,
+      onmouseout: 1,
+      onmouseover: 1,
+      onmouseup: 1
+    },
 
     /*
      * Fairly cross-browser function for adding an eventListener to an element.
@@ -156,8 +183,10 @@ $ext.extend($ext, {
 
       if(elem.addEventListener) {
         return elem.addEventListener(type, callback, useCapture);
-      } else {
+      } else if(elem.attachEvent && this.STANDARD_EVENTS[type]) {
         return elem.attachEvent("on" + type, callback, useCapture);
+      } else {
+        elem["on" + type] = callback;
       }
     },
 
@@ -171,8 +200,40 @@ $ext.extend($ext, {
 
       if(elem.removeEventListener) {
         return elem.removeEventListener(type, callback, useCapture);
-      } else {
+      } else if(elem.detachEvent && this.STANDARD_EVENTS[type]) {
         return elem.detachEvent("on" + type, callback, useCapture);
+      } else {
+        elem["on" + type] = null;
+      }
+    },
+
+    /*
+     * Fairly cross-browser function for dispatching an event on an element.
+     */
+    dispatchEvent: function(elem, type, data) {
+      var event;
+      try {
+        event = new Event(type);
+      } catch(e) {
+        if(document.createEvent) {
+          event = document.createEvent("Event");
+          event.initEvent(type, true, true);
+        } else {
+          event = document.createEventObject("Event");
+          event.eventType = type;
+        }
+      }
+
+      $ext.each(data, function(v, k) {
+        event[k] = v;
+      });
+
+      if(elem.dispatchEvent) {
+        elem.dispatchEvent(event);
+      } else if(elem.fireEvent && this.STANDARD_EVENTS[type]) {
+        elem.fireEvent("on" + type, event);
+      } else if(elem["on" + type]) {
+        elem["on" + type].call(elem, event);
       }
     },
 
@@ -276,7 +337,7 @@ $ext.extend($ext, {
               window.clearTimeout(wheelEndTimeout);
             }
             wheelEndTimeout = window.setTimeout(function() {
-              elem.dispatchEvent(_this.mouseWheelEndEvent);
+              _this.dispatchEvent(elem, _this.mouseWheelEndEvent);
               wheelEndTimeout = undefined;
             }, _this.MOUSE_WHEEL_TIMEOUT);
 
@@ -492,9 +553,9 @@ $ext.extend($ext, {
           return;
         }
         mouseDragged = false;
-        var mdee = _this.mouseDragEndEvent;
-        mdee.button = _this.getMouseButton(evt);
-        elem.dispatchEvent(mdee);
+        _this.dispatchEvent(elem, _this.mouseDragEndEvent, {
+          button: _this.getMouseButton(evt)
+        });
       }
 
       function _onMouseDrag(evt) {

@@ -24,11 +24,11 @@ OFraMP.prototype = {
   checkpoints: undefined,
   activeCheckpoint: undefined,
 
-  uiInitializedEvent: new Event('uiinitialized'),
-  moleculeEnteredEvent: new Event('moleculeentered'),
-  moleculeDisplayedEvent: new Event('moleculedisplayed'),
-  fragmentsGeneratedEvent: new Event('fragmentsgenerated'),
-  historyChangedEvent: new Event('historychanged'),
+  uiInitializedEvent: 'uiinitialized',
+  moleculeEnteredEvent: 'moleculeentered',
+  moleculeDisplayedEvent: 'moleculedisplayed',
+  fragmentsGeneratedEvent: 'fragmentsgenerated',
+  historyChangedEvent: 'historychanged',
 
   __init: function(behavior, containerID, settings) {
     settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
@@ -85,7 +85,7 @@ OFraMP.prototype = {
       this.__initSettingsUI();
     }
 
-    this.container.dispatchEvent(this.uiInitializedEvent);
+    $ext.dom.dispatchEvent(this.container, this.uiInitializedEvent);
   },
 
   __initAtomDetails: function(container) {
@@ -256,7 +256,7 @@ OFraMP.prototype = {
     var _this = this;
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
-      _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+      $ext.dom.dispatchEvent(_this.container, _this.moleculeDisplayedEvent);
       _this.errorControls.style.display = "none";
     }, function(msg) {
       _this.errorControls.style.display = "block";
@@ -267,7 +267,7 @@ OFraMP.prototype = {
     }
     this.off = undefined;
     this.selectionChanged();
-    this.container.dispatchEvent(this.moleculeEnteredEvent);
+    $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
     this.hideSelectionDetails();
     this.hideRelatedFragments();
     this.hidePopup();
@@ -280,12 +280,12 @@ OFraMP.prototype = {
         this.mv.setupInteraction();
       }
 
-      this.container.dispatchEvent(this.moleculeEnteredEvent);
+      $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
       this.hideSelectionDetails();
       this.hideRelatedFragments();
       this.mv.loadMolecule(data);
       this.checkpoint();
-      this.container.dispatchEvent(this.moleculeDisplayedEvent);
+      $ext.dom.dispatchEvent(this.container, this.moleculeDisplayedEvent);
       _this.errorControls.style.display = "none";
 
       this.hidePopup();
@@ -454,7 +454,7 @@ OFraMP.prototype = {
           console.log("Related fragments generated:", fd.off);
 
           _this.off = fd.off;
-          _this.container.dispatchEvent(_this.fragmentsGeneratedEvent);
+          $ext.dom.dispatchEvent(_this.container, _this.fragmentsGeneratedEvent);
         }
       } else if(xhr.readyState > 1 && xhr.status != 200) {
         var msg = "Could not connect to the OMFraF server."
@@ -658,7 +658,7 @@ OFraMP.prototype = {
     if(!this.checkpoints) {
       this.checkpoints = [checkpoint];
       this.activeCheckpoint = 0;
-      this.container.dispatchEvent(this.historyChangedEvent);
+      $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
       return;
     }
 
@@ -668,7 +668,7 @@ OFraMP.prototype = {
 
     this.checkpoints.push(checkpoint);
     this.activeCheckpoint += 1;
-    this.container.dispatchEvent(this.historyChangedEvent);
+    $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
   },
 
   loadCheckpoint: function(i) {
@@ -680,7 +680,7 @@ OFraMP.prototype = {
     this.mv.loadMolecule(this.checkpoints[i].molecule);
     this.behavior.loadJSON(this.checkpoints[i].behavior);
     this.activeCheckpoint = i;
-    this.container.dispatchEvent(this.historyChangedEvent);
+    $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
   },
 
   previousCheckpoint: function() {
