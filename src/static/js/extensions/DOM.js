@@ -151,6 +151,7 @@ $ext.extend($ext, {
       // <body> and <frameset> Events
       onload: 1,
       onunload: 1,
+      oncontextmenu: 1,
       // Form Events
       onblur: 1,
       onchange: 1,
