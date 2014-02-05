@@ -551,8 +551,9 @@ $ext.extend($ext, {
 
       function _onMouseDrag(evt) {
         evt = _this.eventObject(evt);
-        evt.button = _this.getMouseButton(evt);
-        if(button !== undefined && evt.button !== button || !mouseDragged
+        var eb = _this.getMouseButton(evt);
+        evt.button = eb;
+        if(button !== undefined && eb !== button || !mouseDragged
             || !mouseDown) {
           return;
         }
