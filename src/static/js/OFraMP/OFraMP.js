@@ -588,7 +588,7 @@ OFraMP.prototype = {
     var c = document.createElement('canvas');
     c.width = width;
     c.height = height;
-    var ctx = c.getContext('2d');
+    var ctx = $ext.context.getContext(c, '2d');
 
     // Increase selection size when the ratio is off
     var r = sw / sh;
@@ -609,7 +609,7 @@ OFraMP.prototype = {
     var tc = document.createElement('canvas');
     tc.width = id.width;
     tc.height = id.height;
-    tc.getContext("2d").putImageData(id, 0, 0);
+    $ext.context.getContext(tc, '2d').putImageData(id, 0, 0);
 
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
