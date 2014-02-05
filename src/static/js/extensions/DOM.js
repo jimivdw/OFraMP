@@ -363,19 +363,15 @@ $ext.extend($ext, {
 
 
     getMouseButton: function(evt) {
-      if(!$ext.onBrokenIE() && !$ext.onFirefox()) {
-        return evt.button;
+      var button = evt.buttons;
+      if(button & 1) {
+        return 0;
+      } else if(button & 2) {
+        return 2;
+      } else if(button & 4) {
+        return 1;
       } else {
-        var button = evt.buttons;
-        if(button & 1) {
-          return 0;
-        } else if(button & 2) {
-          return 2;
-        } else if(button & 4) {
-          return 1;
-        } else {
-          return 0;
-        }
+        return 0;
       }
     },
 
@@ -549,7 +545,7 @@ $ext.extend($ext, {
         }
         mouseDragged = false;
         _this.dispatchEvent(elem, _this.mouseDragEndEvent, {
-          button: _this.getMouseButton(evt)
+          button: evt.button
         });
       }
 
