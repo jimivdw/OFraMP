@@ -1328,6 +1328,15 @@ if (!document.createElement('canvas').getContext) {
     return new CanvasPattern_(image, repetition);
   };
 
+  /******** UNIMPLEMENTABLE ********/
+  contextPrototype.getImageData = function() {
+    return {width: 0, height: 0, data: []};
+  };
+
+  contextPrototype.putImageData = function(d, x, y) {
+    this.fillText("Please update your browser", x, y);
+  };
+
   // Gradient / Pattern Stubs
   function CanvasGradient_(aType) {
     this.type_ = aType;
