@@ -150,8 +150,9 @@ html, body {
 }
 
 .bgroup {
-    display: inline-block;
+    display: block;
     margin: 0 2px;
+    float: left;
 }
 
 .bgroup > * {
