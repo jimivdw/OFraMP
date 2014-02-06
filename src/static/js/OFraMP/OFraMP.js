@@ -588,6 +588,14 @@ OFraMP.prototype = {
   },
 
   getMoleculeCutout: function(x, y, sw, sh, width, height) {
+    if($ext.onBrokenIE()) {
+      var e = document.createElement('span');
+      e.className = "error";
+      $ext.dom.addText(e,
+          "Please update your browser to see a section of the molecule here");
+      return e;
+    }
+
     // Redraw first to make sure no pending changes are ignored
     this.redraw();
 
