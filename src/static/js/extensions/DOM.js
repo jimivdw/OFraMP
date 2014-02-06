@@ -364,10 +364,12 @@ $ext.extend($ext, {
 
 
     getMouseButton: function(evt) {
-      var button = evt.buttons;
-      if($ext.onBrokenIE()) {
-        button = evt.button;
+      if(evt.buttons === undefined) {
+        var button = evt.button;
+      } else {
+        var button = evt.buttons;
       }
+
       if(button & 1) {
         return 0;
       } else if(button & 2) {
@@ -514,7 +516,7 @@ $ext.extend($ext, {
       var lastDragPos = undefined;
 
       this.onMouseDown(elem, _onMouseDown, button, useCapture);
-      this.onMouseUp(window, _onMouseUp, button, useCapture);
+      this.onMouseUp(elem, _onMouseUp, button, useCapture);
 
       function _onMouseDown(evt) {
         mouseDown = true;
