@@ -396,6 +396,7 @@ NaiveBehavior.prototype = {
           _this.oframp.checkpoint();
         }
 
+        _this.activeFragment = undefined;
         _this.oframp.selectionChanged();
         _this.oframp.redraw();
 
