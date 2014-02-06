@@ -364,7 +364,9 @@ $ext.extend($ext, {
 
 
     getMouseButton: function(evt) {
-      if(evt.buttons === undefined) {
+      if(BrowserDetect.browser === "Explorer" && BrowserDetect.version === 9) {
+        var button = window.event.button;
+      } else if(evt.buttons === undefined) {
         var button = evt.button;
       } else {
         var button = evt.buttons;
