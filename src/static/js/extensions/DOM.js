@@ -87,7 +87,7 @@ $ext.extend($ext, {
     addListItem: function(list, item) {
       var li = document.createElement('li');
 
-      if(!(item instanceof Element)) {
+      if(item instanceof String || typeof item === "string") {
         item = document.createTextNode(item);
       }
       li.appendChild(item);
@@ -112,7 +112,7 @@ $ext.extend($ext, {
 
       $ext.each(headers, function(header) {
         var head = document.createElement('th');
-        if(!(header instanceof Element)) {
+        if(header instanceof String || typeof header === "string") {
           header = document.createTextNode(header);
         }
         head.appendChild(header);
@@ -121,7 +121,7 @@ $ext.extend($ext, {
 
       $ext.each(values, function(value) {
         var data = document.createElement('td');
-        if(!(value instanceof Element)) {
+        if(value instanceof String || typeof value === "string") {
           value = document.createTextNode(value);
         }
         data.appendChild(value);
