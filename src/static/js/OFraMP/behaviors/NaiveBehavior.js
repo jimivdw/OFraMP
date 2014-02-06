@@ -367,9 +367,9 @@ NaiveBehavior.prototype = {
         if(_this.activeFragment && _this.activeFragment !== fv) {
           // Disable the currently active fragment's buttons
           _this.activeFragment.canvas.parentElement
-          .getElementsByClassName("border_box")[0].disabled = "disabled";
+          .getElementsByTagName("button")[0].disabled = "disabled";
           _this.activeFragment.canvas.parentElement
-          .getElementsByClassName("border_box")[1].disabled = "disabled";
+          .getElementsByTagName("button")[1].disabled = "disabled";
         }
         _this.activeFragment = fv;
 
