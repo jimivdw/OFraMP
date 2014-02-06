@@ -184,6 +184,7 @@ OFraMP.prototype = {
 
     var ta = document.createElement('textarea');
     ta.id = "mds_input";
+    ta.style.height = this.popup.clientHeight - 100 + "px";
     ta.placeholder = "Insert PDB / SMILES / InChI string or ATB ID here";
     content.appendChild(ta);
 

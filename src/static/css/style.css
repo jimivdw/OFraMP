@@ -385,16 +385,10 @@ html, body {
 }
 
 #popup_content textarea {
-    position: absolute;
     display: block;
-    top: 0;
-    right: 0;
-    bottom: 30px;
-    left: 0;
+    width: 580px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    width: 580px;
-    margin: 10px;
     border: 1px solid #333;
 }
 
