@@ -32,6 +32,10 @@ $ext.extend($ext, {
      * Remove all child elements from the given elem.
      */
     clear: function(elem) {
+      if($ext.onBrokenIE()) {
+        return elem.innerHTML = "";
+      }
+
       // Make a copy of the children to not mess with the foreach loop.
       var children = $ext.copy(elem.childNodes);
       $ext.each(children, function(child) {
