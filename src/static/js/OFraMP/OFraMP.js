@@ -435,31 +435,34 @@ OFraMP.prototype = {
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4 && xhr.status == 200) {
-        var fd = JSON.parse(xhr.responseText);
-        var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
-            fd.version);
-        if(vc == -1) {
-          var msg = "OMFraF version too old." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
-          showError(msg);
-        } else if(vc == 1) {
-          var msg = "OMFraF version too new." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
-          showError(msg);
-        } else if(fd.error) {
-          showError(fd.error);
-        } else if(fd.off) {
-          console.log("Related fragments generated:", fd.off);
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var fd = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+              fd.version);
+          if(vc == -1) {
+            var msg = "OMFraF version too old." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(vc == 1) {
+            var msg = "OMFraF version too new." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(fd.error) {
+            showError(fd.error);
+          } else if(fd.off) {
+            console.log("Related fragments generated:", fd.off);
 
-          _this.off = fd.off;
-          $ext.dom.dispatchEvent(_this.container, _this.fragmentsGeneratedEvent);
+            _this.off = fd.off;
+            $ext.dom.dispatchEvent(_this.container,
+                _this.fragmentsGeneratedEvent);
+          }
+        } else {
+          var msg = "Could not connect to the OMFraF server."
+          showError(msg);
         }
-      } else if(xhr.readyState > 1 && xhr.status != 200) {
-        var msg = "Could not connect to the OMFraF server."
-        showError(msg);
       }
     };
 
@@ -533,47 +536,49 @@ OFraMP.prototype = {
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4 && xhr.status == 200) {
-        var fd = JSON.parse(xhr.responseText);
-        var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
-            fd.version);
-        if(vc == -1) {
-          var msg = "OMFraF version too old." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
-          showError(msg);
-        } else if(vc == 1) {
-          var msg = "OMFraF version too new." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
-          showError(msg);
-        } else if(fd.error) {
-          showError(fd.error);
-        } else if(fd.fragments) {
-          $ext.each(fd.fragments, function(fragment) {
-            var overlapCount = 0;
-            $ext.each(fragment.atoms, function(atom) {
-              var orig = this.mv.molecule.atoms.get(atom.id);
-              if(orig.isCharged()) {
-                overlapCount += 1;
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var fd = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+              fd.version);
+          if(vc == -1) {
+            var msg = "OMFraF version too old." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(vc == 1) {
+            var msg = "OMFraF version too new." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(fd.error) {
+            showError(fd.error);
+          } else if(fd.fragments) {
+            $ext.each(fd.fragments, function(fragment) {
+              var overlapCount = 0;
+              $ext.each(fragment.atoms, function(atom) {
+                var orig = this.mv.molecule.atoms.get(atom.id);
+                if(orig.isCharged()) {
+                  overlapCount += 1;
+                }
+              }, this);
+
+              if(overlapCount > 0) {
+                fragment.hasOverlap = true;
+                fragment.score -= overlapCount;
               }
-            }, this);
+            }, _this);
 
-            if(overlapCount > 0) {
-              fragment.hasOverlap = true;
-              fragment.score -= overlapCount;
-            }
-          }, _this);
-
-          fragments = fd.fragments.sort(function(a, b) {
-            return b.score - a.score;
-          });
-          _this.hideRelatedFragments();
-          _this.behavior.showRelatedFragments(fragments, selectionIDs);
+            fragments = fd.fragments.sort(function(a, b) {
+              return b.score - a.score;
+            });
+            _this.hideRelatedFragments();
+            _this.behavior.showRelatedFragments(fragments, selectionIDs);
+          }
+        } else {
+          var msg = "Could not connect to the OMFraF server."
+          showError(msg);
         }
-      } else if(xhr.readyState > 1 && xhr.status != 200) {
-        var msg = "Could not connect to the OMFraF server."
-        showError(msg);
       }
     };
 

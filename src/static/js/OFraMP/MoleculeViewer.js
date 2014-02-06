@@ -261,33 +261,35 @@ MoleculeViewer.prototype = {
         _this.showOverlay("Loading molecule data...\nRequest received.");
       } else if(xhr.readyState == 3) {
         _this.showOverlay("Loading molecule data...\nProcessing request...");
-      } else if(xhr.readyState == 4 && xhr.status == 200) {
-        var md = JSON.parse(xhr.responseText);
-        var vc = $ext.string.versionCompare(_this.settings.oapoc.version,
-            md.version);
-        if(vc == -1) {
-          var msg = "OAPoC version too old." + "\n\nRequired version: "
-              + _this.settings.oapoc.version + "\nCurrent version: "
-              + md.version;
-          _this.showOverlay(msg, MESSAGE_TYPES.error);
+      } else if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var md = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.oapoc.version,
+              md.version);
+          if(vc == -1) {
+            var msg = "OAPoC version too old." + "\n\nRequired version: "
+                + _this.settings.oapoc.version + "\nCurrent version: "
+                + md.version;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(vc == 1) {
+            var msg = "OAPoC version too new." + "\n\nRequired version: "
+                + _this.settings.oapoc.version + "\nCurrent version: "
+                + md.version;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(md.error) {
+            var msg = "An error has occured:\n" + md.error;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(md.atoms && md.bonds) {
+            success.call(_this, md);
+          }
+        } else {
+          var msg = "Could not connect to server";
+          _this.showOverlay(msg, MESSAGE_TYPES.critical);
           failure.call(_this, msg);
-        } else if(vc == 1) {
-          var msg = "OAPoC version too new." + "\n\nRequired version: "
-              + _this.settings.oapoc.version + "\nCurrent version: "
-              + md.version;
-          _this.showOverlay(msg, MESSAGE_TYPES.error);
-          failure.call(_this, msg);
-        } else if(md.error) {
-          var msg = "An error has occured:\n" + md.error;
-          _this.showOverlay(msg, MESSAGE_TYPES.error);
-          failure.call(_this, msg);
-        } else if(md.atoms && md.bonds) {
-          success.call(_this, md);
         }
-      } else if(xhr.status != 200) {
-        var msg = "Could not connect to server";
-        _this.showOverlay(msg, MESSAGE_TYPES.critical);
-        failure.call(_this, msg);
       }
     };
 
