@@ -32,7 +32,7 @@ $ext = {
           return r;
         }
       }
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       for( var k in obj) {
         if(Object.prototype[k] !== undefined) {
           continue;
@@ -56,7 +56,7 @@ $ext = {
   extend: function(orig, extension) {
     if(orig instanceof Array) {
       return orig.concat(extension);
-    } else if(orig instanceof Object) {
+    } else if(orig instanceof Object || typeof orig === "object") {
       this.each(extension, function(v, k) {
         if(v !== undefined) {
           orig[k] = v;
@@ -72,7 +72,7 @@ $ext = {
   copy: function(obj) {
     if(obj instanceof Array) {
       return this.extend([], obj);
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       return this.extend({}, obj);
     }
   },
@@ -91,7 +91,7 @@ $ext = {
         r[i] = this.deepCopy(v);
       }, this);
       return r;
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       var r = new Object();
       this.each(obj, function(v, k) {
         if(obj.hasOwnProperty(k)) {
@@ -120,7 +120,7 @@ $ext = {
         }
       });
       return r;
-    } else if(orig instanceof Object) {
+    } else if(orig instanceof Object || typeof orig === "object") {
       this.each(extension, function(v, k) {
         if(typeof r[k] === 'object' && typeof v === 'object') {
           this.merge(r[k], v);
