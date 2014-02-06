@@ -55,7 +55,7 @@ NaiveBehavior.prototype = {
     this.oframp.atomDetails.appendChild(dt);
 
     if(atom) {
-      $ext.dom.addTableRow(dt, atom.id, "ID");
+      $ext.dom.addTableRow(dt, "" + atom.id, "ID");
       $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
       var cc = document.createElement('span');
       var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
@@ -74,9 +74,9 @@ NaiveBehavior.prototype = {
       var cc = document.createElement("span");
       $ext.dom.addText(cc, charge || "unknown");
 
-      $ext.dom.addTableRow(dt, selection.length, "Selection count");
-      $ext.dom.addTableRow(dt, uas.length, "Unparameterised");
-      $ext.dom.addTableRow(dt, selection.length - uas.length, "Parameterised");
+      $ext.dom.addTableRow(dt, "" + selection.length, "Selection count");
+      $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
+      $ext.dom.addTableRow(dt, "" + (selection.length - uas.length), "Parameterised");
       $ext.dom.addTableRow(dt, cc, "Total charge");
 
       var sadl = document.createElement("table");
@@ -120,7 +120,7 @@ NaiveBehavior.prototype = {
           }
         }, $ext.mouse.LEFT);
 
-        $ext.dom.addTableRow(sadl, [atom.element, atom.id, cei, ceb]);
+        $ext.dom.addTableRow(sadl, [atom.element, "" + atom.id, cei, ceb]);
       });
       this.oframp.atomDetails.appendChild(sadl);
 
@@ -428,7 +428,7 @@ NaiveBehavior.prototype = {
     var dd = document.createElement('div');
     dd.id = "charge_details";
     var dt = document.createElement('table');
-    $ext.dom.addTableRow(dt, atom.id, "Atom ID");
+    $ext.dom.addTableRow(dt, "" + atom.id, "Atom ID");
     $ext.dom.addTableRow(dt, atom.element, "Element");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
         "Current charge");
