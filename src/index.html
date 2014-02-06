@@ -52,6 +52,8 @@
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";
         var OMFraF_GENERATE_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/generate/" : "http://127.0.0.1:8001/generate/";
 
+        $ext.dom.remove(document.getElementById("loader"));
+
         var oframp = new OFraMP(NaiveBehavior, "oframp", {
           oapoc : {
             url : OAPoC_URL,
@@ -402,5 +404,9 @@
     </div>
 
     <div id="oframp"></div>
+
+    <div id="loader">
+      <p>Please be patient as the Online tool for Fragment-based Molecule Parameterisation is being loaded.</p>
+    </div>
   </body>
 </html>

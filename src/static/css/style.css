@@ -496,9 +496,18 @@ button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
     background-repeat: no-repeat;
 }
 
-#oframp {
-    height: 100%;
-    background: url('../img/loading.gif') center center no-repeat;
+#loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 160px;
+    margin: -80px 0 0 -300px;
+    text-align: center;
+}
+
+#loader p {
+    font-size: 30px;
 }
 
 #instruction_overlay {
