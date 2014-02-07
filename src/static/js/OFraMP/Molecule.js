@@ -151,6 +151,13 @@ Molecule.prototype = {
   },
 
   /*
+   * Move the center of the given list of atoms to the center of the canvas.
+   */
+  centerOnAtoms: function(atoms) {
+    return this.atoms.centerOnAtoms(atoms);
+  },
+
+  /*
    * Fit the molecule in a bounding box of size w * h.
    */
   bestFit: function(w, h) {

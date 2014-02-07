@@ -337,10 +337,13 @@ NaiveBehavior.prototype = {
 
       var load = function() {
         fv.molecule = new Molecule(fv, atoms, bonds);
-        fv.molecule.setSelected($ext.array.map(selectionIDs, function(id) {
+        fv.molecule.minimize();
+
+        var selectionAtoms = $ext.array.map(selectionIDs, function(id) {
           return fv.molecule.atoms.get(id);
-        }));
-        fv.molecule.bestFit();
+        });
+        fv.molecule.setSelected(selectionAtoms);
+        fv.molecule.centerOnAtoms(selectionAtoms);
         fv.redraw();
       };
 

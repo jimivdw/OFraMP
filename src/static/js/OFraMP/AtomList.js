@@ -438,6 +438,21 @@ AtomList.prototype = {
   },
 
   /*
+   * Center the list of atoms on the center of the list of atoms provided.
+   */
+  centerOnAtoms: function(atoms) {
+    if(!(atoms instanceof AtomList)) {
+      atoms = new AtomList(this.molecule, atoms);
+    }
+    atoms.atoms = $ext.array.filter(atoms.atoms, function(atom) {
+      return this.settings.showHAtoms || atom.element !== "H";
+    }, this);
+    var lc = atoms.getCenterPoint();
+    console.log(lc, atoms);
+    this.centerOn(lc.x, lc.y);
+  },
+
+  /*
    * Zoom on the center of the molecule with a factor f.
    */
   zoom: function(f) {

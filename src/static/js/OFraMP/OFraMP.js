@@ -643,10 +643,11 @@ OFraMP.prototype = {
         580, this.popup.clientHeight - 100);
     ov.showMolecule(fragment.atb_id, function() {
       this.setupInteraction();
-      this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
+      this.molecule.minimize();
       var oas = $ext.array.map(oids, function(oid) {
         return this.molecule.atoms.get(oid);
       }, this);
+      this.molecule.centerOnAtoms(oas);
       this.molecule.setSelected(oas);
       this.hideOverlay();
       this.redraw();
