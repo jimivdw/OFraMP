@@ -28,8 +28,6 @@ NaiveBehavior.prototype = {
   },
 
   showSelectionDetails: function(selection) {
-    this.oframp.showSelectionDetails();
-
     var _this = this;
 
     $ext.dom.clear(this.oframp.atomDetails);
@@ -53,8 +51,10 @@ NaiveBehavior.prototype = {
     var c = this.oframp.getMoleculeCutout(cntr.x, cntr.y, s.w, s.h, 228, 130);
     this.oframp.atomDetails.appendChild(c);
 
-    var dt = document.createElement('table');
-    this.oframp.atomDetails.appendChild(dt);
+    var dtc = document.createElement('table');
+    var dt = document.createElement('tbody');
+    dtc.appendChild(dt);
+    this.oframp.atomDetails.appendChild(dtc);
 
     if(atom) {
       $ext.dom.addTableRow(dt, "" + atom.id, "ID");
@@ -148,7 +148,10 @@ NaiveBehavior.prototype = {
       ced.className = "border_box";
       ced.style.height = "0px";
 
-      var cet = document.createElement('table');
+      var cetc = document.createElement('table');
+      var cet = document.createElement('tbody');
+      cetc.appendChild(cet);
+
       if(atom.usedFragments.length > 0) {
         var ufb = document.createElement('button');
         ufb.id = "show_used_fragments";
@@ -192,7 +195,7 @@ NaiveBehavior.prototype = {
         }
       }
 
-      ced.appendChild(cet);
+      ced.appendChild(cetc);
       ced.appendChild(acb);
       this.oframp.atomDetails.appendChild(ced);
 
@@ -254,6 +257,8 @@ NaiveBehavior.prototype = {
         _this.oframp.getMatchingFragments();
       }, $ext.mouse.LEFT);
     }
+
+    this.oframp.showSelectionDetails();
   },
 
   showRelatedFragments: function(fragments, selectionIDs) {
@@ -427,7 +432,9 @@ NaiveBehavior.prototype = {
 
     var dd = document.createElement('div');
     dd.id = "charge_details";
-    var dt = document.createElement('table');
+    var dtc = document.createElement('table');
+    var dt = document.createElement('tbody');
+    dtc.appendChild(dt);
     $ext.dom.addTableRow(dt, "" + atom.id, "Atom ID");
     $ext.dom.addTableRow(dt, atom.element, "Element");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
@@ -473,7 +480,7 @@ NaiveBehavior.prototype = {
 
     $ext.dom.addTableRow(dt, ss, "Solution");
     $ext.dom.addTableRow(dt, rc, "Resulting charge");
-    dd.appendChild(dt);
+    dd.appendChild(dtc);
     id.appendChild(dd);
     content.appendChild(id);
 
