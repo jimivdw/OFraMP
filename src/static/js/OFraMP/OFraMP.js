@@ -210,33 +210,35 @@ OFraMP.prototype = {
     }
     cbs.appendChild(rb);
 
-    var ossi = document.createElement("input");
-    ossi.type = "file";
-    ossi.style.display = "none";
-    ossi.accept = ".oss";
-    ossi.onchange = function() {
-      var oss = ossi.files[0];
-      if(!oss.name.match(/.*\.oss$/)) {
-        alert("Only OFraMP Structure Storage (.oss) files are allowed.");
-        return;
-      }
+    if(BrowserDetect.browser !== "Explorer" || BrowserDetect.version > 9) {
+      var ossi = document.createElement("input");
+      ossi.type = "file";
+      ossi.style.display = "none";
+      ossi.accept = ".oss";
+      ossi.onchange = function() {
+        var oss = ossi.files[0];
+        if(!oss.name.match(/.*\.oss$/)) {
+          alert("Only OFraMP Structure Storage (.oss) files are allowed.");
+          return;
+        }
 
-      var reader = new FileReader();
-      reader.onload = function(evt) {
-        _this.loadOSS(evt.target.result);
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          _this.loadOSS(evt.target.result);
+        };
+        reader.readAsText(oss);
       };
-      reader.readAsText(oss);
-    };
-    cbs.appendChild(ossi);
+      cbs.appendChild(ossi);
 
-    var lb = document.createElement('button');
-    lb.id = "load_oss";
-    lb.className = "border_box";
-    lb.appendChild(document.createTextNode("Load from OSS file"));
-    lb.onclick = function() {
-      ossi.click();
+      var lb = document.createElement('button');
+      lb.id = "load_oss";
+      lb.className = "border_box";
+      lb.appendChild(document.createTextNode("Load from OSS file"));
+      lb.onclick = function() {
+        ossi.click();
+      }
+      cbs.appendChild(lb);
     }
-    cbs.appendChild(lb);
 
     if(this.mv.molecule) {
       var cb = document.createElement('button');
