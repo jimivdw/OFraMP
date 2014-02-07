@@ -222,10 +222,17 @@
           oframp.settingsUI.toggle();
         }, $ext.mouse.LEFT);
 
-        if ($ext.onBrokenIE()) {
+        // Hide broken stuff on IE
+        if(BrowerDetect.browser === "Explorer") {
           sb.remove();
-          dl.remove();
-          op.remove();
+          if(BrowserDetect.version < 10) {
+            of.remove();
+            sv.remove();
+          }
+          if(BrowserDetect.version < 9) {
+            dl.remove();
+            op.remove();
+          }
         }
 
         $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
