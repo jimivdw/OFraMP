@@ -13,10 +13,14 @@ if(array_key_exists('fname', $_POST)) {
 }
 
 $fsize = strlen($data);
-$mtype = "application/octet-stream";
-header("Content-type: $mtype");
-header("Content-Disposition: filename=\"$fname\"");
-header("Content-length: $fsize");
-header("Cache-control: private");
+$mtype = array("application/octet-stream");
+
+header("Content-Type: $mtype");
+header("Content-Disposition: attachment; filename=\"$fname\"");
+header("Content-Transfer-Encoding: binary");
+header("Content-Length: $fsize");
+header("Expires: 0");
+header("Cache-Control: private");
+
 echo $data;
 ?>
