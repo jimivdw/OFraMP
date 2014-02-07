@@ -287,7 +287,7 @@ OFraMP.prototype = {
       this.mv.loadMolecule(data);
       this.checkpoint();
       $ext.dom.dispatchEvent(this.container, this.moleculeDisplayedEvent);
-      _this.errorControls.style.display = "none";
+      this.errorControls.style.display = "none";
 
       this.hidePopup();
     } catch(err) {
