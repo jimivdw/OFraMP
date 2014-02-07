@@ -138,6 +138,9 @@
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           sv.type = "application/json";
           sv.download = "OFraMP-" + date + ".oss";
+          if($ext.onBrokenIE()) {
+            sv.target = "_blank";
+          }
         }
 
         var sb = document.getElementById("share");
@@ -215,12 +218,14 @@
         }
 
         var op = document.getElementById("opti");
+        $ext.dom.onMouseClick(op, function() {
+          oframp.settingsUI.toggle();
+        }, $ext.mouse.LEFT);
+
         if ($ext.onBrokenIE()) {
+          sb.remove();
+          dl.remove();
           op.remove();
-        } else {
-          $ext.dom.onMouseClick(op, function() {
-            oframp.settingsUI.toggle();
-          }, $ext.mouse.LEFT);
         }
 
         $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
