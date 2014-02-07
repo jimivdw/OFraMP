@@ -225,7 +225,7 @@ OFraMP.prototype = {
       reader.onload = function(evt) {
         _this.loadOSS(evt.target.result);
       };
-      reader.readAsBinaryString(oss);
+      reader.readAsText(oss);
     };
     cbs.appendChild(ossi);
 
