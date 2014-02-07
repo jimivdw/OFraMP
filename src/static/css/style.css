@@ -223,6 +223,7 @@ html, body {
 }
 
 #atom_details span.title, #related_fragments span.title {
+    display: block;
     font-size: 16px;
     font-weight: bold;
 }
