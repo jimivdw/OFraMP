@@ -233,19 +233,6 @@
           oframp.settingsUI.toggle();
         }, $ext.mouse.LEFT);
 
-        // Hide broken stuff on IE
-        if(BrowserDetect.browser === "Explorer") {
-          sb.remove();
-          if(BrowserDetect.version < 10) {
-            of.remove();
-            sv.remove();
-          }
-          if(BrowserDetect.version < 9) {
-            dl.remove();
-            op.remove();
-          }
-        }
-
         $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
           if(oframp.activeCheckpoint === 0) {
             ub.disabled = "disabled";
@@ -333,6 +320,24 @@
             fragmentControls.style.display = "block";
           }
         });
+
+        // Hide broken stuff on IE
+        if(BrowserDetect.browser === "Explorer") {
+          sb.remove();
+          if(BrowserDetect.version < 10) {
+            of.remove();
+            sv.remove();
+          }
+          if(BrowserDetect.version < 9) {
+            dl.remove();
+            op.remove();
+
+            var logo = document.getElementById("logo");
+            logo.style.position = "absolute";
+            logo.style.marginLeft = "-120px";
+            header.style.paddingLeft = "120px";
+          }
+        }
 
         if(URLParams) {
           if(URLParams.mds) {
