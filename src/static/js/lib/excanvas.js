@@ -60,6 +60,14 @@ if (!document.createElement('canvas').getContext) {
         (this.context_ = new CanvasRenderingContext2D_(this));
   }
 
+  /**
+   * Get the <canvas> element's data URL.
+   * UNIMPLEMENTABLE FOR VML.
+   */
+  function toDataURL() {
+    return "";
+  }
+
   var slice = Array.prototype.slice;
 
   /**
@@ -140,6 +148,7 @@ if (!document.createElement('canvas').getContext) {
     initElement: function(el) {
       if (!el.getContext) {
         el.getContext = getContext;
+        el.toDataURL = toDataURL;
 
         // Add namespaces and stylesheet to document of the element.
         addNamespacesAndStylesheet(el.ownerDocument);
