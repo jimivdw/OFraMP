@@ -215,7 +215,7 @@ OFraMP.prototype = {
     ossi.style.display = "none";
     ossi.accept = ".oss";
     ossi.onchange = function() {
-      var oss = this.files[0];
+      var oss = ossi.files[0];
       if(!oss.name.match(/.*\.oss$/)) {
         alert("Only OFraMP Structure Storage (.oss) files are allowed.");
         return;
