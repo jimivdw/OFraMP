@@ -124,6 +124,7 @@ html, body {
     left: 50%;
     width: 180px;
     margin-left: -90px;
+    z-index: 2;
 }
 
 #accept_fragment, #reject_fragment {
