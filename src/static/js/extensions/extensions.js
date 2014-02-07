@@ -133,6 +133,36 @@ $ext = {
   },
 
   /*
+   * Send the given data using a form to the given action URL.
+   * 
+   * Based on http://stackoverflow.com/a/133997.
+   */
+  sendDataForm: function(action, data, method, target) {
+    action = action || "";
+    data = data || {};
+    method = method || "get";
+    target = target || "_self";
+
+    var form = document.createElement("form");
+    form.setAttribute("action", action);
+    form.setAttribute("method", method);
+    form.setAttribute("target", target);
+
+    this.each(data, function(value, key) {
+      var field = document.createElement("input");
+      field.setAttribute("type", "hidden");
+      field.setAttribute("name", key);
+      field.setAttribute("value", value);
+
+      form.appendChild(field);
+    });
+
+    document.documentElement.appendChild(form);
+    form.submit();
+    form.remove();
+  },
+
+  /*
    * Determine whether the user is using a broken IE browser (i.e. IE <= 8).
    */
   onBrokenIE: function() {

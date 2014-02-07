@@ -134,13 +134,13 @@
         $ext.dom.onMouseClick(sv, saveMolecule, $ext.mouse.LEFT);
         function saveMolecule() {
           var data = oframp.getDataURI();
-          sv.href = data;
+          data = data.replace(/^data:application\/octet-stream:base64,/, '');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
-          sv.type = "application/json";
-          sv.download = "OFraMP-" + date + ".oss";
-          if($ext.onBrokenIE()) {
-            sv.target = "_blank";
-          }
+          var fname = "OFraMP-" + date + ".oss";
+          $ext.sendDataForm("save.php", {
+            data: data,
+            fname: fname
+          }, "post", "_blank");
         }
 
         var sb = document.getElementById("share");
