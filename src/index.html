@@ -143,7 +143,11 @@
         var sb = document.getElementById("share");
         $ext.dom.onMouseClick(sb, function(e) {
           shareLink();
-          e.preventDefault();
+          if(e.preventDefault) {
+            e.preventDefault();
+          } else {
+            return false;
+          }
         }, $ext.mouse.LEFT);
         function shareLink() {
           var data = oframp.getDataURI();
