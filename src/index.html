@@ -109,11 +109,22 @@
         };
 
         var dl = document.getElementById("download");
-        dl.onclick = function() {
+        dl.onclick = function(e) {
           var data = oframp.getMVDataURI('image/png');
-          this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+          data = data.replace(/^data:image\/png;base64,/, '');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
-          this.download = "OFraMP-" + date + ".png";
+          var fname = "OFraMP-" + date + ".png";
+          $ext.sendDataForm("save.php", {
+            data: data,
+            fname: fname,
+            bd: "image/png"
+          }, "post", "_blank");
+
+          if(e.preventDefault) {
+            e.preventDefault();
+          } else {
+            return false;
+          }
         };
 
         var nm = document.getElementById("new");
@@ -134,7 +145,7 @@
         $ext.dom.onMouseClick(sv, saveMolecule, $ext.mouse.LEFT);
         function saveMolecule() {
           var data = oframp.getDataURI();
-          data = data.replace(/^data:application\/octet-stream:base64,/, '');
+          data = data.replace(/^data:application\/octet-stream;base64,/, '');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           var fname = "OFraMP-" + date + ".oss";
           $ext.sendDataForm("save.php", {
@@ -154,7 +165,7 @@
         }, $ext.mouse.LEFT);
         function shareLink() {
           var data = oframp.getDataURI();
-          var oss = data.replace(/^data:application\/octet-stream:base64,/, '');
+          var oss = data.replace(/^data:application\/octet-stream;base64,/, '');
           sb.href = "?oss=";
 
           var title = "URL to the current state, copy to share (Ctrl+C)";

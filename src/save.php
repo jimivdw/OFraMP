@@ -12,8 +12,14 @@ if(array_key_exists('fname', $_POST)) {
     $fname = "download";
 }
 
+if(array_key_exists('bd', $_POST)) {
+    $mtype = array($_POST['bd']);
+    $data = base64_decode($data);
+} else {
+    $mtype = array("application/octet-stream");
+}
+
 $fsize = strlen($data);
-$mtype = array("application/octet-stream");
 
 header("Content-Type: $mtype");
 header("Content-Disposition: attachment; filename=\"$fname\"");

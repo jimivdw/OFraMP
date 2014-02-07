@@ -838,7 +838,7 @@ OFraMP.prototype = {
    */
   getDataURI: function() {
     var data = JSON.stringify(this.mv.molecule.getJSON());
-    return "data:application/octet-stream:base64," + btoa(data);
+    return "data:application/octet-stream;base64," + btoa(data);
   },
 
   /*
