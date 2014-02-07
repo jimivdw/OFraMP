@@ -28,6 +28,8 @@ NaiveBehavior.prototype = {
   },
 
   showSelectionDetails: function(selection) {
+    this.oframp.showSelectionDetails();
+
     var _this = this;
 
     $ext.dom.clear(this.oframp.atomDetails);
@@ -252,8 +254,6 @@ NaiveBehavior.prototype = {
         _this.oframp.getMatchingFragments();
       }, $ext.mouse.LEFT);
     }
-
-    this.oframp.showSelectionDetails();
   },
 
   showRelatedFragments: function(fragments, selectionIDs) {
