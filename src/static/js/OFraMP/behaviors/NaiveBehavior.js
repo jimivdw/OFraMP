@@ -81,7 +81,9 @@ NaiveBehavior.prototype = {
       $ext.dom.addTableRow(dt, "" + (selection.length - uas.length), "Parameterised");
       $ext.dom.addTableRow(dt, cc, "Total charge");
 
-      var sadl = document.createElement("table");
+      var sadlc = document.createElement("table");
+      var sadl = document.createElement('tbody');
+      sadlc.appendChild(sadl);
       sadl.id = "selected_atom_details";
       sadl.style.display = "none";
       $ext.dom.addTableRow(sadl, [], ["Elem", "ID", "Charge", ""]);
@@ -124,7 +126,7 @@ NaiveBehavior.prototype = {
 
         $ext.dom.addTableRow(sadl, [atom.element, "" + atom.id, cei, ceb]);
       });
-      this.oframp.atomDetails.appendChild(sadl);
+      this.oframp.atomDetails.appendChild(sadlc);
 
       var satb = document.createElement("button");
       satb.className = "border_box";
