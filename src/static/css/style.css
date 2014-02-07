@@ -34,6 +34,7 @@ html, body {
     width: 500px;
     height: 30px;
     margin-left: -250px;
+    z-index: 2;
     overflow: hidden;
     text-align: center;
     -webkit-transition: height .2s ease-out;
@@ -109,6 +110,7 @@ html, body {
 
 #fragment_controls, #error_controls {
     display: none;
+    z-index: 2;
 }
 
 #fragment_controls button, #error_controls button {
