@@ -158,6 +158,7 @@
           var content = document.createElement('div');
 
           var lta = document.createElement('textarea');
+          lta.style.height = oframp.popup.clientHeight - 100 + "px";
           lta.appendChild(document.createTextNode(sb.href + encodeURIComponent(oss)));
           sb.href = "#";
           content.appendChild(lta);
