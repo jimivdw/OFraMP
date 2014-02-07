@@ -259,6 +259,13 @@
           extraControls.style.display = "inline-block";
           fragmentControls.style.display = "block";
 
+          if($ext.onBrokenIE()) {
+            var logo = document.getElementById("logo");
+            logo.style.position = "absolute";
+            logo.style.marginLeft = "-120px";
+            header.style.paddingLeft = "120px";
+          }
+
           $ext.dom.onMouseClick(toggle, function() {
             if(extraControlsVisible) {
               header.style.height = "30px";
@@ -331,11 +338,6 @@
           if(BrowserDetect.version < 9) {
             dl.remove();
             op.remove();
-
-            var logo = document.getElementById("logo");
-            logo.style.position = "absolute";
-            logo.style.marginLeft = "-120px";
-            header.style.paddingLeft = "120px";
           }
         }
 
