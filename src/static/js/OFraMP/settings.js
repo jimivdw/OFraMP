@@ -69,32 +69,38 @@ var DEFAULT_SETTINGS = {
   },
 
   atom: {
-    showCirc: true,
     showHAtoms: false,
     combineHLabels: true,
     showCLabels: true,
+    showCirc: true,
     showID: false,
-    font: "bold 12px Arial",
-    chargeFont: "9px Arial",
-    color: "rgb( 48, 48, 48)",
-    radius: 20,
-    radiusCharged: 20,
-    chargeOffset: 6,
-    borderWidths: {
-      0: 1,
-      1: 3,
-      2: 3,
-      4: 3,
-      8: 3
+    radius: {
+      default: 20,
+      charged: 20
     },
-    borderColor: "rgb( 48, 48, 48)",
-    bgColors: {
-      0: "rgb(255, 255, 255)",
-      1: "rgb(210, 180, 245)",
-      2: "rgb(150, 140, 205)",
-      4: "rgb(140, 205, 108)",
-      8: "rgb(204, 166,  40)"
-    }
+    backgroundColor: {
+      default: "rgb(255, 255, 255)",
+      charged: "rgb(180, 180, 180)",
+      hover: "rgb(210, 180, 245)",
+      selected: "rgb(150, 140, 205)",
+      preview: "rgb(140, 205, 108)",
+      conflict: "rgb(204, 166,  40)"
+    },
+    borderWidth: {
+      default: 1,
+      active: 3
+    },
+    borderColor: {
+      default: "rgb( 48, 48, 48)",
+      active: "rgb( 48, 48, 48)"
+    },
+    color: {
+      default: "rgb( 48, 48, 48)",
+      charged: "rgb( 48, 48, 48)"
+    },
+    elementFont: "bold 12px Arial",
+    chargeFont: "9px Arial",
+    chargeOffset: 6
   },
 
   bond: {
@@ -182,11 +188,6 @@ var SETTINGS_OPTIONS = {
   },
 
   atom: {
-    "radius, radiusCharged, chargeOffset": {
-      min: 0,
-      max: 50,
-      step: 1
-    },
     showHAtoms: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
@@ -226,30 +227,42 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "showCirc, showID, font, chargeFont, color, chargeOffset, borderColor": {
+    "showCirc, showID, elementFont, chargeFont, chargeOffset": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
     },
-    "radius, radiusCharged": {
-      onChange: function() {
-        var mv = this.__gui.getRootObject().getMV();
-        if(mv.molecule) {
-          mv.molecule.atoms.each(function(a) {
-            a.clearCache('appearance.radius');
-          });
-          mv.molecule.bonds.each(function(b) {
-            b.clearCache('position');
-          });
-          mv.redraw();
+    radius: {
+      "default, charged": {
+        min: 0,
+        max: 50,
+        step: 1,
+        onChange: function() {
+          var mv = this.__gui.getRootObject().getMV();
+          if(mv.molecule) {
+            mv.molecule.atoms.each(function(a) {
+              a.clearCache('appearance.radius');
+            });
+            mv.molecule.bonds.each(function(b) {
+              b.clearCache('position');
+            });
+            mv.redraw();
+          }
+        },
+        onFinishChange: function() {
+          this.__gui.getRootObject().getMV().deoverlap();
         }
-      },
-      onFinishChange: function() {
-        this.__gui.getRootObject().getMV().deoverlap();
       }
     },
-    borderWidths: {
-      "0, 1, 2, 4": {
+    backgroundColor: {
+      "default, charged, hover, selected, preview, conflict": {
+        onChange: function() {
+          this.__gui.getRootObject().getMV().redraw();
+        }
+      }
+    },
+    borderWidth: {
+      "default, active": {
         min: 0,
         max: 10,
         step: 1,
@@ -258,12 +271,24 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    bgColors: {
-      "0, 1, 2, 4": {
+    borderColor: {
+      "default, active": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
+    },
+    color: {
+      "default, charged": {
+        onChange: function() {
+          this.__gui.getRootObject().getMV().redraw();
+        }
+      }
+    },
+    chargeOffset: {
+      min: 0,
+      max: 50,
+      step: 1
     }
   },
 

@@ -234,9 +234,9 @@ Atom.prototype = {
     }
 
     if(this.isCharged()) {
-      var radius = this.settings.atom.radiusCharged;
+      var radius = this.settings.atom.radius.charged;
     } else {
-      var radius = this.settings.atom.radius;
+      var radius = this.settings.atom.radius.default;
     }
     this.cache.set('appearance.radius', radius, this.cache
         .getCache('appearance.showLabel'));
@@ -347,16 +347,34 @@ Atom.prototype = {
    * Get the color of this atom.
    */
   getColor: function() {
-    if($ext.color.isDark(this.getBackgroundColor())) {
-      return $ext.color.invert(this.settings.atom.color);
+    if(this.isCharged()) {
+      var color = this.settings.atom.color.charged;
     } else {
-      return this.settings.atom.color;
+      var color = this.settings.atom.color.default;
+    }
+
+    if($ext.color.isDark(this.getBackgroundColor())) {
+      return $ext.color.invert(color);
+    } else {
+      return color;
     }
   },
 
   getBackgroundColor: function() {
-    var status = $ext.number.msb(this.getStatus());
-    return this.settings.atom.bgColors[status];
+    var status = this.getStatus();
+    if(status & ATOM_STATUSES.conflict) {
+      return this.settings.atom.backgroundColor["conflict"];
+    } else if(status & ATOM_STATUSES.preview) {
+      return this.settings.atom.backgroundColor["preview"];
+    } else if(status & ATOM_STATUSES.selected) {
+      return this.settings.atom.backgroundColor["selected"];
+    } else if(status & ATOM_STATUSES.hover) {
+      return this.settings.atom.backgroundColor["hover"];
+    } else if(this.isCharged()) {
+      return this.settings.atom.backgroundColor["charged"];
+    } else {
+      return this.settings.atom.backgroundColor["default"];
+    }
   },
 
   /*
@@ -551,8 +569,13 @@ Atom.prototype = {
     }
 
     if(s.atom.showCirc) {
-      ctx.lineWidth = s.atom.borderWidths[status];
-      ctx.strokeStyle = s.atom.borderColor;
+      if(this.status > 0) {
+        ctx.lineWidth = s.atom.borderWidth.active;
+        ctx.strokeStyle = s.atom.borderColor.active;
+      } else {
+        ctx.lineWidth = s.atom.borderWidth.default;
+        ctx.strokeStyle = s.atom.borderColor.default;
+      }
       ctx.stroke();
     }
 
@@ -561,7 +584,7 @@ Atom.prototype = {
       label += this.id;
     }
 
-    ctx.font = s.atom.font;
+    ctx.font = s.atom.elementFont;
     ctx.fillStyle = this.getColor();
     var cl = this.getChargeLabel();
     if(cl) {
