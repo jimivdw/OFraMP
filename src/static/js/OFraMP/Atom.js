@@ -347,13 +347,16 @@ Atom.prototype = {
    * Get the color of this atom.
    */
   getColor: function() {
-    if(this.cache.get('appearance.color')) {
-      return this.cache.get('appearance.color');
+    if($ext.color.isDark(this.getBackgroundColor())) {
+      return this.settings.atom.colorInv;
+    } else {
+      return this.settings.atom.color;
     }
-    var c = this.settings.atom.colors[this.element];
-    var color = c || this.settings.atom.colors["other"];
-    this.cache.set('appearance.color', color);
-    return color;
+  },
+
+  getBackgroundColor: function() {
+    var status = $ext.number.msb(this.getStatus());
+    return this.settings.atom.bgColors[status];
   },
 
   /*
@@ -538,8 +541,7 @@ Atom.prototype = {
     var ctx = this.list.molecule.mv.ctx;
     var s = this.settings;
 
-    var status = $ext.number.msb(this.getStatus());
-    ctx.fillStyle = s.atom.bgColors[status];
+    ctx.fillStyle = this.getBackgroundColor();
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
     ctx.fill();

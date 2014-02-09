@@ -76,17 +76,8 @@ var DEFAULT_SETTINGS = {
     showID: false,
     font: "bold 12px Arial",
     chargeFont: "9px Arial",
-    colors: {
-      S: "rgb(204, 166,  40)",
-      O: "rgb(223,  83,  73)",
-      N: "rgb( 76,  81, 178)",
-      H: "rgb(148, 148, 148)",
-      F: "rgb( 80, 169,  75)",
-      Cl: "rgb( 80, 169,  75)",
-      Br: "rgb( 80, 169,  75)",
-      I: "rgb( 80, 169,  75)",
-      other: "rgb( 48, 48, 48)"
-    },
+    color: "rgb( 48, 48, 48)",
+    colorInv: "rgb(207, 207, 207)",
     chargeColor: "rgb( 48, 48, 48)",
     radius: 20,
     radiusCharged: 20,
@@ -237,7 +228,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "showCirc, showID, font, chargeFont, chargeColor, chargeOffset, borderColor": {
+    "showCirc, showID, font, chargeFont, color, colorInv, chargeColor, chargeOffset, borderColor": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
@@ -257,19 +248,6 @@ var SETTINGS_OPTIONS = {
       },
       onFinishChange: function() {
         this.__gui.getRootObject().getMV().deoverlap();
-      }
-    },
-    colors: {
-      "S, O, N, H, F, Cl, Br, I, other": {
-        onChange: function() {
-          var mv = this.__gui.getRootObject().getMV();
-          if(mv.molecule) {
-            mv.molecule.atoms.each(function(a) {
-              a.clearCache('appearance.color');
-            });
-            mv.redraw();
-          }
-        }
       }
     },
     borderWidths: {
