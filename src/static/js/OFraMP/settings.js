@@ -77,8 +77,6 @@ var DEFAULT_SETTINGS = {
     font: "bold 12px Arial",
     chargeFont: "9px Arial",
     color: "rgb( 48, 48, 48)",
-    colorInv: "rgb(207, 207, 207)",
-    chargeColor: "rgb( 48, 48, 48)",
     radius: 20,
     radiusCharged: 20,
     chargeOffset: 6,
@@ -228,7 +226,7 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "showCirc, showID, font, chargeFont, color, colorInv, chargeColor, chargeOffset, borderColor": {
+    "showCirc, showID, font, chargeFont, color, chargeOffset, borderColor": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }

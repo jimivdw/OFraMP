@@ -348,7 +348,7 @@ Atom.prototype = {
    */
   getColor: function() {
     if($ext.color.isDark(this.getBackgroundColor())) {
-      return this.settings.atom.colorInv;
+      return $ext.color.invert(this.settings.atom.color);
     } else {
       return this.settings.atom.color;
     }
@@ -567,7 +567,6 @@ Atom.prototype = {
     if(cl) {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
-      ctx.fillStyle = s.atom.chargeColor;
       ctx.fillText(cl, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);
