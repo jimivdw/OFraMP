@@ -35,6 +35,15 @@ NaiveBehavior.prototype = {
       var atom = selection[0];
     }
 
+    var cb = document.createElement('div');
+    cb.className = 'close';
+    this.oframp.atomDetails.appendChild(cb);
+    $ext.dom.onMouseClick(cb, function() {
+      _this.oframp.mv.molecule.setSelected([]);
+      _this.oframp.hideSelectionDetails();
+      _this.oframp.redraw();
+    });
+
     var ts = document.createElement('span');
     ts.className = "title";
     if(atom) {
@@ -264,8 +273,22 @@ NaiveBehavior.prototype = {
   },
 
   showRelatedFragments: function(fragments, selectionIDs) {
+    var _this = this;
+
     $ext.dom.clear(this.oframp.relatedFragments);
     this.relatedFragmentViewers = new Array();
+
+    var cb = document.createElement('div');
+    cb.className = 'close';
+    this.oframp.relatedFragments.appendChild(cb);
+    $ext.dom.onMouseClick(cb, function() {
+      _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
+      _this.oframp.mv.previewCharges({});
+
+      _this.activeFragment = undefined;
+      _this.oframp.hideRelatedFragments();
+      _this.oframp.redraw();
+    });
 
     var ts = document.createElement('span');
     ts.className = "title";
@@ -327,7 +350,6 @@ NaiveBehavior.prototype = {
       ab.appendChild(document.createTextNode("Select fragment"));
       fc.appendChild(ab);
 
-      var _this = this;
       var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
           228, 130);
       this.relatedFragmentViewers.push(fv);

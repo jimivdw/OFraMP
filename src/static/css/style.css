@@ -515,6 +515,20 @@ button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
     font-size: 30px;
 }
 
+.close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background: #FCC;
+    cursor: pointer;
+}
+
+.close:hover {
+    background: #F99;
+}
+
 #instruction_overlay {
     position: absolute;
     z-index: 100;
