@@ -35,16 +35,7 @@ NaiveBehavior.prototype = {
       var atom = selection[0];
     }
 
-    var cb = document.createElement('div');
-    cb.className = 'close';
-    this.oframp.atomDetails.appendChild(cb);
-    $ext.dom.onMouseClick(cb, function() {
-      _this.oframp.mv.molecule.setSelected([]);
-      _this.oframp.hideSelectionDetails();
-      _this.oframp.redraw();
-    });
-
-    var ts = document.createElement('span');
+    var ts = document.createElement('div');
     ts.className = "title";
     if(atom) {
       var tn = document.createTextNode("Atom details");
@@ -52,13 +43,26 @@ NaiveBehavior.prototype = {
       var tn = document.createTextNode("Selection details");
     }
     ts.appendChild(tn);
+
+    var cb = document.createElement('div');
+    cb.className = 'close';
+    ts.appendChild(cb);
+    $ext.dom.onMouseClick(cb, function() {
+      _this.oframp.mv.molecule.setSelected([]);
+      _this.oframp.hideSelectionDetails();
+      _this.oframp.redraw();
+    });
+
     this.oframp.atomDetails.appendChild(ts);
 
     var sl = new AtomList(this.oframp.mv.molecule, selection);
     var cntr = sl.getCenterPoint();
     var s = sl.getSize();
+    var cc = document.createElement('div');
+    cc.id = "selection_preview";
     var c = this.oframp.getMoleculeCutout(cntr.x, cntr.y, s.w, s.h, 228, 130);
-    this.oframp.atomDetails.appendChild(c);
+    cc.appendChild(c);
+    this.oframp.atomDetails.appendChild(cc);
 
     var dtc = document.createElement('table');
     var dt = document.createElement('tbody');
@@ -278,9 +282,18 @@ NaiveBehavior.prototype = {
     $ext.dom.clear(this.oframp.relatedFragments);
     this.relatedFragmentViewers = new Array();
 
+    var ts = document.createElement('div');
+    ts.className = "title";
+    if(fragments.length > 100) {
+      var title = "Found 100+ fragments";
+    } else {
+      var title = "Found " + fragments.length + " fragments";
+    }
+    ts.appendChild(document.createTextNode(title));
+
     var cb = document.createElement('div');
     cb.className = 'close';
-    this.oframp.relatedFragments.appendChild(cb);
+    ts.appendChild(cb);
     $ext.dom.onMouseClick(cb, function() {
       _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
       _this.oframp.mv.previewCharges({});
@@ -290,14 +303,6 @@ NaiveBehavior.prototype = {
       _this.oframp.redraw();
     });
 
-    var ts = document.createElement('span');
-    ts.className = "title";
-    if(fragments.length > 100) {
-      var title = "Found 100+ fragments";
-    } else {
-      var title = "Found " + fragments.length + " fragments";
-    }
-    ts.appendChild(document.createTextNode(title));
     this.oframp.relatedFragments.appendChild(ts);
 
     if(fragments.length === 0) {

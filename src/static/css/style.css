@@ -145,7 +145,7 @@ html, body {
     background-color: rgb(203,  83,  73);
 }
 #reject_fragment:active:not(:disabled) {
-    background-color: rgb(169,  49,  39);
+background-color: rgb(169,  49,  39);
 }
 
 #view_original {
@@ -220,13 +220,23 @@ html, body {
 }
 
 #atom_details, #related_fragments {
-    padding: 5px 5px 5px 5px;
+    padding: 0 5px;
 }
 
-#atom_details span.title, #related_fragments span.title {
+#atom_details p, #related_fragments p {
+    margin: 0;
+    padding-top: 30px;
+}
+
+#atom_details .title, #related_fragments .title {
+    position: fixed;
     display: block;
+    width: 230px;
+    padding-top: 5px;
     font-size: 16px;
     font-weight: bold;
+    background-color: #FFF;
+    z-index: 10;
 }
 
 #atom_details canvas, #related_fragments canvas {
@@ -353,6 +363,10 @@ html, body {
 
 .fragment canvas.overlapping {
     background-color: #FC9;
+}
+
+#selection_preview, #fc_0 {
+    padding-top: 25px;
 }
 
 #popup {
@@ -490,8 +504,8 @@ button.border_box:hover, a.border_box:hover, select.border_box:hover {
 }
 
 button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
-        select.border_box:active:not(:disabled) {
-    background-color: #DDD;
+select.border_box:active:not(:disabled) {
+background-color: #DDD;
 }
 
 #extra_controls_toggle {
@@ -518,15 +532,16 @@ button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
 .close {
     position: absolute;
     top: 5px;
-    right: 5px;
-    width: 15px;
-    height: 15px;
-    background: #FCC;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+    background: url('../img/cross_product.png') center center no-repeat;
+    opacity: 0.5;
     cursor: pointer;
 }
 
 .close:hover {
-    background: #F99;
+    opacity: 1;
 }
 
 #instruction_overlay {
