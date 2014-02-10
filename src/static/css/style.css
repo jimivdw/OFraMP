@@ -302,7 +302,7 @@ background-color: rgb(169,  49,  39);
 }
 
 #selected_atom_details input, #selected_atom_details button {
-    width: 80px !important;
+    width: 56px !important;
 }
 
 #charge_edit {

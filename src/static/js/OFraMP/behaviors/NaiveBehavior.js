@@ -99,7 +99,7 @@ NaiveBehavior.prototype = {
       sadlc.appendChild(sadl);
       sadl.id = "selected_atom_details";
       sadl.style.display = "none";
-      $ext.dom.addTableRow(sadl, [], ["Elem", "ID", "Charge", ""]);
+      $ext.dom.addTableRow(sadl, [], ["Elem", "Charge", "Edit", "Frags"]);
       $ext.each(selection, function(atom) {
         var cei = document.createElement('input');
         cei.disabled = "disabled";
@@ -137,7 +137,19 @@ NaiveBehavior.prototype = {
           }
         }, $ext.mouse.LEFT);
 
-        $ext.dom.addTableRow(sadl, [atom.element, "" + atom.id, cei, ceb]);
+        if(atom.usedFragments.length > 0) {
+          var fcb = document.createElement("button");
+          fcb.className = "border_box";
+          $ext.dom.addText(fcb, "Show");
+          $ext.dom.onMouseClick(fcb, function() {
+            _this.oframp.showUsedFragments(atom);
+          }, $ext.mouse.LEFT);
+        } else {
+          var fcb = "-";
+        }
+
+        var el = atom.element + "(" + atom.id + ")";
+        $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
       });
       this.oframp.atomDetails.appendChild(sadlc);
 
