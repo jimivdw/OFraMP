@@ -396,7 +396,7 @@ MoleculeViewer.prototype = {
    */
   previewCharges: function(charges) {
     this.molecule.atoms.each(function(atom) {
-      if(charges[atom.id]) {
+      if(charges[atom.id] !== undefined) {
         atom.previewCharge = charges[atom.id];
         if(atom.isCharged()) {
           atom.addHighlight(ATOM_STATUSES.conflict);
@@ -419,7 +419,7 @@ MoleculeViewer.prototype = {
   setCharges: function(charges, fragment) {
     var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
-      if(charges[atom.id]) {
+      if(charges[atom.id] !== undefined) {
         if(atom.isCharged()) {
           if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
             this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
