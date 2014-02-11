@@ -285,16 +285,12 @@ $ext.extend($ext, {
 
       var wheelEndTimeout = undefined;
 
-      _onWheel(elem, this.wheelEventName, callback, useCapture);
-      if(this.wheelEventName === "DOMMouseScroll") {
-        _onWheel(elem, "MozMousePixelScroll", callback, useCapture);
-      }
-
       function _onWheel(elem, wf, callback, useCapture) {
         if(wf === "wheel") {
           _this.addEventListener(elem, wf, callback, useCapture);
+          return callback;
         } else {
-          _this.addEventListener(elem, wf, function(originalEvent) {
+          var cb = function(originalEvent) {
             if(!originalEvent) {
               originalEvent = window.event;
             }
@@ -350,9 +346,22 @@ $ext.extend($ext, {
             if(callback instanceof Function) {
               return callback(event);
             }
-          }, useCapture);
+          };
+
+          _this.addEventListener(elem, wf, cb, useCapture);
+          return cb;
         }
       }
+
+      var cb = _onWheel(elem, this.wheelEventName, callback, useCapture);
+      if(this.wheelEventName === "DOMMouseScroll") {
+        cb = _onWheel(elem, "MozMousePixelScroll", callback, useCapture);
+      }
+      return cb;
+    },
+
+    unMouseWheel: function(elem, callback, useCapture) {
+      this.removeEventListener(elem, this.wheelEventName, callback, useCapture);
     },
 
     onMouseWheelEnd: function(elem, callback, useCapture) {

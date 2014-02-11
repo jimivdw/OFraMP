@@ -100,7 +100,7 @@ NaiveDemo.prototype = {
     this.overlay.style.right = "30px";
     this.overlay.style.width = "220px";
 
-    $ext.dom.addText(this.overlay, "You can now zoom the molecule by "
+    $ext.dom.addText(this.overlay, "You can also zoom the molecule by "
         + "using your mouse's scrollwheel");
 
     $ext.dom.onMouseWheel(this.oframp.container, null);
