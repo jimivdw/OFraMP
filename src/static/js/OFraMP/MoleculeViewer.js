@@ -313,7 +313,8 @@ MoleculeViewer.prototype = {
   showMolecule: function(dataStr, success, failure, fromATB) {
     this.getMoleculeData(dataStr, function(md) {
       this.showOverlay("Initializing molecule...");
-      this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
+      this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr,
+          md.molid);
 
       if(!fromATB) {
         var mj = JSON.stringify({
