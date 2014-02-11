@@ -656,6 +656,7 @@ OFraMP.prototype = {
       $ext.each(fragment.atoms, function(atom) {
         var o = this.molecule.atoms.get(atom.other_id);
         o.charge = atom.charge;
+        o.addHighlight(ATOM_STATUSES.preview);
       }, this);
       this.setupInteraction();
       this.molecule.minimize();
@@ -663,7 +664,6 @@ OFraMP.prototype = {
         return this.molecule.atoms.get(oid);
       }, this);
       this.molecule.centerOnAtoms(oas);
-      this.molecule.setSelected(oas);
       this.hideOverlay();
       this.redraw();
     }, null, true);
