@@ -482,9 +482,14 @@ OFraMP.prototype = {
       }
     };
 
+    var data = "data=" + encodeURIComponent(queryJSON);
+    if(this.settings.omfraf.shellSize) {
+      data += "&shell=" + this.settings.omfraf.shellSize;
+    }
+
     xhr.open("POST", this.settings.omfraf.generateUrl, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("data=" + encodeURIComponent(queryJSON));
+    xhr.send(data);
   },
 
   /*
