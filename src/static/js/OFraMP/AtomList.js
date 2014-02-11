@@ -448,7 +448,6 @@ AtomList.prototype = {
       return this.settings.showHAtoms || atom.element !== "H";
     }, this);
     var lc = atoms.getCenterPoint();
-    console.log(lc, atoms);
     this.centerOn(lc.x, lc.y);
   },
 
