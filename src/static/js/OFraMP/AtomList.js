@@ -23,7 +23,7 @@ AtomList.prototype = {
         this.atoms.push(atom);
       } else {
         this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
-            atom.x, atom.y, atom.charge, atom.previewCharge,
+            atom.iacm, atom.x, atom.y, atom.charge, atom.previewCharge,
             atom.usedFragments, atom.status));
       }
     }, this);

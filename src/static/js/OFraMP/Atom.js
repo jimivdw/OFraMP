@@ -1,9 +1,9 @@
 /**
  * Data structure for an atom
  */
-function Atom(list, id, element, elementID, x, y, charge, previewCharge,
+function Atom(list, id, element, elementID, iacm, x, y, charge, previewCharge,
     usedFragments, status) {
-  this.__init(list, id, element, elementID, x, y, charge, previewCharge,
+  this.__init(list, id, element, elementID, iacm, x, y, charge, previewCharge,
       usedFragments, status);
 }
 
@@ -15,6 +15,7 @@ Atom.prototype = {
   id: undefined,
   element: undefined,
   elementID: undefined,
+  iacm: undefined,
   x: undefined,
   y: undefined,
   charge: undefined,
@@ -22,8 +23,8 @@ Atom.prototype = {
   usedFragments: undefined,
   status: undefined,
 
-  __init: function(list, id, element, elementID, x, y, charge, previewCharge,
-      usedFragments, status) {
+  __init: function(list, id, element, elementID, iacm, x, y, charge,
+      previewCharge, usedFragments, status) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
@@ -31,6 +32,7 @@ Atom.prototype = {
     this.id = id;
     this.element = element;
     this.elementID = elementID;
+    this.iacm = iacm;
     this.x = x;
     this.y = y;
     this.charge = charge;
