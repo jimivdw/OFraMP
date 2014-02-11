@@ -653,6 +653,10 @@ OFraMP.prototype = {
     var ov = new MoleculeViewer(this, "original_" + fragment.atb_id, content,
         580, this.popup.clientHeight - 100);
     ov.showMolecule(fragment.atb_id, function() {
+      $ext.each(fragment.atoms, function(atom) {
+        var o = this.molecule.atoms.get(atom.other_id);
+        o.charge = atom.charge;
+      }, this);
       this.setupInteraction();
       this.molecule.minimize();
       var oas = $ext.array.map(oids, function(oid) {
