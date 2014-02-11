@@ -408,6 +408,36 @@ NaiveBehavior.prototype = {
         $ext.dom.onScroll(rightBar, callback);
       }
 
+      $ext.dom.onMouseOver(fv.canvas, function() {
+        if(!fv.molecule) {
+          return;
+        }
+
+        var charges = {};
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
+        }, this);
+        _this.oframp.mv.previewCharges(charges);
+      });
+
+      $ext.dom.onMouseOut(fv.canvas, function() {
+        if(!fv.molecule) {
+          return;
+        }
+
+        if(_this.activeFragment) {
+          if(_this.activeFragment !== fv) {
+            var charges = {};
+            _this.activeFragment.molecule.atoms.each(function(atom) {
+              charges[atom.id] = atom.charge;
+            }, this);
+            _this.oframp.mv.previewCharges(charges);
+          }
+        } else {
+          _this.oframp.mv.previewCharges({});
+        }
+      });
+
       $ext.dom.onMouseClick(fv.canvas, function() {
         if(!fv.molecule) {
           return;
