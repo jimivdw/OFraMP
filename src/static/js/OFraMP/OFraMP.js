@@ -721,6 +721,8 @@ OFraMP.prototype = {
     var ffbState = "";
     if(!this.off) {
       ffbState = "disabled";
+      $ext.dom.clear(this.findFragmentsButton);
+      $ext.dom.addText(this.findFragmentsButton, "Loading fragments...");
     }
     if(selection && selection.length > 0) {
       this.findFragmentsButton.disabled = ffbState;

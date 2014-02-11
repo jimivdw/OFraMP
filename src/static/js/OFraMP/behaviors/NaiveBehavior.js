@@ -279,6 +279,8 @@ NaiveBehavior.prototype = {
       this.oframp.atomDetails.appendChild(ffb);
       if(!this.oframp.off) {
         ffb.disabled = "disabled";
+        $ext.dom.clear(ffb);
+        $ext.dom.addText(ffb, "Generating fragments...");
       }
       $ext.dom.onMouseClick(ffb, function() {
         _this.oframp.getMatchingFragments();
