@@ -725,6 +725,17 @@ OFraMP.prototype = {
     if(selection && selection.length > 0) {
       this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
+
+      if(this.off) {
+        // Make sure charges are not currently being previewed
+        var pas = $ext.array.filter(this.mv.molecule.atoms.atoms,
+            function(atom) {
+          return atom.previewCharge !== undefined;
+        });
+        if(pas.length === 0) {
+          this.getMatchingFragments();
+        }
+      }
     } else {
       this.findFragmentsButton.disabled = "disabled";
       this.hideSelectionDetails();
