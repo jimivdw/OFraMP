@@ -11,6 +11,8 @@ SmartBehavior.prototype = {
 
   __init: function(oframp) {
     this.oframp = oframp;
+    this.demo = new SmartDemo(oframp);
+
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {

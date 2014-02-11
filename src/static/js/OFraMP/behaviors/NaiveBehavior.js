@@ -10,6 +10,7 @@ NaiveBehavior.prototype = {
 
   __init: function(oframp) {
     this.oframp = oframp;
+    this.demo = new NaiveDemo(oframp);
 
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',

@@ -8,7 +8,6 @@ OFraMP.prototype = {
   settings: undefined,
   mv: undefined,
   settingsUI: undefined,
-  demo: undefined,
   off: undefined,
 
   atomDetails: undefined,
@@ -42,7 +41,6 @@ OFraMP.prototype = {
     this.container = document.getElementById(containerID);
     this.behavior = new behavior(this);
     this.__initUI();
-    this.demo = new Demo(this);
     this.showInsertMoleculePopup();
   },
 
