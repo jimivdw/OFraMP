@@ -282,8 +282,8 @@ MoleculeViewer.prototype = {
             var msg = "An error has occured:\n" + md.error;
             _this.showOverlay(msg, MESSAGE_TYPES.error);
             failure.call(_this, msg);
-          } else if(md.atoms && md.bonds) {
-            success.call(_this, md);
+          } else if(md.molecule) {
+            success.call(_this, md.molecule);
           }
         } else {
           var msg = "Could not connect to server";
