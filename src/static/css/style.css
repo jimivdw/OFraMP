@@ -377,11 +377,14 @@ background-color: rgb(169,  49,  39);
     margin-left: -300px;
     width: 600px;
     z-index: 10;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #popup_title {
     padding: 10px;
     font-size: 20px;
+    cursor: move;
 }
 
 #popup hr {

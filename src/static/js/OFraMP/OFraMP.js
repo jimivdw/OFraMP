@@ -110,6 +110,16 @@ OFraMP.prototype = {
     this.popupContent = document.createElement('div');
     this.popupContent.id = "popup_content";
 
+    $ext.dom.onMouseDrag(this.popupTitle, function(e) {
+      var cs = getComputedStyle(container);
+      var left = (popup.offsetLeft - parseInt(cs.marginLeft) + e.deltaX) + "px";
+      var top = (parseInt(cs.top) + e.deltaY) + "px";
+      var bottom = (parseInt(cs.bottom) - e.deltaY) + "px";
+      container.style.left = left;
+      container.style.top = top;
+      container.style.bottom = bottom;
+    }, $ext.mouse.LEFT);
+
     container.appendChild(this.popupTitle);
     container.appendChild(document.createElement('hr'));
     container.appendChild(this.popupContent);
