@@ -179,6 +179,9 @@ OFraMP.prototype = {
     $ext.dom.clear(this.popupContent);
     this.popupTitle.appendChild(document.createTextNode(title));
     this.popupContent.appendChild(content);
+    this.popup.style.top = "";
+    this.popup.style.bottom = "";
+    this.popup.style.left = "";
     this.popup.style.visibility = 'visible';
   },
 
