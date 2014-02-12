@@ -68,6 +68,17 @@ Atom.prototype = {
     };
   },
 
+  getLGF: function() {
+    var charge = this.charge || 0.;
+    return $ext.number.format(charge, 1, 3, 0) + "\t" + // partial_charge
+        this.id + "\t" +  // label
+        this.elementID + "\t" + // label2
+        this.iacm + "\t" + // atomType
+        "0.000\t0.000\t0.000\t" + // X Y Z coordinates, unknown here
+        this.id + "\t" + // initColor, can be equal to ID here
+        "\n";
+  },
+
   /*
    * Get the base of a hydrogen atom.
    * 

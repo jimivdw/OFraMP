@@ -47,6 +47,16 @@ AtomList.prototype = {
     });
   },
 
+  getLGF: function() {
+    var header = "@nodes\n" +
+        "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t" +
+        "initColor\t\n";
+    var lgfs = this.map(function(atom) {
+      return atom.getLGF();
+    });
+    return header + lgfs.join("");
+  },
+
   /*
    * Get the atom with the given id.
    */
