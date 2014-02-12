@@ -47,7 +47,7 @@ Atom.prototype = {
   getSimpleJSON: function() {
     return {
       id: this.id,
-      element: this.element
+      type: this.iacm
     };
   },
 
