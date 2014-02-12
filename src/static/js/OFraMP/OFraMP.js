@@ -9,6 +9,7 @@ OFraMP.prototype = {
   mv: undefined,
   settingsUI: undefined,
   off: undefined,
+  off_missing: undefined,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -456,9 +457,10 @@ OFraMP.prototype = {
           } else if(fd.error) {
             showError(fd.error);
           } else if(fd.off) {
-            console.log("Related fragments generated:", fd.off);
+            console.log("Related fragments generated:", fd.off, fd.missing_atoms);
 
             _this.off = fd.off;
+            _this.off_missing = fd.missing_atoms;
             $ext.dom.dispatchEvent(_this.container,
                 _this.fragmentsGeneratedEvent);
           }
