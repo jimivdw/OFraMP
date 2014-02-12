@@ -399,6 +399,12 @@ background-color: rgb(169,  49,  39);
     text-align: center;
 }
 
+#popup_content p {
+    margin: 5px;
+    text-align: left;
+    font-size: 14px;
+}
+
 #popup_content textarea {
     display: block;
     width: 580px;

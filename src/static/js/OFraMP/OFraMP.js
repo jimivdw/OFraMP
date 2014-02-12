@@ -745,7 +745,12 @@ OFraMP.prototype = {
           return atom.previewCharge !== undefined;
         });
         if(pas.length === 0) {
-          this.getMatchingFragments();
+          var cas = $ext.array.filter(selection, function(atom) {
+            return !atom.isCharged();
+          });
+          if(cas.length > 0) {
+            this.getMatchingFragments();
+          }
         }
       }
     } else {
