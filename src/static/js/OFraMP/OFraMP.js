@@ -15,6 +15,7 @@ OFraMP.prototype = {
   errorControls: undefined,
 
   popup: undefined,
+  popupClose: undefined,
   popupTitle: undefined,
   popupContent: undefined,
 
@@ -104,6 +105,13 @@ OFraMP.prototype = {
   },
 
   __initPopup: function(container) {
+    var _this = this;
+    this.popupClose = document.createElement('div');
+    this.popupClose.className = "close";
+    $ext.dom.onMouseClick(this.popupClose, function() {
+      _this.hidePopup();
+    }, $ext.mouse.LEFT);
+
     this.popupTitle = document.createElement('div');
     this.popupTitle.id = "popup_title";
 
@@ -120,6 +128,7 @@ OFraMP.prototype = {
       container.style.bottom = bottom;
     }, $ext.mouse.LEFT);
 
+    container.appendChild(this.popupClose);
     container.appendChild(this.popupTitle);
     container.appendChild(document.createElement('hr'));
     container.appendChild(this.popupContent);
@@ -174,11 +183,14 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
-  showPopup: function(title, content) {
+  showPopup: function(title, content, closable) {
     $ext.dom.clear(this.popupTitle);
     $ext.dom.clear(this.popupContent);
     this.popupTitle.appendChild(document.createTextNode(title));
     this.popupContent.appendChild(content);
+    if(closable === true) {
+      this.popupClose.style.display = "block";
+    }
     this.popup.style.top = "";
     this.popup.style.bottom = "";
     this.popup.style.left = "";
@@ -187,6 +199,7 @@ OFraMP.prototype = {
 
   hidePopup: function() {
     this.popup.style.visibility = "hidden";
+    this.popupClose.style.display = "";
   },
 
   showInsertMoleculePopup: function() {
@@ -265,7 +278,7 @@ OFraMP.prototype = {
       cbs.appendChild(cb);
     }
 
-    this.showPopup(title, content);
+    this.showPopup(title, content, this.mv.molecule !== undefined);
     ta.focus();
   },
 

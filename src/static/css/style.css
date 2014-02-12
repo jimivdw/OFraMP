@@ -535,6 +535,12 @@ select.border_box:active:not(:disabled) {
     opacity: 1;
 }
 
+#popup .close {
+    display: none;
+    right: 5px;
+    height: 35px;
+}
+
 #instruction_overlay {
     position: absolute;
     z-index: 100;
