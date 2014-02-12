@@ -452,8 +452,11 @@ NaiveBehavior.prototype = {
           .getElementsByTagName("button")[0].disabled = "disabled";
           _this.activeFragment.canvas.parentElement
           .getElementsByTagName("button")[1].disabled = "disabled";
+          $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
+              "active");
         }
         _this.activeFragment = fv;
+        $ext.dom.addClass(fc, "active");
 
         var charges = {};
         $ext.each(atoms, function(atom) {

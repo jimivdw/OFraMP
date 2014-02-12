@@ -4,7 +4,7 @@ $ext.extend($ext, {
      * Add a class to the given elem.
      */
     addClass: function(elem, className) {
-      elem.className += className;
+      elem.className += " " + className;
     },
 
     /*
