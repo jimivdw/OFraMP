@@ -298,9 +298,9 @@
 
         // Hide broken stuff on IE
         if(BrowserDetect.browser === "Explorer") {
-          sb.remove();
           if(BrowserDetect.version < 10) {
             of.remove();
+            sb.remove();
             sv.remove();
           }
           if(BrowserDetect.version < 9) {
