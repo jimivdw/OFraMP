@@ -353,15 +353,20 @@ $ext.extend($ext, {
         }
       }
 
-      var cb = _onWheel(elem, this.wheelEventName, callback, useCapture);
+      var cbs = {};
+      cbs[this.wheelEventName] = _onWheel(elem, this.wheelEventName, callback,
+          useCapture);
       if(this.wheelEventName === "DOMMouseScroll") {
-        cb = _onWheel(elem, "MozMousePixelScroll", callback, useCapture);
+        cbs["MozMousePixelScroll"] = _onWheel(elem, "MozMousePixelScroll",
+            callback, useCapture);
       }
-      return cb;
+      return cbs;
     },
 
-    unMouseWheel: function(elem, callback, useCapture) {
-      this.removeEventListener(elem, this.wheelEventName, callback, useCapture);
+    unMouseWheel: function(elem, callbacks, useCapture) {
+      $ext.each(callbacks, function(callback, name) {
+        this.removeEventListener(elem, name, callback, useCapture);
+      }, this);
     },
 
     onMouseWheelEnd: function(elem, callback, useCapture) {
