@@ -330,7 +330,7 @@ OFraMP.prototype = {
     var title = "Used molecule fragments";
 
     var content = document.createElement('div');
-    this.showPopup(title, content);
+    this.showPopup(title, content, true);
 
     var frags = document.createElement('div');
     frags.id = "used_fragments";
@@ -372,36 +372,10 @@ OFraMP.prototype = {
       fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
       fv.redraw();
 
-      var oids = $ext.array.map(fragment.atoms, function(atom) {
-        return atom.other_id;
-      });
       $ext.dom.onMouseClick(ob, function() {
-        var title = "Fragment molecule";
-        var content = document.createElement('div');
-
-        var ov = new MoleculeViewer(_this, "original_" + i, content, 580,
-            _this.popup.clientHeight - 100);
-        ov.showMolecule(fragment.atb_id, function() {
-          this.setupInteraction();
-          this.molecule.centerOnAtom(this.molecule.atoms.get(oids[0]));
-          var oas = $ext.array.map(oids, function(oid) {
-            return this.molecule.atoms.get(oid);
-          }, this);
-          this.molecule.setSelected(oas);
-          this.hideOverlay();
-          this.redraw();
-        }, null, true);
-        ov.canvas.className = "border_box";
-
-        var cb = document.createElement('button');
-        cb.appendChild(document.createTextNode("Close"));
-        content.appendChild(cb);
-
-        $ext.dom.onMouseClick(cb, function() {
+        _this.showOriginal(fragment, function() {
           _this.showUsedFragments(atom);
-        }, $ext.mouse.LEFT);
-
-        _this.showPopup(title, content);
+        });
       }, $ext.mouse.LEFT);
     }, this);
 
@@ -664,7 +638,7 @@ OFraMP.prototype = {
     return c;
   },
 
-  showOriginal: function(fragment) {
+  showOriginal: function(fragment, onClose) {
     var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
     var content = document.createElement('div');
 
@@ -695,11 +669,14 @@ OFraMP.prototype = {
     content.appendChild(cb);
 
     var _this = this;
-    $ext.dom.onMouseClick(cb, function() {
-      _this.hidePopup();
-    }, $ext.mouse.LEFT);
+    if(!onClose) {
+      onClose = function() {
+        _this.hidePopup();
+      }
+    }
+    $ext.dom.onMouseClick(cb, onClose, $ext.mouse.LEFT);
 
-    this.showPopup(title, content);
+    this.showPopup(title, content, true);
   },
 
   checkpoint: function() {
