@@ -452,8 +452,11 @@ NaiveBehavior.prototype = {
           .getElementsByTagName("button")[0].disabled = "disabled";
           _this.activeFragment.canvas.parentElement
           .getElementsByTagName("button")[1].disabled = "disabled";
+          $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
+              "active");
         }
         _this.activeFragment = fv;
+        $ext.dom.addClass(fc, "active");
 
         var charges = {};
         $ext.each(atoms, function(atom) {
@@ -616,14 +619,87 @@ NaiveBehavior.prototype = {
         _this.oframp.checkpoint();
         if(unpar.length === 0) {
           _this.parameterizationFinished();
+        } else {
+          var parunpar = $ext.array.filter(unpar, function(atom) {
+            return _this.oframp.off_missing.indexOf(atom.id) === -1;
+          });
+          if(parunpar.length === 0) {
+            _this.parameterizationFinished(true);
+          }
         }
       }
     }, $ext.mouse.LEFT);
     this.oframp.showPopup(title, content);
   },
 
-  parameterizationFinished: function() {
-    alert("You're done! I don't know what should happen now...");
+  parameterizationFinished: function(incomplete) {
+    var _this = this;
+
+    if(incomplete === true) {
+      var title = "No more options available";
+      var message = "The molecule has been parameterised up to the point " +
+          "where there are no more available fragments for the " +
+          "unparameterised atoms. You can manually add charges for these " +
+          "atoms by selecting them and using the charge edit buttons in " +
+          "the selection details window. Charges for other atoms can be" +
+          "edited here as well.";
+    } else {
+      var title = "Fully parameterised";
+      var message = "All atoms in the molecule have been parameterised. If " +
+          "you feel some charges need to be adjusted, this can be done by " +
+          "selecting those atoms and using the charge edit buttons in the " +
+          "selection details window.";
+    }
+
+    var content = document.createElement('div');
+
+    var mp = document.createElement('p');
+    $ext.dom.addText(mp, message);
+    content.appendChild(mp);
+
+    var dp = document.createElement('p');
+    $ext.dom.addText(dp, "You can now download the parameterised molecule " +
+        "data file in LGF format using the 'Download LGF' button below. It " +
+        "is also possible to do this later using the 'Download' button at " +
+        "the top of the page.");
+    content.appendChild(dp);
+
+    var cd = document.createElement('div');
+    cd.className = "controls";
+    content.appendChild(cd);
+
+    var db = document.createElement('button');
+    $ext.dom.addText(db, "Download LGF");
+    db.className = "border_box";
+    $ext.dom.onMouseClick(db, function() {
+      var data = _this.oframp.mv.molecule.getLGF();
+      var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
+      var fname = "OFraMP-" + date + ".lgf";
+      $ext.sendDataForm("save.php", {
+        data: data,
+        fname: fname
+      }, "post", "_blank");
+    }, $ext.mouse.LEFT);
+    cd.appendChild(db);
+
+    var nb = document.createElement('button');
+    $ext.dom.addText(nb, "Enter new molecule");
+    nb.className = "border_box";
+    $ext.dom.onMouseClick(nb, function() {
+      _this.oframp.showInsertMoleculePopup();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(nb);
+
+    var cb = document.createElement('button');
+    $ext.dom.addText(cb, "Cancel");
+    cb.style.float = 'left';
+    cb.className = "border_box";
+    $ext.dom.onMouseClick(cb, function() {
+      _this.oframp.hidePopup();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(cb);
+
+    this.oframp.showPopup(title, content, true);
   }
 };
 

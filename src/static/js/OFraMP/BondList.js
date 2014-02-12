@@ -42,6 +42,16 @@ BondList.prototype = {
     });
   },
 
+  getLGF: function() {
+    var header = "@edges\n" +
+        "\t\tlabel\t" +
+        "\n";
+    var lgfs = this.map(function(bond) {
+      return bond.getLGF();
+    });
+    return header + lgfs.join("");
+  },
+
   /*
    * Get the bond with the given ID.
    */

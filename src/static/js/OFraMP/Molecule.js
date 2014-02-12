@@ -49,6 +49,10 @@ Molecule.prototype = {
     };
   },
 
+  getLGF: function() {
+    return this.atoms.getLGF() + this.bonds.getLGF();
+  },
+
   /*
    * Get the width of this molecule.
    */

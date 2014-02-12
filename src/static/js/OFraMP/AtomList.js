@@ -23,7 +23,7 @@ AtomList.prototype = {
         this.atoms.push(atom);
       } else {
         this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
-            atom.x, atom.y, atom.charge, atom.previewCharge,
+            atom.iacm, atom.x, atom.y, atom.charge, atom.previewCharge,
             atom.usedFragments, atom.status));
       }
     }, this);
@@ -45,6 +45,16 @@ AtomList.prototype = {
     return $ext.array.map(this.atoms, function(atom) {
       return atom.getJSON();
     });
+  },
+
+  getLGF: function() {
+    var header = "@nodes\n" +
+        "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t" +
+        "initColor\t\n";
+    var lgfs = this.map(function(atom) {
+      return atom.getLGF();
+    });
+    return header + lgfs.join("");
   },
 
   /*
@@ -448,7 +458,6 @@ AtomList.prototype = {
       return this.settings.showHAtoms || atom.element !== "H";
     }, this);
     var lc = atoms.getCenterPoint();
-    console.log(lc, atoms);
     this.centerOn(lc.x, lc.y);
   },
 

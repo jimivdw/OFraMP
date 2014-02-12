@@ -4,7 +4,7 @@ $ext.extend($ext, {
      * Add a class to the given elem.
      */
     addClass: function(elem, className) {
-      elem.className += className;
+      elem.className += " " + className;
     },
 
     /*
@@ -531,7 +531,7 @@ $ext.extend($ext, {
       var lastDragPos = undefined;
 
       this.onMouseDown(elem, _onMouseDown, button, useCapture);
-      this.onMouseUp(elem, _onMouseUp, button, useCapture);
+      this.onMouseUp(window, _onMouseUp, button, useCapture);
 
       function _onMouseDown(evt) {
         mouseDown = true;
@@ -550,7 +550,7 @@ $ext.extend($ext, {
           mouseDragged = true;
           _this.removeEventListener(elem, "mousemove", _onMouseMove);
 
-          _this.addEventListener(elem, "mousemove", _onMouseDrag, useCapture);
+          _this.addEventListener(window, "mousemove", _onMouseDrag, useCapture);
         }
       }
 

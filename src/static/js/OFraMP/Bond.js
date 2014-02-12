@@ -50,6 +50,13 @@ Bond.prototype = {
     };
   },
 
+  getLGF: function() {
+    return this.a1.id + "\t" +
+        this.a2.id + "\t" +
+        this.id + "\t" + // label
+        "\n";
+  },
+
   /*
    * Determine if this bond is currently visible.
    * 

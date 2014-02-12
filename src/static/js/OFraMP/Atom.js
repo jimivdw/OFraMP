@@ -1,9 +1,9 @@
 /**
  * Data structure for an atom
  */
-function Atom(list, id, element, elementID, x, y, charge, previewCharge,
+function Atom(list, id, element, elementID, iacm, x, y, charge, previewCharge,
     usedFragments, status) {
-  this.__init(list, id, element, elementID, x, y, charge, previewCharge,
+  this.__init(list, id, element, elementID, iacm, x, y, charge, previewCharge,
       usedFragments, status);
 }
 
@@ -15,6 +15,7 @@ Atom.prototype = {
   id: undefined,
   element: undefined,
   elementID: undefined,
+  iacm: undefined,
   x: undefined,
   y: undefined,
   charge: undefined,
@@ -22,8 +23,8 @@ Atom.prototype = {
   usedFragments: undefined,
   status: undefined,
 
-  __init: function(list, id, element, elementID, x, y, charge, previewCharge,
-      usedFragments, status) {
+  __init: function(list, id, element, elementID, iacm, x, y, charge,
+      previewCharge, usedFragments, status) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
@@ -31,6 +32,7 @@ Atom.prototype = {
     this.id = id;
     this.element = element;
     this.elementID = elementID;
+    this.iacm = iacm;
     this.x = x;
     this.y = y;
     this.charge = charge;
@@ -45,7 +47,7 @@ Atom.prototype = {
   getSimpleJSON: function() {
     return {
       id: this.id,
-      element: this.element
+      type: this.iacm
     };
   },
 
@@ -64,6 +66,17 @@ Atom.prototype = {
       usedFragments: this.usedFragments,
       status: this.status
     };
+  },
+
+  getLGF: function() {
+    var charge = this.charge || 0.;
+    return $ext.number.format(charge, 1, 3, 0) + "\t" + // partial_charge
+        this.id + "\t" +  // label
+        this.elementID + "\t" + // label2
+        this.iacm + "\t" + // atomType
+        "0.000\t0.000\t0.000\t" + // X Y Z coordinates, unknown here
+        this.id + "\t" + // initColor, can be equal to ID here
+        "\n";
   },
 
   /*
