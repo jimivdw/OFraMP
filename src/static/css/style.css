@@ -556,7 +556,7 @@ select.border_box:active:not(:disabled) {
 }
 
 .highlighted {
-    border: 5px solid #333 !important;
+    border: 3px solid #333 !important;
     border-radius: 4px !important;
 }
 
