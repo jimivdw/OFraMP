@@ -29,6 +29,8 @@ OFraMP.prototype = {
   moleculeEnteredEvent: 'moleculeentered',
   moleculeDisplayedEvent: 'moleculedisplayed',
   fragmentsGeneratedEvent: 'fragmentsgenerated',
+  fragmentsFoundEvent: 'fragmentsfound',
+  selectionChangedEvent: 'selectionchanged',
   historyChangedEvent: 'historychanged',
 
   __init: function(behavior, containerID, settings) {
@@ -231,6 +233,7 @@ OFraMP.prototype = {
 
     // Only for debug purposes, TODO: remove
     var rb = document.createElement('button');
+    rb.id = "random_molecule";
     rb.className = "border_box";
     rb.appendChild(document.createTextNode("Random molecule"));
     rb.onclick = function() {
@@ -584,6 +587,7 @@ OFraMP.prototype = {
             });
             _this.hideRelatedFragments();
             _this.behavior.showRelatedFragments(fragments, selectionIDs);
+            $ext.dom.dispatchEvent(_this.container, _this.fragmentsFoundEvent);
           }
         } else {
           var msg = "Could not connect to the OMFraF server."
@@ -759,6 +763,7 @@ OFraMP.prototype = {
       this.findFragmentsButton.disabled = "disabled";
       this.hideSelectionDetails();
     }
+    $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
   },
 
 
