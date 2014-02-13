@@ -372,12 +372,22 @@ var dom = {
     return cbs;
   },
 
+  /*
+   * Bind a callback to the mousewheelend event on a given elem.
+   * 
+   * Note: ONLY dispatched when the mousewheel event is bound on the elem as
+   * well.
+   */
   onMouseWheelEnd: function(elem, callback, useCapture) {
-    this.addEventListener(elem, "mousewheelend", function(evt) {
+    var cb = function(evt) {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mousewheelend", cb, useCapture);
+    return {
+      mousewheelend: cb
+    };
   },
 
   // Minimal distance a mouse should move before a click becomes a drag.
@@ -409,12 +419,16 @@ var dom = {
    */
   onMouseOver: function(elem, callback, useCapture) {
     var _this = this;
-    this.addEventListener(elem, "mouseover", function(evt) {
+    var cb = function(evt) {
       evt = _this.eventObject(evt);
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mouseover", cb, useCapture);
+    return {
+      mouseover: cb
+    };
   },
 
   /*
@@ -422,12 +436,16 @@ var dom = {
    */
   onMouseOut: function(elem, callback, useCapture) {
     var _this = this;
-    this.addEventListener(elem, "mouseout", function(evt) {
+    var cb = function(evt) {
       evt = _this.eventObject(evt);
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mouseout", cb, useCapture);
+    return {
+      mouseout: cb
+    };
   },
 
   /*
@@ -435,7 +453,7 @@ var dom = {
    */
   onMouseDown: function(elem, callback, button, useCapture) {
     var _this = this;
-    this.addEventListener(elem, "mousedown", function(evt) {
+    var cb = function(evt) {
       evt = _this.eventObject(evt);
       evt.button = _this.getMouseButton(evt);
       if(button !== undefined && evt.button !== button) {
@@ -445,7 +463,11 @@ var dom = {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mousedown", cb, useCapture);
+    return {
+      mousedown: cb
+    };
   },
 
   /*
@@ -453,7 +475,7 @@ var dom = {
    */
   onMouseUp: function(elem, callback, button, useCapture) {
     var _this = this;
-    this.addEventListener(elem, "mouseup", function(evt) {
+    var cb = function(evt) {
       evt = _this.eventObject(evt);
       evt.button = _this.getMouseButton(evt);
       if(button !== undefined && evt.button !== button) {
@@ -463,7 +485,11 @@ var dom = {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mouseup", cb, useCapture);
+    return {
+      mouseup: cb
+    };
   },
 
   /*
@@ -475,14 +501,14 @@ var dom = {
   onMouseMove: function(elem, callback, useCapture) {
     var mouseDown = false;
 
-    this.onMouseDown(elem, function() {
+    var dcb = this.onMouseDown(elem, function() {
       mouseDown = true;
     });
-    this.onMouseUp(elem, function() {
+    var ucb = this.onMouseUp(elem, function() {
       mouseDown = false;
     });
 
-    this.addEventListener(elem, "mousemove", function(evt) {
+    var mcb = function(evt) {
       if(mouseDown) {
         return;
       }
@@ -490,7 +516,11 @@ var dom = {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mousemove", mcb, useCapture);
+    return $ext.merge($ext.merge({
+      mousemove: mcb
+    }, dcb), ucb);
   },
 
   /*
@@ -504,14 +534,14 @@ var dom = {
     var _this = this;
     var lastDownPos = undefined;
 
-    this.onMouseDown(elem, function(evt) {
+    var dcb = this.onMouseDown(elem, function(evt) {
       lastDownPos = {
         clientX: evt.clientX,
         clientY: evt.clientY
       };
     }, button, useCapture);
 
-    this.onMouseUp(elem, function(evt) {
+    var ucb = this.onMouseUp(elem, function(evt) {
       if(!lastDownPos) {
         return;
       }
@@ -523,6 +553,8 @@ var dom = {
       }
       lastDownPos = undefined;
     }, button, useCapture);
+
+    return $ext.merge(dcb, ucb);
   },
 
   /*
@@ -537,9 +569,6 @@ var dom = {
     var mouseDragged = false;
     var lastDownPos = undefined;
     var lastDragPos = undefined;
-
-    this.onMouseDown(elem, _onMouseDown, button, useCapture);
-    this.onMouseUp(window, _onMouseUp, button, useCapture);
 
     function _onMouseDown(evt) {
       mouseDown = true;
@@ -610,11 +639,15 @@ var dom = {
         return callback($ext.merge(evt, delta, true));
       }
     }
+
+    var dcb = this.onMouseDown(elem, _onMouseDown, button, useCapture);
+    var ucb = this.onMouseUp(window, _onMouseUp, button, useCapture);
+    return $ext.merge(dcb, ucb);
   },
 
   onMouseDragEnd: function(elem, callback, button, useCapture) {
     var _this = this;
-    this.addEventListener(elem, "mousedragend", function(evt) {
+    var cb = function(evt) {
       evt = _this.eventObject(evt);
       if(button !== undefined && evt.button !== button) {
         return;
@@ -623,20 +656,35 @@ var dom = {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "mousedragend", cb, useCapture);
+    return {
+      mousedragend: cb
+    };
   },
 
   onContextMenu: function(elem, callback, useCapture) {
-    var _this = this;
-    this.addEventListener(elem, "contextmenu", function(evt) {
+    var cb = function(evt) {
       if(callback instanceof Function) {
         return callback(evt);
       }
-    }, useCapture);
+    };
+    this.addEventListener(elem, "contextmenu", cb, useCapture);
+    return {
+      contextmenu: cb
+    };
   },
 
   onScroll: function(elem, callback, useCapture) {
-    this.addEventListener(elem, "scroll", callback, useCapture);
+    var cb = function(evt) {
+      if(callback instanceof Function) {
+        return callback(evt);
+      }
+    };
+    this.addEventListener(elem, "scroll", cb, useCapture);
+    return {
+      scroll: cb
+    };
   }
 };
 

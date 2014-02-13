@@ -392,7 +392,7 @@ NaiveBehavior.prototype = {
       if(i * 150 < barHeight) {
         load();
       } else {
-        var callback = function() {
+        var cbs = $ext.dom.onScroll(rightBar, function() {
           if(fv.molecule || fv.overlayShowing) {
             return;
           }
@@ -402,10 +402,9 @@ NaiveBehavior.prototype = {
           var pt = rightBar.scrollTop;
           if(ot < ph + pt && ot > pt) {
             load();
-            $ext.dom.removeEventListener(rightBar, "scroll", callback);
+            $ext.dom.removeEventListeners(rightBar, cbs);
           }
-        };
-        $ext.dom.onScroll(rightBar, callback);
+        });
       }
 
       $ext.dom.onMouseOver(fv.canvas, function() {
