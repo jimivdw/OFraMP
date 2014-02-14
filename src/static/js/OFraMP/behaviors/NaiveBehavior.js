@@ -438,14 +438,14 @@ NaiveBehavior.prototype = {
       });
 
       $ext.dom.onMouseClick(fv.canvas, function() {
-        if(!fv.molecule) {
+        if(!fv.molecule || _this.activeFragment === fv) {
           return;
         }
 
         ob.disabled = "";
         ab.disabled = "";
 
-        if(_this.activeFragment && _this.activeFragment !== fv) {
+        if(_this.activeFragment) {
           // Disable the currently active fragment's buttons
           _this.activeFragment.canvas.parentElement
           .getElementsByTagName("button")[0].disabled = "disabled";
