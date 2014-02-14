@@ -137,6 +137,7 @@
         }
 
         var of = document.getElementById("open");
+        of.style.display = "none";
         $ext.dom.onMouseClick(of, openFile, $ext.mouse.LEFT);
         function openFile() {
           oframp.showInsertMoleculePopup();
@@ -158,7 +159,8 @@
         }
 
         var sv = document.getElementById("save");
-        $ext.dom.onMouseClick(sv, function(e) {
+        $ext.dom.onMouseClick(sv, downloadLGF, $ext.mouse.LEFT);
+        function downloadLGF() {
           var data = oframp.mv.molecule.getLGF();
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
           var fname = "OFraMP-" + date + ".lgf";
@@ -166,7 +168,7 @@
             data: data,
             fname: fname
           }, "post", "_blank");
-        }, $ext.mouse.LEFT);
+        }
 
         var ub = document.getElementById("undo");
         $ext.dom.onMouseClick(ub, function() {
@@ -200,6 +202,12 @@
         $ext.dom.onMouseClick(op, function() {
           oframp.settingsUI.toggle();
         }, $ext.mouse.LEFT);
+
+        var hb = document.getElementById("help");
+        $ext.dom.onMouseClick(hb, openHelp, $ext.mouse.LEFT);
+        function openHelp() {
+          window.open('help.html', '_blank').focus();
+        }
 
         $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
           if(oframp.activeCheckpoint === 0) {
@@ -269,9 +277,10 @@
               openFile();
             } else if(keyCode === 19) {
               saveMolecule();
-              sv.click();
             } else if(keyCode === 12) {
-              shareLink();
+              downloadLGF();
+            } else if(keyCode === 8) {
+              openHelp();
             }
           });
 
@@ -350,6 +359,12 @@
           </button>
           <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
             Redo
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <button id="help" class="border_box" title="Open OFraMP Help (Alt+H)">
+            Help
           </button>
         </div>
 
