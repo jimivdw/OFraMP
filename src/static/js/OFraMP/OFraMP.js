@@ -772,7 +772,23 @@ OFraMP.prototype = {
           var cas = $ext.array.filter(selection, function(atom) {
             return !atom.isCharged();
           });
-          if(cas.length > 0) {
+
+          var selectionIDs = $ext.array.map(selection, function(atom) {
+            return atom.id;
+          });
+          var tree = this.mv.molecule.atoms.getTree(selection[0]);
+          var selectionTree = tree.filter(function(node) {
+            return selectionIDs.indexOf(node.key) !== -1;
+          });
+
+          var connected = $ext.each(selection, function(atom) {
+            var f = selectionTree.findNode(atom.id);
+            if(!f) {
+              return false;
+            }
+          });
+
+          if(connected !== false && cas.length > 0) {
             this.getMatchingFragments();
           }
         }
