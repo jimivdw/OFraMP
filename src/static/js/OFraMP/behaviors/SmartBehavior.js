@@ -140,8 +140,9 @@ SmartBehavior.prototype = {
       }
     }
     this.__needle = needle;
+    this.oframp.mv.molecule.setSelected([needle]);
     this.oframp.mv.molecule.centerOnAtom(needle);
-    this.oframp.getMatchingFragments([needle]);
+    this.oframp.getMatchingFragments();
   },
 
   showRelatedFragments: function(fragments) {
@@ -246,7 +247,7 @@ SmartBehavior.prototype = {
     atom.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
     if(!this.oframp.settings.atom.showHAtoms) {
       $ext.each(atom.getHydrogenAtoms(), function(a) {
-        a.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
+        a.setCharge((a.charge + a.previewCharge) / 2, fragment);
         a.resetHighlight();
       });
     }
