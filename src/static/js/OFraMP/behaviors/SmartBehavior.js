@@ -68,7 +68,7 @@ SmartBehavior.prototype = {
         return;
       }
 
-      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+      if(_this.oframp.getUnparameterizedAtoms(true).length > 0) {
         _this.__fcd.style.display = "block";
         if(_this.__needle === undefined) {
           _this.__ffb.style.display = "block";
@@ -115,8 +115,8 @@ SmartBehavior.prototype = {
   },
 
   __selectAtom: function() {
-    var unpar = this.oframp.mv.molecule.getUnparameterized();
-    if(!unpar) {
+    var unpar = this.oframp.getUnparameterizedAtoms(true);
+    if(unpar.length === 0) {
       alert("Could not find any more unparameterised atoms.");
       return;
     }
@@ -152,7 +152,7 @@ SmartBehavior.prototype = {
     }
 
     this.__showFragment(0);
-    if(this.__fragments.length > 0) {
+    if(this.__fragments && this.__fragments.length > 0) {
       this.oframp.checkpoint();
     }
   },
@@ -191,7 +191,7 @@ SmartBehavior.prototype = {
       var cf = _this.__fragments[_this.__currentFragment];
       _this.oframp.mv.setPreviewCharges(cf);
 
-      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+      if(_this.oframp.getUnparameterizedAtoms(true).length > 0) {
         _this.__selectAtom();
       }
     }, $ext.mouse.LEFT);
@@ -212,11 +212,6 @@ SmartBehavior.prototype = {
     this.__currentFragment = i;
     var fragment = this.__fragments[i];
     if(!fragment) {
-      if(confirm("No fragments were found, select a different atom?")) {
-        this.__selectAtom();
-      } else {
-        this.parameterizationFinished();
-      }
       return;
     }
 
@@ -249,7 +244,7 @@ SmartBehavior.prototype = {
 
   showChargeFixer: function(atom, rem, charges, fragment) {
     atom.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
-    if(!_this.oframp.settings.atom.showHAtoms) {
+    if(!this.oframp.settings.atom.showHAtoms) {
       $ext.each(atom.getHydrogenAtoms(), function(a) {
         a.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
         a.resetHighlight();
@@ -273,21 +268,27 @@ SmartBehavior.prototype = {
       }
     }, this);
 
+    var unpar = this.oframp.getUnparameterizedAtoms();
     if(!needsFix) {
-      if(this.oframp.mv.molecule.getUnparameterized().length == 0) {
-        this.parameterizationFinished();
+      if(unpar.length === 0) {
+        this.oframp.parameterizationFinished();
+      } else {
+        var parunpar = this.oframp.getUnparameterizedAtoms(true);
+        if(parunpar.length === 0) {
+          this.oframp.parameterizationFinished(true);
+        }
       }
     }
   },
 
-  parameterizationFinished: function() {
+  parameterizationFinished: function(incomplete) {
     this.__needle = undefined;
     this.__fragments = undefined;
     this.__currentFragment = undefined;
     this.__fcd.style.display = "none";
     this.oframp.mv.molecule.center();
     this.oframp.checkpoint();
-    alert("You're done! I don't know what should happen now...");
+    NaiveBehavior.prototype.parameterizationFinished.call(this, incomplete);
   }
 };
 

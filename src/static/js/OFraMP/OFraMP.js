@@ -187,6 +187,18 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
+  getUnparameterizedAtoms: function(only_parameterizable) {
+    var unpar = this.mv.molecule.getUnparameterized();
+    if(only_parameterizable) {
+      var parunpar = $ext.array.filter(unpar, function(atom) {
+        return this.off_missing.indexOf(atom.id) === -1;
+      }, this);
+      return parunpar;
+    } else {
+      return unpar;
+    }
+  },
+
   showPopup: function(title, content, closable) {
     $ext.dom.clear(this.popupTitle);
     $ext.dom.clear(this.popupContent);
@@ -778,7 +790,7 @@ OFraMP.prototype = {
       this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
 
-      if(this.off) {
+      if(!(this.behavior instanceof SmartBehavior) && this.off) {
         // Make sure charges are not currently being previewed
         var pas = $ext.array.filter(this.mv.molecule.atoms.atoms,
             function(atom) {
