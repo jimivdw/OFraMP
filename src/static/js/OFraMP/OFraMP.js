@@ -215,9 +215,21 @@ OFraMP.prototype = {
 
     var ta = document.createElement('textarea');
     ta.id = "mds_input";
-    ta.style.height = this.popup.clientHeight - 100 + "px";
+    ta.style.height = this.popup.clientHeight - 130 + "px";
     ta.placeholder = "Insert PDB / SMILES / InChI string or ATB ID here";
     content.appendChild(ta);
+
+    var sl = document.createElement('label');
+    $ext.dom.addText(sl, "Shell size");
+    content.appendChild(sl);
+
+    var ss = document.createElement('select');
+    ss.id = "shell_size";
+    ss.className = "border_box";
+    for(var i = 1; i <= 5; i++) {
+      $ext.dom.addSelectOption(ss, i);
+    }
+    content.appendChild(ss);
 
     var cbs = document.createElement('div');
     cbs.className = 'controls';
@@ -229,6 +241,10 @@ OFraMP.prototype = {
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.submitMDS(ta.value);
+      var shellSize = parseInt(ss.value);
+      if(shellSize !== 1) {
+        _this.settings.omfraf.shellSize = shellSize;
+      }
     }
     cbs.appendChild(sb);
 

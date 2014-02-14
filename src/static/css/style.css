@@ -413,6 +413,23 @@ background-color: rgb(169,  49,  39);
     border: 1px solid #333;
 }
 
+#popup_content label {
+    float: left;
+    width: 120px;
+    height: 30px;
+    margin-top: 3px;
+    text-align: left;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+#popup_content select {
+    float: left;
+    width: 120px;
+    height: 30px;
+    margin-top: 3px;
+}
+
 #popup_content .controls {
     position: absolute;
     display: block;
