@@ -259,10 +259,10 @@ NaiveDemo.prototype = {
     this.overlay.style.bottom = "15px";
     this.overlay.style.left = "50%";
     this.overlay.style.width = "380px";
-    this.overlay.style.marginLeft = "-420px";
+    this.overlay.style.marginLeft = "-260px";
     this.overlay.style.paddingTop = "15px";
-    this.overlay.style.paddingRight = "50px";
-    this.overlay.style.background = "url('static/img/demo/arrow_up.png') top right no-repeat";
+    this.overlay.style.paddingLeft = "50px";
+    this.overlay.style.background = "url('static/img/demo/arrow_up_2.png') top left no-repeat";
 
     $ext.dom.addText(this.overlay, "Once you have seen enough of this "
         + "molecule, you can close the viewer by clicking 'Close'");

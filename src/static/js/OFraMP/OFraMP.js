@@ -671,9 +671,15 @@ OFraMP.prototype = {
     }, null, true);
     ov.canvas.className = "border_box";
 
+    var cd = document.createElement('div');
+    cd.className = "controls";
+    content.appendChild(cd);
+
     var cb = document.createElement('button');
+    cb.className = "border_box";
+    cb.style.float = "left";
     cb.appendChild(document.createTextNode("Close"));
-    content.appendChild(cb);
+    cd.appendChild(cb);
 
     var _this = this;
     if(!onClose) {
