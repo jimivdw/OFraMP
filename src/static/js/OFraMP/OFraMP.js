@@ -272,15 +272,21 @@ OFraMP.prototype = {
       cbs.appendChild(lb);
     }
 
+    var cb = document.createElement('button');
+    cb.style.float = 'left';
+    cb.className = "border_box";
+    cbs.appendChild(cb);
+
     if(this.mv.molecule) {
-      var cb = document.createElement('button');
-      cb.style.float = 'left';
-      cb.className = "border_box";
-      cb.appendChild(document.createTextNode("Cancel"));
+      $ext.dom.addText(cb, "Cancel");
       cb.onclick = function() {
         _this.hidePopup();
       }
-      cbs.appendChild(cb);
+    } else {
+      $ext.dom.addText(cb, "Start demo");
+      cb.onclick = function() {
+        _this.behavior.demo.start();
+      }
     }
 
     this.showPopup(title, content, this.mv.molecule !== undefined);
