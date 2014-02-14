@@ -21,7 +21,7 @@ NaiveDemo.prototype = {
     $ext.dom.addClass(mi, "highlighted");
     var cbs = $ext.dom.onMouseClick(mi, function() {
       mi.disabled = "disabled";
-      $ext.dom.addText(mi, "NCC(=O)C");
+      $ext.dom.addText(mi, "NCC(=O)CCO");
       $ext.dom.removeClass(mi, "highlighted");
       $ext.dom.removeEventListeners(mi, cbs);
       _this.nextStep();
