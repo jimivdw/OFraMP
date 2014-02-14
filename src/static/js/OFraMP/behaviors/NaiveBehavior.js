@@ -392,7 +392,7 @@ NaiveBehavior.prototype = {
       }
 
       $ext.dom.onMouseOver(fv.canvas, function() {
-        if(!fv.molecule) {
+        if(!fv.molecule || !_this.activeFragment) {
           return;
         }
 
@@ -404,20 +404,16 @@ NaiveBehavior.prototype = {
       });
 
       $ext.dom.onMouseOut(fv.canvas, function() {
-        if(!fv.molecule) {
+        if(!fv.molecule || !_this.activeFragment) {
           return;
         }
 
-        if(_this.activeFragment) {
-          if(_this.activeFragment !== fv) {
-            var charges = {};
-            _this.activeFragment.molecule.atoms.each(function(atom) {
-              charges[atom.id] = atom.charge;
-            }, this);
-            _this.oframp.mv.previewCharges(charges);
-          }
-        } else {
-          _this.oframp.mv.previewCharges({});
+        if(_this.activeFragment !== fv) {
+          var charges = {};
+          _this.activeFragment.molecule.atoms.each(function(atom) {
+            charges[atom.id] = atom.charge;
+          }, this);
+          _this.oframp.mv.previewCharges(charges);
         }
       });
 
