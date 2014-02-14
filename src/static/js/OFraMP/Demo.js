@@ -55,8 +55,8 @@ Demo.prototype = {
   step0: function() {
     this.oframp.showInsertMoleculePopup();
     // TODO: random_molecule will be removed
-    var td = ["load_oss", "random_molecule", "mds_submit", "new", "open",
-        "snap", "save", "extra_controls_toggle"];
+    var td = ["shell_size", "load_oss", "random_molecule", "mds_submit", "new",
+        "open", "snap", "save", "extra_controls_toggle"];
     $ext.each(td, function(id) {
       document.getElementById(id).disabled = "disabled";
     });
