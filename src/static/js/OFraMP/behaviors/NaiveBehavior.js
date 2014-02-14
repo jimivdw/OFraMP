@@ -264,10 +264,6 @@ NaiveBehavior.prototype = {
       }
     }
 
-    var ffb = document.createElement('button');
-    ffb.className = "border_box";
-    ffb.appendChild(document.createTextNode("Find matching fragments"));
-
     if(atom) {
       this.oframp.atomDetails.appendChild(ecb);
       $ext.dom.onMouseClick(ecb, toggleChargeEdit, $ext.mouse.LEFT);
@@ -275,18 +271,6 @@ NaiveBehavior.prototype = {
 
     this.oframp.atomDetails.appendChild(msb);
     $ext.dom.onMouseClick(msb, toggleSelectionEdit, $ext.mouse.LEFT);
-
-    if(this instanceof NaiveBehavior) {
-      this.oframp.atomDetails.appendChild(ffb);
-      if(!this.oframp.off) {
-        ffb.disabled = "disabled";
-        $ext.dom.clear(ffb);
-        $ext.dom.addText(ffb, "Generating fragments...");
-      }
-      $ext.dom.onMouseClick(ffb, function() {
-        _this.oframp.getMatchingFragments();
-      }, $ext.mouse.LEFT);
-    }
 
     this.oframp.showSelectionDetails();
   },
