@@ -73,8 +73,8 @@ NaiveDemo.prototype = {
       _this.overlay.style.paddingBottom = "30px";
       _this.overlay.style.background = "url('static/img/demo/mouse_drag_left.png') bottom center no-repeat";
 
-      $ext.dom.addText(_this.overlay, "You can now move around the molecule " +
-          "by holding down the left mouse button and dragging it");
+      $ext.dom.addText(_this.overlay, "You can now move around the molecule "
+          + "by holding down the left mouse button and dragging it");
       _this.oframp.mv.selectingDisabled = true;
 
       $ext.dom.onMouseDrag(_this.oframp.container, null, $ext.mouse.LEFT);
@@ -95,8 +95,8 @@ NaiveDemo.prototype = {
     this.overlay.style.right = "30px";
     this.overlay.style.width = "220px";
 
-    $ext.dom.addText(this.overlay, "You can also zoom the molecule by " +
-        "using your mouse's scrollwheel");
+    $ext.dom.addText(this.overlay, "You can also zoom the molecule by "
+        + "using your mouse's scrollwheel");
 
     $ext.dom.onMouseWheel(this.oframp.container, null);
     var cbs = $ext.dom.onMouseWheelEnd(this.oframp.container, function() {
@@ -119,8 +119,8 @@ NaiveDemo.prototype = {
     this.overlay.style.left = "30px";
     this.overlay.style.width = "220px";
 
-    $ext.dom.addText(this.overlay, "Fragments are still being generated, " +
-        "please wait until this is done");
+    $ext.dom.addText(this.overlay, "Fragments are still being generated, "
+        + "please wait until this is done");
 
     $ext.dom.addEventListener(this.oframp.container, "fragmentsgenerated",
         fragmentsGenerated);
@@ -145,15 +145,15 @@ NaiveDemo.prototype = {
     this.overlay.style.right = "30px";
     this.overlay.style.width = "220px";
 
-    $ext.dom.addText(this.overlay, "You can now select an atom by clicking " +
-        "on it");
+    $ext.dom.addText(this.overlay, "You can now select an atom by clicking "
+        + "on it");
     _this.oframp.mv.selectingDisabled = false;
 
     $ext.dom.addEventListener(this.oframp.container, "selectionchanged",
         selectionChanged);
     function selectionChanged() {
-      $ext.dom.removeEventListener(_this.oframp.container,
-          "selectionchanged", selectionChanged);
+      $ext.dom.removeEventListener(_this.oframp.container, "selectionchanged",
+          selectionChanged);
       _this.oframp.mv.selectingDisabled = true;
       _this.nextStep();
     }
@@ -175,8 +175,8 @@ NaiveDemo.prototype = {
     this.overlay.style.paddingBottom = "34px";
     this.overlay.style.background = "url('static/img/demo/arrow_right.png') bottom right no-repeat";
 
-    $ext.dom.addText(this.overlay, "The system is looking for fragments " +
-        "that match your selection. They will appear here shortly");
+    $ext.dom.addText(this.overlay, "The system is looking for fragments "
+        + "that match your selection. They will appear here shortly");
 
     $ext.dom.addEventListener(this.oframp.container, "fragmentsfound",
         fragmentsFound);
@@ -199,9 +199,8 @@ NaiveDemo.prototype = {
     this.overlay.style.paddingTop = "34px";
     this.overlay.style.background = "url('static/img/demo/arrow_right.png') top right no-repeat";
 
-    $ext.dom.addText(this.overlay, "You can now preview fragments' charges " +
-        "by clicking on them");
-    _this.oframp.mv.selectingDisabled = false;
+    $ext.dom.addText(this.overlay, "You can now preview fragments' charges "
+        + "by clicking on them");
 
     var frag = document.getElementById("fc_0");
     var cbs = $ext.dom.onMouseClick(frag, function() {
@@ -222,9 +221,8 @@ NaiveDemo.prototype = {
     this.overlay.style.paddingBottom = "34px";
     this.overlay.style.background = "url('static/img/demo/arrow_right.png') bottom right no-repeat";
 
-    $ext.dom.addText(this.overlay, "The molecule from which this fragment " +
-        "originated can be shown by clicking the 'Show molecule' button");
-    _this.oframp.mv.selectingDisabled = false;
+    $ext.dom.addText(this.overlay, "The molecule from which this fragment "
+        + "originated can be shown by clicking the 'Show molecule' button");
 
     var smb = document.getElementById("fc_0").children[0];
     var sfb = document.getElementById("fc_0").children[1];
@@ -252,8 +250,8 @@ NaiveDemo.prototype = {
     this.overlay.style.paddingRight = "50px";
     this.overlay.style.background = "url('static/img/demo/arrow_up.png') top right no-repeat";
 
-    $ext.dom.addText(this.overlay, "Once you have seen enough of this " +
-        "molecule, you can close the viewer by clicking 'Close'");
+    $ext.dom.addText(this.overlay, "Once you have seen enough of this "
+        + "molecule, you can close the viewer by clicking 'Close'");
 
     var cb = document.getElementById("popup_content").getElementsByTagName(
         "button")[0];
@@ -277,14 +275,133 @@ NaiveDemo.prototype = {
     this.overlay.style.paddingBottom = "34px";
     this.overlay.style.background = "url('static/img/demo/arrow_right.png') bottom right no-repeat";
 
-    $ext.dom.addText(this.overlay, "This fragment's charges can now be " +
-        "applied by clicking the 'Select fragment' button");
+    $ext.dom.addText(this.overlay, "This fragment's charges can now be "
+        + "applied by clicking the 'Select fragment' button");
 
     var sfb = document.getElementById("fc_0").children[1];
     $ext.dom.addClass(sfb, "highlighted");
     var cbs = $ext.dom.onMouseClick(sfb, function() {
       $ext.dom.removeEventListeners(sfb, cbs);
       $ext.dom.removeClass(sfb, "highlighted");
+      _this.nextStep();
+    }, $ext.mouse.LEFT);
+  },
+
+  step12: function() {
+    var _this = this;
+
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    this.overlay.style.bottom = "30px";
+    this.overlay.style.left = "260px";
+    this.overlay.style.width = "300px";
+    _this.overlay.style.paddingTop = "30px";
+    _this.overlay.style.background = "url('static/img/demo/mouse_drag_right.png') top center no-repeat";
+
+    $ext.dom.addText(this.overlay, "It is also possible to select multiple "
+        + "atoms at once by dragging with the right mouse button or holding "
+        + "the Ctrl key while clicking atoms");
+    _this.oframp.mv.selectingDisabled = false;
+
+    $ext.dom.addEventListener(this.oframp.container, "selectionchanged",
+        selectionChanged);
+    function selectionChanged() {
+      var selection = $ext.array.filter(_this.oframp.mv.molecule.getSelected(),
+          function(atom) {
+            return _this.oframp.settings.atom.showHAtoms
+                || atom.element !== "H";
+          });
+      if(selection.length > 1) {
+        $ext.dom.removeEventListener(_this.oframp.container,
+            "selectionchanged", selectionChanged);
+        _this.nextStep();
+      }
+    }
+  },
+
+  step13: function() {
+    var _this = this;
+
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    this.overlay.style.top = "60px";
+    this.overlay.style.right = "250px";
+    this.overlay.style.width = "220px";
+    this.overlay.style.paddingBottom = "34px";
+    this.overlay.style.background = "url('static/img/demo/arrow_right.png') bottom right no-repeat";
+
+    $ext.dom.addText(this.overlay, "It is usually a good idea to explore "
+        + "different fragments to find the best match. Try comparing the "
+        + "first two fragments");
+
+    $ext.dom.addEventListener(this.oframp.container, "fragmentsfound",
+        fragmentsFound);
+    function fragmentsFound() {
+      $ext.dom.removeEventListener(_this.oframp.container, "fragmentsfound",
+          fragmentsFound);
+      var frag = document.getElementById("fc_1");
+      var cbs = $ext.dom.onMouseClick(frag, function() {
+        $ext.dom.removeEventListeners(frag, cbs);
+        _this.nextStep();
+      }, $ext.mouse.LEFT);
+    }
+  },
+
+  step14: function() {
+    var _this = this;
+
+    if(this.oframp.mv.molecule.getUnparameterized().length === 0) {
+      return this.nextStep();
+    }
+
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    this.overlay.style.top = "50px";
+    this.overlay.style.left = "50%";
+    this.overlay.style.width = "500px";
+    this.overlay.style.marginLeft = "-250px";
+
+    $ext.dom.addText(this.overlay, "You can now continue to parameterise the "
+        + "rest of the molecule");
+
+    $ext.dom.addEventListener(this.oframp.container,
+        "parameterizationfinished", parameterizationFinished);
+    function parameterizationFinished() {
+      $ext.dom.removeEventListener(_this.oframp.container,
+          "parameterizationfinished", parameterizationFinished);
+      _this.nextStep();
+    }
+  },
+
+  step15: function() {
+    var _this = this;
+
+    $ext.dom.clear(this.overlay);
+    this.overlay.style.cssText = "";
+
+    var pc = document.getElementById("popup_content").children[0];
+    var cd = pc.getElementsByTagName("div")[0];
+
+    var ep = document.createElement("p");
+    $ext.dom.addText(ep, "This concludes the guided demo. You can retake the "
+        + "demo at any time by reloading the page and clicking the 'Demo' "
+        + "button. A more extensive manual is available by clicking the "
+        + "'Help' button in the menu at the top of the page.");
+    pc.insertBefore(ep, cd);
+
+    var cx = document.getElementById("popup").children[0];
+    var cb = cd.children[2];
+    var eb = cd.children[1];
+    $ext.dom.onMouseClick(cx, function() {
+      _this.nextStep();
+    }, $ext.mouse.LEFT);
+    $ext.dom.onMouseClick(cb, function() {
+      _this.nextStep();
+    }, $ext.mouse.LEFT);
+    $ext.dom.onMouseClick(eb, function() {
       _this.nextStep();
     }, $ext.mouse.LEFT);
   }
