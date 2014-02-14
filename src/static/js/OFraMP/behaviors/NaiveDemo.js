@@ -370,6 +370,8 @@ NaiveDemo.prototype = {
       document.getElementById("find_fragments").disabled = "disabled";
       if(_this.oframp.behavior.relatedFragmentViewers.length === 0) {
         return;
+      } else if(_this.oframp.behavior.relatedFragmentViewers.length === 1) {
+        return _this.nextStep();
       }
 
       $ext.dom.removeEventListener(_this.oframp.container, "fragmentsfound",
