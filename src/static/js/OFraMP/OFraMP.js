@@ -32,6 +32,7 @@ OFraMP.prototype = {
   fragmentsFoundEvent: 'fragmentsfound',
   selectionChangedEvent: 'selectionchanged',
   historyChangedEvent: 'historychanged',
+  parameterizationFinishedEvent: 'parameterizationfinished',
 
   __init: function(behavior, containerID, settings) {
     settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
@@ -764,6 +765,11 @@ OFraMP.prototype = {
       this.hideSelectionDetails();
     }
     $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+  },
+
+  parameterizationFinished: function(incomplete) {
+    this.behavior.parameterizationFinished(incomplete);
+    $ext.dom.dispatchEvent(this.container, this.parameterizationFinishedEvent);
   },
 
 

@@ -617,13 +617,13 @@ NaiveBehavior.prototype = {
       if(!needsFix) {
         _this.oframp.checkpoint();
         if(unpar.length === 0) {
-          _this.parameterizationFinished();
+          _this.oframp.parameterizationFinished();
         } else {
           var parunpar = $ext.array.filter(unpar, function(atom) {
             return _this.oframp.off_missing.indexOf(atom.id) === -1;
           });
           if(parunpar.length === 0) {
-            _this.parameterizationFinished(true);
+            _this.oframp.parameterizationFinished(true);
           }
         }
       }

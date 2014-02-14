@@ -436,11 +436,20 @@ MoleculeViewer.prototype = {
     }, this);
     this.redraw();
 
+    var unpar = this.molecule.getUnparameterized();
     if(needsFix) {
       return false;
     } else {
-      if(this.molecule.getUnparameterized().length === 0) {
-        this.oframp.behavior.parameterizationFinished();
+      this.oframp.checkpoint();
+      if(unpar.length === 0) {
+        this.oframp.parameterizationFinished();
+      } else {
+        var parunpar = $ext.array.filter(unpar, function(atom) {
+          return this.oframp.off_missing.indexOf(atom.id) === -1;
+        }, this);
+        if(parunpar.length === 0) {
+          this.oframp.parameterizationFinished(true);
+        }
       }
       return true;
     }
