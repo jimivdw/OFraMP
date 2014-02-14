@@ -340,7 +340,7 @@ background-color: rgb(169,  49,  39);
 
 .fragment canvas {
     margin: 1px 0;
-    cursor: pointer;
+    cursor: pointer !important;
     opacity: 0.6;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
