@@ -155,6 +155,7 @@ NaiveDemo.prototype = {
       $ext.dom.removeEventListener(_this.oframp.container, "selectionchanged",
           selectionChanged);
       _this.oframp.mv.selectingDisabled = true;
+      document.getElementById("find_fragments").disabled = "disabled";
       _this.nextStep();
     }
   },
@@ -197,10 +198,23 @@ NaiveDemo.prototype = {
     this.overlay.style.right = "250px";
     this.overlay.style.width = "220px";
     this.overlay.style.paddingTop = "34px";
-    this.overlay.style.background = "url('static/img/demo/arrow_right.png') top right no-repeat";
+    this.overlay.style.background = "url('static/img/demo/arrow_right_2.png') top right no-repeat";
 
     $ext.dom.addText(this.overlay, "You can now preview fragments' charges "
         + "by clicking on them");
+
+    var rf = document.getElementById("related_fragments");
+    rf.parentElement.style.overflowY = "hidden";
+
+    var cb = rf.children[0].getElementsByTagName("div")[0];
+    cb.style.display = "none";
+
+    var bd = document.createElement("div");
+    bd.id = "fragments_block";
+    bd.style.cssText = "position: absolute; width: 230px; height: 100%; "
+        + "background-color: #FFF; z-index: 10; opacity: 0.5;";
+    var f2 = document.getElementById("fc_1");
+    rf.insertBefore(bd, f2);
 
     var frag = document.getElementById("fc_0");
     var cbs = $ext.dom.onMouseClick(frag, function() {
@@ -231,7 +245,7 @@ NaiveDemo.prototype = {
     var cbs = $ext.dom.onMouseClick(smb, function() {
       $ext.dom.removeEventListeners(smb, cbs);
       $ext.dom.removeClass(smb, "highlighted");
-      sfb.disabled = "";
+      smb.disabled = "disabled";
       _this.nextStep();
     }, $ext.mouse.LEFT);
   },
@@ -253,14 +267,20 @@ NaiveDemo.prototype = {
     $ext.dom.addText(this.overlay, "Once you have seen enough of this "
         + "molecule, you can close the viewer by clicking 'Close'");
 
+    var cx = document.getElementById("popup").children[0];
+    var cbsx = $ext.dom.onMouseClick(cx, closeClicked, $ext.mouse.LEFT);
+
     var cb = document.getElementById("popup_content").getElementsByTagName(
         "button")[0];
     $ext.dom.addClass(cb, "highlighted");
-    var cbs = $ext.dom.onMouseClick(cb, function() {
+    var cbs = $ext.dom.onMouseClick(cb, closeClicked, $ext.mouse.LEFT);
+
+    function closeClicked() {
       $ext.dom.removeEventListeners(cb, cbs);
+      $ext.dom.removeEventListeners(cx, cbsx);
       $ext.dom.removeClass(cb, "highlighted");
       _this.nextStep();
-    }, $ext.mouse.LEFT);
+    }
   },
 
   step11: function() {
@@ -278,11 +298,19 @@ NaiveDemo.prototype = {
     $ext.dom.addText(this.overlay, "This fragment's charges can now be "
         + "applied by clicking the 'Select fragment' button");
 
+    var rf = document.getElementById("related_fragments");
+    var bd = document.getElementById("fragments_block");
+
+    var smb = document.getElementById("fc_0").children[0];
     var sfb = document.getElementById("fc_0").children[1];
     $ext.dom.addClass(sfb, "highlighted");
+    sfb.disabled = "";
     var cbs = $ext.dom.onMouseClick(sfb, function() {
       $ext.dom.removeEventListeners(sfb, cbs);
       $ext.dom.removeClass(sfb, "highlighted");
+      rf.parentElement.style.overflowY = "";
+      $ext.dom.remove(bd);
+      smb.disabled = "";
       _this.nextStep();
     }, $ext.mouse.LEFT);
   },
@@ -315,6 +343,7 @@ NaiveDemo.prototype = {
       if(selection.length > 1) {
         $ext.dom.removeEventListener(_this.oframp.container,
             "selectionchanged", selectionChanged);
+        document.getElementById("find_fragments").disabled = "disabled";
         _this.nextStep();
       }
     }
@@ -339,11 +368,36 @@ NaiveDemo.prototype = {
     $ext.dom.addEventListener(this.oframp.container, "fragmentsfound",
         fragmentsFound);
     function fragmentsFound() {
+      document.getElementById("find_fragments").disabled = "disabled";
+      if(_this.oframp.behavior.relatedFragmentViewers.length === 0) {
+        return;
+      }
+
       $ext.dom.removeEventListener(_this.oframp.container, "fragmentsfound",
           fragmentsFound);
+
+      var bd = document.createElement("div");
+      bd.style.cssText = "position: absolute; width: 230px; height: 100%; "
+          + "background-color: #FFF; z-index: 10; opacity: 0.5;";
+
+      var rf = document.getElementById("related_fragments");
+      var f3 = document.getElementById("fc_2");
+      rf.insertBefore(bd, f3);
+      rf.parentElement.style.overflowY = "hidden";
+
+      var f1 = document.getElementById("fc_0");
+      var cbs1 = $ext.dom.onMouseClick(f1, function() {
+        f1.children[1].disabled = "disabled";
+      }, $ext.mouse.LEFT);
+
       var frag = document.getElementById("fc_1");
       var cbs = $ext.dom.onMouseClick(frag, function() {
         $ext.dom.removeEventListeners(frag, cbs);
+        $ext.dom.removeEventListeners(f1, cbs1);
+
+        $ext.dom.remove(bd);
+        rf.parentElement.style.overflowY = "auto";
+
         _this.nextStep();
       }, $ext.mouse.LEFT);
     }
@@ -395,13 +449,16 @@ NaiveDemo.prototype = {
     var cx = document.getElementById("popup").children[0];
     var cb = cd.children[2];
     var eb = cd.children[1];
-    $ext.dom.onMouseClick(cx, function() {
+    var cbs = $ext.dom.onMouseClick(cx, function() {
+      $ext.dom.removeEventListeners(cx, cbs);
       _this.nextStep();
     }, $ext.mouse.LEFT);
     $ext.dom.onMouseClick(cb, function() {
+      $ext.dom.removeEventListeners(cx, cbs);
       _this.nextStep();
     }, $ext.mouse.LEFT);
     $ext.dom.onMouseClick(eb, function() {
+      $ext.dom.removeEventListeners(cx, cbs);
       _this.nextStep();
     }, $ext.mouse.LEFT);
   }
