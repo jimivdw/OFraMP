@@ -21,8 +21,7 @@ NaiveDemo.prototype = {
     $ext.dom.addClass(mi, "highlighted");
     var cbs = $ext.dom.onMouseClick(mi, function() {
       mi.disabled = "disabled";
-      // TODO: better molecule
-      $ext.dom.addText(mi, "CNc1ccc(CN)cc1");
+      $ext.dom.addText(mi, "NCC(=O)C");
       $ext.dom.removeClass(mi, "highlighted");
       $ext.dom.removeEventListeners(mi, cbs);
       _this.nextStep();
