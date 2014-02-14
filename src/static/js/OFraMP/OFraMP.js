@@ -471,6 +471,11 @@ OFraMP.prototype = {
 
             _this.off = fd.off;
             _this.off_missing = fd.missing_atoms;
+            $ext.each(fd.missing_atoms, function(aid) {
+              _this.mv.molecule.atoms.get(aid)
+                  .addHighlight(ATOM_STATUSES.unparameterizable);
+            });
+            _this.redraw();
             $ext.dom.dispatchEvent(_this.container,
                 _this.fragmentsGeneratedEvent);
           }

@@ -8,10 +8,11 @@ var MESSAGE_TYPES = {
 
 var ATOM_STATUSES = {
   normal: 0,
-  hover: 1,
-  selected: 2,
-  preview: 4,
-  conflict: 8
+  unparameterizable: 1,
+  hover: 2,
+  selected: 4,
+  preview: 8,
+  conflict: 16
 };
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
@@ -84,7 +85,8 @@ var DEFAULT_SETTINGS = {
       hover: "rgb(210, 180, 245)",
       selected: "rgb(150, 140, 205)",
       preview: "rgb(140, 205, 108)",
-      conflict: "rgb(204, 166,  40)"
+      conflict: "rgb(204, 166,  40)",
+      unparameterizable: "rgb(255, 210, 208)"
     },
     borderWidth: {
       default: 1,
@@ -255,7 +257,7 @@ var SETTINGS_OPTIONS = {
       }
     },
     backgroundColor: {
-      "default, charged, hover, selected, preview, conflict": {
+      "default, charged, hover, selected, preview, conflict, unparameterizable": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }

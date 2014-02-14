@@ -383,6 +383,8 @@ Atom.prototype = {
       return this.settings.atom.backgroundColor["selected"];
     } else if(status & ATOM_STATUSES.hover) {
       return this.settings.atom.backgroundColor["hover"];
+    } else if(status & ATOM_STATUSES.unparameterizable) {
+      return this.settings.atom.backgroundColor["unparameterizable"];
     } else if(this.isCharged()) {
       return this.settings.atom.backgroundColor["charged"];
     } else {
@@ -582,7 +584,7 @@ Atom.prototype = {
     }
 
     if(s.atom.showCirc) {
-      if(this.status > 0) {
+      if(this.status > 1) {
         ctx.lineWidth = s.atom.borderWidth.active;
         ctx.strokeStyle = s.atom.borderColor.active;
       } else {
