@@ -71,6 +71,5 @@ Demo.prototype = {
     $ext.each(td, function(id) {
       document.getElementById(id).disabled = "";
     });
-    console.log("End of demo!");
   }
 };

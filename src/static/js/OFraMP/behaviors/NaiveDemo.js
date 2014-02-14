@@ -385,6 +385,9 @@ NaiveDemo.prototype = {
       rf.insertBefore(bd, f3);
       rf.parentElement.style.overflowY = "hidden";
 
+      var cb = rf.children[0].getElementsByTagName("div")[0];
+      cb.style.display = "none";
+
       var f1 = document.getElementById("fc_0");
       var cbs1 = $ext.dom.onMouseClick(f1, function() {
         f1.children[1].disabled = "disabled";
@@ -397,6 +400,7 @@ NaiveDemo.prototype = {
 
         $ext.dom.remove(bd);
         rf.parentElement.style.overflowY = "auto";
+        cb.style.display = "block";
 
         _this.nextStep();
       }, $ext.mouse.LEFT);
