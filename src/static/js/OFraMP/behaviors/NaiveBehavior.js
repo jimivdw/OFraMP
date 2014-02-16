@@ -670,7 +670,7 @@ NaiveBehavior.prototype = {
     cd.appendChild(nb);
 
     var cb = document.createElement('button');
-    $ext.dom.addText(cb, "Cancel");
+    $ext.dom.addText(cb, "Close");
     cb.style.float = 'left';
     cb.className = "border_box";
     $ext.dom.onMouseClick(cb, function() {
