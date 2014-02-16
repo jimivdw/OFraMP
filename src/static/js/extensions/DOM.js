@@ -296,8 +296,22 @@ var dom = {
 
     function _onWheel(elem, wf, callback, useCapture) {
       if(wf === "wheel") {
-        _this.addEventListener(elem, wf, callback, useCapture);
-        return callback;
+        var cb = function(event) {
+          if(wheelEndTimeout) {
+            window.clearTimeout(wheelEndTimeout);
+          }
+          wheelEndTimeout = window.setTimeout(function() {
+            _this.dispatchEvent(elem, _this.mouseWheelEndEvent);
+            wheelEndTimeout = undefined;
+          }, _this.MOUSE_WHEEL_TIMEOUT);
+
+          // it's time to fire the callback
+          if(callback instanceof Function) {
+            return callback(event);
+          }
+        }
+        _this.addEventListener(elem, wf, cb, useCapture);
+        return cb;
       } else {
         var cb = function(originalEvent) {
           if(!originalEvent) {
