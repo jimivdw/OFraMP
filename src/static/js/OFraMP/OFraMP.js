@@ -46,6 +46,7 @@ OFraMP.prototype = {
     this.container = document.getElementById(containerID);
     this.behavior = new behavior(this);
     this.__initUI();
+    // TODO: check cookie
     this.showInsertMoleculePopup();
   },
 
@@ -216,6 +217,91 @@ OFraMP.prototype = {
   hidePopup: function() {
     this.popup.style.visibility = "hidden";
     this.popupClose.style.display = "";
+  },
+
+  showWelcomePopup: function() {
+    var _this = this;
+
+    var title = "Welcome";
+
+    var content = document.createElement('div');
+
+    var mp = document.createElement('p');
+    $ext.dom.addText(mp, "Welcome at OFraMP, the Online tool for Fragment-"
+        + "based molecule parameterisation. Using OFraMP, you can assign "
+        + "atomic partial charges of a molecule based on fragments of "
+        + "other molecules. Once the whole molecule has been parameterised, "
+        + "you can download the resulting parameterisation in an LGF file.");
+    content.appendChild(mp);
+
+    var dp = document.createElement('p');
+    $ext.dom.addText(dp, "If you are here for the first time, it might be a "
+        + "good idea to take the guided demo. This can be started using the "
+        + "'Start demo' button below. More help is available by clicking the "
+        + "'Help' button below. Otherwise, you can continue to the "
+        + "molecule input by clicking the 'New molecule' button.");
+    content.appendChild(dp);
+
+    var rd = document.createElement('div');
+    rd.style.textAlign = "left";
+    rd.style.position = "absolute";
+    rd.style.bottom = "40px";
+    content.appendChild(rd);
+
+    var ri = document.createElement('input');
+    ri.type = "checkbox";
+    ri.value = "true";
+    ri.checked = "checked";
+    ri.id = "remember";
+    rd.appendChild(ri);
+
+    var rl = document.createElement('label');
+    rl.htmlFor = ri.id;
+    rl.style.float = "none";
+    $ext.dom.addText(rl, "Show this message next time");
+    rd.appendChild(rl);
+
+    var cd = document.createElement('div');
+    cd.className = "controls";
+    content.appendChild(cd);
+
+    function rememberCookie() {
+      if(!ri.checked) {
+        var d = new Date();
+        d.setTime(d.getTime() + (100 * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = "hideWelcome=true; " + expires;
+      }
+    }
+
+    var nb = document.createElement('button');
+    nb.className = "border_box";
+    $ext.dom.addText(nb, "New molecule");
+    $ext.dom.onMouseClick(nb, function() {
+      rememberCookie();
+      _this.showInsertMoleculePopup();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(nb);
+
+    var db = document.createElement('button');
+    db.className = "border_box";
+    $ext.dom.addText(db, "Start demo");
+    $ext.dom.onMouseClick(db, function() {
+      rememberCookie();
+      _this.behavior.demo.start();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(db);
+
+    var hb = document.createElement('button');
+    hb.className = "border_box";
+    hb.style.float = "left";
+    $ext.dom.addText(hb, "Help");
+    $ext.dom.onMouseClick(hb, function() {
+      window.open('help.html', '_blank').focus();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(hb);
+
+    this.showPopup(title, content);
   },
 
   showInsertMoleculePopup: function() {
