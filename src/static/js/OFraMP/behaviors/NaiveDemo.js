@@ -97,9 +97,10 @@ NaiveDemo.prototype = {
     $ext.dom.addText(this.overlay, "You can also zoom the molecule by "
         + "using your mouse's scrollwheel");
 
-    $ext.dom.onMouseWheel(this.oframp.container, null);
+    var wcbs = $ext.dom.onMouseWheel(this.oframp.container, null);
     var cbs = $ext.dom.onMouseWheelEnd(this.oframp.container, function() {
       $ext.dom.removeEventListeners(_this.oframp.container, cbs);
+      $ext.dom.removeEventListeners(_this.oframp.container, wcbs);
       _this.nextStep();
     });
   },

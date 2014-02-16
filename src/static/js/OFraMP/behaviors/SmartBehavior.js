@@ -139,6 +139,7 @@ SmartBehavior.prototype = {
         needle = ua;
       }
     }
+    this.__fragments = undefined;
     this.__needle = needle;
     this.oframp.mv.molecule.setSelected([needle]);
     this.oframp.mv.molecule.centerOnAtom(needle);
