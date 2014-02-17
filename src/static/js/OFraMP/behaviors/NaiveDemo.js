@@ -20,6 +20,7 @@ NaiveDemo.prototype = {
     var mi = document.getElementById("mds_input");
     $ext.dom.addClass(mi, "highlighted");
     var cbs = $ext.dom.onMouseClick(mi, function() {
+      log("user.click.molecule_input", "Clicked molecule input textarea");
       mi.disabled = "disabled";
       $ext.dom.addText(mi, "NCC(=O)CCO");
       $ext.dom.removeClass(mi, "highlighted");
