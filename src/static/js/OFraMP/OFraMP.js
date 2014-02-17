@@ -118,6 +118,7 @@ OFraMP.prototype = {
     this.popupClose = document.createElement('div');
     this.popupClose.className = "close";
     $ext.dom.onMouseClick(this.popupClose, function() {
+      log("user.click.close_popup", "Clicked close X on popup");
       _this.hidePopup();
     }, $ext.mouse.LEFT);
 
@@ -135,6 +136,10 @@ OFraMP.prototype = {
       container.style.left = left;
       container.style.top = top;
       container.style.bottom = bottom;
+    }, $ext.mouse.LEFT);
+
+    $ext.dom.onMouseDragEnd(this.popupTitle, function() {
+      log("user.drag.popup", "Dragged popup around");
     }, $ext.mouse.LEFT);
 
     container.appendChild(this.popupClose);
@@ -169,6 +174,7 @@ OFraMP.prototype = {
     elem.appendChild(rnb);
 
     $ext.dom.onMouseClick(rnb, function() {
+      log("user.click.retry_new", "Clicked retry enter molecule button");
       _this.showInsertMoleculePopup();
     }, $ext.mouse.LEFT);
   },
@@ -280,6 +286,7 @@ OFraMP.prototype = {
     nb.className = "border_box";
     $ext.dom.addText(nb, "New molecule");
     $ext.dom.onMouseClick(nb, function() {
+      log("user.click.new", "Clicked New molecule button in Welcome popup");
       rememberCookie();
       _this.showInsertMoleculePopup();
     }, $ext.mouse.LEFT);
@@ -289,6 +296,7 @@ OFraMP.prototype = {
     db.className = "border_box";
     $ext.dom.addText(db, "Start demo");
     $ext.dom.onMouseClick(db, function() {
+      log("user.click.demo", "Clicked Start demo button in Welcome popup");
       rememberCookie();
       _this.behavior.demo.start();
     }, $ext.mouse.LEFT);
@@ -299,6 +307,7 @@ OFraMP.prototype = {
     hb.style.float = "left";
     $ext.dom.addText(hb, "Help");
     $ext.dom.onMouseClick(hb, function() {
+      log("user.click.help", "Clicked Help button in Welcome popup");
       window.open('help.html', '_blank').focus();
     }, $ext.mouse.LEFT);
     cd.appendChild(hb);
@@ -329,6 +338,9 @@ OFraMP.prototype = {
     for(var i = 1; i <= 5; i++) {
       $ext.dom.addSelectOption(ss, i);
     }
+    $ext.dom.addEventListener(ss, 'change', function() {
+      log("user.click.shell_size", "Changed shell size to " + ss.value);
+    });
     content.appendChild(ss);
 
     var cbs = document.createElement('div');
@@ -400,11 +412,13 @@ OFraMP.prototype = {
     if(this.mv.molecule) {
       $ext.dom.addText(cb, "Cancel");
       cb.onclick = function() {
+        log("user.click.cancel_new", "Clicked Cancel in New molecule popup");
         _this.hidePopup();
       }
     } else {
       $ext.dom.addText(cb, "Start demo");
       cb.onclick = function() {
+        log("user.click.demo", "Clicked Demo button in New molecule popup");
         _this.behavior.demo.start();
       }
     }
@@ -505,6 +519,8 @@ OFraMP.prototype = {
       fv.redraw();
 
       $ext.dom.onMouseClick(ob, function() {
+        log("user.click.show_original", "Showing original molecule for "
+            + "used fragment " + i);
         _this.showOriginal(fragment, function() {
           _this.showUsedFragments(atom);
         });
@@ -517,6 +533,8 @@ OFraMP.prototype = {
     content.appendChild(cb);
 
     $ext.dom.onMouseClick(cb, function() {
+      log("user.click.close_used", "Closing used fragments popup for atom "
+          + atom.id);
       _this.hidePopup();
     }, $ext.mouse.LEFT);
   },
@@ -579,15 +597,21 @@ OFraMP.prototype = {
             var msg = "OMFraF version too old." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
+            log("system.error.omfraf_version", msg);
             showError(msg);
           } else if(vc == 1) {
             var msg = "OMFraF version too new." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
+            log("system.error.omfraf_version", msg);
             showError(msg);
           } else if(fd.error) {
+            log("system.error.omfraf", msg);
             showError(fd.error);
           } else if(fd.off) {
+            log("system.load.generate_fragments", "Fragments generated, "
+                + fd.missing_atoms.length + " atoms unparameterisable ("
+                + fd.missing_atoms + ")");
             console.log("Related fragments generated:", fd.off, fd.missing_atoms);
 
             _this.off = fd.off;
@@ -602,6 +626,7 @@ OFraMP.prototype = {
           }
         } else {
           var msg = "Could not connect to the OMFraF server.";
+          log("system.error.omfraf_connect", msg);
           showError(msg);
         }
       }
@@ -691,13 +716,16 @@ OFraMP.prototype = {
             var msg = "OMFraF version too old." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
+            log("system.error.omfraf_version", msg);
             showError(msg);
           } else if(vc == 1) {
             var msg = "OMFraF version too new." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
+            log("system.error.omfraf_version", msg);
             showError(msg);
           } else if(fd.error) {
+            log("system.error.omfraf", msg);
             showError(fd.error);
           } else if(fd.fragments) {
             log("system.load.fragments", "Loaded " + fd.fragments.length
@@ -726,6 +754,7 @@ OFraMP.prototype = {
           }
         } else {
           var msg = "Could not connect to the OMFraF server.";
+          log("system.error.omfraf_connect", msg);
           showError(msg);
         }
       }
@@ -816,12 +845,16 @@ OFraMP.prototype = {
     cd.appendChild(cb);
 
     var _this = this;
-    if(!onClose) {
-      onClose = function() {
+    var oc = function() {
+      log("user.click.close_original", "Clicked close button in Original "
+          + "molecule popup");
+      if(onClose) {
+        onClose.call(_this);
+      } else {
         _this.hidePopup();
       }
-    }
-    $ext.dom.onMouseClick(cb, onClose, $ext.mouse.LEFT);
+    };
+    $ext.dom.onMouseClick(cb, oc, $ext.mouse.LEFT);
 
     this.showPopup(title, content, true);
   },
