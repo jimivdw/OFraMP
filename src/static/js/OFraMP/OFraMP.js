@@ -594,7 +594,7 @@ OFraMP.prototype = {
                 _this.fragmentsGeneratedEvent);
           }
         } else {
-          var msg = "Could not connect to the OMFraF server."
+          var msg = "Could not connect to the OMFraF server.";
           showError(msg);
         }
       }
@@ -716,7 +716,7 @@ OFraMP.prototype = {
             $ext.dom.dispatchEvent(_this.container, _this.fragmentsFoundEvent);
           }
         } else {
-          var msg = "Could not connect to the OMFraF server."
+          var msg = "Could not connect to the OMFraF server.";
           showError(msg);
         }
       }
