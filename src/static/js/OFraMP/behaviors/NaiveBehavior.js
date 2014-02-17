@@ -250,8 +250,9 @@ NaiveBehavior.prototype = {
 
     var msb = document.createElement('button');
     msb.className = "border_box";
-    toggleSelectionEdit();
-    toggleSelectionEdit();
+    _this.oframp.mv.isModifyingSelection = false;
+    $ext.dom.clear(msb);
+    msb.appendChild(document.createTextNode("Modify selection"));
     function toggleSelectionEdit() {
       if(_this.oframp.mv.isModifyingSelection) {
         _this.oframp.mv.isModifyingSelection = false;
