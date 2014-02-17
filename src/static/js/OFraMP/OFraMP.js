@@ -251,7 +251,7 @@ OFraMP.prototype = {
         + "modern browsers. You appear to be using a very old browser ("
         + BrowserDetect.browser + ", version " + BrowserDetect.version + ") "
         + "which, unfortunately, is not supported. For best results, please "
-        + "update to the latest version of ");
+        + "upgrade to the latest version of ");
     var cdl = document.createElement('a');
     cdl.href = "http://chrome.google.com/";
     $ext.dom.addText(cdl, "Google Chrome");
@@ -276,6 +276,24 @@ OFraMP.prototype = {
         + "other molecules. Once the whole molecule has been parameterised, "
         + "you can download the resulting parameterisation in an LGF file.");
     content.appendChild(mp);
+
+    if(!this.isValidBrowser(FULLY_SUPPORTED_BROWSERS)) {
+      var bp = document.createElement("p");
+      $ext.dom.addText(bp, "The Online tool for Fragment-based Molecule "
+          + "Parameterisation has been designed and implemented for use in "
+          + "modern browsers. Your browser (" + BrowserDetect.browser
+          + ", version " + BrowserDetect.version + ") is only partially "
+          + "supported and is lacking some features. For best results, please "
+          + "upgrade to the latest version of ");
+      var cdl = document.createElement('a');
+      cdl.href = "http://chrome.google.com/";
+      $ext.dom.addText(cdl, "Google Chrome");
+      bp.appendChild(cdl);
+      $ext.dom.addText(bp, ".");
+
+      content.appendChild(bp);
+      $ext.dom.addClass(this.popup, "warning");
+    }
 
     var dp = document.createElement('p');
     $ext.dom.addText(dp, "If you are here for the first time, it might be a "
