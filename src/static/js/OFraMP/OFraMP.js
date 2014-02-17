@@ -46,8 +46,11 @@ OFraMP.prototype = {
     this.container = document.getElementById(containerID);
     this.behavior = new behavior(this);
     this.__initUI();
-    // TODO: check cookie
-    this.showInsertMoleculePopup();
+    if($ext.cookie.get("hideWelcome")) {
+      this.showInsertMoleculePopup();
+    } else {
+      this.showWelcomePopup();
+    }
   },
 
   __initUI: function() {
@@ -267,10 +270,7 @@ OFraMP.prototype = {
 
     function rememberCookie() {
       if(!ri.checked) {
-        var d = new Date();
-        d.setTime(d.getTime() + (100 * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toGMTString();
-        document.cookie = "hideWelcome=true; " + expires;
+        $ext.cookie.set('hideWelcome', true, 100);
       }
     }
 
