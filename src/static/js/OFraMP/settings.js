@@ -15,6 +15,52 @@ var ATOM_STATUSES = {
   conflict: 16
 };
 
+var PARTIALLY_SUPPORTED_BROWSERS = [
+  {
+    browser: "Chrome",
+    minVersion: "0"
+  },
+  {
+    browser: "Firefox",
+    minVersion: "4"
+  },
+  {
+    browser: "Explorer",
+    minVersion: "7"
+  },
+  {
+    browser: "Safari",
+    minVersion: "5"
+  },
+  {
+    browser: "Opera",
+    minVersion: "12"
+  }
+];
+
+var FULLY_SUPPORTED_BROWSERS = [
+  {
+    browser: "Chrome",
+    minVersion: "25"
+  },
+//  { TEST IT FIRST!
+//    browser: "Firefox",
+//    minVersion: "25"
+//  },
+  {
+    browser: "Explorer",
+    minVersion: "10"
+  },
+//  { TEST IT FIRST!
+//    browser: "Safari",
+//    minVersion: "5"
+//  },
+//  { TEST IT FIRST!
+//    browser: "Opera",
+//    minVersion: "15"
+//  }
+];
+
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 
 var DEFAULT_SETTINGS = {

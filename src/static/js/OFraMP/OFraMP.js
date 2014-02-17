@@ -46,6 +46,11 @@ OFraMP.prototype = {
     this.container = document.getElementById(containerID);
     this.behavior = new behavior(this);
     this.__initUI();
+
+    if(!this.isValidBrowser(PARTIALLY_SUPPORTED_BROWSERS)) {
+      return this.showErrorPopup();
+    }
+
     if($ext.cookie.get("hideWelcome")) {
       this.showInsertMoleculePopup();
     } else {
@@ -191,6 +196,22 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
+  isValidBrowser: function(browsers) {
+    var names = $ext.array.map(browsers, function(browser) {
+      return browser.browser;
+    });
+    if(names.indexOf(BrowserDetect.browser) === -1) {
+      return false;
+    }
+
+    var minVersion = $ext.each(browsers, function(browser) {
+      if(browser.browser === BrowserDetect.browser) {
+        return browser.minVersion;
+      }
+    });
+    return BrowserDetect.version >= minVersion;
+  },
+
   getUnparameterizedAtoms: function(only_parameterizable) {
     var unpar = this.mv.molecule.getUnparameterized();
     if(only_parameterizable) {
@@ -220,6 +241,25 @@ OFraMP.prototype = {
   hidePopup: function() {
     this.popup.style.visibility = "hidden";
     this.popupClose.style.display = "";
+  },
+
+  showErrorPopup: function() {
+    var title = "Please upgrade your browser";
+    var content = document.createElement("p");
+    $ext.dom.addText(content, "The Online tool for Fragment-based Molecule "
+        + "Parameterisation has been designed and implemented for use in "
+        + "modern browsers. You appear to be using a very old browser ("
+        + BrowserDetect.browser + ", version " + BrowserDetect.version + ") "
+        + "which, unfortunately, is not supported. For best results, please "
+        + "update to the latest version of ");
+    var cdl = document.createElement('a');
+    cdl.href = "http://chrome.google.com/";
+    $ext.dom.addText(cdl, "Google Chrome");
+    content.appendChild(cdl);
+    $ext.dom.addText(content, ". Apologies for any inconvenience.");
+
+    $ext.dom.addClass(this.popup, "error");
+    this.showPopup(title, content);
   },
 
   showWelcomePopup: function() {
