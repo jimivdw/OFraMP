@@ -861,19 +861,11 @@ OFraMP.prototype = {
   },
 
   previousCheckpoint: function() {
-    if(this.activeCheckpoint === 0) {
-      alert("Previous checkpoint does not exist.");
-      return;
-    }
     this.loadCheckpoint(this.activeCheckpoint - 1);
     log("system.action.history_back", "Stepped back in history");
   },
 
   nextCheckpoint: function() {
-    if(this.activeCheckpoint === this.checkpoints.length - 1) {
-      alert("Next checkpoint does not exist.");
-      return;
-    }
     this.loadCheckpoint(this.activeCheckpoint + 1);
     log("system.action.history_forward", "Stepped forward in history");
   },

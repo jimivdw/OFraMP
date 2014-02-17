@@ -159,7 +159,7 @@
         }, $ext.mouse.LEFT);
         function openFile() {
           oframp.showInsertMoleculePopup();
-          var lb = document.getElementById("input_oss");
+          var lb = document.getElementById("load_oss");
           lb.click();
         }
 
@@ -196,7 +196,6 @@
           log("user.click.undo", "Undo clicked");
           undo();
         });
-
         function undo() {
           if(!oframp.checkpoints) {
             return;
