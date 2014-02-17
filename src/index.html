@@ -76,6 +76,7 @@
         });
 
         window.onresize = function() {
+          log("user.resize.window", "Resized window to " + document.documentElement.clientWidth + " x " + document.documentElement.clientHeight);
           oframp.setMVSize(document.documentElement.clientWidth, document.documentElement.clientHeight);
         };
 
@@ -182,7 +183,10 @@
         }
 
         var sv = document.getElementById("save");
-        $ext.dom.onMouseClick(sv, downloadLGF, $ext.mouse.LEFT);
+        $ext.dom.onMouseClick(sv, function() {
+          log("user.click.download", "Download LGF clicked");
+          downloadLGF();
+        }, $ext.mouse.LEFT);
         function downloadLGF() {
           var data = oframp.mv.molecule.getLGF();
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
@@ -230,7 +234,10 @@
         }, $ext.mouse.LEFT);
 
         var hb = document.getElementById("help");
-        $ext.dom.onMouseClick(hb, openHelp, $ext.mouse.LEFT);
+        $ext.dom.onMouseClick(hb, function() {
+          log("user.click.help", "Help clicked");
+          openHelp();
+        }, $ext.mouse.LEFT);
         function openHelp() {
           window.open('help.html', '_blank').focus();
         }
