@@ -21,6 +21,7 @@ NaiveBehavior.prototype = {
           oframp.selectionChanged();
 
           $ext.dom.onMouseClick(ffb, function() {
+            log("user.click.find", "Clicked find fragments button");
             // Make sure the previewed charges are reset.
             oframp.mv.previewCharges({});
             oframp.getMatchingFragments();
@@ -49,6 +50,7 @@ NaiveBehavior.prototype = {
     cb.className = 'close';
     ts.appendChild(cb);
     $ext.dom.onMouseClick(cb, function() {
+      log("user.click.selection_close", "Clicked close for Selection details");
       _this.oframp.mv.molecule.setSelected([]);
       _this.oframp.hideSelectionDetails();
       _this.oframp.redraw();
@@ -112,10 +114,14 @@ NaiveBehavior.prototype = {
         $ext.dom.onMouseClick(ceb, function() {
           $ext.dom.clear(ceb);
           if(cei.disabled) {
+            log("user.click.edit_charge", "Clicked Edit for atom " + atom.id);
             cei.disabled = "";
             $ext.dom.addText(ceb, "Apply");
           } else {
+            log("user.click.apply_charge", "Clicked Apply for atom " + atom.id);
             if(cei.value && !$ext.number.isNumeric(cei.value)) {
+              log("user.action.illegal_charge", "Entered illegal charge value "
+                  + "for atom " + atom.id);
               alert("Only numeric values are allowed for the atom charge.");
               return;
             }
@@ -135,6 +141,8 @@ NaiveBehavior.prototype = {
             }
             cei.disabled = "disabled";
             $ext.dom.addText(ceb, "Edit");
+            log("user.action.edit_charge", "Set charge for atom " + atom.id
+                + " to " + newCharge);
           }
         }, $ext.mouse.LEFT);
 
@@ -143,6 +151,8 @@ NaiveBehavior.prototype = {
           fcb.className = "border_box";
           $ext.dom.addText(fcb, "Show");
           $ext.dom.onMouseClick(fcb, function() {
+            log("user.click.used_fragments", "Clicked show used fragments for "
+                + "atom " + atom.id);
             _this.oframp.showUsedFragments(atom);
           }, $ext.mouse.LEFT);
         } else {
@@ -160,9 +170,13 @@ NaiveBehavior.prototype = {
       $ext.dom.onMouseClick(satb, function() {
         $ext.dom.clear(satb);
         if(sadl.style.display === "table") {
+          log("user.click.hide_selected", "Clicked Hide for selected atoms' "
+              + "details");
           sadl.style.display = "none";
           $ext.dom.addText(satb, "Show");
         } else {
+          log("user.click.show_selected", "Clicked Show for selected atoms' "
+              + "details");
           sadl.style.display = "table";
           $ext.dom.addText(satb, "Hide");
         }
@@ -309,6 +323,7 @@ NaiveBehavior.prototype = {
     cb.className = 'close';
     ts.appendChild(cb);
     $ext.dom.onMouseClick(cb, function() {
+      log("user.click.close_fragments", "Clicked Close on related fragments");
       _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
       _this.oframp.mv.previewCharges({});
 
@@ -411,6 +426,8 @@ NaiveBehavior.prototype = {
           return;
         }
 
+        log("user.hover.fragment", "Mouse over fragment " + i);
+
         var charges = {};
         $ext.each(atoms, function(atom) {
           charges[atom.id] = atom.charge;
@@ -462,6 +479,8 @@ NaiveBehavior.prototype = {
       }, $ext.mouse.LEFT);
 
       $ext.dom.onMouseClick(ob, function() {
+        log("user.click.show_original", "Showing original molecule for "
+            + "fragment " + i);
         _this.oframp.showOriginal(fragment);
       }, $ext.mouse.LEFT);
 
@@ -677,6 +696,7 @@ NaiveBehavior.prototype = {
     $ext.dom.addText(db, "Download LGF");
     db.className = "border_box";
     $ext.dom.onMouseClick(db, function() {
+      log("user.click.download", "Clicked Download LGF in Finished popup");
       var data = _this.oframp.mv.molecule.getLGF();
       var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
       var fname = "OFraMP-" + date + ".lgf";
@@ -691,6 +711,7 @@ NaiveBehavior.prototype = {
     $ext.dom.addText(nb, "Enter new molecule");
     nb.className = "border_box";
     $ext.dom.onMouseClick(nb, function() {
+      log("user.click.new", "Clicked New molecule in Finished popup");
       _this.oframp.showInsertMoleculePopup();
     }, $ext.mouse.LEFT);
     cd.appendChild(nb);
@@ -700,6 +721,7 @@ NaiveBehavior.prototype = {
     cb.style.float = 'left';
     cb.className = "border_box";
     $ext.dom.onMouseClick(cb, function() {
+      log("user.click.close_popup", "Clicked Close in Finished popup");
       _this.oframp.hidePopup();
     }, $ext.mouse.LEFT);
     cd.appendChild(cb);
