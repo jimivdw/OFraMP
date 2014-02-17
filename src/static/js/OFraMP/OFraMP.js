@@ -852,10 +852,16 @@ OFraMP.prototype = {
   },
 
   previousCheckpoint: function() {
+    if(this.activeCheckpoint === 0) {
+      return;
+    }
     this.loadCheckpoint(this.activeCheckpoint - 1);
   },
 
   nextCheckpoint: function() {
+    if(this.activeCheckpoint === this.checkpoints.length - 1) {
+      return;
+    }
     this.loadCheckpoint(this.activeCheckpoint + 1);
   },
 
