@@ -149,7 +149,7 @@ OFraMP.prototype = {
     if(this.off) {
       elem.appendChild(document.createTextNode("Find fragments"));
       $ext.dom.onMouseClick(elem, function() {
-      log("user.click.find", "Clicked regular find fragments button");
+        log("user.click.find", "Clicked find fragments button");
         // Make sure the previewed charges are reset.
         _this.mv.previewCharges({});
         _this.getMatchingFragments();

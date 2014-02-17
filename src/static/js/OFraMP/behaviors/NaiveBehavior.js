@@ -692,7 +692,6 @@ NaiveBehavior.prototype = {
     nb.className = "border_box";
     $ext.dom.onMouseClick(nb, function() {
       _this.oframp.showInsertMoleculePopup();
-      log("system.finish.oframp", "Completely finished");
     }, $ext.mouse.LEFT);
     cd.appendChild(nb);
 
@@ -702,7 +701,6 @@ NaiveBehavior.prototype = {
     cb.className = "border_box";
     $ext.dom.onMouseClick(cb, function() {
       _this.oframp.hidePopup();
-      log("system.finish.oframp", "Completely finished");
     }, $ext.mouse.LEFT);
     cd.appendChild(cb);
 
