@@ -42,6 +42,16 @@ BondList.prototype = {
     });
   },
 
+  getLGF: function() {
+    var header = "@edges\n" +
+        "\t\tlabel\t" +
+        "\n";
+    var lgfs = this.map(function(bond) {
+      return bond.getLGF();
+    });
+    return header + lgfs.join("");
+  },
+
   /*
    * Get the bond with the given ID.
    */
@@ -79,6 +89,13 @@ BondList.prototype = {
    */
   map: function(f, scope) {
     return $ext.array.map(this.bonds, f, scope);
+  },
+
+  /*
+   * Filter function for the list of bonds.
+   */
+  filter: function(f, scope) {
+    return $ext.array.filter(this.bonds, f, scope);
   },
 
   /*

@@ -1,9 +1,9 @@
 /**
  * Data structure for an atom
  */
-function Atom(list, id, element, elementID, x, y, charge, previewCharge,
+function Atom(list, id, element, elementID, iacm, x, y, charge, previewCharge,
     usedFragments, status) {
-  this.__init(list, id, element, elementID, x, y, charge, previewCharge,
+  this.__init(list, id, element, elementID, iacm, x, y, charge, previewCharge,
       usedFragments, status);
 }
 
@@ -15,6 +15,7 @@ Atom.prototype = {
   id: undefined,
   element: undefined,
   elementID: undefined,
+  iacm: undefined,
   x: undefined,
   y: undefined,
   charge: undefined,
@@ -22,8 +23,8 @@ Atom.prototype = {
   usedFragments: undefined,
   status: undefined,
 
-  __init: function(list, id, element, elementID, x, y, charge, previewCharge,
-      usedFragments, status) {
+  __init: function(list, id, element, elementID, iacm, x, y, charge,
+      previewCharge, usedFragments, status) {
     this.list = list;
     this.settings = list.settings;
     this.cache = new Cache();
@@ -31,6 +32,7 @@ Atom.prototype = {
     this.id = id;
     this.element = element;
     this.elementID = elementID;
+    this.iacm = iacm;
     this.x = x;
     this.y = y;
     this.charge = charge;
@@ -45,7 +47,7 @@ Atom.prototype = {
   getSimpleJSON: function() {
     return {
       id: this.id,
-      element: this.element
+      type: this.iacm
     };
   },
 
@@ -64,6 +66,17 @@ Atom.prototype = {
       usedFragments: this.usedFragments,
       status: this.status
     };
+  },
+
+  getLGF: function() {
+    var charge = this.charge || 0.;
+    return $ext.number.format(charge, 1, 3, 0) + "\t" + // partial_charge
+        this.id + "\t" +  // label
+        this.elementID + "\t" + // label2
+        this.iacm + "\t" + // atomType
+        "0.000\t0.000\t0.000\t" + // X Y Z coordinates, unknown here
+        this.id + "\t" + // initColor, can be equal to ID here
+        "\n";
   },
 
   /*
@@ -161,7 +174,7 @@ Atom.prototype = {
 
     var bonds = Array();
     this.list.molecule.bonds.each(function(bond) {
-      if((this === bond.a1 || this === bond.a2) && (!arom || bond.type == 4)) {
+      if((this === bond.a1 || this === bond.a2) && (!arom || bond.type == 5)) {
         bonds.push(bond);
       }
     }, this);
@@ -234,9 +247,9 @@ Atom.prototype = {
     }
 
     if(this.isCharged()) {
-      var radius = this.settings.atom.radiusCharged;
+      var radius = this.settings.atom.radius.charged;
     } else {
-      var radius = this.settings.atom.radius;
+      var radius = this.settings.atom.radius.default;
     }
     this.cache.set('appearance.radius', radius, this.cache
         .getCache('appearance.showLabel'));
@@ -320,10 +333,6 @@ Atom.prototype = {
    * Returns whether the charge of this atom is set or not.
    */
   isCharged: function() {
-    if(this.element === "H") {
-      return this.getBase().isCharged();
-    }
-
     return this.charge !== undefined;
   },
 
@@ -331,10 +340,6 @@ Atom.prototype = {
    * Set the charge of this atom to the given value.
    */
   setCharge: function(charge, fragment) {
-    if(this.element === "H") {
-      return;
-    }
-
     this.charge = charge;
     this.previewCharge = undefined;
     if(fragment) {
@@ -355,20 +360,43 @@ Atom.prototype = {
    * Get the color of this atom.
    */
   getColor: function() {
-    if(this.cache.get('appearance.color')) {
-      return this.cache.get('appearance.color');
+    if(this.isCharged()) {
+      var color = this.settings.atom.color.charged;
+    } else {
+      var color = this.settings.atom.color.default;
     }
-    var c = this.settings.atom.colors[this.element];
-    var color = c || this.settings.atom.colors["other"];
-    this.cache.set('appearance.color', color);
-    return color;
+
+    if($ext.color.isDark(this.getBackgroundColor())) {
+      return $ext.color.invert(color);
+    } else {
+      return color;
+    }
+  },
+
+  getBackgroundColor: function() {
+    var status = this.getStatus();
+    if(status & ATOM_STATUSES.conflict) {
+      return this.settings.atom.backgroundColor["conflict"];
+    } else if(status & ATOM_STATUSES.preview) {
+      return this.settings.atom.backgroundColor["preview"];
+    } else if(status & ATOM_STATUSES.selected) {
+      return this.settings.atom.backgroundColor["selected"];
+    } else if(status & ATOM_STATUSES.hover) {
+      return this.settings.atom.backgroundColor["hover"];
+    } else if(status & ATOM_STATUSES.unparameterizable) {
+      return this.settings.atom.backgroundColor["unparameterizable"];
+    } else if(this.isCharged()) {
+      return this.settings.atom.backgroundColor["charged"];
+    } else {
+      return this.settings.atom.backgroundColor["default"];
+    }
   },
 
   /*
    * Get the status of this atom.
    */
   getStatus: function() {
-    if(this.element === "H") {
+    if(!this.settings.atom.showHAtoms && this.element === "H") {
       return this.getBase().getStatus();
     }
 
@@ -379,21 +407,43 @@ Atom.prototype = {
    * Get the displayed charge label for this atom.
    */
   getChargeLabel: function() {
-    if(!this.isVisible()) {
-      return;
+    var charge = this.getCharge();
+    var previewCharge = this.getPreviewCharge();
+    if(previewCharge !== undefined && this.isCharged()) {
+      charge = (previewCharge + charge) / 2;
+    } else if(previewCharge !== undefined) {
+      charge = previewCharge;
     }
+    return $ext.number.format(charge, 1, 3, 9);
+  },
 
-    if(this.element === "H") {
-      return this.getBase().getChargeLabel();
-    }
-
+  /*
+   * Get the total charge of this atom.
+   */
+  getCharge: function() {
     var charge = this.charge;
-    if(this.previewCharge !== undefined && this.isCharged()) {
-      charge = (this.previewCharge + this.charge) / 2;
-    } else if(this.previewCharge !== undefined) {
-      charge = this.previewCharge;
+    if(!this.settings.atom.showHAtoms) {
+      $ext.each(this.getHydrogenAtoms(), function(atom) {
+        if(!charge) {
+          charge = 0;
+        }
+        charge += atom.charge;
+      });
     }
-    return $ext.number.format(charge, 1, 3);
+    return charge;
+  },
+
+  /*
+   * Get the total preview charge of this atom.
+   */
+  getPreviewCharge: function() {
+    var charge = this.previewCharge;
+    if(charge !== undefined && !this.settings.atom.showHAtoms) {
+      $ext.each(this.getHydrogenAtoms(), function(atom) {
+        charge += atom.previewCharge;
+      });
+    }
+    return charge;
   },
 
   /*
@@ -524,8 +574,7 @@ Atom.prototype = {
     var ctx = this.list.molecule.mv.ctx;
     var s = this.settings;
 
-    var status = $ext.number.msb(this.getStatus());
-    ctx.fillStyle = s.atom.bgColors[status];
+    ctx.fillStyle = this.getBackgroundColor();
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.getRadius(), 0, 2 * Math.PI);
     ctx.fill();
@@ -535,8 +584,13 @@ Atom.prototype = {
     }
 
     if(s.atom.showCirc) {
-      ctx.lineWidth = s.atom.borderWidths[status];
-      ctx.strokeStyle = s.atom.borderColor;
+      if(this.status > 1) {
+        ctx.lineWidth = s.atom.borderWidth.active;
+        ctx.strokeStyle = s.atom.borderColor.active;
+      } else {
+        ctx.lineWidth = s.atom.borderWidth.default;
+        ctx.strokeStyle = s.atom.borderColor.default;
+      }
       ctx.stroke();
     }
 
@@ -545,13 +599,12 @@ Atom.prototype = {
       label += this.id;
     }
 
-    ctx.font = s.atom.font;
+    ctx.font = s.atom.elementFont;
     ctx.fillStyle = this.getColor();
     var cl = this.getChargeLabel();
     if(cl) {
       ctx.fillText(label, this.x, this.y - s.atom.chargeOffset);
       ctx.font = s.atom.chargeFont;
-      ctx.fillStyle = s.atom.chargeColor;
       ctx.fillText(cl, this.x, this.y + s.atom.chargeOffset);
     } else {
       ctx.fillText(label, this.x, this.y);

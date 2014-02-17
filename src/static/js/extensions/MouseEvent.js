@@ -12,11 +12,11 @@ $ext.extend($ext, {
      */
     getX: function(evt) {
       if(evt.target) {
-        return evt.clientX - evt.target.offsetLeft
-            + document.documentElement.scrollLeft;
+        return evt.clientX - $ext.dom.totalOffsetLeft(evt.target)
+            + $ext.dom.totalScrollLeft(evt.target);
       } else if(evt.srcElement) {
-        return evt.clientX - evt.srcElement.offsetLeft
-            + document.documentElement.scrollLeft;
+        return evt.clientX - $ext.dom.totalOffsetLeft(evt.srcElement)
+            + $ext.dom.totalScrollLeft(evt.srcElement);
       } else {
         return evt.clientX + document.documentElement.scrollLeft;
       }
@@ -27,11 +27,11 @@ $ext.extend($ext, {
      */
     getY: function(evt) {
       if(evt.target) {
-        return evt.clientY - evt.target.offsetTop
-            + document.documentElement.scrollTop;
+        return evt.clientY - $ext.dom.totalOffsetTop(evt.target)
+            + $ext.dom.totalScrollTop(evt.target);
       } else if(evt.srcElement) {
-        return evt.clientY - evt.srcElement.offsetTop
-            + document.documentElement.scrollTop;
+        return evt.clientY - $ext.dom.totalOffsetTop(evt.srcElement)
+            + $ext.dom.totalScrollTop(evt.srcElement);
       } else {
         return evt.clientY + document.documentElement.scrollTop;
       }

@@ -23,7 +23,7 @@ AtomList.prototype = {
         this.atoms.push(atom);
       } else {
         this.atoms.push(new Atom(this, atom.id, atom.element, atom.elementID,
-            atom.x, atom.y, atom.charge, atom.previewCharge,
+            atom.iacm, atom.x, atom.y, atom.charge, atom.previewCharge,
             atom.usedFragments, atom.status));
       }
     }, this);
@@ -45,6 +45,16 @@ AtomList.prototype = {
     return $ext.array.map(this.atoms, function(atom) {
       return atom.getJSON();
     });
+  },
+
+  getLGF: function() {
+    var header = "@nodes\n" +
+        "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t" +
+        "initColor\t\n";
+    var lgfs = this.map(function(atom) {
+      return atom.getLGF();
+    });
+    return header + lgfs.join("");
   },
 
   /*
@@ -297,11 +307,6 @@ AtomList.prototype = {
       return;
     }
 
-    // Set hover on the hydrogen base (or the atom itself if it is not an H)
-    if(h) {
-      h = h.getBase();
-    }
-
     var changed = false;
 
     // Unset hover from the currently hovered atom
@@ -336,10 +341,12 @@ AtomList.prototype = {
    * Returns true if the selection was changed and a redraw is needed.
    */
   setSelected: function(s) {
-    // Make sure only hydrogen bases are selected
-    s = $ext.array.map(s, function(atom) {
-      return atom.getBase();
-    });
+    if(!this.settings.atom.showHAtoms) {
+      // Make sure only hydrogen bases are selected
+      s = $ext.array.flatten($ext.array.map(s, function(atom) {
+        return atom.getHydrogenAtoms().concat([atom, atom.getBase()]);
+      }));
+    }
 
     var changed = false;
     this.each(function(a) {
@@ -352,7 +359,7 @@ AtomList.prototype = {
 
     var c = this.molecule.mv.canvas;
     $ext.each(s, function(atom) {
-      if(atom.isVisible() && !(atom.status & ATOM_STATUSES.selected)) {
+      if(!(atom.status & ATOM_STATUSES.selected)) {
         atom.select();
 
         // Bring to back of list to be drawn last (on top).
@@ -438,6 +445,20 @@ AtomList.prototype = {
    */
   centerOnAtom: function(atom) {
     this.centerOn(atom.x, atom.y);
+  },
+
+  /*
+   * Center the list of atoms on the center of the list of atoms provided.
+   */
+  centerOnAtoms: function(atoms) {
+    if(!(atoms instanceof AtomList)) {
+      atoms = new AtomList(this.molecule, atoms);
+    }
+    atoms.atoms = $ext.array.filter(atoms.atoms, function(atom) {
+      return this.settings.showHAtoms || atom.element !== "H";
+    }, this);
+    var lc = atoms.getCenterPoint();
+    this.centerOn(lc.x, lc.y);
   },
 
   /*

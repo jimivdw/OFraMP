@@ -11,47 +11,79 @@ SmartBehavior.prototype = {
 
   __init: function(oframp) {
     this.oframp = oframp;
+    this.demo = new SmartDemo(oframp);
+
     var _this = this;
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
-          _this.__fcd = document.getElementById("fragment_controls");
+          var fcd = document.getElementById("fragment_controls");
           var ffb = document.getElementById("find_fragments");
-          var pe = ffb.parentElement;
-          if(ffb) {
+          if(!_this.__ffb) {
             $ext.dom.remove(ffb);
-          } else {
-            if(_this.__fcd) {
-              $ext.dom.clear(_this.__fcd);
+            ffb = document.createElement("button");
+            ffb.id = "find_fragments";
+            ffb.className = "border_box";
+            if(_this.oframp.off) {
+              ffb.appendChild(document.createTextNode("Start parameterising"));
+            } else {
+              ffb.disabled = "disabled";
+              ffb.appendChild(document.createTextNode("Loading fragments..."));
             }
-          }
-          ffb = document.createElement("button");
-          ffb.id = "find_fragments";
-          ffb.className = "border_box";
-          ffb.appendChild(document.createTextNode("Start parameterising"));
-          pe.appendChild(ffb);
+            fcd.appendChild(ffb);
 
-          $ext.dom.onMouseClick(ffb, function() {
-            log("user.click.start", "Clicked start parameterising");
-            _this.__selectAtom();
-          }, $ext.mouse.LEFT);
+            _this.__fcd = fcd;
+            _this.__ffb = ffb;
+
+            $ext.dom.onMouseClick(ffb, function() {
+              log("user.click.start", "Clicked start parameterising");
+              _this.__selectAtom();
+            }, $ext.mouse.LEFT);
+          } else {
+            var ffb = _this.__ffb;
+            $ext.dom.clear(ffb);
+            if(_this.oframp.off) {
+              ffb.appendChild(document.createTextNode("Start parameterising"));
+            } else {
+              ffb.disabled = "disabled";
+              ffb.appendChild(document.createTextNode("Loading fragments..."));
+            }
+
+            ffb.style.display = "block";
+            _this.__afb.style.display = "none";
+            _this.__rfb.style.display = "none";
+            _this.__vob.style.display = "none";
+          }
+        });
+
+    $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
+        function() {
+          var ffb = document.getElementById("find_fragments");
+          $ext.dom.clear(ffb);
+          ffb.appendChild(document.createTextNode("Start parameterising"));
+          ffb.disabled = "";
         });
 
     $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
-      if(!_this.__fcd || !_this.__fad) {
+      if(!_this.__fcd || !_this.__ffb || !_this.__afb || !_this.__rfb
+          || !_this.__vob) {
         return;
       }
 
-      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+      if(_this.oframp.getUnparameterizedAtoms(true).length > 0) {
+        _this.__fcd.style.display = "block";
         if(_this.__needle === undefined) {
-          _this.__fcd.style.display = "inline-block";
-          _this.__fad.style.display = "none";
+          _this.__ffb.style.display = "block";
+          _this.__afb.style.display = "none";
+          _this.__rfb.style.display = "none";
+          _this.__vob.style.display = "none";
         } else {
-          _this.__fcd.style.display = "none";
-          _this.__fad.style.display = "inline-block";
+          _this.__ffb.style.display = "none";
+          _this.__afb.style.display = "block";
+          _this.__rfb.style.display = "block";
+          _this.__vob.style.display = "block";
         }
       } else {
         _this.__fcd.style.display = "none";
-        _this.__fad.style.display = "none";
       }
     });
   },
@@ -84,8 +116,8 @@ SmartBehavior.prototype = {
   },
 
   __selectAtom: function() {
-    var unpar = this.oframp.mv.molecule.getUnparameterized();
-    if(!unpar) {
+    var unpar = this.oframp.getUnparameterizedAtoms(true);
+    if(unpar.length === 0) {
       alert("Could not find any more unparameterised atoms.");
       return;
     }
@@ -108,40 +140,36 @@ SmartBehavior.prototype = {
         needle = ua;
       }
     }
+    this.__fragments = undefined;
     this.__needle = needle;
+    this.oframp.mv.molecule.setSelected([needle]);
     this.oframp.mv.molecule.centerOnAtom(needle);
-    this.oframp.getMatchingFragments([needle]);
+    this.oframp.getMatchingFragments();
   },
 
   showRelatedFragments: function(fragments) {
     this.__fragments = fragments;
 
-    if(this.__fcd.style.display !== "none") {
+    if(this.__ffb.style.display !== "none") {
       this.__initFCD();
     }
 
     this.__showFragment(0);
-    if(this.__fragments.length > 0) {
+    if(this.__fragments && this.__fragments.length > 0) {
       this.oframp.checkpoint();
     }
   },
 
   __initFCD: function() {
-    this.__fcd.style.display = "none";
-
-    var cd = document.getElementById("controls");
-    var fcd = document.createElement("div");
-    fcd.id = "fragment_accept";
-    fcd.className = "bgroup";
-    cd.insertBefore(fcd, this.__fcd);
-    this.__fad = fcd;
+    this.__ffb.style.display = "none";
 
     var afb = document.createElement("button");
     afb.id = "accept_fragment";
     afb.className = "border_box";
     afb.title = "Accept fragment";
     afb.style.backgroundImage = "url('static/img/check_mark.png')";
-    fcd.appendChild(afb);
+    $ext.dom.addText(afb, "Accept");
+    this.__fcd.appendChild(afb);
     this.__afb = afb;
 
     var rfb = document.createElement("button");
@@ -149,16 +177,17 @@ SmartBehavior.prototype = {
     rfb.className = "border_box";
     rfb.title = "Reject fragment";
     rfb.style.backgroundImage = "url('static/img/ballot_x.png')";
-    fcd.appendChild(rfb);
+    $ext.dom.addText(rfb, "Reject");
+    this.__fcd.appendChild(rfb);
     this.__rfb = rfb;
 
-    var pfb = document.createElement("button");
-    pfb.id = "previous_fragment";
-    pfb.className = "border_box";
-    pfb.title = "Previous fragment";
-    pfb.style.backgroundImage = "url('static/img/undo.png')";
-    fcd.appendChild(pfb);
-    this.__pfb = pfb;
+    var vob = document.createElement("button");
+    vob.id = "view_original";
+    vob.className = "border_box";
+    vob.title = "View fragment in original molecule";
+    $ext.dom.addText(vob, "View original");
+    this.__fcd.appendChild(vob);
+    this.__vob = vob;
 
     var _this = this;
     $ext.dom.onMouseClick(afb, function() {
@@ -167,7 +196,7 @@ SmartBehavior.prototype = {
       var cf = _this.__fragments[_this.__currentFragment];
       _this.oframp.mv.setPreviewCharges(cf);
 
-      if(_this.oframp.mv.molecule.getUnparameterized().length > 0) {
+      if(_this.oframp.getUnparameterizedAtoms(true).length > 0) {
         _this.__selectAtom();
       }
     }, $ext.mouse.LEFT);
@@ -181,12 +210,8 @@ SmartBehavior.prototype = {
       }
     }, $ext.mouse.LEFT);
 
-    $ext.dom.onMouseClick(pfb, function() {
-      if(!pfb.disabled) {
-        log("user.click.previous", "Clicked previous fragment for fragment "
-            + _this.__currentFragment);
-        _this.oframp.previousCheckpoint();
-      }
+    $ext.dom.onMouseClick(vob, function() {
+      _this.oframp.showOriginal(_this.__fragments[_this.__currentFragment]);
     }, $ext.mouse.LEFT);
   },
 
@@ -194,11 +219,6 @@ SmartBehavior.prototype = {
     this.__currentFragment = i;
     var fragment = this.__fragments[i];
     if(!fragment) {
-      if(confirm("No fragments were found, select a different atom?")) {
-        this.__selectAtom();
-      } else {
-        this.parameterizationFinished();
-      }
       return;
     }
 
@@ -222,28 +242,33 @@ SmartBehavior.prototype = {
       } else {
         this.__rfb.disabled = "";
       }
-      this.__pfb.disabled = "disabled";
     } else if(this.__currentFragment === this.__fragments.length - 1) {
       this.__rfb.disabled = "disabled";
-      this.__pfb.disabled = "";
     } else {
       this.__rfb.disabled = "";
-      this.__pfb.disabled = "";
     }
   },
 
   showChargeFixer: function(atom, rem, charges, fragment) {
-    atom.setCharge((atom.charge + charges[atom.id]) / 2, fragment);
+    atom.setCharge((atom.charge + atom.previewCharge) / 2, fragment);
     log("system.action.solve_conflict", "Solved conflict for atom " + atom.id);
+    if(!this.oframp.settings.atom.showHAtoms) {
+      $ext.each(atom.getHydrogenAtoms(), function(a) {
+        a.setCharge((a.charge + a.previewCharge) / 2, fragment);
+        a.resetHighlight();
+      });
+    }
     atom.resetHighlight();
 
     var needsFix = false;
     rem.each(function(atom, i) {
       if(charges[atom.id]) {
-        if(atom.charge) {
-          this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
-          needsFix = true;
-          return $ext.BREAK;
+        if(atom.isCharged()) {
+          if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
+            this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
+            needsFix = true;
+            return $ext.BREAK;
+          }
         } else {
           atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();
@@ -251,22 +276,27 @@ SmartBehavior.prototype = {
       }
     }, this);
 
+    var unpar = this.oframp.getUnparameterizedAtoms();
     if(!needsFix) {
-      if(this.oframp.mv.molecule.getUnparameterized().length == 0) {
-        this.parameterizationFinished();
+      if(unpar.length === 0) {
+        this.oframp.parameterizationFinished();
+      } else {
+        var parunpar = this.oframp.getUnparameterizedAtoms(true);
+        if(parunpar.length === 0) {
+          this.oframp.parameterizationFinished(true);
+        }
       }
     }
   },
 
-  parameterizationFinished: function() {
+  parameterizationFinished: function(incomplete) {
     this.__needle = undefined;
     this.__fragments = undefined;
     this.__currentFragment = undefined;
+    this.__fcd.style.display = "none";
     this.oframp.mv.molecule.center();
     this.oframp.checkpoint();
-    log("system.finish.parameterization", "Finished parameterisation");
-    alert("You're done! I don't know what should happen now...");
-    log("system.finish.oframp", "Completely finished");
+    NaiveBehavior.prototype.parameterizationFinished.call(this, incomplete);
   }
 };
 

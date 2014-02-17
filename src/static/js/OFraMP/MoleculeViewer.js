@@ -33,7 +33,7 @@ MoleculeViewer.prototype = {
     this.canvas = document.createElement('canvas');
     this.__initCanvas(parentID, width, height);
 
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = $ext.context.getContext(this.canvas, '2d');
     if(this.settings.fragment) {
       log("system.init.mv", "Initialized MoleculeViewer");
     }
@@ -47,12 +47,22 @@ MoleculeViewer.prototype = {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    var parent = document.getElementById(parentID);
+    if(parentID instanceof Element) {
+      var parent = parentID;
+    } else {
+      var parent = document.getElementById(parentID);
+    }
     parent.appendChild(this.canvas);
   },
 
+  isMainViewer: function() {
+    return this.settings.fragment !== undefined;
+  },
+
   setupInteraction: function() {
-    var _this = this;
+    if(this.isInteractive) {
+      return;
+    }
 
     this.isInteractive = true;
 
@@ -66,6 +76,46 @@ MoleculeViewer.prototype = {
       }
     });
 
+    if(this.isMainViewer()) {
+      this.setupFullInteraction();
+    } else {
+      this.setupBasicInteraction();
+    }
+  },
+
+  setupBasicInteraction: function() {
+    var _this = this;
+
+    $ext.dom.onMouseDrag(this.canvas, function(e) {
+      if(!_this.overlayShowing) {
+        _this.move(e.deltaX, e.deltaY);
+      }
+    }, $ext.mouse.LEFT);
+
+    $ext.dom.onMouseWheel(this.canvas, function(e) {
+      if(!_this.overlayShowing) {
+        if(e.deltaY < 0) {
+          var f = _this.settings.zoom.factor;
+        } else {
+          var f = 1 / _this.settings.zoom.factor;
+        }
+        var c = $ext.mouse.getCoords(e);
+        _this.zoomOn(c.x, c.y, f);
+
+        if(e.preventDefault) {
+          e.preventDefault();
+        } else if(e.stopPropagation) {
+          e.stopPropagation();
+        } else {
+          return false;
+        }
+      }
+    });
+  },
+
+  setupFullInteraction: function() {
+    var _this = this;
+
     $ext.dom.onMouseMove(this.canvas, function(e) {
       if(!_this.overlayShowing) {
         var c = $ext.mouse.getCoords(e);
@@ -77,7 +127,7 @@ MoleculeViewer.prototype = {
     });
 
     $ext.dom.onMouseClick(this.canvas, function(e) {
-      if(!_this.overlayShowing) {
+      if(!_this.overlayShowing && !_this.selectingDisabled) {
         var c = $ext.mouse.getCoords(e);
         var a = _this.molecule.getAtomAt(c.x, c.y);
         var s = a ? [a] : [];
@@ -125,9 +175,10 @@ MoleculeViewer.prototype = {
 
     var initialSelection = [];
     $ext.dom.onMouseDrag(this.canvas, function(e) {
-      if(!_this.overlayShowing) {
+      if(!_this.overlayShowing && !_this.selectingDisabled) {
         if(!_this.selectionArea) {
-          _this.selectionArea = new SelectionArea(_this, e.clientX, e.clientY);
+          _this.selectionArea = new SelectionArea(_this, $ext.mouse.getX(e),
+              $ext.mouse.getY(e));
           if(e.ctrlKey === true || _this.isModifyingSelection) {
             initialSelection = _this.molecule.getSelected();
           }
@@ -212,9 +263,13 @@ MoleculeViewer.prototype = {
 
   /*
    * Get the molecule data from OAPoC and run the success function on success.
+   * 
+   * If fromATB is true, the molecule will be retrieved from ATB.
    */
-  getMoleculeData: function(dataStr, success) {
+  getMoleculeData: function(dataStr, success, failure, fromATB) {
     var _this = this;
+    success = success || function() {};
+    failure = failure || function() {};
 
     this.showOverlay("Loading molecule data...", MESSAGE_TYPES.info);
 
@@ -227,37 +282,49 @@ MoleculeViewer.prototype = {
         _this.showOverlay("Loading molecule data...\nRequest received.");
       } else if(xhr.readyState == 3) {
         _this.showOverlay("Loading molecule data...\nProcessing request...");
-      } else if(xhr.readyState == 4 && xhr.status == 200) {
-        var md = JSON.parse(xhr.responseText);
-        console.log("md", md);
-
-        var vc = $ext.string.versionCompare(_this.settings.oapoc.version,
-            md.version);
-        if(vc == -1) {
-          var msg = "OAPoC version too old." + "\n\nRequired version: "
-              + _this.settings.oapoc.version + "\nCurrent version: "
-              + md.version;
-          _this.showOverlay(msg, MESSAGE_TYPES.error);
-        } else if(vc == 1) {
-          var msg = "OAPoC version too new." + "\n\nRequired version: "
-              + _this.settings.oapoc.version + "\nCurrent version: "
-              + md.version;
-          _this.showOverlay(msg, MESSAGE_TYPES.error);
-        } else if(md.error) {
-          _this.showOverlay(md.error, MESSAGE_TYPES.error);
-        } else if(md.atoms && md.bonds) {
-          log("system.load.molecule", "Loaded " + dataStr);
-          success.call(_this, md);
+      } else if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var md = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.oapoc.version,
+              md.version);
+          if(vc == -1) {
+            var msg = "OAPoC version too old." + "\n\nRequired version: "
+                + _this.settings.oapoc.version + "\nCurrent version: "
+                + md.version;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(vc == 1) {
+            var msg = "OAPoC version too new." + "\n\nRequired version: "
+                + _this.settings.oapoc.version + "\nCurrent version: "
+                + md.version;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(md.error) {
+            var msg = "An error has occured:\n" + md.error;
+            _this.showOverlay(msg, MESSAGE_TYPES.error);
+            failure.call(_this, msg);
+          } else if(md.molecule) {
+            log("system.load.molecule", "Loaded " + dataStr);
+            success.call(_this, md.molecule);
+          }
+        } else {
+          var msg = "Could not connect to server";
+          _this.showOverlay(msg, MESSAGE_TYPES.critical);
+          failure.call(_this, msg);
         }
-      } else if(xhr.status != 200) {
-        _this
-            .showOverlay("Could not connect to server", MESSAGE_TYPES.critical);
       }
     };
 
-    xhr.open("POST", this.settings.oapoc.url, true);
+    if(fromATB) {
+      var url = this.settings.oapoc.loadUrl;
+      var data = "molid=" + encodeURIComponent(dataStr);
+    } else {
+      var url = this.settings.oapoc.url;
+      var data = "data=" + encodeURIComponent(dataStr);
+    }
+    xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("fmt=smiles&data=" + encodeURIComponent(dataStr));
+    xhr.send(data);
   },
 
   /*
@@ -265,17 +332,30 @@ MoleculeViewer.prototype = {
    * 
    * Once the molecule has been loaded execute the optional success function;
    */
-  showMolecule: function(dataStr, success) {
+  showMolecule: function(dataStr, success, failure, fromATB) {
     this.getMoleculeData(dataStr, function(md) {
       this.showOverlay("Initializing molecule...");
-      this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr);
+      this.molecule = new Molecule(this, md.atoms, md.bonds, md.dataStr,
+          md.molid);
+
+      if(!fromATB) {
+        var mj = JSON.stringify({
+          molecule: this.molecule.getSimpleJSON()
+        });
+        this.oframp.generateMoleculeFragments(mj);
+      }
+
       this.molecule.idealize();
       this.hideOverlay();
       if(success) {
         success.call(this, this.molecule);
       }
       log("system.show.molecule", "Shown " + dataStr);
-    });
+    }, function(msg) {
+      if(failure) {
+        failure.call(this, msg);
+      }
+    }, fromATB);
   },
 
   loadMolecule: function(data) {
@@ -327,7 +407,9 @@ MoleculeViewer.prototype = {
    */
   hideOverlay: function() {
     this.overlayShowing = false;
-    if(!this.isInteractive) {
+    if(this.isInteractive) {
+      this.canvas.style.cursor = this.settings.cursor.drag;
+    } else {
       this.canvas.style.cursor = this.settings.cursor.click;
     }
     this.redraw();
@@ -338,9 +420,9 @@ MoleculeViewer.prototype = {
    */
   previewCharges: function(charges) {
     this.molecule.atoms.each(function(atom) {
-      if(charges[atom.id]) {
+      if(charges[atom.id] !== undefined) {
         atom.previewCharge = charges[atom.id];
-        if(atom.charge) {
+        if(atom.isCharged()) {
           atom.addHighlight(ATOM_STATUSES.conflict);
         } else {
           atom.addHighlight(ATOM_STATUSES.preview);
@@ -361,12 +443,14 @@ MoleculeViewer.prototype = {
   setCharges: function(charges, fragment) {
     var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
-      if(charges[atom.id]) {
-        if(atom.charge) {
-          this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
-              .slice(i + 1), charges, fragment);
-          needsFix = true;
-          return $ext.BREAK;
+      if(charges[atom.id] !== undefined) {
+        if(atom.isCharged()) {
+          if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
+            this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
+                .slice(i + 1), charges, fragment);
+            needsFix = true;
+            return $ext.BREAK;
+          }
         } else {
           atom.setCharge(charges[atom.id], fragment);
           atom.resetHighlight();
@@ -375,11 +459,20 @@ MoleculeViewer.prototype = {
     }, this);
     this.redraw();
 
+    var unpar = this.molecule.getUnparameterized();
     if(needsFix) {
       return false;
     } else {
-      if(this.molecule.getUnparameterized().length === 0) {
-        this.oframp.behavior.parameterizationFinished();
+      this.oframp.checkpoint();
+      if(unpar.length === 0) {
+        this.oframp.parameterizationFinished();
+      } else {
+        var parunpar = $ext.array.filter(unpar, function(atom) {
+          return this.oframp.off_missing.indexOf(atom.id) === -1;
+        }, this);
+        if(parunpar.length === 0) {
+          this.oframp.parameterizationFinished(true);
+        }
       }
       return true;
     }

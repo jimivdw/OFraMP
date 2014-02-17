@@ -1,5 +1,5 @@
-function Molecule(mv, atoms, bonds, dataStr) {
-  this.__init(mv, atoms, bonds, dataStr);
+function Molecule(mv, atoms, bonds, dataStr, molid) {
+  this.__init(mv, atoms, bonds, dataStr, molid);
 }
 
 Molecule.prototype = {
@@ -10,9 +10,10 @@ Molecule.prototype = {
   dataStr: undefined,
   atoms: undefined,
   bonds: undefined,
+  molid: undefined,
 
 
-  __init: function(mv, atoms, bonds, dataStr) {
+  __init: function(mv, atoms, bonds, dataStr, molid) {
     this.mv = mv;
     this.settings = mv.settings;
     this.cache = new Cache();
@@ -20,16 +21,21 @@ Molecule.prototype = {
     this.dataStr = dataStr;
     this.atoms = new AtomList(this, atoms);
     this.bonds = new BondList(this, bonds);
+    this.molid = molid;
   },
 
   /*
    * Convert the basic data of this Molecule to JSON.
    */
   getSimpleJSON: function() {
-    return {
+    var data = {
       atoms: this.atoms.getSimpleJSON(),
       bonds: this.bonds.getSimpleJSON()
     };
+    if(this.molid !== undefined) {
+      data.molid = this.molid;
+    }
+    return data;
   },
 
   /*
@@ -41,6 +47,10 @@ Molecule.prototype = {
       atoms: this.atoms.getJSON(),
       bonds: this.bonds.getJSON()
     };
+  },
+
+  getLGF: function() {
+    return this.atoms.getLGF() + this.bonds.getLGF();
   },
 
   /*
@@ -151,6 +161,13 @@ Molecule.prototype = {
   },
 
   /*
+   * Move the center of the given list of atoms to the center of the canvas.
+   */
+  centerOnAtoms: function(atoms) {
+    return this.atoms.centerOnAtoms(atoms);
+  },
+
+  /*
    * Fit the molecule in a bounding box of size w * h.
    */
   bestFit: function(w, h) {
@@ -203,6 +220,9 @@ Molecule.prototype = {
       });
 
       _this.idealize();
+      _this.mv.hideOverlay();
+    }, function(msg) {
+      alert("Could not reset positions:\n" + msg);
       _this.mv.hideOverlay();
     });
   },

@@ -8,23 +8,26 @@ var MESSAGE_TYPES = {
 
 var ATOM_STATUSES = {
   normal: 0,
-  hover: 1,
-  selected: 2,
-  preview: 4,
-  conflict: 8
+  unparameterizable: 1,
+  hover: 2,
+  selected: 4,
+  preview: 8,
+  conflict: 16
 };
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 
 var DEFAULT_SETTINGS = {
   oapoc: {
-    url: "http://vps955.directvps.nl/OAPoC/",
-    version: "0.1.4"
+    url: "http://vps955.directvps.nl/OAPoC/generate/",
+    loadUrl: "http://vps955.directvps.nl/OAPoC/loadATB/",
+    version: "0.5.0"
   },
 
   omfraf: {
-    url: "http://vps955.directvps.nl/OMFraF/",
-    version: "0.0.3"
+    url: "http://vps955.directvps.nl/OMFraF/load/",
+    generateUrl: "http://vps955.directvps.nl/OMFraF/generate/",
+    version: "0.4.1"
   },
 
   zoom: {
@@ -67,43 +70,39 @@ var DEFAULT_SETTINGS = {
   },
 
   atom: {
-    showCirc: true,
     showHAtoms: false,
     combineHLabels: true,
     showCLabels: true,
+    showCirc: true,
     showID: false,
-    font: "bold 12px Arial",
+    radius: {
+      default: 20,
+      charged: 20
+    },
+    backgroundColor: {
+      default: "rgb(255, 255, 255)",
+      charged: "rgb(180, 180, 180)",
+      hover: "rgb(210, 180, 245)",
+      selected: "rgb(150, 140, 205)",
+      preview: "rgb(140, 205, 108)",
+      conflict: "rgb(204, 166,  40)",
+      unparameterizable: "rgb(255, 210, 208)"
+    },
+    borderWidth: {
+      default: 1,
+      active: 3
+    },
+    borderColor: {
+      default: "rgb( 48, 48, 48)",
+      active: "rgb( 48, 48, 48)"
+    },
+    color: {
+      default: "rgb( 48, 48, 48)",
+      charged: "rgb( 48, 48, 48)"
+    },
+    elementFont: "bold 12px Arial",
     chargeFont: "9px Arial",
-    colors: {
-      S: "rgb(204, 166,  40)",
-      O: "rgb(223,  83,  73)",
-      N: "rgb( 76,  81, 178)",
-      H: "rgb(148, 148, 148)",
-      F: "rgb( 80, 169,  75)",
-      Cl: "rgb( 80, 169,  75)",
-      Br: "rgb( 80, 169,  75)",
-      I: "rgb( 80, 169,  75)",
-      other: "rgb( 48, 48, 48)"
-    },
-    chargeColor: "rgb( 48, 48, 48)",
-    radius: 20,
-    radiusCharged: 20,
-    chargeOffset: 6,
-    borderWidths: {
-      0: 1,
-      1: 3,
-      2: 3,
-      4: 3,
-      8: 3
-    },
-    borderColor: "rgb( 48, 48, 48)",
-    bgColors: {
-      0: "rgb(255, 255, 255)",
-      1: "rgb(204, 166,  40)",
-      2: "rgb(203,  83,  73)",
-      4: "rgb( 80, 169,  75)",
-      8: "rgb(205, 119,  22)"
-    }
+    chargeOffset: 6
   },
 
   bond: {
@@ -191,11 +190,6 @@ var SETTINGS_OPTIONS = {
   },
 
   atom: {
-    "radius, radiusCharged, chargeOffset": {
-      min: 0,
-      max: 50,
-      step: 1
-    },
     showHAtoms: {
       onChange: function() {
         var mv = this.__gui.getRootObject().getMV();
@@ -235,43 +229,42 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    "showCirc, showID, font, chargeFont, chargeColor, chargeOffset, borderColor": {
+    "showCirc, showID, elementFont, chargeFont, chargeOffset": {
       onChange: function() {
         this.__gui.getRootObject().getMV().redraw();
       }
     },
-    "radius, radiusCharged": {
-      onChange: function() {
-        var mv = this.__gui.getRootObject().getMV();
-        if(mv.molecule) {
-          mv.molecule.atoms.each(function(a) {
-            a.clearCache('appearance.radius');
-          });
-          mv.molecule.bonds.each(function(b) {
-            b.clearCache('position');
-          });
-          mv.redraw();
-        }
-      },
-      onFinishChange: function() {
-        this.__gui.getRootObject().getMV().deoverlap();
-      }
-    },
-    colors: {
-      "S, O, N, H, F, Cl, Br, I, other": {
+    radius: {
+      "default, charged": {
+        min: 0,
+        max: 50,
+        step: 1,
         onChange: function() {
           var mv = this.__gui.getRootObject().getMV();
           if(mv.molecule) {
             mv.molecule.atoms.each(function(a) {
-              a.clearCache('appearance.color');
+              a.clearCache('appearance.radius');
+            });
+            mv.molecule.bonds.each(function(b) {
+              b.clearCache('position');
             });
             mv.redraw();
           }
+        },
+        onFinishChange: function() {
+          this.__gui.getRootObject().getMV().deoverlap();
         }
       }
     },
-    borderWidths: {
-      "0, 1, 2, 4": {
+    backgroundColor: {
+      "default, charged, hover, selected, preview, conflict, unparameterizable": {
+        onChange: function() {
+          this.__gui.getRootObject().getMV().redraw();
+        }
+      }
+    },
+    borderWidth: {
+      "default, active": {
         min: 0,
         max: 10,
         step: 1,
@@ -280,12 +273,24 @@ var SETTINGS_OPTIONS = {
         }
       }
     },
-    bgColors: {
-      "0, 1, 2, 4": {
+    borderColor: {
+      "default, active": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
+    },
+    color: {
+      "default, charged": {
+        onChange: function() {
+          this.__gui.getRootObject().getMV().redraw();
+        }
+      }
+    },
+    chargeOffset: {
+      min: 0,
+      max: 50,
+      step: 1
     }
   },
 
@@ -351,6 +356,3 @@ var SETTINGS_OPTIONS = {
     }
   }
 };
-
-DEFAULT_SETTINGS.fragment = $ext.deepCopy(DEFAULT_SETTINGS);
-SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);

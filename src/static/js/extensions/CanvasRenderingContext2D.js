@@ -2,6 +2,13 @@ $ext.extend($ext, {
   context: {
     DEFAULT_DASH_COUNT: 2,
 
+    getContext: function(elem, type) {
+      if($ext.onBrokenIE()) {
+        G_vmlCanvasManager.initElement(elem);
+      }
+      return elem.getContext(type);
+    },
+
     /*
      * Get the coordinates of the center point of the canvas.
      */

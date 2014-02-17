@@ -6,7 +6,7 @@ TreeVis.prototype = {
   init: function(tree) {
     this.tree = tree;
     this.canvas = document.createElement('canvas');
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = $ext.context.getContext(this.canvas, '2d');
   },
 
   __drawRow: function(nodes, x, y, width, px, py) {

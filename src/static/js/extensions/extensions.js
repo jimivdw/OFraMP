@@ -38,7 +38,7 @@ $ext = {
           }
         }
       }
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       for( var k in obj) {
         if(Object.prototype[k] !== undefined) {
           continue;
@@ -68,7 +68,7 @@ $ext = {
   extend: function(orig, extension) {
     if(orig instanceof Array) {
       return orig.concat(extension);
-    } else if(orig instanceof Object) {
+    } else if(orig instanceof Object || typeof orig === "object") {
       this.each(extension, function(v, k) {
         if(v !== undefined) {
           orig[k] = v;
@@ -84,7 +84,7 @@ $ext = {
   copy: function(obj) {
     if(obj instanceof Array) {
       return this.extend([], obj);
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       return this.extend({}, obj);
     }
   },
@@ -103,7 +103,7 @@ $ext = {
         r[i] = this.deepCopy(v);
       }, this);
       return r;
-    } else if(obj instanceof Object) {
+    } else if(obj instanceof Object || typeof obj === "object") {
       var r = new Object();
       this.each(obj, function(v, k) {
         if(obj.hasOwnProperty(k)) {
@@ -132,7 +132,7 @@ $ext = {
         }
       });
       return r;
-    } else if(orig instanceof Object) {
+    } else if(orig instanceof Object || typeof orig === "object") {
       this.each(extension, function(v, k) {
         if(typeof r[k] === 'object' && typeof v === 'object') {
           this.merge(r[k], v);
@@ -142,6 +142,36 @@ $ext = {
       }, this);
       return r;
     }
+  },
+
+  /*
+   * Send the given data using a form to the given action URL.
+   * 
+   * Based on http://stackoverflow.com/a/133997.
+   */
+  sendDataForm: function(action, data, method, target) {
+    action = action || "";
+    data = data || {};
+    method = method || "get";
+    target = target || "_self";
+
+    var form = document.createElement("form");
+    form.setAttribute("action", action);
+    form.setAttribute("method", method);
+    form.setAttribute("target", target);
+
+    this.each(data, function(value, key) {
+      var field = document.createElement("input");
+      field.setAttribute("type", "hidden");
+      field.setAttribute("name", key);
+      field.setAttribute("value", value);
+
+      form.appendChild(field);
+    });
+
+    document.documentElement.appendChild(form);
+    form.submit();
+    form.remove();
   },
 
   /*

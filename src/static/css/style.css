@@ -27,24 +27,31 @@ html, body {
     background-color: #FFF;
 }
 
-#logo {
+#header {
     position: absolute;
     top: 10px;
     left: 50%;
-    width: 100px;
-    margin-left: -50px;
+    width: 540px;
+    height: 30px;
+    margin-left: -270px;
+    z-index: 2;
     overflow: hidden;
     text-align: center;
-    -webkit-user-select: none;
-    user-select: none;
-    opacity: 0.5;
-    cursor: default;
-    -webkit-transition: opacity .2s ease-out;
-    transition: opacity .2s ease-out;
+    -webkit-transition: height .2s ease-out;
+    transition: height .2s ease-out;
 }
 
-#logo:hover {
-    opacity: 1;
+#logo {
+    display: inline-block;
+    width: 100px;
+    height: 30px;
+    margin: 0 5px;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
 }
 
 #logo span {
@@ -83,30 +90,65 @@ html, body {
 }
 
 #controls, #extra_controls {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    width: 600px;
-    height: 30px;
-    box-sizing: border-box;
-    margin-left: -300px;
+    display: none;
+    margin: 0 5px;
     text-align: center;
     -webkit-user-select: none;
     user-select: none;
-    -webkit-transition: bottom .2s ease-out, height .2s ease-out, visibility .2s ease-out;
-    transition: bottom .2s ease-out, height .2s ease-out, visibility .2s ease-out;
-    visibility: hidden;
 }
 
 #extra_controls {
-    bottom: 0px;
-    height: 0px;
-    z-index: 10;
+    margin-top: 5px;
+}
+
+#fragment_controls, #error_controls {
+    display: none;
+    z-index: 2;
+}
+
+#fragment_controls button, #error_controls button {
+    height: 35px;
+    font-size: 16px;
+}
+
+#find_fragments, #retry_new, #accept_fragment, #reject_fragment, #view_original {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    width: 180px;
+    margin-left: -90px;
+    z-index: 2;
+}
+
+#accept_fragment, #reject_fragment {
+    background-position: left center;
+    background-repeat: no-repeat;
+    color: #EEE;
+}
+
+#accept_fragment {
+    background-color: rgb( 80, 169,  75);
+}
+#accept_fragment:active {
+    background-color: rgb( 66, 135,  41);
+}
+
+#reject_fragment {
+    margin-left: 100px;
+    background-color: rgb(203,  83,  73);
+}
+#reject_fragment:active:not(:disabled) {
+background-color: rgb(169,  49,  39);
+}
+
+#view_original {
+    margin-left: -280px;
 }
 
 .bgroup {
-    display: inline-block;
-    margin: 0 10px;
+    display: block;
+    margin: 0 2px;
+    float: left;
 }
 
 .bgroup > * {
@@ -171,23 +213,41 @@ html, body {
 }
 
 #atom_details, #related_fragments {
-    padding: 5px 5px 5px 5px;
+    padding: 0 5px;
 }
 
-#atom_details span.title, #related_fragments span.title {
+#atom_details p, #related_fragments p {
+    margin: 0;
+    padding-top: 30px;
+}
+
+#atom_details .title, #related_fragments .title {
+    position: fixed;
+    display: block;
+    width: 230px;
+    padding-top: 5px;
     font-size: 16px;
     font-weight: bold;
+    background-color: #FFF;
+    z-index: 10;
 }
 
 #atom_details canvas, #related_fragments canvas {
     border: 1px solid #AAA;
     border-radius: 2px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 #atom_details table {
     width: 230px;
     margin: 3px 0;
+}
+
+#atom_details table ul {
+    margin: 0 0 8px 0;
+    padding: 0;
+    list-style: none;
 }
 
 .border_box table {
@@ -200,8 +260,9 @@ html, body {
 }
 
 .border_box th, .border_box td {
-    height: 30px;
-    padding: 3px 2px;
+    padding: 6px 2px;
+    vertical-align: baseline;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
@@ -218,28 +279,28 @@ html, body {
     width: 230px;
     margin: 3px 0;
     height: 30px;
-    cursor: pointer;
-    opacity: 0.5;
-    -webkit-transition: opacity .2s ease-out;
-    transition: opacity .2s ease-out;
 }
 
-#atom_details button:disabled {
-    opacity: 0.1 !important;
-    cursor: default !important;
-    background-color: #FFF !important;
+#atom_details table input, #atom_details table button {
+    width: 100px;
+    height: 24px;
+    margin: -4px 0;
+    padding: 0 5px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-#atom_details button:hover {
-    opacity: 1.0;
+#selected_atom_details, #selected_atom_details th, #selected_atom_details input {
+    text-align: center;
 }
 
-#atom_details button:active {
-    background-color: #DDD;
+#selected_atom_details input, #selected_atom_details button {
+    width: 56px !important;
 }
 
 #charge_edit {
     width: 230px;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 4px;
     visibility: hidden;
@@ -247,13 +308,6 @@ html, body {
 
 #charge_edit table {
     width: 220px;
-}
-
-#charge_edit input, #charge_edit table button {
-    width: 100px;
-    height: 25px;
-    box-sizing: border-box;
-    padding: 0 5px;
 }
 
 #charge_edit > button {
@@ -264,12 +318,19 @@ html, body {
     position: absolute;
     width: 110px;
     height: 30px;
-    margin: 95px 0 0 60px;
-    cursor: pointer;
-    opacity: 0.5;
+    margin-top: 95px;
     z-index: 10;
-    -webkit-transition: opacity .2s ease-out, visibility .2s ease-out;
-    transition: opacity .2s ease-out, visibility .2s ease-out;
+    font-weight: normal !important;
+    -webkit-transition: visibility .2s ease-out;
+    transition: visibility .2s ease-out;
+}
+
+.fragment .show_original {
+    margin-left: 5px;
+}
+
+.fragment .select_fragment {
+    margin-left: 115px;
 }
 
 .fragment button:disabled {
@@ -277,18 +338,10 @@ html, body {
     opacity: 0.0 !important;
 }
 
-.fragment button:hover {
-    opacity: 1.0;
-}
-
-.fragment button:active {
-    background-color: #DDD;
-}
-
 .fragment canvas {
     margin: 1px 0;
-    cursor: pointer;
-    opacity: 0.5;
+    cursor: pointer !important;
+    opacity: 0.6;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
 }
@@ -297,8 +350,16 @@ html, body {
     background-color: #DDD;
 }
 
-.fragment:hover canvas {
+.fragment:hover canvas, .fragment.active canvas {
     opacity: 1.0;
+}
+
+.fragment canvas.overlapping {
+    background-color: #FC9;
+}
+
+#selection_preview, #fc_0 {
+    padding-top: 25px;
 }
 
 #popup {
@@ -309,11 +370,14 @@ html, body {
     margin-left: -300px;
     width: 600px;
     z-index: 10;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #popup_title {
     padding: 10px;
     font-size: 20px;
+    cursor: move;
 }
 
 #popup hr {
@@ -329,22 +393,41 @@ html, body {
     width: 600px;
     overflow-x: hidden;
     overflow-y: auto;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 10px;
     text-align: center;
 }
 
+#popup_content p {
+    margin: 5px;
+    text-align: left;
+    font-size: 14px;
+}
+
 #popup_content textarea {
-    position: absolute;
     display: block;
-    top: 0;
-    right: 0;
-    bottom: 30px;
-    left: 0;
-    box-sizing: border-box;
     width: 580px;
-    margin: 10px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     border: 1px solid #333;
+}
+
+#popup_content label {
+    float: left;
+    width: 120px;
+    height: 30px;
+    margin-top: 3px;
+    text-align: left;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+#popup_content select {
+    float: left;
+    width: 120px;
+    height: 30px;
+    margin-top: 3px;
 }
 
 #popup_content .controls {
@@ -358,6 +441,8 @@ html, body {
 
 #popup_content .controls button {
     float: right;
+    height: 28px;
+    margin: 0 2px;
 }
 
 #molecule_cutout, #charge_details {
@@ -378,13 +463,15 @@ html, body {
 #charge_details select, #charge_details input {
     width: 110px;
     margin: 0;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
-#charge_details table input:disabled {
+.border_box input:disabled {
     margin: 0;
     padding: 0;
     border: 0;
+    background: none;
 }
 
 #used_fragments {
@@ -400,65 +487,94 @@ html, body {
     margin: 10px;
 }
 
-.bgroup button, .bgroup a, .bgroup select {
+.used_fragment .show_original {
+    position: absolute;
+    width: 110px;
+    height: 30px;
+    margin: 95px 0 0 75px;
+    cursor: pointer;
+    z-index: 10;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+button.border_box, a.border_box, select.border_box {
     -webkit-user-select: none;
     user-select: none;
     font-weight: bold;
-    opacity: 0.5;
     cursor: pointer;
     -webkit-transition: opacity .2s ease-out;
     transition: opacity .2s ease-out;
 }
 
-.bgroup button:disabled, .bgroup a:disabled, .bgroup select:disabled {
-    opacity: 0.1 !important;
+button.border_box:disabled, a.border_box:disabled, select.border_box:disabled {
+    opacity: 0.3 !important;
     cursor: default !important;
 }
 
-.bgroup button:hover, .bgroup a:hover, .bgroup select:hover {
-    opacity: 1;
+button.border_box:hover:not(:disabled), a.border_box:hover:not(:disabled),
+select.border_box:hover:not(:disabled) {
+    border-color: #333;
 }
 
-.bgroup button:active:not(:disabled), .bgroup a:active:not(:disabled),
-        .bgroup select:active:not(:disabled) {
+button.border_box:active:not(:disabled), a.border_box:active:not(:disabled),
+select.border_box:active:not(:disabled) {
     background-color: #DDD;
-}
-
-#accept_fragment, #reject_fragment, #previous_fragment {
-    width: 34px;
-    height: 30px;
-    font-size: 26px;
-    line-height: 30px;
-    padding: 0;
-    background-position: center center;
-}
-
-#accept_fragment {
-    background-color: rgb( 80, 169,  75);
-}
-#accept_fragment:active {
-    background-color: rgb( 66, 135,  41);
-}
-
-#reject_fragment {
-    background-color: rgb(203,  83,  73);
-}
-#reject_fragment:active:not(:disabled) {
-    background-color: rgb(169,  49,  39);
-}
-
-#previous_fragment {
-    background-color: rgb( 76,  81, 178);
-}
-#previous_fragment:active:not(:disabled) {
-    background-color: rgb( 42,  47, 144);
 }
 
 #extra_controls_toggle {
     width: 30px;
-    background-image: url('../img/open.png');
+    background-image: url('../img/double_arrow_down.png');
     background-position: center center;
     background-repeat: no-repeat;
+}
+
+#loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 160px;
+    margin: -80px 0 0 -300px;
+    text-align: center;
+}
+
+#loader p {
+    font-size: 30px;
+}
+
+.close {
+    position: absolute;
+    top: 5px;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+    background: url('../img/cross_product.png') center center no-repeat;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+#popup .close {
+    display: none;
+    right: 5px;
+    height: 35px;
+}
+
+#instruction_overlay {
+    position: absolute;
+    z-index: 100;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.highlighted {
+    border: 3px solid #333 !important;
+    border-radius: 4px !important;
 }
 
 .border_box {

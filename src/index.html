@@ -10,6 +10,7 @@
     <script type="text/javascript" src="static/js/compatibility/console.js"></script>
     <script type="text/javascript" src="static/js/compatibility/Element.js"></script>
     <script type="text/javascript" src="static/js/compatibility/Window.js"></script>
+    <script type="text/javascript" src="static/js/compatibility/base64.min.js"></script>
 
     <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
     <script type="text/javascript" src="static/js/lib/dat.gui.js"></script>
@@ -18,6 +19,8 @@
     <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
     <script type="text/javascript" src="static/js/extensions/Array.js"></script>
     <script type="text/javascript" src="static/js/extensions/CanvasRenderingContext2D.js"></script>
+    <script type="text/javascript" src="static/js/extensions/Color.js"></script>
+    <script type="text/javascript" src="static/js/extensions/Cookie.js"></script>
     <script type="text/javascript" src="static/js/extensions/Date.js"></script>
     <script type="text/javascript" src="static/js/extensions/DOM.js"></script>
     <script type="text/javascript" src="static/js/extensions/MouseEvent.js"></script>
@@ -37,6 +40,7 @@
     <script type="text/javascript" src="static/js/OFraMP/AtomList.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/Bond.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/BondList.js"></script>
+    <script type="text/javascript" src="static/js/OFraMP/Demo.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/Molecule.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/MoleculeViewer.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/OFraMP.js"></script>
@@ -46,18 +50,26 @@
     <script type="text/javascript" src="static/js/OFraMP/Behavior.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/behaviors/NaiveBehavior.js"></script>
     <script type="text/javascript" src="static/js/OFraMP/behaviors/SmartBehavior.js"></script>
+    <script type="text/javascript" src="static/js/OFraMP/behaviors/NaiveDemo.js"></script>
+    <script type="text/javascript" src="static/js/OFraMP/behaviors/SmartDemo.js"></script>
     <script>
       window.onload = function() {
         log("system.load.page", "OFraMP loaded");
-        var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/" : "http://127.0.0.1:8000/";
-        var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/" : "http://127.0.0.1:8001/";
+        var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
+        var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
+        var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";
+        var OMFraF_GENERATE_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/generate/" : "http://127.0.0.1:8001/generate/";
+
+        $ext.dom.remove(document.getElementById("loader"));
 
         var oframp = new OFraMP(NaiveBehavior, "oframp", {
           oapoc : {
-            url : OAPoC_URL
+            url : OAPoC_URL,
+            loadUrl : OAPoC_LOAD_URL
           },
           omfraf: {
-            url: OMFraF_URL
+            url: OMFraF_URL,
+            generateUrl: OMFraF_GENERATE_URL
           }
         });
 
@@ -111,12 +123,23 @@
         };
 
         var dl = document.getElementById("download");
-        dl.onclick = function() {
+        dl.onclick = function(e) {
           log("user.click.download", "Download as image clicked");
           var data = oframp.getMVDataURI('image/png');
-          this.href = data.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+          data = data.replace(/^data:image\/png;base64,/, '');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
-          this.download = "OFraMP-" + date + ".png";
+          var fname = "OFraMP-" + date + ".png";
+          $ext.sendDataForm("save.php", {
+            data: data,
+            fname: fname,
+            bd: "image/png"
+          }, "post", "_blank");
+
+          if(e.preventDefault) {
+            e.preventDefault();
+          } else {
+            return false;
+          }
         };
 
         var nm = document.getElementById("new");
@@ -129,6 +152,7 @@
         }
 
         var of = document.getElementById("open");
+        of.style.display = "none";
         $ext.dom.onMouseClick(of, function() {
           log("user.click.open", "Open clicked");
           openFile();
@@ -139,58 +163,32 @@
           lb.click();
         }
 
-        var sv = document.getElementById("save");
-        $ext.dom.onMouseClick(sv, function() {
-          log("user.click.save", "Save clicked");
+        var sb = document.getElementById("snap");
+        $ext.dom.onMouseClick(sb, function() {
+          log("user.click.snapshot", "Snapshot clicked");
           saveMolecule();
         }, $ext.mouse.LEFT);
         function saveMolecule() {
           var data = oframp.getDataURI();
-          sv.href = data;
+          data = data.replace(/^data:application\/octet-stream;base64,/, '');
           var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
-          sv.type = "application/json";
-          sv.download = "OFraMP-" + date + ".oss";
+          var fname = "OFraMP-" + date + ".oss";
+          $ext.sendDataForm("save.php", {
+            data: data,
+            fname: fname
+          }, "post", "_blank");
         }
 
-        var sb = document.getElementById("share");
-        $ext.dom.onMouseClick(sb, function(e) {
-          shareLink();
-          e.preventDefault();
-        }, $ext.mouse.LEFT);
-        function shareLink() {
-          var data = oframp.getDataURI();
-          var oss = data.replace(/^data:application\/octet-stream:base64,/, '');
-          sb.href = "?oss=";
-
-          var title = "URL to the current state, copy to share (Ctrl+C)";
-          var content = document.createElement('div');
-
-          var lta = document.createElement('textarea');
-          lta.appendChild(document.createTextNode(sb.href + encodeURIComponent(oss)));
-          sb.href = "#";
-          content.appendChild(lta);
-          lta.onfocus = function() {
-            lta.select();
-
-            // Work around Chrome's little problem
-            lta.onmouseup = function() {
-              // Prevent further mouseup intervention
-              lta.onmouseup = null;
-              return false;
-            };
-          };
-
-          var cb = document.createElement('button');
-          cb.className = "border_box controls";
-          cb.appendChild(document.createTextNode("Cancel"));
-          cb.onclick = function() {
-            oframp.hidePopup();
-          };
-          content.appendChild(cb);
-
-          oframp.showPopup(title, content);
-          // Weird bug in Chrome messes up document height upon focus call..
-          // lta.focus();
+        var sv = document.getElementById("save");
+        $ext.dom.onMouseClick(sv, downloadLGF, $ext.mouse.LEFT);
+        function downloadLGF() {
+          var data = oframp.mv.molecule.getLGF();
+          var date = $ext.date.format(new Date(), "%Y%m%d%H%M%S");
+          var fname = "OFraMP-" + date + ".lgf";
+          $ext.sendDataForm("save.php", {
+            data: data,
+            fname: fname
+          }, "post", "_blank");
         }
 
         var ub = document.getElementById("undo");
@@ -225,13 +223,15 @@
         }
 
         var op = document.getElementById("opti");
-        if ($ext.onBrokenIE()) {
-          op.remove();
-        } else {
-          $ext.dom.onMouseClick(op, function() {
-            log("user.click.settings", "Settings clicked");
-            oframp.settingsUI.toggle();
-          }, $ext.mouse.LEFT);
+        $ext.dom.onMouseClick(op, function() {
+          log("user.click.settings", "Settings clicked");
+          oframp.settingsUI.toggle();
+        }, $ext.mouse.LEFT);
+
+        var hb = document.getElementById("help");
+        $ext.dom.onMouseClick(hb, openHelp, $ext.mouse.LEFT);
+        function openHelp() {
+          window.open('help.html', '_blank').focus();
         }
 
         $ext.dom.addEventListener(oframp.container, 'historychanged', function() {
@@ -249,26 +249,34 @@
         });
 
         var controlsInitialized = false;
+        var header = document.getElementById("header");
         var controls = document.getElementById("controls");
         var extraControls = document.getElementById("extra_controls");
+        var fragmentControls = document.getElementById("fragment_controls");
         var toggle = document.getElementById("extra_controls_toggle");
+        var extraControlsVisible = false;
         function initControls() {
-          controls.style.visibility = "visible";
+          controls.style.display = "inline-block";
+          extraControls.style.display = "inline-block";
+          fragmentControls.style.display = "block";
+
+          if($ext.onBrokenIE()) {
+            var logo = document.getElementById("logo");
+            logo.style.position = "absolute";
+            logo.style.marginLeft = "-120px";
+            header.style.paddingLeft = "120px";
+          }
 
           $ext.dom.onMouseClick(toggle, function() {
-            if(extraControls.style.visibility === "visible") {
-              controls.style.bottom = "12px";
-              extraControls.style.height = "0px";
-              extraControls.style.padding = "0px";
-              extraControls.style.visibility = "hidden";
-              toggle.style.backgroundImage = "url('static/img/open.png')";
+            if(extraControlsVisible) {
+              header.style.height = "30px";
+              toggle.style.backgroundImage = "url('static/img/double_arrow_down.png')";
+              extraControlsVisible = false;
               log("user.click.hide_extra_controls", "Hide extra controls clicked");
             } else {
-              controls.style.bottom = "34px";
-              extraControls.style.visibility = "visible";
-              extraControls.style.height = "34px";
-              extraControls.style.padding = "2px";
-              toggle.style.backgroundImage = "url('static/img/close.png')";
+              header.style.height = "70px";
+              toggle.style.backgroundImage = "url('static/img/double_arrow_up.png')";
+              extraControlsVisible = true;
               log("user.click.show_extra_controls", "Show extra controls clicked");
             }
           }, $ext.mouse.LEFT);
@@ -302,9 +310,10 @@
             } else if(keyCode === 19) {
               log("user.press.save", "Save (Alt+S) pressed");
               saveMolecule();
-              sv.click();
             } else if(keyCode === 12) {
-              shareLink();
+              downloadLGF();
+            } else if(keyCode === 8) {
+              openHelp();
             }
           });
 
@@ -315,6 +324,7 @@
           if (controlsInitialized) {
             controls.style.display = "none";
             extraControls.style.display = "none";
+            fragmentControls.style.display = "none";
           }
         });
 
@@ -322,15 +332,31 @@
           if (!controlsInitialized) {
             initControls();
           } else {
-            controls.style.display = "block";
-            extraControls.style.display = "block";
+            controls.style.display = "inline-block";
+            extraControls.style.display = "inline-block";
+            fragmentControls.style.display = "block";
           }
         });
+
+        // Hide broken stuff on IE
+        if(BrowserDetect.browser === "Explorer") {
+          if(BrowserDetect.version < 10) {
+            of.remove();
+            sb.remove();
+            sv.remove();
+          }
+          if(BrowserDetect.version < 9) {
+            dl.remove();
+            op.remove();
+          }
+        }
 
         if(URLParams) {
           if(URLParams.mds) {
             log("system.laod.url_mds", "Submitting the MDS from the URL");
             oframp.submitMDS(URLParams.mds);
+          } else if(URLParams.atb_id) {
+            oframp.submitMDS(URLParams.atb_id);
           } else if(URLParams.oss) {
             log("system.laod.url_oss", "Loading the OSS from the URL");
             oframp.loadOSS(URLParams.oss);
@@ -341,82 +367,90 @@
   </head>
 
   <body>
-    <div id="logo">
-      <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+    <div id="header">
+      <div id="logo">
+        <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+      </div>
+
+      <div id="controls">
+        <div class="bgroup">
+          <button id="new" class="border_box" title="Submit another molecule (Alt+N)">
+            New molecule
+          </button>
+          <button id="open" class="border_box" title="Open a saved molecule (Alt+O)">
+            Open
+          </button>
+          <button id="snap" class="border_box" title="Save the current state (Alt+S)">
+            Snapshot
+          </button>
+          <button id="save" class="border_box" title="Download the current strcuture as an LGF file (Alt+L)">
+            Download
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <button id="undo" class="border_box" title="Undo last action (Alt+Z)">
+            Undo
+          </button>
+          <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
+            Redo
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <button id="help" class="border_box" title="Open OFraMP Help (Alt+H)">
+            Help
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <button id="extra_controls_toggle" class="border_box" title="Show/Hide advanced controls">
+            &nbsp;
+          </button>
+        </div>
+      </div>
+
+      <div id="extra_controls">
+        <div class="bgroup">
+          <button id="zoomin" class="border_box" title="Zoom in">
+            Zoom +
+          </button>
+          <button id="zoomout" class="border_box" title="Zoom out">
+            Zoom -
+          </button>
+          <select id="zoom" class="border_box" title="Zoom to a predefined level">
+            <option value="pre" disabled="disabled" selected="selected">Predefined</option>
+            <option value="min">Minimal</option>
+            <option value="avg">Ideal</option>
+            <option value="max">Maximal</option>
+            <option value="fit">Best fit</option>
+          </select>
+        </div>
+
+        <div class="bgroup">
+          <button id="reset" class="border_box" title="Reset the atom positions">
+            Reset positions
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <a id="download" class="border_box" href="" title="Download the molecule as an image">
+            Download image
+          </a>
+        </div>
+
+        <div class="bgroup">
+          <button id="opti" class="border_box" title="Settings">
+            Settings
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div id="controls">
-      <div class="bgroup">
-        <button id="new" class="border_box" title="Submit another molecule (Alt+N)">
-          New molecule
-        </button>
-        <button id="open" class="border_box" title="Open a saved molecule (Alt+O)">
-          Open
-        </button>
-        <a id="save" class="border_box" href="#" title="Save the current state (Alt+S)">
-          Save
-        </a>
-        <a id="share" class="border_box" href="#" title="Share a link to the current state (Alt+L)">
-          Share
-        </a>
-      </div>
-
-      <div class="bgroup">
-        <button id="undo" class="border_box" title="Undo last action (Alt+Z)">
-          Undo
-        </button>
-        <button id="redo" class="border_box" title="Redo last action (Alt+Y / Alt+Shift+Z)">
-          Redo
-        </button>
-      </div>
-
-      <div class="bgroup" id="fragment_controls">
-        <button id="find_fragments" class="border_box" title="Find matching fragments">
-          Find fragments
-        </button>
-      </div>
-
-      <div class="bgroup">
-        <button id="extra_controls_toggle" class="border_box" title="Show/Hide advanced controls">
-          &nbsp;
-        </button>
-      </div>
-    </div>
-
-    <div id="extra_controls">
-      <div class="bgroup">
-        <button id="zoomin" class="border_box" title="Zoom in">
-          Zoom +
-        </button>
-        <button id="zoomout" class="border_box" title="Zoom out">
-          Zoom -
-        </button>
-        <select id="zoom" class="border_box" title="Zoom to a predefined level">
-          <option value="pre" disabled="disabled" selected="selected">Predefined</option>
-          <option value="min">Minimal</option>
-          <option value="avg">Ideal</option>
-          <option value="max">Maximal</option>
-          <option value="fit">Best fit</option>
-        </select>
-      </div>
-
-      <div class="bgroup">
-        <button id="reset" class="border_box" title="Reset the atom positions">
-          Reset positions
-        </button>
-      </div>
-
-      <div class="bgroup">
-        <a id="download" class="border_box" href="" title="Download the molecule as an image">
-          Download as image
-        </a>
-      </div>
-
-      <div class="bgroup">
-        <button id="opti" class="border_box" title="Settings">
-          Settings
-        </button>
-      </div>
+    <div id="fragment_controls">
+      <button id="find_fragments" class="border_box" title="Find matching fragments">
+        Find fragments
+      </button>
     </div>
 
     <div id="copyright">
@@ -424,5 +458,9 @@
     </div>
 
     <div id="oframp"></div>
+
+    <div id="loader">
+      <p>Please be patient as the Online tool for Fragment-based Molecule Parameterisation is being loaded.</p>
+    </div>
   </body>
 </html>

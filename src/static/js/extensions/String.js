@@ -20,7 +20,7 @@ $ext.extend($ext, {
       }
 
       var chars = str.split("");
-      chars.splice(i);
+      chars.splice(i, chars.length - i);
       return chars.join("");
     },
 

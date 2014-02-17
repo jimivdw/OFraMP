@@ -8,11 +8,15 @@ OFraMP.prototype = {
   settings: undefined,
   mv: undefined,
   settingsUI: undefined,
+  off: undefined,
+  off_missing: undefined,
 
   atomDetails: undefined,
   relatedFragments: undefined,
+  errorControls: undefined,
 
   popup: undefined,
+  popupClose: undefined,
   popupTitle: undefined,
   popupContent: undefined,
 
@@ -21,17 +25,32 @@ OFraMP.prototype = {
   checkpoints: undefined,
   activeCheckpoint: undefined,
 
-  uiInitializedEvent: new Event('uiinitialized'),
-  moleculeEnteredEvent: new Event('moleculeentered'),
-  moleculeDisplayedEvent: new Event('moleculedisplayed'),
-  historyChangedEvent: new Event('historychanged'),
+  uiInitializedEvent: 'uiinitialized',
+  moleculeEnteredEvent: 'moleculeentered',
+  moleculeDisplayedEvent: 'moleculedisplayed',
+  fragmentsGeneratedEvent: 'fragmentsgenerated',
+  fragmentsFoundEvent: 'fragmentsfound',
+  selectionChangedEvent: 'selectionchanged',
+  historyChangedEvent: 'historychanged',
+  parameterizationFinishedEvent: 'parameterizationfinished',
 
   __init: function(behavior, containerID, settings) {
+    settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
+    settings.fragment = $ext.deepCopy(settings);
+    // Ugly way to achieve this, but cannot do it otherwise currently.
+    settings.fragment.atom.backgroundColor.charged =
+        settings.fragment.atom.backgroundColor.default;
+    SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
+    this.settings = settings;
+
     this.container = document.getElementById(containerID);
-    this.settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     this.behavior = new behavior(this);
     this.__initUI();
-    this.showInsertMoleculePopup();
+    if($ext.cookie.get("hideWelcome")) {
+      this.showInsertMoleculePopup();
+    } else {
+      this.showWelcomePopup();
+    }
     log("system.init.oframp", "Initialized OFraMP");
   },
 
@@ -62,6 +81,12 @@ OFraMP.prototype = {
     this.__initFFB(ffb);
     this.findFragmentsButton = ffb;
 
+    var ecd = document.createElement('div');
+    ecd.id = "error_controls";
+    this.__initECD(ecd);
+    this.container.appendChild(ecd);
+    this.errorControls = ecd;
+
     var cc = document.createElement('div');
     cc.id = "canvas_container";
     this.container.appendChild(cc);
@@ -71,7 +96,7 @@ OFraMP.prototype = {
       this.__initSettingsUI();
     }
 
-    this.container.dispatchEvent(this.uiInitializedEvent);
+    $ext.dom.dispatchEvent(this.container, this.uiInitializedEvent);
   },
 
   __initAtomDetails: function(container) {
@@ -89,26 +114,62 @@ OFraMP.prototype = {
   },
 
   __initPopup: function(container) {
+    var _this = this;
+    this.popupClose = document.createElement('div');
+    this.popupClose.className = "close";
+    $ext.dom.onMouseClick(this.popupClose, function() {
+      _this.hidePopup();
+    }, $ext.mouse.LEFT);
+
     this.popupTitle = document.createElement('div');
     this.popupTitle.id = "popup_title";
 
     this.popupContent = document.createElement('div');
     this.popupContent.id = "popup_content";
 
+    $ext.dom.onMouseDrag(this.popupTitle, function(e) {
+      var cs = getComputedStyle(container);
+      var left = (popup.offsetLeft - parseInt(cs.marginLeft) + e.deltaX) + "px";
+      var top = (parseInt(cs.top) + e.deltaY) + "px";
+      var bottom = (parseInt(cs.bottom) - e.deltaY) + "px";
+      container.style.left = left;
+      container.style.top = top;
+      container.style.bottom = bottom;
+    }, $ext.mouse.LEFT);
+
+    container.appendChild(this.popupClose);
     container.appendChild(this.popupTitle);
     container.appendChild(document.createElement('hr'));
     container.appendChild(this.popupContent);
   },
 
   __initFFB: function(elem) {
-    elem.appendChild(document.createTextNode("Find fragments"));
-    elem.disabled = "disabled";
     var _this = this;
-    $ext.dom.onMouseClick(elem, function() {
+    elem.disabled = "disabled";
+    if(this.off) {
+      elem.appendChild(document.createTextNode("Find fragments"));
+      $ext.dom.onMouseClick(elem, function() {
       log("user.click.find", "Clicked regular find fragments button");
-      // Make sure the previewed charges are reset.
-      _this.mv.previewCharges({});
-      _this.getMatchingFragments();
+        // Make sure the previewed charges are reset.
+        _this.mv.previewCharges({});
+        _this.getMatchingFragments();
+      }, $ext.mouse.LEFT);
+    } else {
+      elem.appendChild(document.createTextNode("Loading fragments..."));
+    }
+  },
+
+  __initECD: function(elem) {
+    var _this = this;
+
+    var rnb = document.createElement('button');
+    rnb.id = "retry_new";
+    rnb.className = "border_box";
+    $ext.dom.addText(rnb, "Enter a new molecule");
+    elem.appendChild(rnb);
+
+    $ext.dom.onMouseClick(rnb, function() {
+      _this.showInsertMoleculePopup();
     }, $ext.mouse.LEFT);
   },
 
@@ -132,16 +193,117 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
-  showPopup: function(title, content) {
+  getUnparameterizedAtoms: function(only_parameterizable) {
+    var unpar = this.mv.molecule.getUnparameterized();
+    if(only_parameterizable) {
+      var parunpar = $ext.array.filter(unpar, function(atom) {
+        return this.off_missing.indexOf(atom.id) === -1;
+      }, this);
+      return parunpar;
+    } else {
+      return unpar;
+    }
+  },
+
+  showPopup: function(title, content, closable) {
     $ext.dom.clear(this.popupTitle);
     $ext.dom.clear(this.popupContent);
     this.popupTitle.appendChild(document.createTextNode(title));
     this.popupContent.appendChild(content);
+    if(closable === true) {
+      this.popupClose.style.display = "block";
+    }
+    this.popup.style.top = "";
+    this.popup.style.bottom = "";
+    this.popup.style.left = "";
     this.popup.style.visibility = 'visible';
   },
 
   hidePopup: function() {
     this.popup.style.visibility = "hidden";
+    this.popupClose.style.display = "";
+  },
+
+  showWelcomePopup: function() {
+    var _this = this;
+
+    var title = "Welcome";
+
+    var content = document.createElement('div');
+
+    var mp = document.createElement('p');
+    $ext.dom.addText(mp, "Welcome at OFraMP, the Online tool for Fragment-"
+        + "based molecule parameterisation. Using OFraMP, you can assign "
+        + "atomic partial charges of a molecule based on fragments of "
+        + "other molecules. Once the whole molecule has been parameterised, "
+        + "you can download the resulting parameterisation in an LGF file.");
+    content.appendChild(mp);
+
+    var dp = document.createElement('p');
+    $ext.dom.addText(dp, "If you are here for the first time, it might be a "
+        + "good idea to take the guided demo. This can be started using the "
+        + "'Start demo' button below. More help is available by clicking the "
+        + "'Help' button below. Otherwise, you can continue to the "
+        + "molecule input by clicking the 'New molecule' button.");
+    content.appendChild(dp);
+
+    var rd = document.createElement('div');
+    rd.style.textAlign = "left";
+    rd.style.position = "absolute";
+    rd.style.bottom = "40px";
+    content.appendChild(rd);
+
+    var ri = document.createElement('input');
+    ri.type = "checkbox";
+    ri.value = "true";
+    ri.checked = "checked";
+    ri.id = "remember";
+    rd.appendChild(ri);
+
+    var rl = document.createElement('label');
+    rl.htmlFor = ri.id;
+    rl.style.float = "none";
+    $ext.dom.addText(rl, "Show this message next time");
+    rd.appendChild(rl);
+
+    var cd = document.createElement('div');
+    cd.className = "controls";
+    content.appendChild(cd);
+
+    function rememberCookie() {
+      if(!ri.checked) {
+        $ext.cookie.set('hideWelcome', true, 100);
+      }
+    }
+
+    var nb = document.createElement('button');
+    nb.className = "border_box";
+    $ext.dom.addText(nb, "New molecule");
+    $ext.dom.onMouseClick(nb, function() {
+      rememberCookie();
+      _this.showInsertMoleculePopup();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(nb);
+
+    var db = document.createElement('button');
+    db.className = "border_box";
+    $ext.dom.addText(db, "Start demo");
+    $ext.dom.onMouseClick(db, function() {
+      rememberCookie();
+      _this.behavior.demo.start();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(db);
+
+    var hb = document.createElement('button');
+    hb.className = "border_box";
+    hb.style.float = "left";
+    $ext.dom.addText(hb, "Help");
+    $ext.dom.onMouseClick(hb, function() {
+      window.open('help.html', '_blank').focus();
+    }, $ext.mouse.LEFT);
+    cd.appendChild(hb);
+
+    this.showPopup(title, content);
   },
 
   showInsertMoleculePopup: function() {
@@ -152,22 +314,45 @@ OFraMP.prototype = {
     var content = document.createElement('div');
 
     var ta = document.createElement('textarea');
-    ta.placeholder = "Insert SMILES / InChI string here";
+    ta.id = "mds_input";
+    ta.style.height = this.popup.clientHeight - 130 + "px";
+    ta.placeholder = "Insert PDB / SMILES / InChI string or ATB ID here";
     content.appendChild(ta);
+
+    var sl = document.createElement('label');
+    $ext.dom.addText(sl, "Shell size");
+    content.appendChild(sl);
+
+    var ss = document.createElement('select');
+    ss.id = "shell_size";
+    ss.className = "border_box";
+    for(var i = 1; i <= 5; i++) {
+      $ext.dom.addSelectOption(ss, i);
+    }
+    content.appendChild(ss);
 
     var cbs = document.createElement('div');
     cbs.className = 'controls';
     content.appendChild(cbs);
 
     var sb = document.createElement('button');
+    sb.id = "mds_submit";
+    sb.className = "border_box";
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       log("user.click.submit", "Submitted mds: " + ta.value);
       _this.submitMDS(ta.value);
+      var shellSize = parseInt(ss.value);
+      if(shellSize !== 1) {
+        _this.settings.omfraf.shellSize = shellSize;
+      }
     }
     cbs.appendChild(sb);
 
+    // Only for debug purposes, TODO: remove
     var rb = document.createElement('button');
+    rb.id = "random_molecule";
+    rb.className = "border_box";
     rb.appendChild(document.createTextNode("Random molecule"));
     rb.onclick = function() {
       ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
@@ -175,47 +360,56 @@ OFraMP.prototype = {
     }
     cbs.appendChild(rb);
 
-    var ossi = document.createElement("input");
-    ossi.id = "input_oss";
-    ossi.type = "file";
-    ossi.style.display = "none";
-    ossi.accept = ".oss";
-    ossi.onchange = function() {
-      var oss = this.files[0];
-      if(!oss.name.match(/.*\.oss$/)) {
-        alert("Only OFraMP Structure Storage (.oss) files are allowed.");
-        return;
-      }
+    if(BrowserDetect.browser !== "Explorer" || BrowserDetect.version > 9) {
+      var ossi = document.createElement("input");
+      ossi.type = "file";
+      ossi.style.display = "none";
+      ossi.accept = ".oss";
+      ossi.onchange = function() {
+        var oss = ossi.files[0];
+        if(!oss.name.match(/.*\.oss$/)) {
+          alert("Only OFraMP Structure Storage (.oss) files are allowed.");
+          return;
+        }
 
-      var reader = new FileReader();
-      reader.onload = function(evt) {
-        log("system.load.oss_file", "Loaded " + oss.name);
-        _this.loadOSS(evt.target.result);
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          log("system.load.oss_file", "Loaded " + oss.name);
+          _this.loadOSS(evt.target.result);
+        };
+        reader.readAsText(oss);
       };
-      reader.readAsBinaryString(oss);
-    };
-    cbs.appendChild(ossi);
+      cbs.appendChild(ossi);
 
-    var lb = document.createElement('button');
-    lb.id = "load_oss";
-    lb.appendChild(document.createTextNode("Load from OSS file"));
-    lb.onclick = function() {
+      var lb = document.createElement('button');
+      lb.id = "load_oss";
+      lb.className = "border_box";
+      lb.appendChild(document.createTextNode("Load from OSS file"));
+      lb.onclick = function() {
       log("user.click.load_oss", "Load from OSS clicked");
-      ossi.click();
+        ossi.click();
+      }
+      cbs.appendChild(lb);
     }
-    cbs.appendChild(lb);
+
+    var cb = document.createElement('button');
+    cb.style.float = 'left';
+    cb.className = "border_box";
+    cbs.appendChild(cb);
 
     if(this.mv.molecule) {
-      var cb = document.createElement('button');
-      cb.style.float = 'left';
-      cb.appendChild(document.createTextNode("Cancel"));
+      $ext.dom.addText(cb, "Cancel");
       cb.onclick = function() {
         _this.hidePopup();
       }
-      cbs.appendChild(cb);
+    } else {
+      $ext.dom.addText(cb, "Start demo");
+      cb.onclick = function() {
+        _this.behavior.demo.start();
+      }
     }
 
-    this.showPopup(title, content);
+    this.showPopup(title, content, this.mv.molecule !== undefined);
     ta.focus();
   },
 
@@ -223,13 +417,20 @@ OFraMP.prototype = {
     var _this = this;
     this.mv.showMolecule(mds, function() {
       _this.checkpoint();
-      _this.container.dispatchEvent(_this.moleculeDisplayedEvent);
+      $ext.dom.dispatchEvent(_this.container, _this.moleculeDisplayedEvent);
+      _this.errorControls.style.display = "none";
+    }, function(msg) {
+      _this.errorControls.style.display = "block";
     });
 
     if(!this.mv.molecule) {
       this.mv.setupInteraction();
     }
-    this.container.dispatchEvent(this.moleculeEnteredEvent);
+    this.off = undefined;
+    this.selectionChanged();
+    $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
+    this.hideSelectionDetails();
+    this.hideRelatedFragments();
     this.hidePopup();
   },
 
@@ -240,10 +441,13 @@ OFraMP.prototype = {
         this.mv.setupInteraction();
       }
 
-      this.container.dispatchEvent(this.moleculeEnteredEvent);
+      $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
+      this.hideSelectionDetails();
+      this.hideRelatedFragments();
       this.mv.loadMolecule(data);
       this.checkpoint();
-      this.container.dispatchEvent(this.moleculeDisplayedEvent);
+      $ext.dom.dispatchEvent(this.container, this.moleculeDisplayedEvent);
+      this.errorControls.style.display = "none";
       log("system.show.molecule", "Shown from OSS");
 
       this.hidePopup();
@@ -258,7 +462,7 @@ OFraMP.prototype = {
     var title = "Used molecule fragments";
 
     var content = document.createElement('div');
-    this.showPopup(title, content);
+    this.showPopup(title, content, true);
 
     var frags = document.createElement('div');
     frags.id = "used_fragments";
@@ -273,20 +477,38 @@ OFraMP.prototype = {
         return atom;
       }, this);
 
-      var bonds = $ext.array.map(fragment.bonds, function(bond) {
-        return this.mv.molecule.bonds.get(bond.id).getJSON();
-      }, this);
+      var aids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.id;
+      });
+      var abs = this.mv.molecule.bonds.filter(function(bond) {
+        return aids.indexOf(bond.a1.id) !== -1
+            && aids.indexOf(bond.a2.id) !== -1;
+      });
+      var bonds = $ext.array.map(abs, function(bond) {
+        return bond.getJSON();
+      });
 
       var fc = document.createElement('div');
       fc.id = "ufc_" + i;
       fc.className = 'used_fragment border_box';
       frags.appendChild(fc);
 
+      var ob = document.createElement('button');
+      ob.className = "show_original border_box";
+      ob.appendChild(document.createTextNode("Show molecule"));
+      fc.appendChild(ob);
+
       var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
       fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
       fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
       fv.redraw();
+
+      $ext.dom.onMouseClick(ob, function() {
+        _this.showOriginal(fragment, function() {
+          _this.showUsedFragments(atom);
+        });
+      }, $ext.mouse.LEFT);
     }, this);
 
     var cb = document.createElement('button');
@@ -317,6 +539,82 @@ OFraMP.prototype = {
   hideRelatedFragments: function() {
     this.relatedFragments.parentElement.style.visibility = "hidden";
     this.relatedFragments.parentElement.style.opacity = "0.0";
+  },
+
+  /*
+   * Instruct OMFraF to generate the molecule fragments.
+   */
+  generateMoleculeFragments: function(queryJSON) {
+    var _this = this;
+
+    function showError(msg) {
+      $ext.dom.clear(_this.relatedFragments);
+      var ts = document.createElement('span');
+      ts.className = "title";
+      ts.appendChild(document.createTextNode("An error has occured"));
+      _this.relatedFragments.appendChild(ts);
+
+      var ep = document.createElement('p');
+      ep.appendChild(document.createTextNode(msg));
+      _this.relatedFragments.appendChild(ep);
+
+      var cb = document.createElement("button");
+      cb.appendChild(document.createTextNode("Close"));
+      $ext.dom.onMouseClick(cb, function() {
+        _this.hideRelatedFragments();
+      }, $ext.mouse.LEFT);
+      _this.relatedFragments.appendChild(cb);
+
+      _this.showRelatedFragments();
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var fd = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+              fd.version);
+          if(vc == -1) {
+            var msg = "OMFraF version too old." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(vc == 1) {
+            var msg = "OMFraF version too new." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(fd.error) {
+            showError(fd.error);
+          } else if(fd.off) {
+            console.log("Related fragments generated:", fd.off, fd.missing_atoms);
+
+            _this.off = fd.off;
+            _this.off_missing = fd.missing_atoms;
+            $ext.each(fd.missing_atoms, function(aid) {
+              _this.mv.molecule.atoms.get(aid)
+                  .addHighlight(ATOM_STATUSES.unparameterizable);
+            });
+            _this.redraw();
+            $ext.dom.dispatchEvent(_this.container,
+                _this.fragmentsGeneratedEvent);
+          }
+        } else {
+          var msg = "Could not connect to the OMFraF server.";
+          showError(msg);
+        }
+      }
+    };
+
+    var data = "data=" + encodeURIComponent(queryJSON);
+    if(this.settings.omfraf.shellSize) {
+      data += "&shell=" + this.settings.omfraf.shellSize;
+    }
+
+    xhr.open("POST", this.settings.omfraf.generateUrl, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(data);
   },
 
   /*
@@ -352,10 +650,8 @@ OFraMP.prototype = {
     }
 
     var queryJSON = JSON.stringify({
-      needle: $ext.array.map(selection, function(atom) {
-        return atom.id;
-      }),
-      molecule: this.mv.molecule.getSimpleJSON()
+      off: this.off,
+      needle: selectionIDs
     });
 
     $ext.dom.clear(this.relatedFragments);
@@ -386,33 +682,52 @@ OFraMP.prototype = {
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
-      if(xhr.readyState == 4 && xhr.status == 200) {
-        var fd = JSON.parse(xhr.responseText);
-        console.log("fd", fd);
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var fd = JSON.parse(xhr.responseText);
+          var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
+              fd.version);
+          if(vc == -1) {
+            var msg = "OMFraF version too old." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(vc == 1) {
+            var msg = "OMFraF version too new." + "\n\nRequired version: "
+                + _this.settings.omfraf.version + "\nCurrent version: "
+                + fd.version;
+            showError(msg);
+          } else if(fd.error) {
+            showError(fd.error);
+          } else if(fd.fragments) {
+            log("system.load.fragments", "Loaded " + fd.fragments.length
+                + " fragments");
+            $ext.each(fd.fragments, function(fragment) {
+              var overlapCount = 0;
+              $ext.each(fragment.atoms, function(atom) {
+                var orig = this.mv.molecule.atoms.get(atom.id);
+                if(orig.isCharged()) {
+                  overlapCount += 1;
+                }
+              }, this);
 
-        var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
-            fd.version);
-        if(vc == -1) {
-          var msg = "OMFraF version too old." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
+              if(overlapCount > 0) {
+                fragment.hasOverlap = true;
+                fragment.score -= overlapCount;
+              }
+            }, _this);
+
+            fragments = fd.fragments.sort(function(a, b) {
+              return b.score - a.score;
+            });
+            _this.hideRelatedFragments();
+            _this.behavior.showRelatedFragments(fragments, selectionIDs);
+            $ext.dom.dispatchEvent(_this.container, _this.fragmentsFoundEvent);
+          }
+        } else {
+          var msg = "Could not connect to the OMFraF server.";
           showError(msg);
-        } else if(vc == 1) {
-          var msg = "OMFraF version too new." + "\n\nRequired version: "
-              + _this.settings.omfraf.version + "\nCurrent version: "
-              + fd.version;
-          showError(msg);
-        } else if(fd.error) {
-          showError(fd.error);
-        } else if(fd.fragments) {
-          log("system.load.fragments", "Loaded " + fd.fragments.length
-              + " fragments");
-          _this.hideRelatedFragments();
-          _this.behavior.showRelatedFragments(fd.fragments);
         }
-      } else if(xhr.readyState > 1 && xhr.status != 200) {
-        var msg = "Could not connect to the OMFraF server."
-        showError(msg);
       }
     };
 
@@ -422,13 +737,21 @@ OFraMP.prototype = {
   },
 
   getMoleculeCutout: function(x, y, sw, sh, width, height) {
+    if($ext.onBrokenIE()) {
+      var e = document.createElement('span');
+      e.className = "error";
+      $ext.dom.addText(e,
+          "Please update your browser to see a section of the molecule here");
+      return e;
+    }
+
     // Redraw first to make sure no pending changes are ignored
     this.redraw();
 
     var c = document.createElement('canvas');
     c.width = width;
     c.height = height;
-    var ctx = c.getContext('2d');
+    var ctx = $ext.context.getContext(c, '2d');
 
     // Increase selection size when the ratio is off
     var r = sw / sh;
@@ -449,11 +772,58 @@ OFraMP.prototype = {
     var tc = document.createElement('canvas');
     tc.width = id.width;
     tc.height = id.height;
-    tc.getContext("2d").putImageData(id, 0, 0);
+    $ext.context.getContext(tc, '2d').putImageData(id, 0, 0);
 
     ctx.scale(f, f);
     ctx.drawImage(tc, 0, 0);
     return c;
+  },
+
+  showOriginal: function(fragment, onClose) {
+    var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
+    var content = document.createElement('div');
+
+    var oids = $ext.array.map(fragment.atoms, function(atom) {
+      return atom.other_id;
+    });
+    var ov = new MoleculeViewer(this, "original_" + fragment.atb_id, content,
+        580, this.popup.clientHeight - 100);
+    ov.showMolecule(fragment.atb_id, function() {
+      $ext.each(fragment.atoms, function(atom) {
+        var o = this.molecule.atoms.get(atom.other_id);
+        o.charge = atom.charge;
+        o.addHighlight(ATOM_STATUSES.preview);
+      }, this);
+      this.setupInteraction();
+      this.molecule.minimize();
+      var oas = $ext.array.map(oids, function(oid) {
+        return this.molecule.atoms.get(oid);
+      }, this);
+      this.molecule.centerOnAtoms(oas);
+      this.hideOverlay();
+      this.redraw();
+    }, null, true);
+    ov.canvas.className = "border_box";
+
+    var cd = document.createElement('div');
+    cd.className = "controls";
+    content.appendChild(cd);
+
+    var cb = document.createElement('button');
+    cb.className = "border_box";
+    cb.style.float = "left";
+    cb.appendChild(document.createTextNode("Close"));
+    cd.appendChild(cb);
+
+    var _this = this;
+    if(!onClose) {
+      onClose = function() {
+        _this.hidePopup();
+      }
+    }
+    $ext.dom.onMouseClick(cb, onClose, $ext.mouse.LEFT);
+
+    this.showPopup(title, content, true);
   },
 
   checkpoint: function() {
@@ -465,7 +835,7 @@ OFraMP.prototype = {
     if(!this.checkpoints) {
       this.checkpoints = [checkpoint];
       this.activeCheckpoint = 0;
-      this.container.dispatchEvent(this.historyChangedEvent);
+      $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
       return;
     }
 
@@ -475,7 +845,7 @@ OFraMP.prototype = {
 
     this.checkpoints.push(checkpoint);
     this.activeCheckpoint += 1;
-    this.container.dispatchEvent(this.historyChangedEvent);
+    $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
   },
 
   loadCheckpoint: function(i) {
@@ -487,7 +857,7 @@ OFraMP.prototype = {
     this.mv.loadMolecule(this.checkpoints[i].molecule);
     this.behavior.loadJSON(this.checkpoints[i].behavior);
     this.activeCheckpoint = i;
-    this.container.dispatchEvent(this.historyChangedEvent);
+    $ext.dom.dispatchEvent(this.container, this.historyChangedEvent);
   },
 
   previousCheckpoint: function() {
@@ -512,14 +882,60 @@ OFraMP.prototype = {
    * Handler to be called after a change in the atom selection.
    */
   selectionChanged: function() {
-    var selection = this.mv.molecule.getSelected();
+    if(this.mv.molecule) {
+      var selection = this.mv.molecule.getSelected();
+    }
+    var ffbState = "";
+    if(!this.off) {
+      ffbState = "disabled";
+      $ext.dom.clear(this.findFragmentsButton);
+      $ext.dom.addText(this.findFragmentsButton, "Loading fragments...");
+    }
     if(selection && selection.length > 0) {
-      this.findFragmentsButton.disabled = "";
+      this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
+
+      if(!(this.behavior instanceof SmartBehavior) && this.off) {
+        // Make sure charges are not currently being previewed
+        var pas = $ext.array.filter(this.mv.molecule.atoms.atoms,
+            function(atom) {
+          return atom.previewCharge !== undefined;
+        });
+        if(pas.length === 0) {
+          var cas = $ext.array.filter(selection, function(atom) {
+            return !atom.isCharged();
+          });
+
+          var selectionIDs = $ext.array.map(selection, function(atom) {
+            return atom.id;
+          });
+          var tree = this.mv.molecule.atoms.getTree(selection[0]);
+          var selectionTree = tree.filter(function(node) {
+            return selectionIDs.indexOf(node.key) !== -1;
+          });
+
+          var connected = $ext.each(selection, function(atom) {
+            var f = selectionTree.findNode(atom.id);
+            if(!f) {
+              return false;
+            }
+          });
+
+          if(connected !== false && cas.length > 0) {
+            this.getMatchingFragments();
+          }
+        }
+      }
     } else {
       this.findFragmentsButton.disabled = "disabled";
       this.hideSelectionDetails();
     }
+    $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+  },
+
+  parameterizationFinished: function(incomplete) {
+    this.behavior.parameterizationFinished(incomplete);
+    $ext.dom.dispatchEvent(this.container, this.parameterizationFinishedEvent);
   },
 
 
@@ -635,7 +1051,7 @@ OFraMP.prototype = {
    */
   getDataURI: function() {
     var data = JSON.stringify(this.mv.molecule.getJSON());
-    return "data:application/octet-stream:base64," + btoa(data);
+    return "data:application/octet-stream;base64," + btoa(data);
   },
 
   /*
