@@ -291,16 +291,19 @@ MoleculeViewer.prototype = {
             var msg = "OAPoC version too old." + "\n\nRequired version: "
                 + _this.settings.oapoc.version + "\nCurrent version: "
                 + md.version;
+            log("system.error.oapoc_version", msg);
             _this.showOverlay(msg, MESSAGE_TYPES.error);
             failure.call(_this, msg);
           } else if(vc == 1) {
             var msg = "OAPoC version too new." + "\n\nRequired version: "
                 + _this.settings.oapoc.version + "\nCurrent version: "
                 + md.version;
+            log("system.error.oapoc_version", msg);
             _this.showOverlay(msg, MESSAGE_TYPES.error);
             failure.call(_this, msg);
           } else if(md.error) {
             var msg = "An error has occured:\n" + md.error;
+            log("system.error.oapoc", msg);
             _this.showOverlay(msg, MESSAGE_TYPES.error);
             failure.call(_this, msg);
           } else if(md.molecule) {
@@ -309,6 +312,7 @@ MoleculeViewer.prototype = {
           }
         } else {
           var msg = "Could not connect to server";
+          log("system.error.oapoc_connect", msg);
           _this.showOverlay(msg, MESSAGE_TYPES.critical);
           failure.call(_this, msg);
         }
