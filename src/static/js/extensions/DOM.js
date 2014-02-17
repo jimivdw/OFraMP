@@ -617,7 +617,10 @@ var dom = {
       }
       mouseDragged = false;
       _this.dispatchEvent(elem, _this.mouseDragEndEvent, {
-        button: evt.button
+        button: evt.button,
+        ctrlKey: evt.ctrlKey,
+        altKey: evt.altKey,
+        shiftKey: evt.shiftKey
       });
     }
 
