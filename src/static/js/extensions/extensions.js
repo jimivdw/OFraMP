@@ -20,16 +20,22 @@ $ext = {
    * The parameter scope will be provided to the function and can be used for
    * 'this' scoping.
    */
-  each: function(obj, f, scope) {
+  each: function(obj, f, scope, recursive, recursive_key) {
     if(obj instanceof Array) {
       for( var i = 0; i < obj.length; i++) {
-        var r = f.call(scope, obj[i], i);
-        if(r === this.CONTINUE) {
-          continue;
-        } else if(r === this.BREAK) {
-          break;
-        } else if(r !== undefined) {
-          return r;
+        var e = obj[i];
+        var dk = recursive_key ? recursive_key + "." + i : i;
+        if(e instanceof Array && recursive) {
+          this.each(e, f, scope, recursive, dk);
+        } else {
+          var r = f.call(scope, e, dk);
+          if(r === this.CONTINUE) {
+            continue;
+          } else if(r === this.BREAK) {
+            break;
+          } else if(r !== undefined) {
+            return r;
+          }
         }
       }
     } else if(obj instanceof Object || typeof obj === "object") {
@@ -38,13 +44,19 @@ $ext = {
           continue;
         }
 
-        var r = f.call(scope, obj[k], k);
-        if(r === this.CONTINUE) {
-          continue;
-        } else if(r === this.BREAK) {
-          break;
-        } else if(r !== undefined) {
-          return r;
+        var e = obj[k];
+        var dk = recursive_key ? recursive_key + "." + k : k;
+        if(!(e instanceof Array) && e instanceof Object && recursive) {
+          this.each(e, f, scope, recursive, dk);
+        } else {
+          var r = f.call(scope, e, dk);
+          if(r === this.CONTINUE) {
+            continue;
+          } else if(r === this.BREAK) {
+            break;
+          } else if(r !== undefined) {
+            return r;
+          }
         }
       }
     }
