@@ -319,8 +319,10 @@
               log("user.press.save", "Save (Alt+S) pressed");
               saveMolecule();
             } else if(keyCode === 12) {
+              log("user.press.download", "Download (Alt+L) pressed");
               downloadLGF();
             } else if(keyCode === 8) {
+              log("user.press.help", "Help (Alt+H) pressed");
               openHelp();
             }
           });
