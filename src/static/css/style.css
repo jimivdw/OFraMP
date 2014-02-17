@@ -374,6 +374,14 @@ background-color: rgb(169,  49,  39);
     user-select: none;
 }
 
+#popup.error {
+    background-color: #FDC;
+}
+
+#popup.warning {
+    background-color: #EEA;
+}
+
 #popup_title {
     padding: 10px;
     font-size: 20px;
