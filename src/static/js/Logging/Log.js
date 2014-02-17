@@ -38,7 +38,7 @@ function getOrderedLog() {
     });
   }, undefined, true);
   return ol.sort(function(a, b) {
-    return a.time > b.time;
+    return a.time - b.time;
   });
 }
 
