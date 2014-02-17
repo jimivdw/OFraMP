@@ -211,6 +211,8 @@ SmartBehavior.prototype = {
     }, $ext.mouse.LEFT);
 
     $ext.dom.onMouseClick(vob, function() {
+      log("user.click.show_original", "Showing original molecule for "
+          + "fragment " + _this.__currentFragment);
       _this.oframp.showOriginal(_this.__fragments[_this.__currentFragment]);
     }, $ext.mouse.LEFT);
   },
