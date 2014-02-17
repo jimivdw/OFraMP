@@ -365,6 +365,8 @@ OFraMP.prototype = {
   showInsertMoleculePopup: function() {
     var _this = this;
 
+    $ext.dom.removeClass(this.popup, "warning");
+
     var title = "Please enter a molecule data string";
 
     var content = document.createElement('div');
