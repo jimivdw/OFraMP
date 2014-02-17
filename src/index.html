@@ -80,6 +80,10 @@
           oframp.setMVSize(document.documentElement.clientWidth, document.documentElement.clientHeight);
         };
 
+        window.onblur = function() {
+          log("user.action.blur", "User changed window focus");
+        };
+
         // ONLY for debug purposes, TODO : remove
         doframp = oframp;
 
