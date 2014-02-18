@@ -24,7 +24,7 @@ var cookie = {
     document.cookie = name + "=" + value + expires;
   },
 
-  delete: function(name) {
+  remove: function(name) {
     name += "=";
     var d = new Date('1970-01-01');
     document.cookie = name + "; expires=" + d.toGMTString();
