@@ -249,7 +249,7 @@ Atom.prototype = {
     if(this.isCharged()) {
       var radius = this.settings.atom.radius.charged;
     } else {
-      var radius = this.settings.atom.radius.default;
+      var radius = this.settings.atom.radius.standard;
     }
     this.cache.set('appearance.radius', radius, this.cache
         .getCache('appearance.showLabel'));
@@ -363,7 +363,7 @@ Atom.prototype = {
     if(this.isCharged()) {
       var color = this.settings.atom.color.charged;
     } else {
-      var color = this.settings.atom.color.default;
+      var color = this.settings.atom.color.standard;
     }
 
     if($ext.color.isDark(this.getBackgroundColor())) {
@@ -388,7 +388,7 @@ Atom.prototype = {
     } else if(this.isCharged()) {
       return this.settings.atom.backgroundColor["charged"];
     } else {
-      return this.settings.atom.backgroundColor["default"];
+      return this.settings.atom.backgroundColor["standard"];
     }
   },
 
@@ -588,8 +588,8 @@ Atom.prototype = {
         ctx.lineWidth = s.atom.borderWidth.active;
         ctx.strokeStyle = s.atom.borderColor.active;
       } else {
-        ctx.lineWidth = s.atom.borderWidth.default;
-        ctx.strokeStyle = s.atom.borderColor.default;
+        ctx.lineWidth = s.atom.borderWidth.standard;
+        ctx.strokeStyle = s.atom.borderColor.standard;
       }
       ctx.stroke();
     }

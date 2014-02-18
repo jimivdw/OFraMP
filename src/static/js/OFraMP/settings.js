@@ -130,11 +130,11 @@ var DEFAULT_SETTINGS = {
     showCirc: true,
     showID: false,
     radius: {
-      default: 20,
+      standard: 20,
       charged: 20
     },
     backgroundColor: {
-      default: "rgb(255, 255, 255)",
+      standard: "rgb(255, 255, 255)",
       charged: "rgb(194, 255, 147)",
       hover: "rgb(210, 180, 245)",
       selected: "rgb(150, 140, 205)",
@@ -143,15 +143,15 @@ var DEFAULT_SETTINGS = {
       unparameterizable: "rgb(255, 210, 208)"
     },
     borderWidth: {
-      default: 1,
+      standard: 1,
       active: 3
     },
     borderColor: {
-      default: "rgb( 48, 48, 48)",
+      standard: "rgb( 48, 48, 48)",
       active: "rgb( 48, 48, 48)"
     },
     color: {
-      default: "rgb( 48, 48, 48)",
+      standard: "rgb( 48, 48, 48)",
       charged: "rgb( 48, 48, 48)"
     },
     elementFont: "bold 12px Arial",
@@ -289,7 +289,7 @@ var SETTINGS_OPTIONS = {
       }
     },
     radius: {
-      "default, charged": {
+      "standard, charged": {
         min: 0,
         max: 50,
         step: 1,
@@ -311,14 +311,14 @@ var SETTINGS_OPTIONS = {
       }
     },
     backgroundColor: {
-      "default, charged, hover, selected, preview, conflict, unparameterizable": {
+      "standard, charged, hover, selected, preview, conflict, unparameterizable": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
     },
     borderWidth: {
-      "default, active": {
+      "standard, active": {
         min: 0,
         max: 10,
         step: 1,
@@ -328,14 +328,14 @@ var SETTINGS_OPTIONS = {
       }
     },
     borderColor: {
-      "default, active": {
+      "standard, active": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
     },
     color: {
-      "default, charged": {
+      "standard, charged": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
