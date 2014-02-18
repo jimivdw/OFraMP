@@ -294,6 +294,14 @@ background-color: rgb(169,  49,  39);
     text-align: center;
 }
 
+#selected_atom_details tr {
+    cursor: crosshair;
+}
+
+#selected_atom_details tr:first-child {
+    cursor: auto;
+}
+
 #selected_atom_details input, #selected_atom_details button {
     width: 56px !important;
 }

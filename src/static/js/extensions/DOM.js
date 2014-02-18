@@ -92,6 +92,7 @@ var dom = {
     li.appendChild(item);
 
     list.appendChild(li);
+    return li;
   },
 
   addTableRow: function(table, values, headers) {
@@ -128,6 +129,7 @@ var dom = {
     });
 
     table.appendChild(row);
+    return row;
   },
 
   addSelectOption: function(select, value, label, selected) {
@@ -142,6 +144,7 @@ var dom = {
       option.selected = "selected";
     }
     select.appendChild(option);
+    return option;
   },
 
   /*

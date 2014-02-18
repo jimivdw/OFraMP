@@ -150,7 +150,17 @@ NaiveBehavior.prototype = {
         }
 
         var el = atom.element + "(" + atom.id + ")";
-        $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
+        var row = $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
+        $ext.dom.onMouseOver(row, function() {
+          if(_this.oframp.mv.molecule.setHover(atom)) {
+            _this.oframp.redraw();
+          }
+        });
+        $ext.dom.onMouseOut(row, function() {
+          if(_this.oframp.mv.molecule.setHover()) {
+            _this.oframp.redraw();
+          }
+        });
       });
       this.oframp.atomDetails.appendChild(sadlc);
 
