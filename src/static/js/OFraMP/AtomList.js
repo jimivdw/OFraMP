@@ -304,7 +304,11 @@ AtomList.prototype = {
    */
   setHover: function(h) {
     if(h && !h.isVisible()) {
-      return;
+      if(this.settings.atom.showHAtoms) {
+        return;
+      } else {
+        h = h.getBase();
+      }
     }
 
     var changed = false;
