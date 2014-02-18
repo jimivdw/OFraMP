@@ -320,7 +320,7 @@ AtomList.prototype = {
 
     var c = this.molecule.mv.canvas;
     if(h) {
-      if(!(h.status & (ATOM_STATUSES.hover | ATOM_STATUSES.selected))) {
+      if(!(h.status & ATOM_STATUSES.hover)) {
         h.hover();
 
         // Bring to back of list to be drawn last (on top).

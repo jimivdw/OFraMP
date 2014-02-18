@@ -374,16 +374,16 @@ Atom.prototype = {
   },
 
   getBackgroundColor: function() {
-    var status = this.getStatus();
-    if(status & ATOM_STATUSES.conflict) {
+    var status = $ext.number.msb(this.getStatus());
+    if(status === ATOM_STATUSES.conflict) {
       return this.settings.atom.backgroundColor["conflict"];
-    } else if(status & ATOM_STATUSES.preview) {
+    } else if(status === ATOM_STATUSES.preview) {
       return this.settings.atom.backgroundColor["preview"];
-    } else if(status & ATOM_STATUSES.selected) {
+    } else if(status === ATOM_STATUSES.selected) {
       return this.settings.atom.backgroundColor["selected"];
-    } else if(status & ATOM_STATUSES.hover) {
+    } else if(status === ATOM_STATUSES.hover) {
       return this.settings.atom.backgroundColor["hover"];
-    } else if(status & ATOM_STATUSES.unparameterizable) {
+    } else if(status === ATOM_STATUSES.unparameterizable) {
       return this.settings.atom.backgroundColor["unparameterizable"];
     } else if(this.isCharged()) {
       return this.settings.atom.backgroundColor["charged"];

@@ -9,8 +9,8 @@ var MESSAGE_TYPES = {
 var ATOM_STATUSES = {
   normal: 0,
   unparameterizable: 1,
-  hover: 2,
-  selected: 4,
+  selected: 2,
+  hover: 4,
   preview: 8,
   conflict: 16
 };
