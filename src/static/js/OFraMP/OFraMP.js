@@ -39,7 +39,7 @@ OFraMP.prototype = {
     settings.fragment = $ext.deepCopy(settings);
     // Ugly way to achieve this, but cannot do it otherwise currently.
     settings.fragment.atom.backgroundColor.charged =
-        settings.fragment.atom.backgroundColor.default;
+        settings.fragment.atom.backgroundColor.standard;
     SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
     this.settings = settings;
 
