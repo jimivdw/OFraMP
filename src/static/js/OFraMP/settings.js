@@ -35,6 +35,10 @@ var PARTIALLY_SUPPORTED_BROWSERS = [
   {
     browser: "Opera",
     minVersion: "12"
+  },
+  { // IE 11
+    browser: "Mozilla",
+    minVersion: "11"
   }
 ];
 
@@ -58,7 +62,11 @@ var FULLY_SUPPORTED_BROWSERS = [
 //  { TEST IT FIRST!
 //    browser: "Opera",
 //    minVersion: "15"
-//  }
+//  },
+  { // IE 11
+    browser: "Mozilla",
+    minVersion: "11"
+  }
 ];
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
