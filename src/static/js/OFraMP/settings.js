@@ -127,10 +127,10 @@ var DEFAULT_SETTINGS = {
     },
     backgroundColor: {
       default: "rgb(255, 255, 255)",
-      charged: "rgb(180, 180, 180)",
+      charged: "rgb(194, 255, 147)",
       hover: "rgb(210, 180, 245)",
       selected: "rgb(150, 140, 205)",
-      preview: "rgb(140, 205, 108)",
+      preview: "rgb(114, 198, 105)",
       conflict: "rgb(204, 166,  40)",
       unparameterizable: "rgb(255, 210, 208)"
     },
