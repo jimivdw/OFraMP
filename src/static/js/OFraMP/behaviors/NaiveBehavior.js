@@ -73,6 +73,7 @@ NaiveBehavior.prototype = {
     if(atom) {
       $ext.dom.addTableRow(dt, "" + atom.id, "ID");
       $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
+      $ext.dom.addTableRow(dt, "" + atom.iacm, "IACM");
       var cc = document.createElement('span');
       var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
       cc.appendChild(document.createTextNode(charge || "unknown"));
@@ -149,7 +150,7 @@ NaiveBehavior.prototype = {
           var fcb = "-";
         }
 
-        var el = atom.element + "(" + atom.id + ")";
+        var el = atom.element + "(" + atom.iacm + ")";
         var row = $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
         $ext.dom.onMouseOver(row, function() {
           if(_this.oframp.mv.molecule.setHover(atom)) {
