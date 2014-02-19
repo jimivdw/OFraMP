@@ -388,7 +388,7 @@ AtomList.prototype = {
     $ext.each(s, function(atom) {
       if(atom.status & ATOM_STATUSES.selected) {
         atom.deselect();
-      } else if(atom.isVisible()) {
+      } else {
         atom.select();
       }
     });
