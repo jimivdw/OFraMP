@@ -1,0 +1,16 @@
+#header {
+    position: fixed;
+}
+
+#content {
+    width: 960px;
+    margin: 50px auto;
+    padding: 10px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0px;
+}
