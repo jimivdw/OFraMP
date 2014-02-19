@@ -193,7 +193,11 @@ var dom = {
     } else if(elem.attachEvent && this.STANDARD_EVENTS["on" + type]) {
       return elem.attachEvent("on" + type, callback, useCapture);
     } else {
-      elem["on" + type] = callback;
+      if(elem["on" + type]) {
+        elem["on" + type].push(callback);
+      } else {
+        elem["on" + type] = [callback];
+      }
     }
   },
 
@@ -210,7 +214,9 @@ var dom = {
     } else if(elem.detachEvent && this.STANDARD_EVENTS["on" + type]) {
       return elem.detachEvent("on" + type, callback, useCapture);
     } else {
-      elem["on" + type] = null;
+      if(elem["on" + type]) {
+        $ext.array.remove(elem["on" + type], callback);
+      }
     }
   },
 
@@ -250,7 +256,9 @@ var dom = {
     } else if(elem.fireEvent && this.STANDARD_EVENTS["on" + type]) {
       elem.fireEvent("on" + type, event);
     } else if(elem["on" + type]) {
-      elem["on" + type].call(elem, event);
+      $ext.each(elem["on" + type], function(callback) {
+        callback.call(elem, event);
+      });
     }
   },
 
