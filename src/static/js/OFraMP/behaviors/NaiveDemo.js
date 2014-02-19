@@ -152,6 +152,10 @@ NaiveDemo.prototype = {
     $ext.dom.addEventListener(this.oframp.container, "selectionchanged",
         selectionChanged);
     function selectionChanged() {
+      if(_this.oframp.mv.molecule.getSelected().length === 0) {
+        return;
+      }
+
       $ext.dom.removeEventListener(_this.oframp.container, "selectionchanged",
           selectionChanged);
       _this.oframp.mv.selectingDisabled = true;
