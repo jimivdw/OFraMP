@@ -91,7 +91,6 @@ html, body {
 
 #controls, #extra_controls {
     display: none;
-    margin: 0 5px;
     text-align: center;
     -webkit-user-select: none;
     user-select: none;
