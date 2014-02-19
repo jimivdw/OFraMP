@@ -683,7 +683,7 @@ NaiveBehavior.prototype = {
 
     var cb = document.createElement('button');
     $ext.dom.addText(cb, "Close");
-    cb.style.float = 'left';
+    $ext.dom.setFloat(cb, 'left');
     cb.className = "border_box";
     $ext.dom.onMouseClick(cb, function() {
       _this.oframp.hidePopup();

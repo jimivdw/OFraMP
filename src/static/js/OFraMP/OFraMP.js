@@ -318,7 +318,7 @@ OFraMP.prototype = {
 
     var rl = document.createElement('label');
     rl.htmlFor = ri.id;
-    rl.style.float = "none";
+    $ext.dom.setFloat(rl, "none");
     $ext.dom.addText(rl, "Show this message next time");
     rd.appendChild(rl);
 
@@ -352,7 +352,7 @@ OFraMP.prototype = {
 
     var hb = document.createElement('button');
     hb.className = "border_box";
-    hb.style.float = "left";
+    $ext.dom.setFloat(hb, "left");
     $ext.dom.addText(hb, "Help");
     $ext.dom.onMouseClick(hb, function() {
       window.open('help.html', '_blank').focus();
@@ -447,7 +447,7 @@ OFraMP.prototype = {
     }
 
     var cb = document.createElement('button');
-    cb.style.float = 'left';
+    $ext.dom.setFloat(cb, "left");
     cb.className = "border_box";
     cbs.appendChild(cb);
 
@@ -862,7 +862,7 @@ OFraMP.prototype = {
 
     var cb = document.createElement('button');
     cb.className = "border_box";
-    cb.style.float = "left";
+    $ext.dom.setFloat(cb, "left");
     cb.appendChild(document.createTextNode("Close"));
     cd.appendChild(cb);
 

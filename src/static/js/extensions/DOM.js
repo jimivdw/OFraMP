@@ -13,6 +13,14 @@ var dom = {
     elem.className = elem.className.replace(className, "");
   },
 
+  setFloat: function(elem, value) {
+    if($ext.onBrokenIE()) {
+      elem.style.styleFloat = value;
+    } else {
+      elem.style.cssFloat = value;
+    }
+  },
+
   /*
    * Add a text node containing the given text to the given elem.
    */
