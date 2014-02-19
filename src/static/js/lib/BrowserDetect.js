@@ -31,6 +31,10 @@ var BrowserDetect = {
     identity: "Chrome"
   }, {
     string: navigator.userAgent,
+    subString: "OPR",
+    identity: "Opera"
+  }, {
+    string: navigator.userAgent,
     subString: "OmniWeb",
     versionSearch: "OmniWeb/",
     identity: "OmniWeb"
