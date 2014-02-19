@@ -448,6 +448,9 @@ var dom = {
     } else if(button & 4) {
       return 1;
     } else {
+      if(evt.which) {
+        return evt.which - 1;
+      }
       return 0;
     }
   },
