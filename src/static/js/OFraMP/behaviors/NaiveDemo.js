@@ -246,7 +246,10 @@ NaiveDemo.prototype = {
       $ext.dom.removeEventListeners(smb, cbs);
       $ext.dom.removeClass(smb, "highlighted");
       smb.disabled = "disabled";
-      _this.nextStep();
+      window.setTimeout(function() {
+        // Wait a bit to make sure the popup is already opened
+        _this.nextStep();
+      }, 500);
     }, $ext.mouse.LEFT);
   },
 
@@ -267,11 +270,10 @@ NaiveDemo.prototype = {
     $ext.dom.addText(this.overlay, "Once you have seen enough of this "
         + "molecule, you can close the viewer by clicking 'Close'");
 
-    var cx = document.getElementById("popup").children[0];
+    var cx = this.oframp.popupClose;
     var cbsx = $ext.dom.onMouseClick(cx, closeClicked, $ext.mouse.LEFT);
 
-    var cb = document.getElementById("popup_content").getElementsByTagName(
-        "button")[0];
+    var cb = this.oframp.popupContent.getElementsByTagName("button")[0];
     $ext.dom.addClass(cb, "highlighted");
     var cbs = $ext.dom.onMouseClick(cb, closeClicked, $ext.mouse.LEFT);
 
