@@ -161,37 +161,41 @@ MoleculeViewer.prototype = {
       }
     }, $ext.mouse.LEFT);
 
-    var initialSelection = [];
-    $ext.dom.onMouseDrag(this.canvas, function(e) {
-      if(!_this.overlayShowing && !_this.selectingDisabled) {
-        if(!_this.selectionArea) {
-          _this.selectionArea = new SelectionArea(_this, $ext.mouse.getX(e),
-              $ext.mouse.getY(e));
-          if(e.ctrlKey === true || _this.isModifyingSelection) {
-            initialSelection = _this.molecule.getSelected();
-          }
-        } else {
-          _this.selectionArea.resize(e.deltaX, e.deltaY);
-          var bb = _this.selectionArea.getBB();
-          var atoms = _this.molecule.getAtomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
-          if(e.ctrlKey === true || _this.isModifyingSelection) {
-            _this.molecule.setSelected(initialSelection);
-            _this.molecule.atoms.addSelected(atoms);
+    // In opera, right mouse action defaults to gestures
+    // Can be disabled by the user, but cannot be detected or prevented
+    if(BrowserDetect.browser !== "Opera") {
+      var initialSelection = [];
+      $ext.dom.onMouseDrag(this.canvas, function(e) {
+        if(!_this.overlayShowing && !_this.selectingDisabled) {
+          if(!_this.selectionArea) {
+            _this.selectionArea = new SelectionArea(_this, $ext.mouse.getX(e),
+                $ext.mouse.getY(e));
+            if(e.ctrlKey === true || _this.isModifyingSelection) {
+              initialSelection = _this.molecule.getSelected();
+            }
           } else {
-            _this.molecule.setSelected(atoms);
+            _this.selectionArea.resize(e.deltaX, e.deltaY);
+            var bb = _this.selectionArea.getBB();
+            var atoms = _this.molecule.getAtomsIn(bb.x1, bb.y1, bb.x2, bb.y2);
+            if(e.ctrlKey === true || _this.isModifyingSelection) {
+              _this.molecule.setSelected(initialSelection);
+              _this.molecule.atoms.addSelected(atoms);
+            } else {
+              _this.molecule.setSelected(atoms);
+            }
+            _this.redraw();
           }
-          _this.redraw();
         }
-      }
-    }, $ext.mouse.RIGHT);
+      }, $ext.mouse.RIGHT);
 
-    $ext.dom.onMouseDragEnd(this.canvas, function(e) {
-      if(!_this.overlayShowing) {
-        _this.selectionArea = undefined;
-        _this.redraw();
-        _this.oframp.selectionChanged();
-      }
-    }, $ext.mouse.RIGHT);
+      $ext.dom.onMouseDragEnd(this.canvas, function(e) {
+        if(!_this.overlayShowing) {
+          _this.selectionArea = undefined;
+          _this.redraw();
+          _this.oframp.selectionChanged();
+        }
+      }, $ext.mouse.RIGHT);
+    }
 
     var lastZoomTime = undefined;
     $ext.dom.onMouseWheel(this.canvas, function(e) {
