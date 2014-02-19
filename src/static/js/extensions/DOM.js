@@ -178,7 +178,12 @@ var dom = {
     onmousemove: 1,
     onmouseout: 1,
     onmouseover: 1,
-    onmouseup: 1
+    onmouseup: 1,
+    // Mousewheel Events
+    onwheel: 1,
+    onmousewheel: 1,
+    onDOMMouseScroll: 1,
+    onMozMousePixelScroll: 1
   },
 
   /*
