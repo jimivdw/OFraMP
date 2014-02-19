@@ -27,12 +27,12 @@ var BrowserDetect = {
   },
   dataBrowser: [{
     string: navigator.userAgent,
-    subString: "Chrome",
-    identity: "Chrome"
-  }, {
-    string: navigator.userAgent,
     subString: "OPR",
     identity: "Opera"
+  }, {
+    string: navigator.userAgent,
+    subString: "Chrome",
+    identity: "Chrome"
   }, {
     string: navigator.userAgent,
     subString: "OmniWeb",
