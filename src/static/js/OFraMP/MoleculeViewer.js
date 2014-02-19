@@ -44,7 +44,7 @@ MoleculeViewer.prototype = {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    if(parentID instanceof Element) {
+    if(parentID instanceof Element || parentID.appendChild) {
       var parent = parentID;
     } else {
       var parent = document.getElementById(parentID);
