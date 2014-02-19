@@ -377,10 +377,13 @@ AtomList.prototype = {
   },
 
   addSelected: function(s) {
-    // Make sure only hydrogen bases are selected
-    s = $ext.array.map(s, function(atom) {
-      return atom.getBase();
-    });
+    if(!this.settings.atom.showHAtoms) {
+      // Make sure only hydrogen bases are selected
+      s = $ext.array.flatten($ext.array.map(s, function(atom) {
+        return atom.getHydrogenAtoms().concat([atom, atom.getBase()]);
+      }));
+      s = $ext.array.unique(s);
+    }
 
     $ext.each(s, function(atom) {
       if(atom.status & ATOM_STATUSES.selected) {
