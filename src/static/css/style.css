@@ -154,6 +154,7 @@ background-color: rgb(169,  49,  39);
 .bgroup > * {
     display: block;
     float: left;
+    height: 30px;
     margin: 0;
     padding: 6px;
     border-right-width: 0 !important;
@@ -161,8 +162,10 @@ background-color: rgb(169,  49,  39);
     color: #333;
     cursor: pointer;
     font-size: 12px;
-    line-height: 12px;
+    line-height: 16px;
     text-decoration: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .bgroup > select {
