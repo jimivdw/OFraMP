@@ -42,27 +42,27 @@ var PARTIALLY_SUPPORTED_BROWSERS = [
   }
 ];
 
+/*
+ * Note that Opera has a strange right mouse drag default shortcut that
+ * prevents full support.
+ */
 var FULLY_SUPPORTED_BROWSERS = [
   {
     browser: "Chrome",
     minVersion: "25"
   },
-//  { TEST IT FIRST!
-//    browser: "Firefox",
-//    minVersion: "25"
-//  },
+  {
+    browser: "Firefox",
+    minVersion: "25"
+  },
   {
     browser: "Explorer",
     minVersion: "10"
   },
-//  { TEST IT FIRST!
-//    browser: "Safari",
-//    minVersion: "5"
-//  },
-//  { TEST IT FIRST!
-//    browser: "Opera",
-//    minVersion: "15"
-//  },
+  {
+    browser: "Safari",
+    minVersion: "5"
+  },
   { // IE 11
     browser: "Mozilla",
     minVersion: "11"
