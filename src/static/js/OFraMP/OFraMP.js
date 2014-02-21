@@ -8,6 +8,7 @@ OFraMP.prototype = {
   settings: undefined,
   mv: undefined,
   settingsUI: undefined,
+  repos: undefined,
   off: undefined,
   off_missing: undefined,
 
@@ -50,6 +51,29 @@ OFraMP.prototype = {
     if(!this.isValidBrowser(PARTIALLY_SUPPORTED_BROWSERS)) {
       return this.showErrorPopup();
     }
+
+    this.getRepositories(function(repos) {
+      console.log("Got repositories", repos);
+      this.repos = repos;
+      var rs = document.getElementById("repository");
+      if(rs) {
+        $ext.dom.clear(rs);
+        $ext.each(repos, function(repo) {
+          $ext.dom.addSelectOption(rs, repo);
+        });
+        rs.disabled = "";
+        var sb = document.getElementById("mds_submit");
+        sb.disabled = "";
+        sb.title = "";
+      }
+    }, function(msg) {
+      alert("Could not connect to OMFraF, fragment finding is not possible:\n"
+          + msg);
+      this.repos = [];
+      var sb = document.getElementById("mds_submit");
+      sb.disabled = "";
+      sb.title = "Submit only for visualisation";
+    });
 
     if($ext.cookie.get("hideWelcome")) {
       this.showInsertMoleculePopup();
@@ -389,9 +413,14 @@ OFraMP.prototype = {
     var rs = document.createElement('select');
     rs.id = "repository";
     rs.className = "border_box";
-    $ext.dom.addSelectOption(rs, "lipids");
-    var to = $ext.dom.addSelectOption(rs, "TODO");
-    to.disabled = "disabled";
+    if(this.repos) {
+      $ext.each(this.repos, function(repo) {
+        $ext.dom.addSelectOption(rs, repo);
+      });
+    } else {
+      $ext.dom.addSelectOption(rs, "Loading...");
+      rs.disabled = "disabled";
+    }
     sd.appendChild(rs);
 
     var sl = document.createElement('label');
@@ -418,6 +447,10 @@ OFraMP.prototype = {
     var sb = document.createElement('button');
     sb.id = "mds_submit";
     sb.className = "border_box";
+    if(!this.repos) {
+      sb.disabled = "disabled";
+      sb.title = "Please wait for the repository list to load";
+    }
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.submitMDS(ta.value);
@@ -616,6 +649,39 @@ OFraMP.prototype = {
   hideRelatedFragments: function() {
     this.relatedFragments.parentElement.style.visibility = "hidden";
     this.relatedFragments.parentElement.style.opacity = "0.0";
+  },
+
+  /*
+   * Get the molecule data from OAPoC and run the success function on success.
+   * 
+   * If fromATB is true, the molecule will be retrieved from ATB.
+   */
+  getRepositories: function(success, failure) {
+    var _this = this;
+    success = success || function() {};
+    failure = failure || function() {};
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var rd = JSON.parse(xhr.responseText);
+          if(rd.error) {
+            var msg = "An error has occured:\n" + rd.error;
+            failure.call(_this, msg);
+          } else if(rd.repos) {
+            success.call(_this, rd.repos);
+          }
+        } else {
+          var msg = "Could not connect to server";
+          failure.call(_this, msg);
+        }
+      }
+    };
+
+    xhr.open("POST", this.settings.omfraf.repoUrl, true);
+    xhr.send(null);
   },
 
   /*
