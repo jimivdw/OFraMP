@@ -470,10 +470,10 @@ NaiveBehavior.prototype = {
         }, this);
         if(_this.oframp.mv.setCharges(charges, fragment)) {
           _this.oframp.checkpoint();
+          _this.oframp.selectionChanged();
         }
 
         _this.activeFragment = undefined;
-        _this.oframp.selectionChanged();
         _this.oframp.redraw();
 
         _this.oframp.hideRelatedFragments();
@@ -642,6 +642,7 @@ NaiveBehavior.prototype = {
       var unpar = _this.oframp.mv.molecule.getUnparameterized();
       if(!needsFix) {
         _this.oframp.checkpoint();
+        _this.oframp.selectionChanged();
         if(unpar.length === 0) {
           _this.oframp.parameterizationFinished();
         } else {
