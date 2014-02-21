@@ -1062,43 +1062,15 @@ OFraMP.prototype = {
     if(selection && selection.length > 0) {
       this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
-
-      if(!(this.behavior instanceof SmartBehavior) && this.off) {
-        // Make sure charges are not currently being previewed
-        var pas = $ext.array.filter(this.mv.molecule.atoms.atoms,
-            function(atom) {
-          return atom.previewCharge !== undefined;
-        });
-        if(pas.length === 0) {
-          var cas = $ext.array.filter(selection, function(atom) {
-            return !atom.isCharged();
-          });
-
-          var selectionIDs = $ext.array.map(selection, function(atom) {
-            return atom.id;
-          });
-          var tree = this.mv.molecule.atoms.getTree(selection[0]);
-          var selectionTree = tree.filter(function(node) {
-            return selectionIDs.indexOf(node.key) !== -1;
-          });
-
-          var connected = $ext.each(selection, function(atom) {
-            var f = selectionTree.findNode(atom.id);
-            if(!f) {
-              return false;
-            }
-          });
-
-          if(connected !== false && cas.length > 0) {
-            this.getMatchingFragments();
-          }
-        }
-      }
     } else {
       this.findFragmentsButton.disabled = "disabled";
       this.hideSelectionDetails();
     }
-    $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+
+    if(this.mv.molecule) {
+      this.behavior.selectionChanged();
+      $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+    }
   },
 
   parameterizationFinished: function(incomplete) {

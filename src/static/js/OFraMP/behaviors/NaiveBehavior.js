@@ -488,6 +488,43 @@ NaiveBehavior.prototype = {
     this.oframp.showRelatedFragments();
   },
 
+  selectionChanged: function() {
+    var selection = this.oframp.mv.molecule.getSelected();
+    console.log("Selection changed to", selection);
+
+    if(this.oframp.off) {
+      // Make sure charges are not currently being previewed
+      var pas = $ext.array.filter(this.oframp.mv.molecule.atoms.atoms,
+          function(atom) {
+        return atom.previewCharge !== undefined;
+      });
+      if(pas.length === 0) {
+        var cas = $ext.array.filter(selection, function(atom) {
+          return !atom.isCharged();
+        });
+
+        var selectionIDs = $ext.array.map(selection, function(atom) {
+          return atom.id;
+        });
+        var tree = this.oframp.mv.molecule.atoms.getTree(selection[0]);
+        var selectionTree = tree.filter(function(node) {
+          return selectionIDs.indexOf(node.key) !== -1;
+        });
+
+        var connected = $ext.each(selection, function(atom) {
+          var f = selectionTree.findNode(atom.id);
+          if(!f) {
+            return false;
+          }
+        });
+
+        if(connected !== false && cas.length > 0) {
+          this.oframp.getMatchingFragments();
+        }
+      }
+    }
+  },
+
   showChargeFixer: function(atom, rem, charges, fragment) {
     var title = "Attempting to assign a new charge to an already charged atom";
     var content = document.createElement('div');
