@@ -925,7 +925,31 @@ OFraMP.prototype = {
     return c;
   },
 
+  getShellAtoms: function(molecule, selection) {
+    var shell = [];
+    for(var i = 0; i < this.settings.omfraf.shellSize; i++) {
+      if(i === 0) {
+        var base = selection;
+      } else {
+        var base = shell;
+      }
+      shell = shell.concat($ext.array.filter(
+        $ext.array.flatten(
+          $ext.array.map(base, function(atom) {
+            return atom.getBondedAtoms();
+          })
+        ),
+        function(atom) {
+          return selection.indexOf(atom) === -1;
+        }
+      ));
+    }
+    return $ext.array.unique(shell);
+  },
+
   showOriginal: function(fragment, onClose) {
+    var _this = this;
+
     var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
     var content = document.createElement('div');
 
@@ -945,6 +969,10 @@ OFraMP.prototype = {
       var oas = $ext.array.map(oids, function(oid) {
         return this.molecule.atoms.get(oid);
       }, this);
+      window.__shellll = _this.getShellAtoms(this.molecule, oas);
+      $ext.each(_this.getShellAtoms(this.molecule, oas), function(atom) {
+        atom.addHighlight(ATOM_STATUSES.unparameterizable);
+      });
       this.molecule.centerOnAtoms(oas);
       this.hideOverlay();
       this.redraw();
@@ -961,7 +989,6 @@ OFraMP.prototype = {
     cb.appendChild(document.createTextNode("Close"));
     cd.appendChild(cb);
 
-    var _this = this;
     if(!onClose) {
       onClose = function() {
         _this.hidePopup();
