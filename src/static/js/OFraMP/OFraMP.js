@@ -969,7 +969,6 @@ OFraMP.prototype = {
       var oas = $ext.array.map(oids, function(oid) {
         return this.molecule.atoms.get(oid);
       }, this);
-      window.__shellll = _this.getShellAtoms(this.molecule, oas);
       $ext.each(_this.getShellAtoms(this.molecule, oas), function(atom) {
         atom.addHighlight(ATOM_STATUSES.unparameterizable);
       });
