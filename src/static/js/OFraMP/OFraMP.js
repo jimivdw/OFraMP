@@ -373,13 +373,31 @@ OFraMP.prototype = {
 
     var ta = document.createElement('textarea');
     ta.id = "mds_input";
-    ta.style.height = this.popup.clientHeight - 130 + "px";
+    ta.style.height = this.popup.clientHeight - 136 + "px";
     ta.placeholder = "Insert PDB / SMILES / InChI string or ATB ID here";
     content.appendChild(ta);
 
+    var sd = document.createElement('div');
+    sd.id = "omfraf_settings";
+    content.appendChild(sd);
+
+    var rl = document.createElement('label');
+    rl.htmlFor = "repository";
+    $ext.dom.addText(rl, "Fragment repository");
+    sd.appendChild(rl);
+
+    var rs = document.createElement('select');
+    rs.id = "repository";
+    rs.className = "border_box";
+    $ext.dom.addSelectOption(rs, "lipids");
+    var to = $ext.dom.addSelectOption(rs, "TODO");
+    to.disabled = "disabled";
+    sd.appendChild(rs);
+
     var sl = document.createElement('label');
+    sl.htmlFor = "shell_size";
     $ext.dom.addText(sl, "Shell size");
-    content.appendChild(sl);
+    sd.appendChild(sl);
 
     var ss = document.createElement('select');
     ss.id = "shell_size";
@@ -387,7 +405,11 @@ OFraMP.prototype = {
     for(var i = 1; i <= 5; i++) {
       $ext.dom.addSelectOption(ss, i);
     }
-    content.appendChild(ss);
+    sd.appendChild(ss);
+
+    var hr = document.createElement('hr');
+    hr.style.margin = "3px 0";
+    content.appendChild(hr);
 
     var cbs = document.createElement('div');
     cbs.className = 'controls';
@@ -399,10 +421,12 @@ OFraMP.prototype = {
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       _this.submitMDS(ta.value);
+
+      var repository = rs.value;
+      _this.settings.omfraf.repository = repository;
+
       var shellSize = parseInt(ss.value);
-      if(shellSize !== 1) {
-        _this.settings.omfraf.shellSize = shellSize;
-      }
+      _this.settings.omfraf.shellSize = shellSize;
     }
     cbs.appendChild(sb);
 
@@ -661,8 +685,13 @@ OFraMP.prototype = {
     };
 
     var data = "data=" + encodeURIComponent(queryJSON);
-    if(this.settings.omfraf.shellSize) {
-      data += "&shell=" + this.settings.omfraf.shellSize;
+    var repo = this.settings.omfraf.repository;
+    if(repo && repo !== DEFAULT_REPO) {
+      data += "&repo=" + repo;
+    }
+    var shell = this.settings.omfraf.shellSize;
+    if(shell && shell !== DEFAULT_SHELL) {
+      data += "&shell=" + shell;
     }
 
     xhr.open("POST", this.settings.omfraf.generateUrl, true);

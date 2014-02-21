@@ -205,7 +205,6 @@ background-color: rgb(169,  49,  39);
 
 #popup_content label {
     float: left;
-    width: 120px;
     height: 30px;
     margin-top: 3px;
     text-align: left;
@@ -217,7 +216,7 @@ background-color: rgb(169,  49,  39);
     float: left;
     width: 120px;
     height: 30px;
-    margin-top: 3px;
+    margin: 3px 30px 0px 10px;
 }
 
 #popup_content .controls {
@@ -233,6 +232,10 @@ background-color: rgb(169,  49,  39);
     float: right;
     height: 28px;
     margin: 0 2px;
+}
+
+#omfraf_settings {
+    overflow: hidden;
 }
 
 #molecule_cutout, #charge_details {

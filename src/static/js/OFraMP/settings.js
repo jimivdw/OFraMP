@@ -15,6 +15,9 @@ var ATOM_STATUSES = {
   conflict: 16
 };
 
+var DEFAULT_SHELL = 1;
+var DEFAULT_REPO = "lipids";
+
 var PARTIALLY_SUPPORTED_BROWSERS = [
   {
     browser: "Chrome",
@@ -81,7 +84,7 @@ var DEFAULT_SETTINGS = {
   omfraf: {
     url: "http://vps955.directvps.nl/OMFraF/load/",
     generateUrl: "http://vps955.directvps.nl/OMFraF/generate/",
-    version: "0.4.1"
+    version: "0.5.0"
   },
 
   zoom: {
