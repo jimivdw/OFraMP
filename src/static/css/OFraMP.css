@@ -269,22 +269,20 @@ background-color: rgb(169,  49,  39);
 
 #used_fragments {
     overflow: hidden;
-    width: 564px;
     margin: 0 auto;
 }
 
 .used_fragment {
-    width: 260px;
-    height: 130px;
-    float: left;
-    margin: 10px;
+    width: 560px;
+    height: 230px;
+    margin: 0 auto 10px auto;
 }
 
 .used_fragment .show_original {
     position: absolute;
-    width: 110px;
+    width: 130px;
     height: 30px;
-    margin: 95px 0 0 75px;
+    margin: 195px 0 0 215px;
     cursor: pointer;
     z-index: 10;
     -webkit-transition: opacity .2s ease-out;

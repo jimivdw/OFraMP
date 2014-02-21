@@ -608,7 +608,7 @@ OFraMP.prototype = {
       ob.appendChild(document.createTextNode("Show molecule"));
       fc.appendChild(ob);
 
-      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
+      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 560, 230);
       fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
       fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
