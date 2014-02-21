@@ -11,6 +11,7 @@ OFraMP.prototype = {
   repos: undefined,
   off: undefined,
   off_missing: undefined,
+  finished: false,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -1074,8 +1075,13 @@ OFraMP.prototype = {
   },
 
   parameterizationFinished: function(incomplete) {
+    if(this.finished) {
+      return;
+    }
+
     this.behavior.parameterizationFinished(incomplete);
     $ext.dom.dispatchEvent(this.container, this.parameterizationFinishedEvent);
+    this.finished = true;
   },
 
 
