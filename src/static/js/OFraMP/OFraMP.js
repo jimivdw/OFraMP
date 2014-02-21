@@ -853,7 +853,7 @@ OFraMP.prototype = {
               var overlapCount = 0;
               $ext.each(fragment.atoms, function(atom) {
                 var orig = this.mv.molecule.atoms.get(atom.id);
-                if(orig.isCharged()) {
+                if(orig.isCharged() && orig.element !== "H") {
                   overlapCount += 1;
                 }
               }, this);
