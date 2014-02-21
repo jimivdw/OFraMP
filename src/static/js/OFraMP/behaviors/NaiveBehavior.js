@@ -490,37 +490,34 @@ NaiveBehavior.prototype = {
 
   selectionChanged: function() {
     var selection = this.oframp.mv.molecule.getSelected();
-    console.log("Selection changed to", selection);
 
     if(this.oframp.off) {
-      // Make sure charges are not currently being previewed
-      var pas = $ext.array.filter(this.oframp.mv.molecule.atoms.atoms,
-          function(atom) {
-        return atom.previewCharge !== undefined;
+      this.oframp.mv.previewCharges({});
+
+      var cas = $ext.array.filter(selection, function(atom) {
+        return !atom.isCharged();
       });
-      if(pas.length === 0) {
-        var cas = $ext.array.filter(selection, function(atom) {
-          return !atom.isCharged();
-        });
 
-        var selectionIDs = $ext.array.map(selection, function(atom) {
-          return atom.id;
-        });
-        var tree = this.oframp.mv.molecule.atoms.getTree(selection[0]);
-        var selectionTree = tree.filter(function(node) {
-          return selectionIDs.indexOf(node.key) !== -1;
-        });
+      var selectionIDs = $ext.array.map(selection, function(atom) {
+        return atom.id;
+      });
+      var tree = this.oframp.mv.molecule.atoms.getTree(selection[0]);
+      var selectionTree = tree.filter(function(node) {
+        return selectionIDs.indexOf(node.key) !== -1;
+      });
 
-        var connected = $ext.each(selection, function(atom) {
-          var f = selectionTree.findNode(atom.id);
-          if(!f) {
-            return false;
-          }
-        });
-
-        if(connected !== false && cas.length > 0) {
-          this.oframp.getMatchingFragments();
+      var connected = $ext.each(selection, function(atom) {
+        var f = selectionTree.findNode(atom.id);
+        if(!f) {
+          return false;
         }
+      });
+
+      if(connected !== false && cas.length > 0) {
+        this.oframp.getMatchingFragments();
+      } else {
+        this.activeFragment = undefined;
+        this.oframp.hideRelatedFragments();
       }
     }
   },
