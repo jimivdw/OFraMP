@@ -59,6 +59,7 @@ Atom.prototype = {
       id: this.id,
       element: this.element,
       elementID: this.elementID,
+      iacm: this.iacm,
       x: this.x,
       y: this.y,
       charge: this.charge,
