@@ -4,7 +4,7 @@ function DummyCache(name) {
 
 DummyCache.prototype = {
   init: function(name) {
-    return
+    return;
   },
 
   touch: function() {
