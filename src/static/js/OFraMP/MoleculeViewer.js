@@ -189,7 +189,7 @@ MoleculeViewer.prototype = {
       }, $ext.mouse.RIGHT);
 
       $ext.dom.onMouseDragEnd(this.canvas, function(e) {
-        if(!_this.overlayShowing) {
+        if(!_this.overlayShowing && !_this.selectingDisabled) {
           _this.selectionArea = undefined;
           _this.redraw();
           _this.oframp.selectionChanged();

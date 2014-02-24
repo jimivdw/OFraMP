@@ -349,6 +349,7 @@ NaiveDemo.prototype = {
       if(selection.length > 1) {
         $ext.dom.removeEventListener(_this.oframp.container,
             "selectionchanged", selectionChanged);
+        _this.oframp.mv.selectingDisabled = true;
         document.getElementById("find_fragments").disabled = "disabled";
         _this.nextStep();
       }
@@ -432,6 +433,7 @@ NaiveDemo.prototype = {
 
     $ext.dom.addText(this.overlay, "You can now continue to parameterise the "
         + "rest of the molecule");
+    _this.oframp.mv.selectingDisabled = false;
 
     $ext.dom.addEventListener(this.oframp.container,
         "parameterizationfinished", parameterizationFinished);
