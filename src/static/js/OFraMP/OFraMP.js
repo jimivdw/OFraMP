@@ -537,6 +537,7 @@ OFraMP.prototype = {
     if(!this.mv.molecule) {
       this.mv.setupInteraction();
     }
+    this.finished = false;
     this.off = undefined;
     this.selectionChanged();
     $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
