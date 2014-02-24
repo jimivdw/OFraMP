@@ -40,8 +40,7 @@ OFraMP.prototype = {
     settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     settings.fragment = $ext.deepCopy(settings);
     // Ugly way to achieve this, but cannot do it otherwise currently.
-    settings.fragment.atom.backgroundColor.charged =
-        settings.fragment.atom.backgroundColor.standard;
+    settings.fragment.atom.backgroundColor.charged = settings.fragment.atom.backgroundColor.standard;
     SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
     this.settings = settings;
 
@@ -157,10 +156,10 @@ OFraMP.prototype = {
     this.popupContent.id = "popup_content";
 
     $ext.dom.onMouseDrag(this.popupTitle, function(e) {
-      var cs = getComputedStyle(container);
-      var left = (popup.offsetLeft - parseInt(cs.marginLeft) + e.deltaX) + "px";
-      var top = (parseInt(cs.top) + e.deltaY) + "px";
-      var bottom = (parseInt(cs.bottom) - e.deltaY) + "px";
+      var s = getComputedStyle(container);
+      var left = (popup.offsetLeft - parseInt(s.marginLeft) + e.deltaX) + "px";
+      var top = (parseInt(s.top) + e.deltaY) + "px";
+      var bottom = (parseInt(s.bottom) - e.deltaY) + "px";
       container.style.left = left;
       container.style.top = top;
       container.style.bottom = bottom;
@@ -432,7 +431,7 @@ OFraMP.prototype = {
     var ss = document.createElement('select');
     ss.id = "shell_size";
     ss.className = "border_box";
-    for(var i = 1; i <= 5; i++) {
+    for( var i = 1; i <= 5; i++) {
       $ext.dom.addSelectOption(ss, i);
     }
     sd.appendChild(ss);
@@ -732,13 +731,14 @@ OFraMP.prototype = {
           } else if(fd.error) {
             showError(fd.error);
           } else if(fd.off) {
-            console.log("Related fragments generated:", fd.off, fd.missing_atoms);
+            console.log("Related fragments generated:", fd.off,
+                fd.missing_atoms);
 
             _this.off = fd.off;
             _this.off_missing = fd.missing_atoms;
             $ext.each(fd.missing_atoms, function(aid) {
-              _this.mv.molecule.atoms.get(aid)
-                  .addHighlight(ATOM_STATUSES.unparameterizable);
+              _this.mv.molecule.atoms.get(aid).addHighlight(
+                  ATOM_STATUSES.unparameterizable);
             });
             _this.redraw();
             $ext.dom.dispatchEvent(_this.container,
@@ -928,22 +928,18 @@ OFraMP.prototype = {
 
   getShellAtoms: function(molecule, selection) {
     var shell = [];
-    for(var i = 0; i < this.settings.omfraf.shellSize; i++) {
+    for( var i = 0; i < this.settings.omfraf.shellSize; i++) {
       if(i === 0) {
         var base = selection;
       } else {
         var base = shell;
       }
-      shell = shell.concat($ext.array.filter(
-        $ext.array.flatten(
-          $ext.array.map(base, function(atom) {
+      shell = shell.concat($ext.array.filter($ext.array.flatten($ext.array.map(
+          base, function(atom) {
             return atom.getBondedAtoms();
-          })
-        ),
-        function(atom) {
-          return selection.indexOf(atom) === -1;
-        }
-      ));
+          })), function(atom) {
+        return selection.indexOf(atom) === -1;
+      }));
     }
     return $ext.array.unique(shell);
   },
