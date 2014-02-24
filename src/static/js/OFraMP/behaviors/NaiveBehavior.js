@@ -492,6 +492,8 @@ NaiveBehavior.prototype = {
   },
 
   selectionChanged: function() {
+    var _this = this;
+
     var selection = this.oframp.mv.molecule.getSelected();
 
     var ffb = document.createElement('button');
@@ -520,17 +522,20 @@ NaiveBehavior.prototype = {
         }
       });
 
-      $ext.dom.addText(ffb, "Find matching fragments");
       if(connected !== false && cas.length > 0) {
         this.oframp.getMatchingFragments();
-
-        $ext.dom.onMouseClick(ffb, function() {
-          _this.oframp.getMatchingFragments();
-        }, $ext.mouse.LEFT);
       } else {
         this.activeFragment = undefined;
         this.oframp.hideRelatedFragments();
+      }
+
+      $ext.dom.addText(ffb, "Find matching fragments");
+      if(connected === false) {
         ffb.disabled = "disabled";
+      } else {
+        $ext.dom.onMouseClick(ffb, function() {
+          _this.oframp.getMatchingFragments();
+        }, $ext.mouse.LEFT);
       }
 
     } else {
