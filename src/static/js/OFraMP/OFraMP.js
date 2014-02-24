@@ -860,12 +860,12 @@ OFraMP.prototype = {
 
               if(overlapCount > 0) {
                 fragment.hasOverlap = true;
-                fragment.score -= overlapCount;
+                fragment.score -= overlapCount + 1;
               }
             }, _this);
 
             fragments = fd.fragments.sort(function(a, b) {
-              return b.score - a.score;
+              return b.score - a.score || b.atoms.length - a.atoms.length;
             });
             _this.hideRelatedFragments();
             _this.behavior.showRelatedFragments(fragments, selectionIDs);
