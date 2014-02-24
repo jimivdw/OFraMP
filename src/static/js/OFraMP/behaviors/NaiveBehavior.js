@@ -324,162 +324,161 @@ NaiveBehavior.prototype = {
 
     var rightBar = this.oframp.relatedFragments.parentElement;
     var barHeight = rightBar.clientHeight;
-    $ext.each(fragments,
-        function(fragment, i) {
-          var atoms = $ext.array.map(fragment.atoms, function(atom) {
-            var orig = this.oframp.mv.molecule.atoms.get(atom.id);
-            atom.element = orig.element;
-            atom.x = orig.x;
-            atom.y = orig.y;
-            return atom;
-          }, this);
+    $ext.each(fragments, function(fragment, i) {
+      var atoms = $ext.array.map(fragment.atoms, function(atom) {
+        var orig = this.oframp.mv.molecule.atoms.get(atom.id);
+        atom.element = orig.element;
+        atom.x = orig.x;
+        atom.y = orig.y;
+        return atom;
+      }, this);
 
-          var aids = $ext.array.map(fragment.atoms, function(atom) {
-            return atom.id;
-          });
-          var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
-            return aids.indexOf(bond.a1.id) !== -1
-                && aids.indexOf(bond.a2.id) !== -1;
-          });
-          var bonds = $ext.array.map(abs, function(bond) {
-            return bond.getJSON();
-          });
+      var aids = $ext.array.map(fragment.atoms, function(atom) {
+        return atom.id;
+      });
+      var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
+        return aids.indexOf(bond.a1.id) !== -1
+            && aids.indexOf(bond.a2.id) !== -1;
+      });
+      var bonds = $ext.array.map(abs, function(bond) {
+        return bond.getJSON();
+      });
 
-          var fc = document.createElement('div');
-          fc.id = "fc_" + i;
-          fc.className = "fragment";
-          this.oframp.relatedFragments.appendChild(fc);
+      var fc = document.createElement('div');
+      fc.id = "fc_" + i;
+      fc.className = "fragment";
+      this.oframp.relatedFragments.appendChild(fc);
 
-          var ob = document.createElement('button');
-          ob.className = "show_original border_box";
-          ob.disabled = "disabled";
-          ob.appendChild(document.createTextNode("Show molecule"));
-          fc.appendChild(ob);
+      var ob = document.createElement('button');
+      ob.className = "show_original border_box";
+      ob.disabled = "disabled";
+      ob.appendChild(document.createTextNode("Show molecule"));
+      fc.appendChild(ob);
 
-          var ab = document.createElement('button');
-          ab.className = "select_fragment border_box";
-          ab.disabled = "disabled";
-          ab.appendChild(document.createTextNode("Select fragment"));
-          fc.appendChild(ab);
+      var ab = document.createElement('button');
+      ab.className = "select_fragment border_box";
+      ab.disabled = "disabled";
+      ab.appendChild(document.createTextNode("Select fragment"));
+      fc.appendChild(ab);
 
-          var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id, 228,
-              130);
-          this.relatedFragmentViewers.push(fv);
-          if(fragment.hasOverlap) {
-            fv.canvas.className += "overlapping";
+      var fvid = "fragment_" + i;
+      var fv = new MoleculeViewer(this.oframp, fvid, fc.id, 228, 130);
+      this.relatedFragmentViewers.push(fv);
+      if(fragment.hasOverlap) {
+        fv.canvas.className += "overlapping";
+      }
+
+      var load = function() {
+        fv.molecule = new Molecule(fv, atoms, bonds);
+        fv.molecule.minimize();
+
+        var selectionAtoms = $ext.array.map(selectionIDs, function(id) {
+          return fv.molecule.atoms.get(id);
+        });
+        fv.molecule.setSelected(selectionAtoms);
+        fv.molecule.centerOnAtoms(selectionAtoms);
+        fv.redraw();
+      };
+
+      if(i * 150 < barHeight) {
+        load();
+      } else {
+        var cbs = $ext.dom.onScroll(rightBar, function() {
+          if(fv.molecule || fv.overlayShowing) {
+            return;
           }
 
-          var load = function() {
-            fv.molecule = new Molecule(fv, atoms, bonds);
-            fv.molecule.minimize();
-
-            var selectionAtoms = $ext.array.map(selectionIDs, function(id) {
-              return fv.molecule.atoms.get(id);
-            });
-            fv.molecule.setSelected(selectionAtoms);
-            fv.molecule.centerOnAtoms(selectionAtoms);
-            fv.redraw();
-          };
-
-          if(i * 150 < barHeight) {
+          var ot = $ext.dom.totalOffsetTop(fv.canvas);
+          var ph = rightBar.clientHeight;
+          var pt = rightBar.scrollTop;
+          if(ot < ph + pt && ot > pt) {
             load();
-          } else {
-            var cbs = $ext.dom.onScroll(rightBar, function() {
-              if(fv.molecule || fv.overlayShowing) {
-                return;
-              }
-
-              var ot = $ext.dom.totalOffsetTop(fv.canvas);
-              var ph = rightBar.clientHeight;
-              var pt = rightBar.scrollTop;
-              if(ot < ph + pt && ot > pt) {
-                load();
-                $ext.dom.removeEventListeners(rightBar, cbs);
-              }
-            });
+            $ext.dom.removeEventListeners(rightBar, cbs);
           }
+        });
+      }
 
-          $ext.dom.onMouseOver(fv.canvas, function() {
-            if(!fv.molecule || !_this.activeFragment) {
-              return;
-            }
+      $ext.dom.onMouseOver(fv.canvas, function() {
+        if(!fv.molecule || !_this.activeFragment) {
+          return;
+        }
 
-            var charges = {};
-            $ext.each(atoms, function(atom) {
-              charges[atom.id] = atom.charge;
-            }, this);
-            _this.oframp.mv.previewCharges(charges);
-          });
-
-          $ext.dom.onMouseOut(fv.canvas, function() {
-            if(!fv.molecule || !_this.activeFragment) {
-              return;
-            }
-
-            if(_this.activeFragment !== fv) {
-              var charges = {};
-              _this.activeFragment.molecule.atoms.each(function(atom) {
-                charges[atom.id] = atom.charge;
-              }, this);
-              _this.oframp.mv.previewCharges(charges);
-            }
-          });
-
-          $ext.dom.onMouseClick(fv.canvas, function() {
-            if(!fv.molecule || _this.activeFragment === fv) {
-              return;
-            }
-
-            ob.disabled = "";
-            ab.disabled = "";
-
-            if(_this.activeFragment) {
-              // Disable the currently active fragment's buttons
-              _this.activeFragment.canvas.parentElement
-                  .getElementsByTagName("button")[0].disabled = "disabled";
-              _this.activeFragment.canvas.parentElement
-                  .getElementsByTagName("button")[1].disabled = "disabled";
-              $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
-                  "active");
-            }
-            _this.activeFragment = fv;
-            $ext.dom.addClass(fc, "active");
-
-            var charges = {};
-            $ext.each(atoms, function(atom) {
-              charges[atom.id] = atom.charge;
-            }, this);
-            _this.oframp.mv.previewCharges(charges);
-          }, $ext.mouse.LEFT);
-
-          $ext.dom.onMouseClick(ob, function() {
-            _this.oframp.showOriginal(fragment);
-          }, $ext.mouse.LEFT);
-
-          $ext.dom.onMouseClick(ab, function() {
-            _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
-            _this.oframp.mv.molecule.setSelected([]);
-
-            var charges = {};
-            $ext.each(atoms, function(atom) {
-              charges[atom.id] = atom.charge;
-            }, this);
-            if(_this.oframp.mv.setCharges(charges, fragment)) {
-              _this.oframp.checkpoint();
-              _this.oframp.selectionChanged();
-            }
-
-            _this.activeFragment = undefined;
-            _this.oframp.redraw();
-
-            _this.oframp.hideRelatedFragments();
-          }, $ext.mouse.LEFT);
-
-          // It makes no sense to show more than 100 fragments
-          if(i === 100) {
-            return $ext.BREAK;
-          }
+        var charges = {};
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
         }, this);
+        _this.oframp.mv.previewCharges(charges);
+      });
+
+      $ext.dom.onMouseOut(fv.canvas, function() {
+        if(!fv.molecule || !_this.activeFragment) {
+          return;
+        }
+
+        if(_this.activeFragment !== fv) {
+          var charges = {};
+          _this.activeFragment.molecule.atoms.each(function(atom) {
+            charges[atom.id] = atom.charge;
+          }, this);
+          _this.oframp.mv.previewCharges(charges);
+        }
+      });
+
+      $ext.dom.onMouseClick(fv.canvas, function() {
+        if(!fv.molecule || _this.activeFragment === fv) {
+          return;
+        }
+
+        ob.disabled = "";
+        ab.disabled = "";
+
+        if(_this.activeFragment) {
+          // Disable the currently active fragment's buttons
+          _this.activeFragment.canvas.parentElement
+              .getElementsByTagName("button")[0].disabled = "disabled";
+          _this.activeFragment.canvas.parentElement
+              .getElementsByTagName("button")[1].disabled = "disabled";
+          $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
+              "active");
+        }
+        _this.activeFragment = fv;
+        $ext.dom.addClass(fc, "active");
+
+        var charges = {};
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
+        }, this);
+        _this.oframp.mv.previewCharges(charges);
+      }, $ext.mouse.LEFT);
+
+      $ext.dom.onMouseClick(ob, function() {
+        _this.oframp.showOriginal(fragment);
+      }, $ext.mouse.LEFT);
+
+      $ext.dom.onMouseClick(ab, function() {
+        _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
+        _this.oframp.mv.molecule.setSelected([]);
+
+        var charges = {};
+        $ext.each(atoms, function(atom) {
+          charges[atom.id] = atom.charge;
+        }, this);
+        if(_this.oframp.mv.setCharges(charges, fragment)) {
+          _this.oframp.checkpoint();
+          _this.oframp.selectionChanged();
+        }
+
+        _this.activeFragment = undefined;
+        _this.oframp.redraw();
+
+        _this.oframp.hideRelatedFragments();
+      }, $ext.mouse.LEFT);
+
+      // It makes no sense to show more than 100 fragments
+      if(i === 100) {
+        return $ext.BREAK;
+      }
+    }, this);
 
     this.oframp.showRelatedFragments();
   },
