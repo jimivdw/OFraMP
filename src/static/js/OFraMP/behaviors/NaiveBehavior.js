@@ -25,18 +25,10 @@ NaiveBehavior.prototype = {
     var _this = this;
 
     $ext.dom.clear(this.oframp.atomDetails);
-    if(selection.length === 1) {
-      var atom = selection[0];
-    }
 
     var ts = document.createElement('div');
     ts.className = "title";
-    if(atom) {
-      var tn = document.createTextNode("Atom details");
-    } else {
-      var tn = document.createTextNode("Selection details");
-    }
-    ts.appendChild(tn);
+    $ext.dom.addText(ts, "Selection details");
 
     var cb = document.createElement('div');
     cb.className = 'close';
@@ -63,195 +55,107 @@ NaiveBehavior.prototype = {
     dtc.appendChild(dt);
     this.oframp.atomDetails.appendChild(dtc);
 
-    if(atom) {
-      $ext.dom.addTableRow(dt, "" + atom.id, "ID");
-      $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
-      $ext.dom.addTableRow(dt, "" + atom.iacm, "IACM");
-      var cc = document.createElement('span');
-      var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
-      cc.appendChild(document.createTextNode(charge || "unknown"));
-      $ext.dom.addTableRow(dt, cc, "Charge");
-    } else {
-      // Get the unparameterised atoms
-      var uas = $ext.array.filter(selection, function(atom) {
-        return !atom.isCharged();
-      });
-      // Get the charge of all atoms
-      var cs = $ext.array.map(selection, function(atom) {
-        return atom.charge;
-      });
-      var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
-      var cc = document.createElement("span");
-      $ext.dom.addText(cc, charge || "unknown");
+    // Get the unparameterised atoms
+    var uas = $ext.array.filter(selection, function(atom) {
+      return !atom.isCharged();
+    });
+    // Get the charge of all atoms
+    var cs = $ext.array.map(selection, function(atom) {
+      return atom.charge;
+    });
+    var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+    var cc = document.createElement("span");
+    $ext.dom.addText(cc, charge || "unknown");
 
-      $ext.dom.addTableRow(dt, "" + selection.length, "Selection count");
-      $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
-      $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
-          "Parameterised");
-      $ext.dom.addTableRow(dt, cc, "Total charge");
+    $ext.dom.addTableRow(dt, "" + selection.length, "Atom count");
+    $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
+    $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
+        "Parameterised");
+    $ext.dom.addTableRow(dt, cc, "Total charge");
 
-      var sadlc = document.createElement("table");
-      var sadl = document.createElement('tbody');
-      sadlc.appendChild(sadl);
-      sadl.id = "selected_atom_details";
-      sadl.style.display = "none";
-      $ext.dom.addTableRow(sadl, [], ["Elem", "Charge", "Edit", "Frags"]);
-      $ext.each(selection, function(atom) {
-        var cei = document.createElement('input');
-        cei.disabled = "disabled";
-        cei.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
+    var sadlc = document.createElement("table");
+    var sadl = document.createElement('tbody');
+    sadlc.appendChild(sadl);
+    sadl.id = "selected_atom_details";
+    sadl.style.display = "none";
+    $ext.dom.addTableRow(sadl, [], ["Elem", "Charge", "Edit", "Frags"]);
+    $ext.each(selection, function(atom) {
+      var cei = document.createElement('input');
+      cei.disabled = "disabled";
+      cei.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
 
-        var ceb = document.createElement("button");
-        ceb.className = "border_box";
-        $ext.dom.addText(ceb, "Edit");
-        $ext.dom.onMouseClick(ceb, function() {
-          $ext.dom.clear(ceb);
-          if(cei.disabled) {
-            cei.disabled = "";
-            $ext.dom.addText(ceb, "Apply");
-          } else {
-            if(cei.value && !$ext.number.isNumeric(cei.value)) {
-              alert("Only numeric values are allowed for the atom charge.");
-              return;
-            }
-
-            var oldCharge = atom.charge;
-            var newCharge = parseFloat(cei.value) || undefined;
-            atom.setCharge(newCharge);
-            if(oldCharge !== newCharge) {
-              var cs = $ext.array.map(selection, function(atom) {
-                return atom.charge;
-              });
-              var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
-              $ext.dom.clear(cc);
-              $ext.dom.addText(cc, charge || "undefined");
-              _this.oframp.redraw();
-              _this.oframp.checkpoint();
-            }
-            cei.disabled = "disabled";
-            $ext.dom.addText(ceb, "Edit");
-          }
-        }, $ext.mouse.LEFT);
-
-        if(atom.usedFragments.length > 0) {
-          var fcb = document.createElement("button");
-          fcb.className = "border_box";
-          $ext.dom.addText(fcb, "Show");
-          $ext.dom.onMouseClick(fcb, function() {
-            _this.oframp.showUsedFragments(atom);
-          }, $ext.mouse.LEFT);
+      var ceb = document.createElement("button");
+      ceb.className = "border_box";
+      $ext.dom.addText(ceb, "Edit");
+      $ext.dom.onMouseClick(ceb, function() {
+        $ext.dom.clear(ceb);
+        if(cei.disabled) {
+          cei.disabled = "";
+          $ext.dom.addText(ceb, "Apply");
         } else {
-          var fcb = "-";
-        }
-
-        var el = atom.element + "(" + atom.iacm + ")";
-        var row = $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
-        $ext.dom.onMouseOver(row, function() {
-          if(_this.oframp.mv.molecule.setHover(atom)) {
-            _this.oframp.redraw();
+          if(cei.value && !$ext.number.isNumeric(cei.value)) {
+            alert("Only numeric values are allowed for the atom charge.");
+            return;
           }
-        });
-        $ext.dom.onMouseOut(row, function() {
-          if(_this.oframp.mv.molecule.setHover()) {
-            _this.oframp.redraw();
-          }
-        });
-      });
-      this.oframp.atomDetails.appendChild(sadlc);
 
-      var satb = document.createElement("button");
-      satb.className = "border_box";
-      $ext.dom.addText(satb, "Show");
-      $ext.dom.onMouseClick(satb, function() {
-        $ext.dom.clear(satb);
-        if(sadl.style.display === "table") {
-          sadl.style.display = "none";
-          $ext.dom.addText(satb, "Show");
-        } else {
-          sadl.style.display = "table";
-          $ext.dom.addText(satb, "Hide");
+          var oldCharge = atom.charge;
+          var newCharge = parseFloat(cei.value) || undefined;
+          atom.setCharge(newCharge);
+          if(oldCharge !== newCharge) {
+            var cs = $ext.array.map(selection, function(atom) {
+              return atom.charge;
+            });
+            var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+            $ext.dom.clear(cc);
+            $ext.dom.addText(cc, charge || "undefined");
+            _this.oframp.redraw();
+            _this.oframp.checkpoint();
+          }
+          cei.disabled = "disabled";
+          $ext.dom.addText(ceb, "Edit");
         }
       }, $ext.mouse.LEFT);
-      $ext.dom.addTableRow(dt, satb, "Selected atoms");
-    }
-
-    if(atom) {
-      var ced = document.createElement('div');
-      ced.id = "charge_edit";
-      ced.className = "border_box";
-      ced.style.height = "0px";
-
-      var cetc = document.createElement('table');
-      var cet = document.createElement('tbody');
-      cetc.appendChild(cet);
 
       if(atom.usedFragments.length > 0) {
-        var ufb = document.createElement('button');
-        ufb.id = "show_used_fragments";
-        ufb.className = "border_box";
-        ufb.appendChild(document.createTextNode("(" + atom.usedFragments.length
-            + ") Show"));
-
-        $ext.dom.onMouseClick(ufb, function() {
+        var fcb = document.createElement("button");
+        fcb.className = "border_box";
+        $ext.dom.addText(fcb, "Show");
+        $ext.dom.onMouseClick(fcb, function() {
           _this.oframp.showUsedFragments(atom);
         }, $ext.mouse.LEFT);
       } else {
-        var ufb = "-";
-      }
-      $ext.dom.addTableRow(cet, ufb, "Used fragments");
-      var ceb = document.createElement('input');
-      ceb.className = "border_box";
-      ceb.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
-      $ext.dom.addTableRow(cet, ceb, "New charge");
-
-      var acb = document.createElement('button');
-      acb.className = "border_box";
-      acb.appendChild(document.createTextNode("Apply charge"));
-
-      var ecb = document.createElement('button');
-      ecb.className = "border_box";
-      ecb.appendChild(document.createTextNode("Edit charge"));
-
-      function toggleChargeEdit() {
-        if(ced.style.visibility === "visible") {
-          ced.style.height = "0px";
-          ced.style.visibility = "hidden";
-          $ext.dom.clear(ecb);
-          ecb.appendChild(document.createTextNode("Edit charge"));
-          _this.oframp.atomDetails.insertBefore(ecb, ffb);
-        } else {
-          ced.style.height = "";
-          ced.style.visibility = "visible";
-          $ext.dom.clear(ecb);
-          ecb.appendChild(document.createTextNode("Cancel"));
-          ced.appendChild(ecb);
-        }
+        var fcb = "-";
       }
 
-      ced.appendChild(cetc);
-      ced.appendChild(acb);
-      this.oframp.atomDetails.appendChild(ced);
-
-      $ext.dom.onMouseClick(acb, function() {
-        if(ceb.value && !$ext.number.isNumeric(ceb.value)) {
-          alert("Only numeric values are allowed for the atom charge.");
-          return;
-        }
-
-        var oldCharge = atom.charge;
-        var newCharge = parseFloat(ceb.value) || undefined;
-        atom.setCharge(newCharge);
-        if(oldCharge !== newCharge) {
-          $ext.dom.clear(cc);
-          var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
-          cc.appendChild(document.createTextNode(charge || "unknown"));
+      var el = atom.element + "(" + atom.iacm + ")";
+      var row = $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
+      $ext.dom.onMouseOver(row, function() {
+        if(_this.oframp.mv.molecule.setHover(atom)) {
           _this.oframp.redraw();
-          _this.oframp.checkpoint();
         }
+      });
+      $ext.dom.onMouseOut(row, function() {
+        if(_this.oframp.mv.molecule.setHover()) {
+          _this.oframp.redraw();
+        }
+      });
+    });
+    this.oframp.atomDetails.appendChild(sadlc);
 
-        toggleChargeEdit();
-      }, $ext.mouse.LEFT);
-    }
+    var satb = document.createElement("button");
+    satb.className = "border_box";
+    $ext.dom.addText(satb, "Show");
+    $ext.dom.onMouseClick(satb, function() {
+      $ext.dom.clear(satb);
+      if(sadl.style.display === "table") {
+        sadl.style.display = "none";
+        $ext.dom.addText(satb, "Show");
+      } else {
+        sadl.style.display = "table";
+        $ext.dom.addText(satb, "Hide");
+      }
+    }, $ext.mouse.LEFT);
+    $ext.dom.addTableRow(dt, satb, "Selected atoms");
 
     var msb = document.createElement('button');
     msb.className = "border_box";
@@ -268,11 +172,6 @@ NaiveBehavior.prototype = {
         $ext.dom.clear(msb);
         msb.appendChild(document.createTextNode("Stop modifying selection"));
       }
-    }
-
-    if(atom) {
-      this.oframp.atomDetails.appendChild(ecb);
-      $ext.dom.onMouseClick(ecb, toggleChargeEdit, $ext.mouse.LEFT);
     }
 
     this.oframp.atomDetails.appendChild(msb);
