@@ -197,7 +197,8 @@ MoleculeViewer.prototype = {
           _this.selectionArea = undefined;
           _this.redraw();
 
-          if(!$ext.array.isIdentical(initialSelection, _this.molecule.getSelected())) {
+          if(!$ext.array.isIdentical(initialSelection, _this.molecule
+              .getSelected())) {
             _this.oframp.selectionChanged();
           }
         }
