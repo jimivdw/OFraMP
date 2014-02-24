@@ -97,6 +97,7 @@ NaiveBehavior.prototype = {
         } else {
           log("user.click.apply_charge", "Clicked Apply for atom " + atom.id);
           if(cei.value && !$ext.number.isNumeric(cei.value)) {
+            alert("Only numeric values are allowed for the atom charge.");
             log("user.action.illegal_charge", "Entered illegal charge value "
                 + "for atom " + atom.id);
             return;
