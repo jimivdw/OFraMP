@@ -382,10 +382,10 @@ Atom.prototype = {
       return this.settings.atom.backgroundColor["selected"];
     } else if(status === ATOM_STATUSES.hover) {
       return this.settings.atom.backgroundColor["hover"];
-    } else if(status === ATOM_STATUSES.unparameterizable) {
-      return this.settings.atom.backgroundColor["unparameterizable"];
     } else if(this.isCharged()) {
       return this.settings.atom.backgroundColor["charged"];
+    } else if(status === ATOM_STATUSES.unparameterizable) {
+      return this.settings.atom.backgroundColor["unparameterizable"];
     } else {
       return this.settings.atom.backgroundColor["standard"];
     }
