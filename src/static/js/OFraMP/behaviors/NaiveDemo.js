@@ -159,7 +159,6 @@ NaiveDemo.prototype = {
       $ext.dom.removeEventListener(_this.oframp.container, "selectionchanged",
           selectionChanged);
       _this.oframp.mv.selectingDisabled = true;
-      document.getElementById("find_fragments").disabled = "disabled";
       _this.nextStep();
     }
   },
@@ -350,7 +349,6 @@ NaiveDemo.prototype = {
         $ext.dom.removeEventListener(_this.oframp.container,
             "selectionchanged", selectionChanged);
         _this.oframp.mv.selectingDisabled = true;
-        document.getElementById("find_fragments").disabled = "disabled";
         _this.nextStep();
       }
     }
@@ -375,7 +373,6 @@ NaiveDemo.prototype = {
     $ext.dom.addEventListener(this.oframp.container, "fragmentsfound",
         fragmentsFound);
     function fragmentsFound() {
-      document.getElementById("find_fragments").disabled = "disabled";
       if(_this.oframp.behavior.relatedFragmentViewers.length === 0) {
         return;
       } else if(_this.oframp.behavior.relatedFragmentViewers.length === 1) {

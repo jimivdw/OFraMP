@@ -16,15 +16,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
         function() {
           var ffb = document.getElementById("find_fragments");
-          $ext.dom.clear(ffb);
-          ffb.appendChild(document.createTextNode("Find fragments"));
+          ffb.style.display = "none";
           oframp.selectionChanged();
-
-          $ext.dom.onMouseClick(ffb, function() {
-            // Make sure the previewed charges are reset.
-            oframp.mv.previewCharges({});
-            oframp.getMatchingFragments();
-          }, $ext.mouse.LEFT);
         });
   },
 
