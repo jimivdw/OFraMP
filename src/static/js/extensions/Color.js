@@ -123,11 +123,8 @@ var color = {
       co2 = this.getRGBA(c2);
     }
 
-    var ad = $ext.array.avg([
-      Math.abs(co1.r - co2.r),
-      Math.abs(co1.g - co2.g),
-      Math.abs(co1.b - co2.b)
-    ]);
+    var ad = $ext.array.avg([Math.abs(co1.r - co2.r), Math.abs(co1.g - co2.g),
+        Math.abs(co1.b - co2.b)]);
     if(ad < 128) {
       return this.invert(c1);
     } else {
@@ -136,4 +133,6 @@ var color = {
   }
 };
 
-$ext.extend($ext, {color: color});
+$ext.extend($ext, {
+  color: color
+});
