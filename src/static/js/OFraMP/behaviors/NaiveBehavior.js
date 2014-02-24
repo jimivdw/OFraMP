@@ -159,9 +159,13 @@ NaiveBehavior.prototype = {
 
     var msb = document.createElement('button');
     msb.className = "border_box";
-    _this.oframp.mv.isModifyingSelection = false;
-    $ext.dom.clear(msb);
-    msb.appendChild(document.createTextNode("Modify selection"));
+    if(_this.oframp.mv.isModifyingSelection) {
+      msb.appendChild(document.createTextNode("Stop modifying selection"));
+    } else {
+      msb.appendChild(document.createTextNode("Modify selection"));
+    }
+    this.oframp.atomDetails.appendChild(msb);
+
     function toggleSelectionEdit() {
       if(_this.oframp.mv.isModifyingSelection) {
         _this.oframp.mv.isModifyingSelection = false;
@@ -173,8 +177,6 @@ NaiveBehavior.prototype = {
         msb.appendChild(document.createTextNode("Stop modifying selection"));
       }
     }
-
-    this.oframp.atomDetails.appendChild(msb);
     $ext.dom.onMouseClick(msb, toggleSelectionEdit, $ext.mouse.LEFT);
 
     this.oframp.showSelectionDetails();
