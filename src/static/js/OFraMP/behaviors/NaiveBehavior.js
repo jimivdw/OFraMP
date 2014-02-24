@@ -93,7 +93,8 @@ NaiveBehavior.prototype = {
 
       $ext.dom.addTableRow(dt, "" + selection.length, "Selection count");
       $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
-      $ext.dom.addTableRow(dt, "" + (selection.length - uas.length), "Parameterised");
+      $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
+          "Parameterised");
       $ext.dom.addTableRow(dt, cc, "Total charge");
 
       var sadlc = document.createElement("table");
@@ -330,166 +331,172 @@ NaiveBehavior.prototype = {
 
     var rightBar = this.oframp.relatedFragments.parentElement;
     var barHeight = rightBar.clientHeight;
-    $ext.each(fragments, function(fragment, i) {
-      var atoms = $ext.array.map(fragment.atoms, function(atom) {
-        var orig = this.oframp.mv.molecule.atoms.get(atom.id);
-        atom.element = orig.element;
-        atom.x = orig.x;
-        atom.y = orig.y;
-        return atom;
-      }, this);
-
-      var aids = $ext.array.map(fragment.atoms, function(atom) {
-        return atom.id;
-      });
-      var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
-        return aids.indexOf(bond.a1.id) !== -1 && aids.indexOf(bond.a2.id) !== -1;
-      });
-      var bonds = $ext.array.map(abs, function(bond) {
-        return bond.getJSON();
-      });
-
-      var fc = document.createElement('div');
-      fc.id = "fc_" + i;
-      fc.className = "fragment";
-      this.oframp.relatedFragments.appendChild(fc);
-
-      var ob = document.createElement('button');
-      ob.className = "show_original border_box";
-      ob.disabled = "disabled";
-      ob.appendChild(document.createTextNode("Show molecule"));
-      fc.appendChild(ob);
-
-      var ab = document.createElement('button');
-      ab.className = "select_fragment border_box";
-      ab.disabled = "disabled";
-      ab.appendChild(document.createTextNode("Select fragment"));
-      fc.appendChild(ab);
-
-      var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
-          228, 130);
-      this.relatedFragmentViewers.push(fv);
-      if(fragment.hasOverlap) {
-        fv.canvas.className += "overlapping";
-      }
-
-      var load = function() {
-        fv.molecule = new Molecule(fv, atoms, bonds);
-        fv.molecule.minimize();
-
-        var selectionAtoms = $ext.array.map(selectionIDs, function(id) {
-          return fv.molecule.atoms.get(id);
-        });
-        fv.molecule.setSelected(selectionAtoms);
-        fv.molecule.centerOnAtoms(selectionAtoms);
-        fv.redraw();
-      };
-
-      if(i * 150 < barHeight) {
-        load();
-      } else {
-        var cbs = $ext.dom.onScroll(rightBar, function() {
-          if(fv.molecule || fv.overlayShowing) {
-            return;
-          }
-
-          var ot = $ext.dom.totalOffsetTop(fv.canvas);
-          var ph = rightBar.clientHeight;
-          var pt = rightBar.scrollTop;
-          if(ot < ph + pt && ot > pt) {
-            load();
-            $ext.dom.removeEventListeners(rightBar, cbs);
-          }
-        });
-      }
-
-      $ext.dom.onMouseOver(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
-          return;
-        }
-
-        var charges = {};
-        $ext.each(atoms, function(atom) {
-          charges[atom.id] = atom.charge;
-        }, this);
-        _this.oframp.mv.previewCharges(charges);
-      });
-
-      $ext.dom.onMouseOut(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
-          return;
-        }
-
-        if(_this.activeFragment !== fv) {
-          var charges = {};
-          _this.activeFragment.molecule.atoms.each(function(atom) {
-            charges[atom.id] = atom.charge;
+    $ext.each(fragments,
+        function(fragment, i) {
+          var atoms = $ext.array.map(fragment.atoms, function(atom) {
+            var orig = this.oframp.mv.molecule.atoms.get(atom.id);
+            atom.element = orig.element;
+            atom.x = orig.x;
+            atom.y = orig.y;
+            return atom;
           }, this);
-          _this.oframp.mv.previewCharges(charges);
-        }
-      });
 
-      $ext.dom.onMouseClick(fv.canvas, function() {
-        if(!fv.molecule || _this.activeFragment === fv) {
-          return;
-        }
+          var aids = $ext.array.map(fragment.atoms, function(atom) {
+            return atom.id;
+          });
+          var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
+            return aids.indexOf(bond.a1.id) !== -1
+                && aids.indexOf(bond.a2.id) !== -1;
+          });
+          var bonds = $ext.array.map(abs, function(bond) {
+            return bond.getJSON();
+          });
 
-        ob.disabled = "";
-        ab.disabled = "";
+          var fc = document.createElement('div');
+          fc.id = "fc_" + i;
+          fc.className = "fragment";
+          this.oframp.relatedFragments.appendChild(fc);
 
-        if(_this.activeFragment) {
-          // Disable the currently active fragment's buttons
-          _this.activeFragment.canvas.parentElement
-          .getElementsByTagName("button")[0].disabled = "disabled";
-          _this.activeFragment.canvas.parentElement
-          .getElementsByTagName("button")[1].disabled = "disabled";
-          $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
-              "active");
-        }
-        _this.activeFragment = fv;
-        $ext.dom.addClass(fc, "active");
+          var ob = document.createElement('button');
+          ob.className = "show_original border_box";
+          ob.disabled = "disabled";
+          ob.appendChild(document.createTextNode("Show molecule"));
+          fc.appendChild(ob);
 
-        var charges = {};
-        $ext.each(atoms, function(atom) {
-          charges[atom.id] = atom.charge;
+          var ab = document.createElement('button');
+          ab.className = "select_fragment border_box";
+          ab.disabled = "disabled";
+          ab.appendChild(document.createTextNode("Select fragment"));
+          fc.appendChild(ab);
+
+          var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id, 228,
+              130);
+          this.relatedFragmentViewers.push(fv);
+          if(fragment.hasOverlap) {
+            fv.canvas.className += "overlapping";
+          }
+
+          var load = function() {
+            fv.molecule = new Molecule(fv, atoms, bonds);
+            fv.molecule.minimize();
+
+            var selectionAtoms = $ext.array.map(selectionIDs, function(id) {
+              return fv.molecule.atoms.get(id);
+            });
+            fv.molecule.setSelected(selectionAtoms);
+            fv.molecule.centerOnAtoms(selectionAtoms);
+            fv.redraw();
+          };
+
+          if(i * 150 < barHeight) {
+            load();
+          } else {
+            var cbs = $ext.dom.onScroll(rightBar, function() {
+              if(fv.molecule || fv.overlayShowing) {
+                return;
+              }
+
+              var ot = $ext.dom.totalOffsetTop(fv.canvas);
+              var ph = rightBar.clientHeight;
+              var pt = rightBar.scrollTop;
+              if(ot < ph + pt && ot > pt) {
+                load();
+                $ext.dom.removeEventListeners(rightBar, cbs);
+              }
+            });
+          }
+
+          $ext.dom.onMouseOver(fv.canvas, function() {
+            if(!fv.molecule || !_this.activeFragment) {
+              return;
+            }
+
+            var charges = {};
+            $ext.each(atoms, function(atom) {
+              charges[atom.id] = atom.charge;
+            }, this);
+            _this.oframp.mv.previewCharges(charges);
+          });
+
+          $ext.dom.onMouseOut(fv.canvas, function() {
+            if(!fv.molecule || !_this.activeFragment) {
+              return;
+            }
+
+            if(_this.activeFragment !== fv) {
+              var charges = {};
+              _this.activeFragment.molecule.atoms.each(function(atom) {
+                charges[atom.id] = atom.charge;
+              }, this);
+              _this.oframp.mv.previewCharges(charges);
+            }
+          });
+
+          $ext.dom.onMouseClick(fv.canvas, function() {
+            if(!fv.molecule || _this.activeFragment === fv) {
+              return;
+            }
+
+            ob.disabled = "";
+            ab.disabled = "";
+
+            if(_this.activeFragment) {
+              // Disable the currently active fragment's buttons
+              _this.activeFragment.canvas.parentElement
+                  .getElementsByTagName("button")[0].disabled = "disabled";
+              _this.activeFragment.canvas.parentElement
+                  .getElementsByTagName("button")[1].disabled = "disabled";
+              $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
+                  "active");
+            }
+            _this.activeFragment = fv;
+            $ext.dom.addClass(fc, "active");
+
+            var charges = {};
+            $ext.each(atoms, function(atom) {
+              charges[atom.id] = atom.charge;
+            }, this);
+            _this.oframp.mv.previewCharges(charges);
+          }, $ext.mouse.LEFT);
+
+          $ext.dom.onMouseClick(ob, function() {
+            _this.oframp.showOriginal(fragment);
+          }, $ext.mouse.LEFT);
+
+          $ext.dom.onMouseClick(ab, function() {
+            _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
+            _this.oframp.mv.molecule.setSelected([]);
+
+            var charges = {};
+            $ext.each(atoms, function(atom) {
+              charges[atom.id] = atom.charge;
+            }, this);
+            if(_this.oframp.mv.setCharges(charges, fragment)) {
+              _this.oframp.checkpoint();
+              _this.oframp.selectionChanged();
+            }
+
+            _this.activeFragment = undefined;
+            _this.oframp.redraw();
+
+            _this.oframp.hideRelatedFragments();
+          }, $ext.mouse.LEFT);
+
+          // It makes no sense to show more than 100 fragments
+          if(i === 100) {
+            return $ext.BREAK;
+          }
         }, this);
-        _this.oframp.mv.previewCharges(charges);
-      }, $ext.mouse.LEFT);
-
-      $ext.dom.onMouseClick(ob, function() {
-        _this.oframp.showOriginal(fragment);
-      }, $ext.mouse.LEFT);
-
-      $ext.dom.onMouseClick(ab, function() {
-        _this.oframp.mv.molecule.dehighlight(ATOM_STATUSES.preview);
-        _this.oframp.mv.molecule.setSelected([]);
-
-        var charges = {};
-        $ext.each(atoms, function(atom) {
-          charges[atom.id] = atom.charge;
-        }, this);
-        if(_this.oframp.mv.setCharges(charges, fragment)) {
-          _this.oframp.checkpoint();
-          _this.oframp.selectionChanged();
-        }
-
-        _this.activeFragment = undefined;
-        _this.oframp.redraw();
-
-        _this.oframp.hideRelatedFragments();
-      }, $ext.mouse.LEFT);
-
-      // It makes no sense to show more than 100 fragments
-      if(i === 100) {
-        return $ext.BREAK;
-      }
-    }, this);
 
     this.oframp.showRelatedFragments();
   },
 
   selectionChanged: function() {
     var selection = this.oframp.mv.molecule.getSelected();
+
+    var ffb = document.createElement('button');
+    ffb.className = "border_box";
+    this.oframp.atomDetails.appendChild(ffb);
 
     if(this.oframp.off) {
       this.oframp.mv.previewCharges({});
@@ -513,12 +520,22 @@ NaiveBehavior.prototype = {
         }
       });
 
+      $ext.dom.addText(ffb, "Find matching fragments");
       if(connected !== false && cas.length > 0) {
         this.oframp.getMatchingFragments();
+
+        $ext.dom.onMouseClick(ffb, function() {
+          _this.oframp.getMatchingFragments();
+        }, $ext.mouse.LEFT);
       } else {
         this.activeFragment = undefined;
         this.oframp.hideRelatedFragments();
+        ffb.disabled = "disabled";
       }
+
+    } else {
+      ffb.disabled = "disabled";
+      $ext.dom.addText(ffb, "Generating fragments...");
     }
   },
 
@@ -544,8 +561,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addTableRow(dt, atom.element, "Element");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
         "Current charge");
-    $ext.dom.addTableRow(dt, $ext.number.format(
-        atom.getPreviewCharge(), 1, 3, 9), "Proposed charge");
+    $ext.dom.addTableRow(dt, $ext.number.format(atom.getPreviewCharge(), 1, 3,
+        9), "Proposed charge");
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
@@ -556,8 +573,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addSelectOption(ss, "current", "Current value");
     $ext.dom.addSelectOption(ss, "other", "Other value");
     $ext.dom.addSelectOption(ss, "average", "Average value", true);
-    if(this.oframp.settings.atom.showHAtoms ||
-        atom.getHydrogenAtoms().length === 0) {
+    if(this.oframp.settings.atom.showHAtoms
+        || atom.getHydrogenAtoms().length === 0) {
       $ext.dom.addSelectOption(ss, "custom", "Custom value");
     } // TODO maybe add some slider-like thing for old:new ratio otherwise?
     $ext.dom.addEventListener(ss, 'change', function() {
@@ -663,18 +680,18 @@ NaiveBehavior.prototype = {
 
     if(incomplete === true) {
       var title = "No more options available";
-      var message = "The molecule has been parameterised up to the point " +
-          "where there are no more available fragments for the " +
-          "unparameterised atoms. You can manually add charges for these " +
-          "atoms by selecting them and using the charge edit buttons in " +
-          "the selection details window. Charges for other atoms can be" +
-          "edited here as well.";
+      var message = "The molecule has been parameterised up to the point "
+          + "where there are no more available fragments for the "
+          + "unparameterised atoms. You can manually add charges for these "
+          + "atoms by selecting them and using the charge edit buttons in "
+          + "the selection details window. Charges for other atoms can be"
+          + "edited here as well.";
     } else {
       var title = "Fully parameterised";
-      var message = "All atoms in the molecule have been parameterised. If " +
-          "you feel some charges need to be adjusted, this can be done by " +
-          "selecting those atoms and using the charge edit buttons in the " +
-          "selection details window.";
+      var message = "All atoms in the molecule have been parameterised. If "
+          + "you feel some charges need to be adjusted, this can be done by "
+          + "selecting those atoms and using the charge edit buttons in the "
+          + "selection details window.";
     }
 
     var content = document.createElement('div');
@@ -684,10 +701,10 @@ NaiveBehavior.prototype = {
     content.appendChild(mp);
 
     var dp = document.createElement('p');
-    $ext.dom.addText(dp, "You can now download the parameterised molecule " +
-        "data file in LGF format using the 'Download LGF' button below. It " +
-        "is also possible to do this later using the 'Download' button at " +
-        "the top of the page.");
+    $ext.dom.addText(dp, "You can now download the parameterised molecule "
+        + "data file in LGF format using the 'Download LGF' button below. It "
+        + "is also possible to do this later using the 'Download' button at "
+        + "the top of the page.");
     content.appendChild(dp);
 
     var cd = document.createElement('div');
