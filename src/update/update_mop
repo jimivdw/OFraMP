@@ -1,6 +1,0 @@
-#!bin/bash
-cd ../../../OMFraF/src/bin/mop/
-git pull 2>&1
-
-cd ../fragments/
-rm -r *.off

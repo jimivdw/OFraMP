@@ -85,7 +85,7 @@ var DEFAULT_SETTINGS = {
     url: "http://vps955.directvps.nl/OMFraF/load/",
     repoUrl: "http://vps955.directvps.nl/OMFraF/repos/",
     generateUrl: "http://vps955.directvps.nl/OMFraF/generate/",
-    version: "0.6.1"
+    version: "0.7.0"
   },
 
   zoom: {
