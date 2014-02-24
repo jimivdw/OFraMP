@@ -1,4 +1,4 @@
-$ext = {
+var ext = {
   /*
    * Identity function.
    */
@@ -194,3 +194,5 @@ $ext = {
     return BrowserDetect.browser === "Firefox";
   }
 };
+
+$ext = ext;
