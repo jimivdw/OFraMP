@@ -43,9 +43,7 @@ BondList.prototype = {
   },
 
   getLGF: function() {
-    var header = "@edges\n" +
-        "\t\tlabel\t" +
-        "\n";
+    var header = "@edges\n" + "\t\tlabel\t\n";
     var lgfs = this.map(function(bond) {
       return bond.getLGF();
     });
