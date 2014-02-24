@@ -166,8 +166,8 @@ html, body {
 }
 
 .border_box th, .border_box td {
+    height: 32px;
     padding: 6px 2px;
-    vertical-align: baseline;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
@@ -225,6 +225,10 @@ html, body {
     margin: 5px;
     text-align: left;
     font-size: 14px;
+}
+
+#popup button {
+    height: 30px;
 }
 
 button.border_box, a.border_box, select.border_box {

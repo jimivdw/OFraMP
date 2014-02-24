@@ -453,12 +453,11 @@ NaiveBehavior.prototype = {
     var dtc = document.createElement('table');
     var dt = document.createElement('tbody');
     dtc.appendChild(dt);
-    $ext.dom.addTableRow(dt, "" + atom.id, "Atom ID");
-    $ext.dom.addTableRow(dt, atom.element, "Element");
+    $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
         "Current charge");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getPreviewCharge(), 1, 3,
-        9), "Proposed charge");
+        9), "Fragment charge");
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
@@ -466,12 +465,13 @@ NaiveBehavior.prototype = {
         (atom.getCharge() + atom.getPreviewCharge()) / 2, 1, 3, 9);
 
     var ss = document.createElement('select');
-    $ext.dom.addSelectOption(ss, "current", "Current value");
-    $ext.dom.addSelectOption(ss, "other", "Other value");
-    $ext.dom.addSelectOption(ss, "average", "Average value", true);
+    ss.className = "border_box";
+    $ext.dom.addSelectOption(ss, "current", "Current charge");
+    $ext.dom.addSelectOption(ss, "other", "Fragment charge");
+    $ext.dom.addSelectOption(ss, "average", "Average charge", true);
     if(this.oframp.settings.atom.showHAtoms
         || atom.getHydrogenAtoms().length === 0) {
-      $ext.dom.addSelectOption(ss, "custom", "Custom value");
+      $ext.dom.addSelectOption(ss, "custom", "Custom charge");
     } // TODO maybe add some slider-like thing for old:new ratio otherwise?
     $ext.dom.addEventListener(ss, 'change', function() {
       rc.disabled = "disabled";
@@ -503,7 +503,8 @@ NaiveBehavior.prototype = {
     content.appendChild(id);
 
     var rb = document.createElement('button');
-    rb.appendChild(document.createTextNode("Apply charge"));
+    rb.className = "border_box";
+    rb.appendChild(document.createTextNode("Apply solution"));
     content.appendChild(rb);
 
     function getResultingCharge(atom, method) {
