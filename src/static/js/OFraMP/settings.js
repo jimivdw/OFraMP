@@ -18,59 +18,46 @@ var ATOM_STATUSES = {
 var DEFAULT_SHELL = 1;
 var DEFAULT_REPO = "lipids";
 
-var PARTIALLY_SUPPORTED_BROWSERS = [
-  {
-    browser: "Chrome",
-    minVersion: "0"
-  },
-  {
-    browser: "Firefox",
-    minVersion: "4"
-  },
-  {
-    browser: "Explorer",
-    minVersion: "7"
-  },
-  {
-    browser: "Safari",
-    minVersion: "5"
-  },
-  {
-    browser: "Opera",
-    minVersion: "12"
-  },
-  { // IE 11
-    browser: "Mozilla",
-    minVersion: "11"
-  }
-];
+var PARTIALLY_SUPPORTED_BROWSERS = [{
+  browser: "Chrome",
+  minVersion: "0"
+}, {
+  browser: "Firefox",
+  minVersion: "4"
+}, {
+  browser: "Explorer",
+  minVersion: "7"
+}, {
+  browser: "Safari",
+  minVersion: "5"
+}, {
+  browser: "Opera",
+  minVersion: "12"
+}, { // IE 11
+  browser: "Mozilla",
+  minVersion: "11"
+}];
 
 /*
- * Note that Opera has a strange right mouse drag default shortcut that
- * prevents full support.
+ * Note that Opera has a strange right mouse drag default shortcut that prevents
+ * full support.
  */
-var FULLY_SUPPORTED_BROWSERS = [
-  {
-    browser: "Chrome",
-    minVersion: "25"
-  },
-  {
-    browser: "Firefox",
-    minVersion: "25"
-  },
-  {
-    browser: "Explorer",
-    minVersion: "10"
-  },
-  {
-    browser: "Safari",
-    minVersion: "5"
-  },
-  { // IE 11
-    browser: "Mozilla",
-    minVersion: "11"
-  }
-];
+var FULLY_SUPPORTED_BROWSERS = [{
+  browser: "Chrome",
+  minVersion: "25"
+}, {
+  browser: "Firefox",
+  minVersion: "25"
+}, {
+  browser: "Explorer",
+  minVersion: "10"
+}, {
+  browser: "Safari",
+  minVersion: "5"
+}, { // IE 11
+  browser: "Mozilla",
+  minVersion: "11"
+}];
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 
