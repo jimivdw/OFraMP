@@ -628,7 +628,8 @@ var dom = {
         mouseDragged = true;
         _this.removeEventListener(elem, "mousemove", _onMouseMove);
 
-        _this.addEventListener(document.documentElement, "mousemove", _onMouseDrag, useCapture);
+        _this.addEventListener(document.documentElement, "mousemove",
+            _onMouseDrag, useCapture);
       }
     }
 
@@ -685,7 +686,8 @@ var dom = {
     }
 
     var dcb = this.onMouseDown(elem, _onMouseDown, button, useCapture);
-    var ucb = this.onMouseUp(document.documentElement, _onMouseUp, button, useCapture);
+    var ucb = this.onMouseUp(document.documentElement, _onMouseUp, button,
+        useCapture);
     return $ext.merge(dcb, ucb);
   },
 
