@@ -26,7 +26,7 @@ TreeVis.prototype = {
     $ext.context.clear(this.ctx);
     this.__drawRow([this.tree], 0, 40, this.canvas.width);
   },
-  
+
   overlayOnScreen: function() {
     this.canvas.style.position = "absolute";
     this.canvas.style.top = "10px";
