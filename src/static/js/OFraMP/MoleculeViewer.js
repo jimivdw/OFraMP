@@ -125,6 +125,7 @@ MoleculeViewer.prototype = {
 
     $ext.dom.onMouseClick(this.canvas, function(e) {
       if(!_this.overlayShowing && !_this.selectingDisabled) {
+        var is = _this.molecule.getSelected();
         var c = $ext.mouse.getCoords(e);
         var a = _this.molecule.getAtomAt(c.x, c.y);
         var s = a ? [a] : [];
@@ -134,7 +135,10 @@ MoleculeViewer.prototype = {
         } else if(_this.molecule.setSelected(s)) {
           _this.redraw();
         }
-        _this.oframp.selectionChanged();
+
+        if(!$ext.array.isIdentical(is, _this.molecule.getSelected())) {
+          _this.oframp.selectionChanged();
+        }
       }
     }, $ext.mouse.LEFT);
 
@@ -192,7 +196,10 @@ MoleculeViewer.prototype = {
         if(!_this.overlayShowing && !_this.selectingDisabled) {
           _this.selectionArea = undefined;
           _this.redraw();
-          _this.oframp.selectionChanged();
+
+          if(!$ext.array.isIdentical(initialSelection, _this.molecule.getSelected())) {
+            _this.oframp.selectionChanged();
+          }
         }
       }, $ext.mouse.RIGHT);
     }

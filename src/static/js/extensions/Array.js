@@ -203,6 +203,29 @@ var array = {
   randomElement: function(arr) {
     var i = Math.floor(Math.random() * arr.length);
     return arr[i];
+  },
+
+  /*
+   * Determine whether two arrays a and b are identical.
+   */
+  isIdentical: function(a, b) {
+    if(a.length !== b.length) {
+      return false;
+    }
+
+    var eq = $ext.each(a, function(v, i) {
+      if(v instanceof Array && b[i] instanceof Array) {
+        if(!$ext.array.isIdentical(v, b[i])) {
+          return false;
+        }
+      } else {
+        if(v !== b[i]) {
+          return false;
+        }
+      }
+    });
+
+    return eq !== false;
   }
 };
 
