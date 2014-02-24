@@ -48,9 +48,9 @@ AtomList.prototype = {
   },
 
   getLGF: function() {
-    var header = "@nodes\n" +
-        "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t" +
-        "initColor\t\n";
+    var header = "@nodes\n"
+        + "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t"
+        + "initColor\t\n";
     var lgfs = this.map(function(atom) {
       return atom.getLGF();
     });
