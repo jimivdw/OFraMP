@@ -8,8 +8,10 @@ OFraMP.prototype = {
   settings: undefined,
   mv: undefined,
   settingsUI: undefined,
+  repos: undefined,
   off: undefined,
   off_missing: undefined,
+  finished: false,
 
   atomDetails: undefined,
   relatedFragments: undefined,
@@ -38,14 +40,41 @@ OFraMP.prototype = {
     settings = $ext.merge($ext.copy(DEFAULT_SETTINGS), settings);
     settings.fragment = $ext.deepCopy(settings);
     // Ugly way to achieve this, but cannot do it otherwise currently.
-    settings.fragment.atom.backgroundColor.charged =
-        settings.fragment.atom.backgroundColor.default;
+    settings.fragment.atom.backgroundColor.charged = settings.fragment.atom.backgroundColor.standard;
     SETTINGS_OPTIONS.fragment = $ext.deepCopy(SETTINGS_OPTIONS);
     this.settings = settings;
 
     this.container = document.getElementById(containerID);
     this.behavior = new behavior(this);
     this.__initUI();
+
+    if(!this.isValidBrowser(PARTIALLY_SUPPORTED_BROWSERS)) {
+      return this.showErrorPopup();
+    }
+
+    this.getRepositories(function(repos) {
+      console.log("Got repositories", repos);
+      this.repos = repos;
+      var rs = document.getElementById("repository");
+      if(rs) {
+        $ext.dom.clear(rs);
+        $ext.each(repos, function(repo) {
+          $ext.dom.addSelectOption(rs, repo);
+        });
+        rs.disabled = "";
+        var sb = document.getElementById("mds_submit");
+        sb.disabled = "";
+        sb.title = "";
+      }
+    }, function(msg) {
+      alert("Could not connect to OMFraF, fragment finding is not possible:\n"
+          + msg);
+      this.repos = [];
+      var sb = document.getElementById("mds_submit");
+      sb.disabled = "";
+      sb.title = "Submit only for visualisation";
+    });
+
     if($ext.cookie.get("hideWelcome")) {
       this.showInsertMoleculePopup();
     } else {
@@ -129,10 +158,10 @@ OFraMP.prototype = {
     this.popupContent.id = "popup_content";
 
     $ext.dom.onMouseDrag(this.popupTitle, function(e) {
-      var cs = getComputedStyle(container);
-      var left = (popup.offsetLeft - parseInt(cs.marginLeft) + e.deltaX) + "px";
-      var top = (parseInt(cs.top) + e.deltaY) + "px";
-      var bottom = (parseInt(cs.bottom) - e.deltaY) + "px";
+      var s = getComputedStyle(container);
+      var left = (popup.offsetLeft - parseInt(s.marginLeft) + e.deltaX) + "px";
+      var top = (parseInt(s.top) + e.deltaY) + "px";
+      var bottom = (parseInt(s.bottom) - e.deltaY) + "px";
       container.style.left = left;
       container.style.top = top;
       container.style.bottom = bottom;
@@ -199,6 +228,22 @@ OFraMP.prototype = {
         .extrapolate(SETTINGS_OPTIONS));
   },
 
+  isValidBrowser: function(browsers) {
+    var names = $ext.array.map(browsers, function(browser) {
+      return browser.browser;
+    });
+    if(names.indexOf(BrowserDetect.browser) === -1) {
+      return false;
+    }
+
+    var minVersion = $ext.each(browsers, function(browser) {
+      if(browser.browser === BrowserDetect.browser) {
+        return browser.minVersion;
+      }
+    });
+    return BrowserDetect.version >= minVersion;
+  },
+
   getUnparameterizedAtoms: function(only_parameterizable) {
     var unpar = this.mv.molecule.getUnparameterized();
     if(only_parameterizable) {
@@ -230,6 +275,25 @@ OFraMP.prototype = {
     this.popupClose.style.display = "";
   },
 
+  showErrorPopup: function() {
+    var title = "Please upgrade your browser";
+    var content = document.createElement("p");
+    $ext.dom.addText(content, "The Online tool for Fragment-based Molecule "
+        + "Parameterisation has been designed and implemented for use in "
+        + "modern browsers. You appear to be using a very old browser ("
+        + BrowserDetect.browser + ", version " + BrowserDetect.version + ") "
+        + "which, unfortunately, is not supported. For best results, please "
+        + "upgrade to the latest version of ");
+    var cdl = document.createElement('a');
+    cdl.href = "http://chrome.google.com/";
+    $ext.dom.addText(cdl, "Google Chrome");
+    content.appendChild(cdl);
+    $ext.dom.addText(content, ". Apologies for any inconvenience.");
+
+    $ext.dom.addClass(this.popup, "error");
+    this.showPopup(title, content);
+  },
+
   showWelcomePopup: function() {
     var _this = this;
 
@@ -244,6 +308,24 @@ OFraMP.prototype = {
         + "other molecules. Once the whole molecule has been parameterised, "
         + "you can download the resulting parameterisation in an LGF file.");
     content.appendChild(mp);
+
+    if(!this.isValidBrowser(FULLY_SUPPORTED_BROWSERS)) {
+      var bp = document.createElement("p");
+      $ext.dom.addText(bp, "The Online tool for Fragment-based Molecule "
+          + "Parameterisation has been designed and implemented for use in "
+          + "modern browsers. Your browser (" + BrowserDetect.browser
+          + ", version " + BrowserDetect.version + ") is only partially "
+          + "supported and is lacking some features. For best results, please "
+          + "upgrade to the latest version of ");
+      var cdl = document.createElement('a');
+      cdl.href = "http://chrome.google.com/";
+      $ext.dom.addText(cdl, "Google Chrome");
+      bp.appendChild(cdl);
+      $ext.dom.addText(bp, ".");
+
+      content.appendChild(bp);
+      $ext.dom.addClass(this.popup, "warning");
+    }
 
     var dp = document.createElement('p');
     $ext.dom.addText(dp, "If you are here for the first time, it might be a "
@@ -268,7 +350,7 @@ OFraMP.prototype = {
 
     var rl = document.createElement('label');
     rl.htmlFor = ri.id;
-    rl.style.float = "none";
+    $ext.dom.setFloat(rl, "none");
     $ext.dom.addText(rl, "Show this message next time");
     rd.appendChild(rl);
 
@@ -304,7 +386,7 @@ OFraMP.prototype = {
 
     var hb = document.createElement('button');
     hb.className = "border_box";
-    hb.style.float = "left";
+    $ext.dom.setFloat(hb, "left");
     $ext.dom.addText(hb, "Help");
     $ext.dom.onMouseClick(hb, function() {
       log("user.click.help", "Clicked Help button in Welcome popup");
@@ -318,30 +400,59 @@ OFraMP.prototype = {
   showInsertMoleculePopup: function() {
     var _this = this;
 
+    $ext.dom.removeClass(this.popup, "warning");
+
     var title = "Please enter a molecule data string";
 
     var content = document.createElement('div');
 
     var ta = document.createElement('textarea');
     ta.id = "mds_input";
-    ta.style.height = this.popup.clientHeight - 130 + "px";
+    ta.style.height = this.popup.clientHeight - 136 + "px";
     ta.placeholder = "Insert PDB / SMILES / InChI string or ATB ID here";
     content.appendChild(ta);
 
+    var sd = document.createElement('div');
+    sd.id = "omfraf_settings";
+    content.appendChild(sd);
+
+    var rl = document.createElement('label');
+    rl.htmlFor = "repository";
+    $ext.dom.addText(rl, "Fragment repository");
+    sd.appendChild(rl);
+
+    var rs = document.createElement('select');
+    rs.id = "repository";
+    rs.className = "border_box";
+    if(this.repos) {
+      $ext.each(this.repos, function(repo) {
+        $ext.dom.addSelectOption(rs, repo);
+      });
+    } else {
+      $ext.dom.addSelectOption(rs, "Loading...");
+      rs.disabled = "disabled";
+    }
+    sd.appendChild(rs);
+
     var sl = document.createElement('label');
+    sl.htmlFor = "shell_size";
     $ext.dom.addText(sl, "Shell size");
-    content.appendChild(sl);
+    sd.appendChild(sl);
 
     var ss = document.createElement('select');
     ss.id = "shell_size";
     ss.className = "border_box";
-    for(var i = 1; i <= 5; i++) {
+    for( var i = 1; i <= 5; i++) {
       $ext.dom.addSelectOption(ss, i);
     }
     $ext.dom.addEventListener(ss, 'change', function() {
       log("user.click.shell_size", "Changed shell size to " + ss.value);
     });
-    content.appendChild(ss);
+    sd.appendChild(ss);
+
+    var hr = document.createElement('hr');
+    hr.style.margin = "3px 0";
+    content.appendChild(hr);
 
     var cbs = document.createElement('div');
     cbs.className = 'controls';
@@ -350,14 +461,20 @@ OFraMP.prototype = {
     var sb = document.createElement('button');
     sb.id = "mds_submit";
     sb.className = "border_box";
+    if(!this.repos) {
+      sb.disabled = "disabled";
+      sb.title = "Please wait for the repository list to load";
+    }
     sb.appendChild(document.createTextNode("Submit"));
     sb.onclick = function() {
       log("user.click.submit", "Submitted mds: " + ta.value);
       _this.submitMDS(ta.value);
+
+      var repository = rs.value;
+      _this.settings.omfraf.repository = repository;
+
       var shellSize = parseInt(ss.value);
-      if(shellSize !== 1) {
-        _this.settings.omfraf.shellSize = shellSize;
-      }
+      _this.settings.omfraf.shellSize = shellSize;
     }
     cbs.appendChild(sb);
 
@@ -405,7 +522,7 @@ OFraMP.prototype = {
     }
 
     var cb = document.createElement('button');
-    cb.style.float = 'left';
+    $ext.dom.setFloat(cb, "left");
     cb.className = "border_box";
     cbs.appendChild(cb);
 
@@ -440,6 +557,7 @@ OFraMP.prototype = {
     if(!this.mv.molecule) {
       this.mv.setupInteraction();
     }
+    this.finished = false;
     this.off = undefined;
     this.selectionChanged();
     $ext.dom.dispatchEvent(this.container, this.moleculeEnteredEvent);
@@ -512,7 +630,7 @@ OFraMP.prototype = {
       ob.appendChild(document.createTextNode("Show molecule"));
       fc.appendChild(ob);
 
-      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 258, 130);
+      var fv = new MoleculeViewer(this, "fragment_" + i, fc.id, 560, 230);
       fv.molecule = new Molecule(fv, atoms, bonds);
       fv.molecule.bestFit();
       fv.molecule.setSelected([fv.molecule.atoms.get(atom.id)]);
@@ -557,6 +675,39 @@ OFraMP.prototype = {
   hideRelatedFragments: function() {
     this.relatedFragments.parentElement.style.visibility = "hidden";
     this.relatedFragments.parentElement.style.opacity = "0.0";
+  },
+
+  /*
+   * Get the molecule data from OAPoC and run the success function on success.
+   * 
+   * If fromATB is true, the molecule will be retrieved from ATB.
+   */
+  getRepositories: function(success, failure) {
+    var _this = this;
+    success = success || function() {};
+    failure = failure || function() {};
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        if(xhr.status == 200) {
+          var rd = JSON.parse(xhr.responseText);
+          if(rd.error) {
+            var msg = "An error has occured:\n" + rd.error;
+            failure.call(_this, msg);
+          } else if(rd.repos) {
+            success.call(_this, rd.repos);
+          }
+        } else {
+          var msg = "Could not connect to server";
+          failure.call(_this, msg);
+        }
+      }
+    };
+
+    xhr.open("POST", this.settings.omfraf.repoUrl, true);
+    xhr.send(null);
   },
 
   /*
@@ -612,13 +763,14 @@ OFraMP.prototype = {
             log("system.load.generate_fragments", "Fragments generated, "
                 + fd.missing_atoms.length + " atoms unparameterisable ("
                 + fd.missing_atoms + ")");
-            console.log("Related fragments generated:", fd.off, fd.missing_atoms);
+            console.log("Related fragments generated:", fd.off,
+                fd.missing_atoms);
 
             _this.off = fd.off;
             _this.off_missing = fd.missing_atoms;
             $ext.each(fd.missing_atoms, function(aid) {
-              _this.mv.molecule.atoms.get(aid)
-                  .addHighlight(ATOM_STATUSES.unparameterizable);
+              _this.mv.molecule.atoms.get(aid).addHighlight(
+                  ATOM_STATUSES.unparameterizable);
             });
             _this.redraw();
             $ext.dom.dispatchEvent(_this.container,
@@ -633,8 +785,13 @@ OFraMP.prototype = {
     };
 
     var data = "data=" + encodeURIComponent(queryJSON);
-    if(this.settings.omfraf.shellSize) {
-      data += "&shell=" + this.settings.omfraf.shellSize;
+    var repo = this.settings.omfraf.repository;
+    if(repo && repo !== DEFAULT_REPO) {
+      data += "&repo=" + repo;
+    }
+    var shell = this.settings.omfraf.shellSize;
+    if(shell && shell !== DEFAULT_SHELL) {
+      data += "&shell=" + shell;
     }
 
     xhr.open("POST", this.settings.omfraf.generateUrl, true);
@@ -734,19 +891,19 @@ OFraMP.prototype = {
               var overlapCount = 0;
               $ext.each(fragment.atoms, function(atom) {
                 var orig = this.mv.molecule.atoms.get(atom.id);
-                if(orig.isCharged()) {
+                if(orig.isCharged() && orig.element !== "H") {
                   overlapCount += 1;
                 }
               }, this);
 
               if(overlapCount > 0) {
                 fragment.hasOverlap = true;
-                fragment.score -= overlapCount;
+                fragment.score -= overlapCount + 1;
               }
             }, _this);
 
             fragments = fd.fragments.sort(function(a, b) {
-              return b.score - a.score;
+              return b.score - a.score || b.atoms.length - a.atoms.length;
             });
             _this.hideRelatedFragments();
             _this.behavior.showRelatedFragments(fragments, selectionIDs);
@@ -808,7 +965,27 @@ OFraMP.prototype = {
     return c;
   },
 
+  getShellAtoms: function(molecule, selection) {
+    var shell = [];
+    for( var i = 0; i < this.settings.omfraf.shellSize; i++) {
+      if(i === 0) {
+        var base = selection;
+      } else {
+        var base = shell;
+      }
+      shell = shell.concat($ext.array.filter($ext.array.flatten($ext.array.map(
+          base, function(atom) {
+            return atom.getBondedAtoms();
+          })), function(atom) {
+        return selection.indexOf(atom) === -1;
+      }));
+    }
+    return $ext.array.unique(shell);
+  },
+
   showOriginal: function(fragment, onClose) {
+    var _this = this;
+
     var title = "Fragment molecule (ATB ID: " + fragment.atb_id + ")";
     var content = document.createElement('div');
 
@@ -828,6 +1005,9 @@ OFraMP.prototype = {
       var oas = $ext.array.map(oids, function(oid) {
         return this.molecule.atoms.get(oid);
       }, this);
+      $ext.each(_this.getShellAtoms(this.molecule, oas), function(atom) {
+        atom.addHighlight(ATOM_STATUSES.unparameterizable);
+      });
       this.molecule.centerOnAtoms(oas);
       this.hideOverlay();
       this.redraw();
@@ -840,7 +1020,7 @@ OFraMP.prototype = {
 
     var cb = document.createElement('button');
     cb.className = "border_box";
-    cb.style.float = "left";
+    $ext.dom.setFloat(cb, "left");
     cb.appendChild(document.createTextNode("Close"));
     cd.appendChild(cb);
 
@@ -925,48 +1105,25 @@ OFraMP.prototype = {
     if(selection && selection.length > 0) {
       this.findFragmentsButton.disabled = ffbState;
       this.behavior.showSelectionDetails(selection);
-
-      if(!(this.behavior instanceof SmartBehavior) && this.off) {
-        // Make sure charges are not currently being previewed
-        var pas = $ext.array.filter(this.mv.molecule.atoms.atoms,
-            function(atom) {
-          return atom.previewCharge !== undefined;
-        });
-        if(pas.length === 0) {
-          var cas = $ext.array.filter(selection, function(atom) {
-            return !atom.isCharged();
-          });
-
-          var selectionIDs = $ext.array.map(selection, function(atom) {
-            return atom.id;
-          });
-          var tree = this.mv.molecule.atoms.getTree(selection[0]);
-          var selectionTree = tree.filter(function(node) {
-            return selectionIDs.indexOf(node.key) !== -1;
-          });
-
-          var connected = $ext.each(selection, function(atom) {
-            var f = selectionTree.findNode(atom.id);
-            if(!f) {
-              return false;
-            }
-          });
-
-          if(connected !== false && cas.length > 0) {
-            this.getMatchingFragments();
-          }
-        }
-      }
     } else {
       this.findFragmentsButton.disabled = "disabled";
       this.hideSelectionDetails();
     }
-    $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+
+    if(this.mv.molecule) {
+      this.behavior.selectionChanged();
+      $ext.dom.dispatchEvent(this.container, this.selectionChangedEvent);
+    }
   },
 
   parameterizationFinished: function(incomplete) {
+    if(this.finished) {
+      return;
+    }
+
     this.behavior.parameterizationFinished(incomplete);
     $ext.dom.dispatchEvent(this.container, this.parameterizationFinishedEvent);
+    this.finished = true;
   },
 
 

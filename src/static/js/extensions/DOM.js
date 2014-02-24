@@ -13,6 +13,14 @@ var dom = {
     elem.className = elem.className.replace(className, "");
   },
 
+  setFloat: function(elem, value) {
+    if($ext.onBrokenIE()) {
+      elem.style.styleFloat = value;
+    } else {
+      elem.style.cssFloat = value;
+    }
+  },
+
   /*
    * Add a text node containing the given text to the given elem.
    */
@@ -92,6 +100,7 @@ var dom = {
     li.appendChild(item);
 
     list.appendChild(li);
+    return li;
   },
 
   addTableRow: function(table, values, headers) {
@@ -128,6 +137,7 @@ var dom = {
     });
 
     table.appendChild(row);
+    return row;
   },
 
   addSelectOption: function(select, value, label, selected) {
@@ -142,6 +152,7 @@ var dom = {
       option.selected = "selected";
     }
     select.appendChild(option);
+    return option;
   },
 
   /*
@@ -175,7 +186,12 @@ var dom = {
     onmousemove: 1,
     onmouseout: 1,
     onmouseover: 1,
-    onmouseup: 1
+    onmouseup: 1,
+    // Mousewheel Events
+    onwheel: 1,
+    onmousewheel: 1,
+    onDOMMouseScroll: 1,
+    onMozMousePixelScroll: 1
   },
 
   /*
@@ -190,7 +206,11 @@ var dom = {
     } else if(elem.attachEvent && this.STANDARD_EVENTS["on" + type]) {
       return elem.attachEvent("on" + type, callback, useCapture);
     } else {
-      elem["on" + type] = callback;
+      if(elem["on" + type]) {
+        elem["on" + type].push(callback);
+      } else {
+        elem["on" + type] = [callback];
+      }
     }
   },
 
@@ -207,7 +227,9 @@ var dom = {
     } else if(elem.detachEvent && this.STANDARD_EVENTS["on" + type]) {
       return elem.detachEvent("on" + type, callback, useCapture);
     } else {
-      elem["on" + type] = null;
+      if(elem["on" + type]) {
+        $ext.array.remove(elem["on" + type], callback);
+      }
     }
   },
 
@@ -247,7 +269,9 @@ var dom = {
     } else if(elem.fireEvent && this.STANDARD_EVENTS["on" + type]) {
       elem.fireEvent("on" + type, event);
     } else if(elem["on" + type]) {
-      elem["on" + type].call(elem, event);
+      $ext.each(elem["on" + type], function(callback) {
+        callback.call(elem, event);
+      });
     }
   },
 
@@ -424,6 +448,9 @@ var dom = {
     } else if(button & 4) {
       return 1;
     } else {
+      if(evt.which) {
+        return evt.which - 1;
+      }
       return 0;
     }
   },
@@ -601,7 +628,8 @@ var dom = {
         mouseDragged = true;
         _this.removeEventListener(elem, "mousemove", _onMouseMove);
 
-        _this.addEventListener(window, "mousemove", _onMouseDrag, useCapture);
+        _this.addEventListener(document.documentElement, "mousemove",
+            _onMouseDrag, useCapture);
       }
     }
 
@@ -658,7 +686,8 @@ var dom = {
     }
 
     var dcb = this.onMouseDown(elem, _onMouseDown, button, useCapture);
-    var ucb = this.onMouseUp(window, _onMouseUp, button, useCapture);
+    var ucb = this.onMouseUp(document.documentElement, _onMouseUp, button,
+        useCapture);
     return $ext.merge(dcb, ucb);
   },
 

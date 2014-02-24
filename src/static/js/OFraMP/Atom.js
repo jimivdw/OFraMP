@@ -59,6 +59,7 @@ Atom.prototype = {
       id: this.id,
       element: this.element,
       elementID: this.elementID,
+      iacm: this.iacm,
       x: this.x,
       y: this.y,
       charge: this.charge,
@@ -70,13 +71,11 @@ Atom.prototype = {
 
   getLGF: function() {
     var charge = this.charge || 0.;
-    return $ext.number.format(charge, 1, 3, 0) + "\t" + // partial_charge
-        this.id + "\t" +  // label
-        this.elementID + "\t" + // label2
-        this.iacm + "\t" + // atomType
-        "0.000\t0.000\t0.000\t" + // X Y Z coordinates, unknown here
-        this.id + "\t" + // initColor, can be equal to ID here
-        "\n";
+    // partial_charge label label2 atomType X Y Z initColor
+    // Note: X Y Z unknown -> can be 0, initColor unknown -> can be equal to ID
+    return $ext.number.format(charge, 1, 3, 0) + "\t" + this.id + "\t"
+        + this.elementID + "\t" + this.iacm + "\t" + "0.000\t0.000\t0.000\t"
+        + this.id + "\t" + "\n";
   },
 
   /*
@@ -249,7 +248,7 @@ Atom.prototype = {
     if(this.isCharged()) {
       var radius = this.settings.atom.radius.charged;
     } else {
-      var radius = this.settings.atom.radius.default;
+      var radius = this.settings.atom.radius.standard;
     }
     this.cache.set('appearance.radius', radius, this.cache
         .getCache('appearance.showLabel'));
@@ -363,7 +362,7 @@ Atom.prototype = {
     if(this.isCharged()) {
       var color = this.settings.atom.color.charged;
     } else {
-      var color = this.settings.atom.color.default;
+      var color = this.settings.atom.color.standard;
     }
 
     if($ext.color.isDark(this.getBackgroundColor())) {
@@ -374,21 +373,21 @@ Atom.prototype = {
   },
 
   getBackgroundColor: function() {
-    var status = this.getStatus();
-    if(status & ATOM_STATUSES.conflict) {
+    var status = $ext.number.msb(this.getStatus());
+    if(status === ATOM_STATUSES.conflict) {
       return this.settings.atom.backgroundColor["conflict"];
-    } else if(status & ATOM_STATUSES.preview) {
+    } else if(status === ATOM_STATUSES.preview) {
       return this.settings.atom.backgroundColor["preview"];
-    } else if(status & ATOM_STATUSES.selected) {
+    } else if(status === ATOM_STATUSES.selected) {
       return this.settings.atom.backgroundColor["selected"];
-    } else if(status & ATOM_STATUSES.hover) {
+    } else if(status === ATOM_STATUSES.hover) {
       return this.settings.atom.backgroundColor["hover"];
-    } else if(status & ATOM_STATUSES.unparameterizable) {
-      return this.settings.atom.backgroundColor["unparameterizable"];
     } else if(this.isCharged()) {
       return this.settings.atom.backgroundColor["charged"];
+    } else if(status === ATOM_STATUSES.unparameterizable) {
+      return this.settings.atom.backgroundColor["unparameterizable"];
     } else {
-      return this.settings.atom.backgroundColor["default"];
+      return this.settings.atom.backgroundColor["standard"];
     }
   },
 
@@ -588,8 +587,8 @@ Atom.prototype = {
         ctx.lineWidth = s.atom.borderWidth.active;
         ctx.strokeStyle = s.atom.borderColor.active;
       } else {
-        ctx.lineWidth = s.atom.borderWidth.default;
-        ctx.strokeStyle = s.atom.borderColor.default;
+        ctx.lineWidth = s.atom.borderWidth.standard;
+        ctx.strokeStyle = s.atom.borderColor.standard;
       }
       ctx.stroke();
     }

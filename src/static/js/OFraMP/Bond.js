@@ -51,10 +51,8 @@ Bond.prototype = {
   },
 
   getLGF: function() {
-    return this.a1.id + "\t" +
-        this.a2.id + "\t" +
-        this.id + "\t" + // label
-        "\n";
+    // atom1 atom2 label
+    return this.a1.id + "\t" + this.a2.id + "\t" + this.id + "\t" + "\n";
   },
 
   /*

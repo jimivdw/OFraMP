@@ -1,0 +1,346 @@
+#canvas_container {
+    width: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    overflow: hidden;
+}
+
+#canvas_container > * {
+    text-shadow: 0 1px 1px rgba(255, 255, 255, .9);
+}
+
+#main_molecule {
+    background-color: #FFF;
+}
+
+#fragment_controls, #error_controls {
+    display: none;
+    z-index: 2;
+}
+
+#fragment_controls button, #error_controls button {
+    height: 35px;
+    font-size: 16px;
+}
+
+#find_fragments, #retry_new, #accept_fragment, #reject_fragment, #view_original {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    width: 180px;
+    margin-left: -90px;
+    z-index: 2;
+}
+
+#accept_fragment, #reject_fragment {
+    background-position: left center;
+    background-repeat: no-repeat;
+    color: #EEE;
+}
+
+#accept_fragment {
+    background-color: rgb( 80, 169,  75);
+}
+#accept_fragment:active {
+    background-color: rgb( 66, 135,  41);
+}
+
+#reject_fragment {
+    margin-left: 100px;
+    background-color: rgb(203,  83,  73);
+}
+#reject_fragment:active:not(:disabled) {
+background-color: rgb(169,  49,  39);
+}
+
+#view_original {
+    margin-left: -280px;
+}
+
+#atom_details, #related_fragments {
+    padding: 0 5px;
+}
+
+#atom_details p, #related_fragments p {
+    margin: 0;
+    padding-top: 30px;
+}
+
+#atom_details .title, #related_fragments .title {
+    position: fixed;
+    display: block;
+    width: 230px;
+    padding-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #FFF;
+    z-index: 10;
+}
+
+#atom_details canvas, #related_fragments canvas {
+    border: 1px solid #AAA;
+    border-radius: 2px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#atom_details table {
+    width: 230px;
+    margin: 3px 0;
+}
+
+#atom_details table ul {
+    margin: 0 0 8px 0;
+    padding: 0;
+    list-style: none;
+}
+
+#atom_details th {
+    width: 120px;
+    text-align: left;
+}
+
+#atom_details button {
+    width: 230px;
+    margin: 3px 0;
+    height: 30px;
+}
+
+#atom_details table input, #atom_details table button {
+    width: 100px;
+    height: 24px;
+    margin: -4px 0;
+    padding: 0 5px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#selected_atom_details, #selected_atom_details th, #selected_atom_details input {
+    text-align: center;
+}
+
+#selected_atom_details tr {
+    cursor: crosshair;
+}
+
+#selected_atom_details tr:first-child {
+    cursor: auto;
+}
+
+#selected_atom_details input, #selected_atom_details button {
+    width: 56px !important;
+}
+
+#charge_edit {
+    width: 230px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 4px;
+    visibility: hidden;
+}
+
+#charge_edit table {
+    width: 220px;
+}
+
+#charge_edit > button {
+    width: 220px;
+}
+
+.fragment button {
+    position: absolute;
+    width: 110px;
+    height: 30px;
+    margin-top: 95px;
+    z-index: 10;
+    font-weight: normal !important;
+    -webkit-transition: visibility .2s ease-out;
+    transition: visibility .2s ease-out;
+}
+
+.fragment .show_original {
+    margin-left: 5px;
+}
+
+.fragment .select_fragment {
+    margin-left: 115px;
+}
+
+.fragment button:disabled {
+    visibility: hidden;
+    opacity: 0.0 !important;
+}
+
+.fragment canvas {
+    margin: 1px 0;
+    cursor: pointer !important;
+    opacity: 0.6;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+.fragment canvas:active {
+    background-color: #DDD;
+}
+
+.fragment:hover canvas, .fragment.active canvas {
+    opacity: 1.0;
+}
+
+.fragment canvas.overlapping {
+    background-color: #FC9;
+}
+
+#selection_preview, #fc_0 {
+    padding-top: 25px;
+}
+
+#popup_content textarea {
+    display: block;
+    width: 580px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid #333;
+}
+
+#popup_content label {
+    float: left;
+    height: 30px;
+    margin-top: 3px;
+    text-align: left;
+    font-weight: bold;
+    line-height: 30px;
+}
+
+#popup_content select {
+    float: left;
+    width: 120px;
+    height: 30px;
+    margin: 3px 30px 0px 10px;
+}
+
+#popup_content .controls {
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 10px;
+}
+
+#popup_content .controls button {
+    float: right;
+    height: 28px;
+    margin: 0 2px;
+}
+
+#omfraf_settings {
+    overflow: hidden;
+}
+
+#molecule_cutout, #charge_details {
+    float: left;
+    width: 260px;
+    overflow: hidden;
+}
+
+#charge_details {
+    float: right;
+}
+
+#charge_details table {
+    width: 260px;
+    text-align: left;
+}
+
+#charge_details select, #charge_details input {
+    width: 140px;
+    height: 20px;
+    margin: 0;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.border_box input:disabled {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+#used_fragments {
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.used_fragment {
+    width: 560px;
+    height: 230px;
+    margin: 0 auto 10px auto;
+}
+
+.used_fragment .show_original {
+    position: absolute;
+    width: 130px;
+    height: 30px;
+    margin: 195px 0 0 215px;
+    cursor: pointer;
+    z-index: 10;
+    -webkit-transition: opacity .2s ease-out;
+    transition: opacity .2s ease-out;
+}
+
+#loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 160px;
+    margin: -80px 0 0 -300px;
+    text-align: center;
+}
+
+#loader p {
+    font-size: 30px;
+}
+
+#instruction_overlay {
+    position: absolute;
+    z-index: 100;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.highlighted {
+    border: 3px solid #333 !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+}
+
+.dg.ac {
+    z-index: 100 !important;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.dg.ac span, .dg.ac li {
+    color: #EEE;
+}
+
+.dg.main {
+    -webkit-transition: width .2s ease-out, visibility .2s ease-out !important;
+    transition: width .2s ease-out, visibility .2s ease-out !important;
+}
+
+.main-title {
+    background-color: #000 !important;
+    color: #FFF !important;
+    font-weight: bold;
+    text-shadow: rgba(0, 0, 0, 0.701961) 0px 1px 1px;
+    cursor: pointer !important;
+}
+
+.main-save {
+    background-color: #3e3e3e !important;
+}

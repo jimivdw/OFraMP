@@ -1,4 +1,4 @@
-$ext = {
+var ext = {
   /*
    * Identity function.
    */
@@ -21,7 +21,11 @@ $ext = {
    * 'this' scoping.
    */
   each: function(obj, f, scope, recursive, recursive_key) {
-    if(obj instanceof Array) {
+    if(!obj) {
+      return;
+    }
+
+    if(obj instanceof Array || (obj.length && obj[0])) {
       for( var i = 0; i < obj.length; i++) {
         var e = obj[i];
         var dk = recursive_key ? recursive_key + "." + i : i;
@@ -190,3 +194,5 @@ $ext = {
     return BrowserDetect.browser === "Firefox";
   }
 };
+
+$ext = ext;

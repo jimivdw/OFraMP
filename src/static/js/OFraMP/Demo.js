@@ -55,10 +55,13 @@ Demo.prototype = {
   step0: function() {
     this.oframp.showInsertMoleculePopup();
     // TODO: random_molecule will be removed
-    var td = ["shell_size", "load_oss", "random_molecule", "mds_submit", "new",
-        "open", "snap", "save", "extra_controls_toggle"];
+    var td = ["repository", "shell_size", "load_oss", "random_molecule",
+        "mds_submit", "new", "open", "snap", "save", "extra_controls_toggle"];
     $ext.each(td, function(id) {
-      document.getElementById(id).disabled = "disabled";
+      var elem = document.getElementById(id);
+      if(elem) {
+        elem.disabled = "disabled";
+      }
     });
     this.nextStep();
   },
@@ -69,7 +72,10 @@ Demo.prototype = {
     this.overlay.style.cssText = "";
     var td = ["new", "open", "snap", "save", "extra_controls_toggle"];
     $ext.each(td, function(id) {
-      document.getElementById(id).disabled = "";
+      var elem = document.getElementById(id);
+      if(elem) {
+        elem.disabled = "";
+      }
     });
   }
 };

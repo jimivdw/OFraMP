@@ -27,6 +27,10 @@ Behavior.prototype = {
     throw "Not implemented";
   },
 
+  selectionChanged: function() {
+    return;
+  },
+
   showChargeFixer: function(atom, rem, charges) {
     throw "Not implemented";
   },

@@ -1,0 +1,79 @@
+#header {
+    width: 760px;
+    margin-left: -380px;
+}
+
+#controls {
+    display: inline-block;
+}
+
+#content {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    margin: 50px 10px 20px 260px;
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#top {
+    height: 10px;
+    margin-top: -10px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0px;
+    font-family: "Century Gothic", "Avant Garde Gothic", "Avant Garde", "URW Gothic L", Helvetica, sans-serif;
+    font-variant: small-caps;
+    font-weight: bold;
+    font-size: 24px;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-size: 24px;
+}
+h2 {
+    font-size: 22px;
+}
+h3 {
+    font-size: 20px;
+}
+h4 {
+    font-size: 18px;
+}
+h5 {
+    font-size: 16px;
+}
+
+h6 {
+    padding: 5px 0;
+    font-size: 16px;
+}
+
+hr {
+    margin: 2px;
+    border: 0;
+    border-bottom: 1px solid #333;
+}
+
+.sidebar {
+    top: 50px;
+    width: 220px;
+    padding: 10px;
+    opacity: 1;
+}
+
+#leftbar ol {
+    padding: 0px;
+    list-style-type: none;
+}
+
+#leftbar ol ol {
+    padding-left: 10px;
+}

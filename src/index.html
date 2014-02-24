@@ -4,6 +4,7 @@
     <title>OFraMP</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="static/css/OFraMP.css" />
     <!--[if IE]><script type="text/javascript" src="static/js/lib/excanvas.js"></script><![endif]-->
     <script type="text/javascript" src="static/js/compatibility/es5.js"></script>
     <script type="text/javascript" src="static/js/compatibility/json3.min.js"></script>
@@ -60,6 +61,7 @@
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
         var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";
+        var OMFraF_REPO_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/repos/" : "http://127.0.0.1:8001/repos/";
         var OMFraF_GENERATE_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/generate/" : "http://127.0.0.1:8001/generate/";
 
         $ext.dom.remove(document.getElementById("loader"));
@@ -71,6 +73,7 @@
           },
           omfraf: {
             url: OMFraF_URL,
+            repoUrl: OMFraF_REPO_URL,
             generateUrl: OMFraF_GENERATE_URL
           }
         });
@@ -357,7 +360,6 @@
           if(BrowserDetect.version < 10) {
             of.remove();
             sb.remove();
-            sv.remove();
           }
           if(BrowserDetect.version < 9) {
             dl.remove();
@@ -395,7 +397,7 @@
             Open
           </button>
           <button id="snap" class="border_box" title="Save the current state (Alt+S)">
-            Snapshot
+            Checkpoint
           </button>
           <button id="save" class="border_box" title="Download the current strcuture as an LGF file (Alt+L)">
             Download

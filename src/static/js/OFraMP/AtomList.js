@@ -48,9 +48,9 @@ AtomList.prototype = {
   },
 
   getLGF: function() {
-    var header = "@nodes\n" +
-        "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t" +
-        "initColor\t\n";
+    var header = "@nodes\n"
+        + "partial_charge\tlabel\tlabel2\tatomType\tcoordX\tcoordY\tcoordZ\t"
+        + "initColor\t\n";
     var lgfs = this.map(function(atom) {
       return atom.getLGF();
     });
@@ -304,7 +304,11 @@ AtomList.prototype = {
    */
   setHover: function(h) {
     if(h && !h.isVisible()) {
-      return;
+      if(this.settings.atom.showHAtoms) {
+        return;
+      } else {
+        h = h.getBase();
+      }
     }
 
     var changed = false;
@@ -320,7 +324,7 @@ AtomList.prototype = {
 
     var c = this.molecule.mv.canvas;
     if(h) {
-      if(!(h.status & (ATOM_STATUSES.hover | ATOM_STATUSES.selected))) {
+      if(!(h.status & ATOM_STATUSES.hover)) {
         h.hover();
 
         // Bring to back of list to be drawn last (on top).
@@ -373,15 +377,18 @@ AtomList.prototype = {
   },
 
   addSelected: function(s) {
-    // Make sure only hydrogen bases are selected
-    s = $ext.array.map(s, function(atom) {
-      return atom.getBase();
-    });
+    if(!this.settings.atom.showHAtoms) {
+      // Make sure only hydrogen bases are selected
+      s = $ext.array.flatten($ext.array.map(s, function(atom) {
+        return atom.getHydrogenAtoms().concat([atom, atom.getBase()]);
+      }));
+      s = $ext.array.unique(s);
+    }
 
     $ext.each(s, function(atom) {
       if(atom.status & ATOM_STATUSES.selected) {
         atom.deselect();
-      } else if(atom.isVisible()) {
+      } else {
         atom.select();
       }
     });

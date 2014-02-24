@@ -16,16 +16,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addEventListener(oframp.container, 'fragmentsgenerated',
         function() {
           var ffb = document.getElementById("find_fragments");
-          $ext.dom.clear(ffb);
-          ffb.appendChild(document.createTextNode("Find fragments"));
+          ffb.style.display = "none";
           oframp.selectionChanged();
-
-          $ext.dom.onMouseClick(ffb, function() {
-            log("user.click.find", "Clicked find fragments button");
-            // Make sure the previewed charges are reset.
-            oframp.mv.previewCharges({});
-            oframp.getMatchingFragments();
-          }, $ext.mouse.LEFT);
         });
   },
 
@@ -33,18 +25,10 @@ NaiveBehavior.prototype = {
     var _this = this;
 
     $ext.dom.clear(this.oframp.atomDetails);
-    if(selection.length === 1) {
-      var atom = selection[0];
-    }
 
     var ts = document.createElement('div');
     ts.className = "title";
-    if(atom) {
-      var tn = document.createTextNode("Atom details");
-    } else {
-      var tn = document.createTextNode("Selection details");
-    }
-    ts.appendChild(tn);
+    $ext.dom.addText(ts, "Selection details");
 
     var cb = document.createElement('div');
     cb.className = 'close';
@@ -72,212 +56,128 @@ NaiveBehavior.prototype = {
     dtc.appendChild(dt);
     this.oframp.atomDetails.appendChild(dtc);
 
-    if(atom) {
-      $ext.dom.addTableRow(dt, "" + atom.id, "ID");
-      $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
-      var cc = document.createElement('span');
-      var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
-      cc.appendChild(document.createTextNode(charge || "unknown"));
-      $ext.dom.addTableRow(dt, cc, "Charge");
-    } else {
-      // Get the unparameterised atoms
-      var uas = $ext.array.filter(selection, function(atom) {
-        return !atom.isCharged();
-      });
-      // Get the charge of all atoms
-      var cs = $ext.array.map(selection, function(atom) {
-        return atom.charge;
-      });
-      var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
-      var cc = document.createElement("span");
-      $ext.dom.addText(cc, charge || "unknown");
+    // Get the unparameterised atoms
+    var uas = $ext.array.filter(selection, function(atom) {
+      return !atom.isCharged();
+    });
+    // Get the charge of all atoms
+    var cs = $ext.array.map(selection, function(atom) {
+      return atom.charge;
+    });
+    var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+    var cc = document.createElement("span");
+    $ext.dom.addText(cc, charge || "unknown");
 
-      $ext.dom.addTableRow(dt, "" + selection.length, "Selection count");
-      $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
-      $ext.dom.addTableRow(dt, "" + (selection.length - uas.length), "Parameterised");
-      $ext.dom.addTableRow(dt, cc, "Total charge");
+    $ext.dom.addTableRow(dt, "" + selection.length, "Atom count");
+    $ext.dom.addTableRow(dt, "" + uas.length, "Unparameterised");
+    $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
+        "Parameterised");
+    $ext.dom.addTableRow(dt, cc, "Total charge");
 
-      var sadlc = document.createElement("table");
-      var sadl = document.createElement('tbody');
-      sadlc.appendChild(sadl);
-      sadl.id = "selected_atom_details";
-      sadl.style.display = "none";
-      $ext.dom.addTableRow(sadl, [], ["Elem", "Charge", "Edit", "Frags"]);
-      $ext.each(selection, function(atom) {
-        var cei = document.createElement('input');
-        cei.disabled = "disabled";
-        cei.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
+    var sadlc = document.createElement("table");
+    var sadl = document.createElement('tbody');
+    sadlc.appendChild(sadl);
+    sadl.id = "selected_atom_details";
+    sadl.style.display = "none";
+    $ext.dom.addTableRow(sadl, [], ["Elem", "Charge", "Edit", "Frags"]);
+    $ext.each(selection, function(atom) {
+      var cei = document.createElement('input');
+      cei.disabled = "disabled";
+      cei.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
 
-        var ceb = document.createElement("button");
-        ceb.className = "border_box";
-        $ext.dom.addText(ceb, "Edit");
-        $ext.dom.onMouseClick(ceb, function() {
-          $ext.dom.clear(ceb);
-          if(cei.disabled) {
-            log("user.click.edit_charge", "Clicked Edit for atom " + atom.id);
-            cei.disabled = "";
-            $ext.dom.addText(ceb, "Apply");
-          } else {
-            log("user.click.apply_charge", "Clicked Apply for atom " + atom.id);
-            if(cei.value && !$ext.number.isNumeric(cei.value)) {
-              log("user.action.illegal_charge", "Entered illegal charge value "
-                  + "for atom " + atom.id);
-              alert("Only numeric values are allowed for the atom charge.");
-              return;
-            }
-
-            var oldCharge = atom.charge;
-            var newCharge = parseFloat(cei.value) || undefined;
-            atom.setCharge(newCharge);
-            if(oldCharge !== newCharge) {
-              var cs = $ext.array.map(selection, function(atom) {
-                return atom.charge;
-              });
-              var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
-              $ext.dom.clear(cc);
-              $ext.dom.addText(cc, charge || "undefined");
-              _this.oframp.redraw();
-              _this.oframp.checkpoint();
-            }
-            cei.disabled = "disabled";
-            $ext.dom.addText(ceb, "Edit");
-            log("user.action.edit_charge", "Set charge for atom " + atom.id
-                + " to " + newCharge);
+      var ceb = document.createElement("button");
+      ceb.className = "border_box";
+      $ext.dom.addText(ceb, "Edit");
+      $ext.dom.onMouseClick(ceb, function() {
+        $ext.dom.clear(ceb);
+        if(cei.disabled) {
+          log("user.click.edit_charge", "Clicked Edit for atom " + atom.id);
+          cei.disabled = "";
+          $ext.dom.addText(ceb, "Apply");
+        } else {
+          log("user.click.apply_charge", "Clicked Apply for atom " + atom.id);
+          if(cei.value && !$ext.number.isNumeric(cei.value)) {
+            log("user.action.illegal_charge", "Entered illegal charge value "
+                + "for atom " + atom.id);
+            return;
           }
-        }, $ext.mouse.LEFT);
 
-        if(atom.usedFragments.length > 0) {
-          var fcb = document.createElement("button");
-          fcb.className = "border_box";
-          $ext.dom.addText(fcb, "Show");
-          $ext.dom.onMouseClick(fcb, function() {
-            log("user.click.used_fragments", "Clicked show used fragments for "
-                + "atom " + atom.id);
-            _this.oframp.showUsedFragments(atom);
-          }, $ext.mouse.LEFT);
-        } else {
-          var fcb = "-";
-        }
-
-        var el = atom.element + "(" + atom.id + ")";
-        $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
-      });
-      this.oframp.atomDetails.appendChild(sadlc);
-
-      var satb = document.createElement("button");
-      satb.className = "border_box";
-      $ext.dom.addText(satb, "Show");
-      $ext.dom.onMouseClick(satb, function() {
-        $ext.dom.clear(satb);
-        if(sadl.style.display === "table") {
-          log("user.click.hide_selected", "Clicked Hide for selected atoms' "
-              + "details");
-          sadl.style.display = "none";
-          $ext.dom.addText(satb, "Show");
-        } else {
-          log("user.click.show_selected", "Clicked Show for selected atoms' "
-              + "details");
-          sadl.style.display = "table";
-          $ext.dom.addText(satb, "Hide");
+          var oldCharge = atom.charge;
+          var newCharge = parseFloat(cei.value) || undefined;
+          atom.setCharge(newCharge);
+          if(oldCharge !== newCharge) {
+            var cs = $ext.array.map(selection, function(atom) {
+              return atom.charge;
+            });
+            var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
+            $ext.dom.clear(cc);
+            $ext.dom.addText(cc, charge || "undefined");
+            _this.oframp.redraw();
+            _this.oframp.checkpoint();
+          }
+          cei.disabled = "disabled";
+          $ext.dom.addText(ceb, "Edit");
+          log("user.action.edit_charge", "Set charge for atom " + atom.id
+              + " to " + newCharge);
         }
       }, $ext.mouse.LEFT);
-      $ext.dom.addTableRow(dt, satb, "Selected atoms");
-    }
-
-    if(atom) {
-      var ced = document.createElement('div');
-      ced.id = "charge_edit";
-      ced.className = "border_box";
-      ced.style.height = "0px";
-
-      var cetc = document.createElement('table');
-      var cet = document.createElement('tbody');
-      cetc.appendChild(cet);
 
       if(atom.usedFragments.length > 0) {
-        var ufb = document.createElement('button');
-        ufb.id = "show_used_fragments";
-        ufb.className = "border_box";
-        ufb.appendChild(document.createTextNode("(" + atom.usedFragments.length
-            + ") Show"));
-
-        $ext.dom.onMouseClick(ufb, function() {
-          log("user.click.used_fragments",
-              "Clicked show used fragments for atom " + atom.id);
+        var fcb = document.createElement("button");
+        fcb.className = "border_box";
+        $ext.dom.addText(fcb, "Show");
+        $ext.dom.onMouseClick(fcb, function() {
+          log("user.click.used_fragments", "Clicked show used fragments for "
+              + "atom " + atom.id);
           _this.oframp.showUsedFragments(atom);
         }, $ext.mouse.LEFT);
       } else {
-        var ufb = "-";
-      }
-      $ext.dom.addTableRow(cet, ufb, "Used fragments");
-      var ceb = document.createElement('input');
-      ceb.className = "border_box";
-      ceb.value = $ext.number.format(atom.charge, 1, 3, 9) || "";
-      $ext.dom.addTableRow(cet, ceb, "New charge");
-
-      var acb = document.createElement('button');
-      acb.className = "border_box";
-      acb.appendChild(document.createTextNode("Apply charge"));
-
-      var ecb = document.createElement('button');
-      ecb.className = "border_box";
-      ecb.appendChild(document.createTextNode("Edit charge"));
-
-      function toggleChargeEdit() {
-        if(ced.style.visibility === "visible") {
-          log("user.click.cancel_edit", "Clicked cancel charge edit for atom " +
-              atom.id);
-          ced.style.height = "0px";
-          ced.style.visibility = "hidden";
-          $ext.dom.clear(ecb);
-          ecb.appendChild(document.createTextNode("Edit charge"));
-          _this.oframp.atomDetails.insertBefore(ecb, ffb);
-        } else {
-          log("user.click.edit_charge", "Clicked edit charge for atom " +
-              atom.id);
-          ced.style.height = "";
-          ced.style.visibility = "visible";
-          $ext.dom.clear(ecb);
-          ecb.appendChild(document.createTextNode("Cancel"));
-          ced.appendChild(ecb);
-        }
+        var fcb = "-";
       }
 
-      ced.appendChild(cetc);
-      ced.appendChild(acb);
-      this.oframp.atomDetails.appendChild(ced);
-
-      $ext.dom.onMouseClick(acb, function() {
-        if(ceb.value && !$ext.number.isNumeric(ceb.value)) {
-          alert("Only numeric values are allowed for the atom charge.");
-          return;
-        }
-
-        log("user.click.apply_charge", "Clicked apply charge for atom " +
-            atom.id);
-
-        var oldCharge = atom.charge;
-        var newCharge = parseFloat(ceb.value) || undefined;
-        atom.setCharge(newCharge);
-        if(oldCharge !== newCharge) {
-          $ext.dom.clear(cc);
-          var charge = $ext.number.format(atom.getCharge(), 1, 3, 9);
-          cc.appendChild(document.createTextNode(charge || "unknown"));
+      var el = atom.element + "(" + atom.iacm + ")";
+      var row = $ext.dom.addTableRow(sadl, [el, cei, ceb, fcb]);
+      $ext.dom.onMouseOver(row, function() {
+        if(_this.oframp.mv.molecule.setHover(atom)) {
           _this.oframp.redraw();
-          _this.oframp.checkpoint();
-          log("user.action.charge_edit", "Set charge of atom " + atom.id +
-              " to " + charge);
         }
+      });
+      $ext.dom.onMouseOut(row, function() {
+        if(_this.oframp.mv.molecule.setHover()) {
+          _this.oframp.redraw();
+        }
+      });
+    });
+    this.oframp.atomDetails.appendChild(sadlc);
 
-        toggleChargeEdit();
-      }, $ext.mouse.LEFT);
-    }
+    var satb = document.createElement("button");
+    satb.className = "border_box";
+    $ext.dom.addText(satb, "Show");
+    $ext.dom.onMouseClick(satb, function() {
+      $ext.dom.clear(satb);
+      if(sadl.style.display === "table") {
+        log("user.click.hide_selected", "Clicked Hide for selected atoms' "
+            + "details");
+        sadl.style.display = "none";
+        $ext.dom.addText(satb, "Show");
+      } else {
+        log("user.click.show_selected", "Clicked Show for selected atoms' "
+            + "details");
+        sadl.style.display = "table";
+        $ext.dom.addText(satb, "Hide");
+      }
+    }, $ext.mouse.LEFT);
+    $ext.dom.addTableRow(dt, satb, "Selected atoms");
 
     var msb = document.createElement('button');
     msb.className = "border_box";
-    _this.oframp.mv.isModifyingSelection = false;
-    $ext.dom.clear(msb);
-    msb.appendChild(document.createTextNode("Modify selection"));
+    if(_this.oframp.mv.isModifyingSelection) {
+      msb.appendChild(document.createTextNode("Stop modifying selection"));
+    } else {
+      msb.appendChild(document.createTextNode("Modify selection"));
+    }
+    this.oframp.atomDetails.appendChild(msb);
+
     function toggleSelectionEdit() {
       if(_this.oframp.mv.isModifyingSelection) {
         log("user.click.modify_selection_stop",
@@ -292,13 +192,6 @@ NaiveBehavior.prototype = {
         msb.appendChild(document.createTextNode("Stop modifying selection"));
       }
     }
-
-    if(atom) {
-      this.oframp.atomDetails.appendChild(ecb);
-      $ext.dom.onMouseClick(ecb, toggleChargeEdit, $ext.mouse.LEFT);
-    }
-
-    this.oframp.atomDetails.appendChild(msb);
     $ext.dom.onMouseClick(msb, toggleSelectionEdit, $ext.mouse.LEFT);
 
     this.oframp.showSelectionDetails();
@@ -361,7 +254,8 @@ NaiveBehavior.prototype = {
         return atom.id;
       });
       var abs = this.oframp.mv.molecule.bonds.filter(function(bond) {
-        return aids.indexOf(bond.a1.id) !== -1 && aids.indexOf(bond.a2.id) !== -1;
+        return aids.indexOf(bond.a1.id) !== -1
+            && aids.indexOf(bond.a2.id) !== -1;
       });
       var bonds = $ext.array.map(abs, function(bond) {
         return bond.getJSON();
@@ -384,8 +278,8 @@ NaiveBehavior.prototype = {
       ab.appendChild(document.createTextNode("Select fragment"));
       fc.appendChild(ab);
 
-      var fv = new MoleculeViewer(this.oframp, "fragment_" + i, fc.id,
-          228, 130);
+      var fvid = "fragment_" + i;
+      var fv = new MoleculeViewer(this.oframp, fvid, fc.id, 228, 130);
       this.relatedFragmentViewers.push(fv);
       if(fragment.hasOverlap) {
         fv.canvas.className += "overlapping";
@@ -462,9 +356,9 @@ NaiveBehavior.prototype = {
         if(_this.activeFragment) {
           // Disable the currently active fragment's buttons
           _this.activeFragment.canvas.parentElement
-          .getElementsByTagName("button")[0].disabled = "disabled";
+              .getElementsByTagName("button")[0].disabled = "disabled";
           _this.activeFragment.canvas.parentElement
-          .getElementsByTagName("button")[1].disabled = "disabled";
+              .getElementsByTagName("button")[1].disabled = "disabled";
           $ext.dom.removeClass(_this.activeFragment.canvas.parentElement,
               "active");
         }
@@ -495,10 +389,10 @@ NaiveBehavior.prototype = {
         }, this);
         if(_this.oframp.mv.setCharges(charges, fragment)) {
           _this.oframp.checkpoint();
+          _this.oframp.selectionChanged();
         }
 
         _this.activeFragment = undefined;
-        _this.oframp.selectionChanged();
         _this.oframp.redraw();
 
         _this.oframp.hideRelatedFragments();
@@ -511,6 +405,59 @@ NaiveBehavior.prototype = {
     }, this);
 
     this.oframp.showRelatedFragments();
+  },
+
+  selectionChanged: function() {
+    var _this = this;
+
+    var selection = this.oframp.mv.molecule.getSelected();
+
+    var ffb = document.createElement('button');
+    ffb.className = "border_box";
+    this.oframp.atomDetails.appendChild(ffb);
+
+    if(this.oframp.off) {
+      this.oframp.mv.previewCharges({});
+
+      var cas = $ext.array.filter(selection, function(atom) {
+        return !atom.isCharged();
+      });
+
+      var selectionIDs = $ext.array.map(selection, function(atom) {
+        return atom.id;
+      });
+      var tree = this.oframp.mv.molecule.atoms.getTree(selection[0]);
+      var selectionTree = tree.filter(function(node) {
+        return selectionIDs.indexOf(node.key) !== -1;
+      });
+
+      var connected = $ext.each(selection, function(atom) {
+        var f = selectionTree.findNode(atom.id);
+        if(!f) {
+          return false;
+        }
+      });
+
+      if(connected !== false && cas.length > 0) {
+        this.oframp.getMatchingFragments();
+      } else {
+        this.activeFragment = undefined;
+        this.oframp.hideRelatedFragments();
+      }
+
+      $ext.dom.addText(ffb, "Find matching fragments");
+      if(connected === false) {
+        ffb.disabled = "disabled";
+      } else {
+        $ext.dom.onMouseClick(ffb, function() {
+          _this.oframp.getMatchingFragments();
+        }, $ext.mouse.LEFT);
+      }
+
+    } else {
+      ffb.disabled = "disabled";
+      $ext.dom.addText(ffb, "Generating fragments...");
+    }
   },
 
   showChargeFixer: function(atom, rem, charges, fragment) {
@@ -531,12 +478,11 @@ NaiveBehavior.prototype = {
     var dtc = document.createElement('table');
     var dt = document.createElement('tbody');
     dtc.appendChild(dt);
-    $ext.dom.addTableRow(dt, "" + atom.id, "Atom ID");
-    $ext.dom.addTableRow(dt, atom.element, "Element");
+    $ext.dom.addTableRow(dt, atom.getLabel(), "Element");
     $ext.dom.addTableRow(dt, $ext.number.format(atom.getCharge(), 1, 3, 9),
         "Current charge");
-    $ext.dom.addTableRow(dt, $ext.number.format(
-        atom.getPreviewCharge(), 1, 3, 9), "Proposed charge");
+    $ext.dom.addTableRow(dt, $ext.number.format(atom.getPreviewCharge(), 1, 3,
+        9), "Fragment charge");
 
     var rc = document.createElement('input');
     rc.disabled = "disabled";
@@ -544,12 +490,13 @@ NaiveBehavior.prototype = {
         (atom.getCharge() + atom.getPreviewCharge()) / 2, 1, 3, 9);
 
     var ss = document.createElement('select');
-    $ext.dom.addSelectOption(ss, "current", "Current value");
-    $ext.dom.addSelectOption(ss, "other", "Other value");
-    $ext.dom.addSelectOption(ss, "average", "Average value", true);
-    if(this.oframp.settings.atom.showHAtoms ||
-        atom.getHydrogenAtoms().length === 0) {
-      $ext.dom.addSelectOption(ss, "custom", "Custom value");
+    ss.className = "border_box";
+    $ext.dom.addSelectOption(ss, "current", "Current charge");
+    $ext.dom.addSelectOption(ss, "other", "Fragment charge");
+    $ext.dom.addSelectOption(ss, "average", "Average charge", true);
+    if(this.oframp.settings.atom.showHAtoms
+        || atom.getHydrogenAtoms().length === 0) {
+      $ext.dom.addSelectOption(ss, "custom", "Custom charge");
     } // TODO maybe add some slider-like thing for old:new ratio otherwise?
     $ext.dom.addEventListener(ss, 'change', function() {
       rc.disabled = "disabled";
@@ -572,8 +519,8 @@ NaiveBehavior.prototype = {
           break;
       }
       rc.value = $ext.number.format(value, 1, 3, 9);
-      log("user.click.solution_method", "Changed solution method to " +
-          ss.value);
+      log("user.click.solution_method", "Changed solution method to "
+          + ss.value);
     });
 
     $ext.dom.addTableRow(dt, ss, "Solution");
@@ -583,7 +530,8 @@ NaiveBehavior.prototype = {
     content.appendChild(id);
 
     var rb = document.createElement('button');
-    rb.appendChild(document.createTextNode("Apply charge"));
+    rb.className = "border_box";
+    rb.appendChild(document.createTextNode("Apply solution"));
     content.appendChild(rb);
 
     function getResultingCharge(atom, method) {
@@ -607,8 +555,8 @@ NaiveBehavior.prototype = {
     var _this = this;
     $ext.dom.onMouseClick(rb, function() {
       atom.setCharge(getResultingCharge(atom, ss.value), fragment);
-      log("user.click.apply_solution", "Solved charge of atom " + atom.id +
-          " to " + atom.charge);
+      log("user.click.apply_solution", "Solved charge of atom " + atom.id
+          + " to " + atom.charge);
       if(!_this.oframp.settings.atom.showHAtoms) {
         $ext.each(atom.getHydrogenAtoms(), function(a) {
           a.setCharge(getResultingCharge(a, ss.value), fragment);
@@ -637,6 +585,7 @@ NaiveBehavior.prototype = {
       var unpar = _this.oframp.mv.molecule.getUnparameterized();
       if(!needsFix) {
         _this.oframp.checkpoint();
+        _this.oframp.selectionChanged();
         if(unpar.length === 0) {
           _this.oframp.parameterizationFinished();
         } else {
@@ -650,8 +599,8 @@ NaiveBehavior.prototype = {
       }
     }, $ext.mouse.LEFT);
     this.oframp.showPopup(title, content);
-    log("system.show.charge_conflict", "Shown conflicting charge for atom " +
-        atom.id);
+    log("system.show.charge_conflict", "Shown conflicting charge for atom "
+        + atom.id);
   },
 
   parameterizationFinished: function(incomplete) {
@@ -661,18 +610,18 @@ NaiveBehavior.prototype = {
 
     if(incomplete === true) {
       var title = "No more options available";
-      var message = "The molecule has been parameterised up to the point " +
-          "where there are no more available fragments for the " +
-          "unparameterised atoms. You can manually add charges for these " +
-          "atoms by selecting them and using the charge edit buttons in " +
-          "the selection details window. Charges for other atoms can be" +
-          "edited here as well.";
+      var message = "The molecule has been parameterised up to the point "
+          + "where there are no more available fragments for the "
+          + "unparameterised atoms. You can manually add charges for these "
+          + "atoms by selecting them and using the charge edit buttons in "
+          + "the selection details window. Charges for other atoms can be"
+          + "edited here as well.";
     } else {
       var title = "Fully parameterised";
-      var message = "All atoms in the molecule have been parameterised. If " +
-          "you feel some charges need to be adjusted, this can be done by " +
-          "selecting those atoms and using the charge edit buttons in the " +
-          "selection details window.";
+      var message = "All atoms in the molecule have been parameterised. If "
+          + "you feel some charges need to be adjusted, this can be done by "
+          + "selecting those atoms and using the charge edit buttons in the "
+          + "selection details window.";
     }
 
     var content = document.createElement('div');
@@ -682,10 +631,10 @@ NaiveBehavior.prototype = {
     content.appendChild(mp);
 
     var dp = document.createElement('p');
-    $ext.dom.addText(dp, "You can now download the parameterised molecule " +
-        "data file in LGF format using the 'Download LGF' button below. It " +
-        "is also possible to do this later using the 'Download' button at " +
-        "the top of the page.");
+    $ext.dom.addText(dp, "You can now download the parameterised molecule "
+        + "data file in LGF format using the 'Download LGF' button below. It "
+        + "is also possible to do this later using the 'Download' button at "
+        + "the top of the page.");
     content.appendChild(dp);
 
     var cd = document.createElement('div');
@@ -718,7 +667,7 @@ NaiveBehavior.prototype = {
 
     var cb = document.createElement('button');
     $ext.dom.addText(cb, "Close");
-    cb.style.float = 'left';
+    $ext.dom.setFloat(cb, 'left');
     cb.className = "border_box";
     $ext.dom.onMouseClick(cb, function() {
       log("user.click.close_popup", "Clicked Close in Finished popup");

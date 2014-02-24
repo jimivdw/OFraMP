@@ -4,10 +4,203 @@
     <meta charset="utf-8" />
     <title>Help - OFraMP</title>
     <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/help.css" />
+    <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
+    <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
+    <script type="text/javascript" src="static/js/extensions/DOM.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+        var wr = false;
+        var wrb = document.getElementById("wr");
+        wrb.onclick = function() {
+          wr = !wr;
+          $ext.dom.clear(wrb);
+          if (wr) {
+            $ext.dom.addText(wrb, "Unrestrict width");
+            $ext.each(document.getElementsByTagName("p"), function(p) {
+              p.style.width = "600px";
+            });
+          } else {
+            $ext.dom.addText(wrb, "Restrict width");
+            $ext.each(document.getElementsByTagName("p"), function(p) {
+              p.style.width = "auto";
+            });
+          }
+        };
+      };
+    </script>
   </head>
 
   <body>
-    <h1>HELP</h1>
-    <p>This is where the help will be once it has been created.</p>
+    <div id="header">
+      <div id="logo">
+        <span id="logo_o">O</span><span id="logo_fra">Fra</span><span id="logo_m">M</span><span id="logo_p">P</span>
+      </div>
+
+      <div id="controls">
+        <div class="bgroup">
+          <a href="#top" class="border_box">Help</a>
+          <a href="#about" class="border_box">About</a>
+          <a href="#gettingstarted" class="border_box">Getting started</a>
+          <a href="#advanced" class="border_box">Advanced</a>
+          <a href="#errors" class="border_box">Problem solving</a>
+        </div>
+
+        <div class="bgroup">
+          <button id="wr" class="border_box">
+            Restrict width
+          </button>
+        </div>
+
+        <div class="bgroup">
+          <a href="./" class="border_box">Back to OFraMP</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="leftbar" class="sidebar border_box">
+      <h6>Page contents</h6>
+      <hr />
+      <ol>
+        <li>
+          <a href="#top">Top</a>
+        </li>
+        <li>
+          <a href="#intro">Introduction</a>
+        </li>
+        <li>
+          <a href="#about">About OFraMP</a>
+        </li>
+        <li>
+          <a href="#gettingstarted">Getting started</a>
+          <ol>
+            <li><a href="#submitting">Entering a molecule</a></li>
+            <li><a href="#selecting">Selecting atoms</a></li>
+            <li><a href="#finding">Finding fragments</a></li>
+            <li><a href="#completing">Completing a molecule</a></li>
+          </ol>
+        </li>
+        <li>
+          <a href="#advanced">Advanced Features</a>
+          <ol>
+            <li><a href="#shell">Modifying shell size</a></li>
+            <li><a href="#editing">Editing atom charges</a></li>
+            <li><a href="#saving">Making and loading checkpoints</a></li>
+            <li><a href="#settings">Modifying settings</a></li>
+            <li><a href="#shortcuts">Keyboard shortcuts</a></li>
+          </ol>
+        </li>
+        <li>
+          <a href="#errors">Solving problems</a>
+          <ol>
+            <li><a href="#oapocerror">OAPoC errors</a></li>
+            <li><a href="#omfraferror">OMFraF errors</a></li>
+            <li><a href="#miscerror">Miscellaneous errors</a></li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+
+    <div id="content" class="border_box">
+      <div id="top"></div>
+
+      <h1 id="intro">OFraMP Help</h1>
+      <hr />
+      <p>
+        Welcome at the help pages for the Online tool for Fragment-based Molecule
+        Parameterisation. Here, you will be able to find information about
+        <a href="#about">OFraMP in general</a>, <a href="#gettingstarted">how to use it</a>,
+        detailed information about its more <a href="#advanced">advanced features</a>
+        and how to <a href="#errors">solve potential errors</a>.
+      </p>
+
+      <h2 id="about">About OFraMP</h2>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+
+      <h2 id="gettingstarted">Getting started with OFraMP</h2>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="submitting">Entering a molecule into OFraMP</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="selecting">Selecting atoms to parameterise</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="finding">Finding matching fragments</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="completing">Completing the charges of a molecule</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+
+      <h2 id="advanced">OFraMP's advanced features</h2>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="shell">Using a different shell size</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="editing">Manually editing atom charges</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="saving">Making and loading checkpoints</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="settings">Changing visualisation settings</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="shortcuts">Keyboard shortcuts</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+
+      <h2 id="errors">Solving OFraMP problems</h2>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="oapocerror">Online Atom Position Calculator (OAPoC) errors</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="omfraferror">Online Molecule Fragment Finder (OMFraF) errors</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+      <h3 id="miscerror">Miscellaneous errors</h3>
+      <hr />
+      <p>
+        Coming soon!
+      </p>
+    </div>
+
+    <div id="copyright">
+      &copy; jimivdw 2013-2014
+    </div>
   </body>
 </html>

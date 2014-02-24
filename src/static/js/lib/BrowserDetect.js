@@ -27,6 +27,11 @@ var BrowserDetect = {
   },
   dataBrowser: [{
     string: navigator.userAgent,
+    subString: "OPR",
+    versionSearch: "OPR",
+    identity: "Opera"
+  }, {
+    string: navigator.userAgent,
     subString: "Chrome",
     identity: "Chrome"
   }, {

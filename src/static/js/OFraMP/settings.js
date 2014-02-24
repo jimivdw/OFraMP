@@ -9,11 +9,55 @@ var MESSAGE_TYPES = {
 var ATOM_STATUSES = {
   normal: 0,
   unparameterizable: 1,
-  hover: 2,
-  selected: 4,
+  selected: 2,
+  hover: 4,
   preview: 8,
   conflict: 16
 };
+
+var DEFAULT_SHELL = 1;
+var DEFAULT_REPO = "lipids";
+
+var PARTIALLY_SUPPORTED_BROWSERS = [{
+  browser: "Chrome",
+  minVersion: "0"
+}, {
+  browser: "Firefox",
+  minVersion: "4"
+}, {
+  browser: "Explorer",
+  minVersion: "7"
+}, {
+  browser: "Safari",
+  minVersion: "5"
+}, {
+  browser: "Opera",
+  minVersion: "12"
+}, { // IE 11
+  browser: "Mozilla",
+  minVersion: "11"
+}];
+
+/*
+ * Note that Opera has a strange right mouse drag default shortcut that prevents
+ * full support.
+ */
+var FULLY_SUPPORTED_BROWSERS = [{
+  browser: "Chrome",
+  minVersion: "25"
+}, {
+  browser: "Firefox",
+  minVersion: "25"
+}, {
+  browser: "Explorer",
+  minVersion: "10"
+}, {
+  browser: "Safari",
+  minVersion: "5"
+}, { // IE 11
+  browser: "Mozilla",
+  minVersion: "11"
+}];
 
 var PREDEFINED_MOLECULES = ["CC(NC)CC1=CC=C(OCO2)C2=C1", "c1ccccc1"];
 
@@ -26,8 +70,9 @@ var DEFAULT_SETTINGS = {
 
   omfraf: {
     url: "http://vps955.directvps.nl/OMFraF/load/",
+    repoUrl: "http://vps955.directvps.nl/OMFraF/repos/",
     generateUrl: "http://vps955.directvps.nl/OMFraF/generate/",
-    version: "0.4.1"
+    version: "0.7.0"
   },
 
   zoom: {
@@ -76,28 +121,28 @@ var DEFAULT_SETTINGS = {
     showCirc: true,
     showID: false,
     radius: {
-      default: 20,
+      standard: 20,
       charged: 20
     },
     backgroundColor: {
-      default: "rgb(255, 255, 255)",
-      charged: "rgb(180, 180, 180)",
+      standard: "rgb(255, 255, 255)",
+      charged: "rgb(194, 255, 147)",
       hover: "rgb(210, 180, 245)",
       selected: "rgb(150, 140, 205)",
-      preview: "rgb(140, 205, 108)",
+      preview: "rgb(114, 198, 105)",
       conflict: "rgb(204, 166,  40)",
       unparameterizable: "rgb(255, 210, 208)"
     },
     borderWidth: {
-      default: 1,
+      standard: 1,
       active: 3
     },
     borderColor: {
-      default: "rgb( 48, 48, 48)",
+      standard: "rgb( 48, 48, 48)",
       active: "rgb( 48, 48, 48)"
     },
     color: {
-      default: "rgb( 48, 48, 48)",
+      standard: "rgb( 48, 48, 48)",
       charged: "rgb( 48, 48, 48)"
     },
     elementFont: "bold 12px Arial",
@@ -235,7 +280,7 @@ var SETTINGS_OPTIONS = {
       }
     },
     radius: {
-      "default, charged": {
+      "standard, charged": {
         min: 0,
         max: 50,
         step: 1,
@@ -257,14 +302,14 @@ var SETTINGS_OPTIONS = {
       }
     },
     backgroundColor: {
-      "default, charged, hover, selected, preview, conflict, unparameterizable": {
+      "standard, charged, hover, selected, preview, conflict, unparameterizable": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
     },
     borderWidth: {
-      "default, active": {
+      "standard, active": {
         min: 0,
         max: 10,
         step: 1,
@@ -274,14 +319,14 @@ var SETTINGS_OPTIONS = {
       }
     },
     borderColor: {
-      "default, active": {
+      "standard, active": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }
       }
     },
     color: {
-      "default, charged": {
+      "standard, charged": {
         onChange: function() {
           this.__gui.getRootObject().getMV().redraw();
         }

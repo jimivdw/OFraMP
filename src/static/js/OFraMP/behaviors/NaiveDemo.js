@@ -22,7 +22,7 @@ NaiveDemo.prototype = {
     var cbs = $ext.dom.onMouseClick(mi, function() {
       log("user.click.molecule_input", "Clicked molecule input textarea");
       mi.disabled = "disabled";
-      $ext.dom.addText(mi, "NCC(=O)CCO");
+      mi.value = "NCC(=O)CCO";
       $ext.dom.removeClass(mi, "highlighted");
       $ext.dom.removeEventListeners(mi, cbs);
       _this.nextStep();
@@ -153,10 +153,13 @@ NaiveDemo.prototype = {
     $ext.dom.addEventListener(this.oframp.container, "selectionchanged",
         selectionChanged);
     function selectionChanged() {
+      if(_this.oframp.mv.molecule.getSelected().length === 0) {
+        return;
+      }
+
       $ext.dom.removeEventListener(_this.oframp.container, "selectionchanged",
           selectionChanged);
       _this.oframp.mv.selectingDisabled = true;
-      document.getElementById("find_fragments").disabled = "disabled";
       _this.nextStep();
     }
   },
@@ -247,7 +250,10 @@ NaiveDemo.prototype = {
       $ext.dom.removeEventListeners(smb, cbs);
       $ext.dom.removeClass(smb, "highlighted");
       smb.disabled = "disabled";
-      _this.nextStep();
+      window.setTimeout(function() {
+        // Wait a bit to make sure the popup is already opened
+        _this.nextStep();
+      }, 500);
     }, $ext.mouse.LEFT);
   },
 
@@ -268,11 +274,10 @@ NaiveDemo.prototype = {
     $ext.dom.addText(this.overlay, "Once you have seen enough of this "
         + "molecule, you can close the viewer by clicking 'Close'");
 
-    var cx = document.getElementById("popup").children[0];
+    var cx = this.oframp.popupClose;
     var cbsx = $ext.dom.onMouseClick(cx, closeClicked, $ext.mouse.LEFT);
 
-    var cb = document.getElementById("popup_content").getElementsByTagName(
-        "button")[0];
+    var cb = this.oframp.popupContent.getElementsByTagName("button")[0];
     $ext.dom.addClass(cb, "highlighted");
     var cbs = $ext.dom.onMouseClick(cb, closeClicked, $ext.mouse.LEFT);
 
@@ -344,7 +349,7 @@ NaiveDemo.prototype = {
       if(selection.length > 1) {
         $ext.dom.removeEventListener(_this.oframp.container,
             "selectionchanged", selectionChanged);
-        document.getElementById("find_fragments").disabled = "disabled";
+        _this.oframp.mv.selectingDisabled = true;
         _this.nextStep();
       }
     }
@@ -369,7 +374,6 @@ NaiveDemo.prototype = {
     $ext.dom.addEventListener(this.oframp.container, "fragmentsfound",
         fragmentsFound);
     function fragmentsFound() {
-      document.getElementById("find_fragments").disabled = "disabled";
       if(_this.oframp.behavior.relatedFragmentViewers.length === 0) {
         return;
       } else if(_this.oframp.behavior.relatedFragmentViewers.length === 1) {
@@ -427,6 +431,7 @@ NaiveDemo.prototype = {
 
     $ext.dom.addText(this.overlay, "You can now continue to parameterise the "
         + "rest of the molecule");
+    _this.oframp.mv.selectingDisabled = false;
 
     $ext.dom.addEventListener(this.oframp.container,
         "parameterizationfinished", parameterizationFinished);
