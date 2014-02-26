@@ -55,9 +55,15 @@
     <script type="text/javascript" src="static/js/OFraMP/behaviors/SmartDemo.js"></script>
     <script>
       window.onload = function() {
-        log("system.load.page", "OFraMP loaded");
-        log("user.data.browser", "User browser: " + BrowserDetect.browser + " version " + BrowserDetect.version);
-        log("user.data.os", "User OS: " + BrowserDetect.OS);
+        var lc = $ext.cookie.get("log");
+        if(lc) {
+          __log = JSON.parse(decodeURIComponent(lc));
+          log("system.load.log", "Loaded existing log");
+        } else {
+          log("system.load.page", "OFraMP loaded");
+          log("user.data.browser", "User browser: " + BrowserDetect.browser + " version " + BrowserDetect.version);
+          log("user.data.os", "User OS: " + BrowserDetect.OS);
+        }
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
         var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";

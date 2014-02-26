@@ -23,6 +23,8 @@ function log(type, desc) {
     msg: desc
   };
   cl.push(lo);
+  $ext.cookie.set("log", encodeURIComponent(JSON.stringify(__log)), 1);
+  $ext.cookie.set("logCSV", encodeURIComponent(getCSVLog()), 1);
   console.log(type, desc);
 }
 
@@ -55,5 +57,3 @@ function getCSVLog() {
   });
   return csvl;
 }
-
-log("system.init.logger", "Logger created");
