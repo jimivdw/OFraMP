@@ -451,6 +451,7 @@ NaiveBehavior.prototype = {
         ffb.disabled = "disabled";
       } else {
         $ext.dom.onMouseClick(ffb, function() {
+          log("user.click.find_fragments", "Clicked Find fragments button");
           _this.oframp.getMatchingFragments();
         }, $ext.mouse.LEFT);
       }

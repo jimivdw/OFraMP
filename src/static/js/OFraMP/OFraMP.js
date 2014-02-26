@@ -695,12 +695,15 @@ OFraMP.prototype = {
           var rd = JSON.parse(xhr.responseText);
           if(rd.error) {
             var msg = "An error has occured:\n" + rd.error;
+            log("system.error.omfraf_repos", msg);
             failure.call(_this, msg);
           } else if(rd.repos) {
+            log("system.load.repos", rd.repos.length + " repositories loaded");
             success.call(_this, rd.repos);
           }
         } else {
           var msg = "Could not connect to server";
+          log("system.error.omfraf_connect", msg);
           failure.call(_this, msg);
         }
       }
