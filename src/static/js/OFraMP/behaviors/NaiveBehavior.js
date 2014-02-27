@@ -59,10 +59,14 @@ NaiveBehavior.prototype = {
     var uas = $ext.array.filter(selection, function(atom) {
       return !atom.isCharged();
     });
-    // Get the charge of all atoms
+    // Get the charge of all selection atoms
     var cs = $ext.array.map(selection, function(atom) {
       return atom.charge;
     });
+    // Get the total charge of all atoms in the molecule
+    var tc = $ext.array.sum(this.oframp.mv.molecule.atoms.map(function(atom) {
+      return atom.charge;
+    }));
     var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
     var cc = document.createElement("span");
     $ext.dom.addText(cc, charge || "unknown");
@@ -72,6 +76,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
         "Parameterised");
     $ext.dom.addTableRow(dt, cc, "Total charge");
+    $ext.dom.addTableRow(dt, $ext.number.format(tc, 1, 3, 9) || "unknown",
+        "Molecule charge");
 
     var sadlc = document.createElement("table");
     var sadl = document.createElement('tbody');
