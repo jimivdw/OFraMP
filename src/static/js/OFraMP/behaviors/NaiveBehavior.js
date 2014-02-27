@@ -300,7 +300,7 @@ NaiveBehavior.prototype = {
       }
 
       $ext.dom.onMouseOver(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
+        if(!fv.molecule) {
           return;
         }
 
@@ -312,11 +312,13 @@ NaiveBehavior.prototype = {
       });
 
       $ext.dom.onMouseOut(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
+        if(!fv.molecule) {
           return;
         }
 
-        if(_this.activeFragment !== fv) {
+        if(!_this.activeFragment) {
+          _this.oframp.mv.previewCharges({});
+        } else if(_this.activeFragment !== fv) {
           var charges = {};
           _this.activeFragment.molecule.atoms.each(function(atom) {
             charges[atom.id] = atom.charge;
