@@ -411,9 +411,11 @@ MoleculeViewer.prototype = {
     this.molecule.atoms.each(function(atom) {
       if(charges[atom.id] !== undefined) {
         atom.previewCharge = charges[atom.id];
-        if(atom.isCharged()) {
+        if(atom.isCharged()
+            && !$ext.number.approx(atom.getPreviewCharge(), atom.charge)) {
           atom.addHighlight(ATOM_STATUSES.conflict);
         } else {
+          atom.removeHighlight(ATOM_STATUSES.conflict);
           atom.addHighlight(ATOM_STATUSES.preview);
         }
       } else {
@@ -433,7 +435,8 @@ MoleculeViewer.prototype = {
     var needsFix = false;
     this.molecule.atoms.each(function(atom, i) {
       if(charges[atom.id] !== undefined) {
-        if(atom.isCharged()) {
+        if(atom.isCharged()
+            && !$ext.number.approx(atom.getPreviewCharge(), atom.charge)) {
           if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
             this.oframp.behavior.showChargeFixer(atom, this.molecule.atoms
                 .slice(i + 1), charges, fragment);
@@ -452,6 +455,9 @@ MoleculeViewer.prototype = {
     if(needsFix) {
       return false;
     } else {
+      this.molecule.atoms.each(function(atom) {
+        atom.previewCharge = undefined;
+      });
       this.oframp.checkpoint();
       if(unpar.length === 0) {
         this.oframp.parameterizationFinished();

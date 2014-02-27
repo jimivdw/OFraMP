@@ -551,7 +551,8 @@ NaiveBehavior.prototype = {
       var needsFix = false;
       rem.each(function(atom, i) {
         if(charges[atom.id]) {
-          if(atom.isCharged()) {
+          if(atom.isCharged()
+              && !$ext.number.approx(atom.getPreviewCharge(), atom.charge)) {
             if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
               this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
               needsFix = true;
@@ -566,6 +567,9 @@ NaiveBehavior.prototype = {
 
       var unpar = _this.oframp.mv.molecule.getUnparameterized();
       if(!needsFix) {
+        _this.oframp.mv.molecule.atoms.each(function(atom) {
+          atom.previewCharge = undefined;
+        });
         _this.oframp.checkpoint();
         _this.oframp.selectionChanged();
         if(unpar.length === 0) {
