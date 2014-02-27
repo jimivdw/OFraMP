@@ -395,6 +395,7 @@ NaiveBehavior.prototype = {
 
     if(this.oframp.off) {
       this.oframp.mv.previewCharges({});
+      this.activeFragment = undefined;
 
       var cas = $ext.array.filter(selection, function(atom) {
         return !atom.isCharged();
