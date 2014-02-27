@@ -544,6 +544,7 @@ OFraMP.prototype = {
     this.hideSelectionDetails();
     this.hideRelatedFragments();
     this.hidePopup();
+    this.findFragmentsButton.style.display = "inline-block";
   },
 
   loadOSS: function(oss) {
