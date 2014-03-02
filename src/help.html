@@ -8,7 +8,9 @@
     <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
     <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
     <script type="text/javascript" src="static/js/extensions/DOM.js"></script>
+    <script type="text/javascript" src="static/js/extensions/MouseEvent.js"></script>
     <script type="text/javascript">
+      var IN_BORDER = 20;
       window.onload = function() {
         var wr = false;
         var wrb = document.getElementById("wr");
@@ -18,7 +20,7 @@
           if (wr) {
             $ext.dom.addText(wrb, "Unrestrict width");
             $ext.each(document.getElementsByTagName("p"), function(p) {
-              p.style.width = "600px";
+              p.style.width = "640px";
             });
           } else {
             $ext.dom.addText(wrb, "Restrict width");
@@ -27,6 +29,42 @@
             });
           }
         };
+
+        var imgnifier = document.getElementById("imgnifier");
+        $ext.dom.onMouseClick(imgnifier, function() {
+          imgnifier.style.display = "none";
+        }, $ext.mouse.LEFT);
+
+        var in_cont = document.getElementById("in_cont");
+        $ext.each(document.getElementsByTagName("img"), function(img) {
+          $ext.dom.onMouseClick(img, function() {
+            $ext.dom.clear(in_cont);
+            var mi = document.createElement("img");
+            mi.onload = function() {
+              in_cont.appendChild(mi);
+
+              var sw = document.documentElement.clientWidth;
+              var sh = document.documentElement.clientHeight;
+              var wd = sw - mi.width;
+              var hd = sh - mi.height;
+              if(wd < IN_BORDER || hd < IN_BORDER) {
+                if(wd < hd) {
+                  var f = (sw - IN_BORDER) / mi.width;
+                } else {
+                  var f = (sh - IN_BORDER) / mi.height;
+                }
+                mi.width *= f;
+                mi.height *= f;
+              }
+
+              in_cont.style.marginTop = -mi.height / 2 + "px";
+              in_cont.style.marginLeft = -mi.width / 2 + "px";
+
+              imgnifier.style.display = "block";
+            };
+            mi.src = img.src;
+          }, $ext.mouse.LEFT);
+        });
       };
     </script>
   </head>
@@ -83,6 +121,7 @@
         <li>
           <a href="#advanced">Advanced Features</a>
           <ol>
+            <li><a href="#repository">Changing repository</a></li>
             <li><a href="#shell">Modifying shell size</a></li>
             <li><a href="#editing">Editing atom charges</a></li>
             <li><a href="#saving">Making and loading checkpoints</a></li>
@@ -123,27 +162,67 @@
       <h2 id="gettingstarted">Getting started with OFraMP</h2>
       <hr />
       <p>
-        Coming soon!
+        Upon loading OFraMP for the first time, you should see something like the following screen:<br />
+        <img class="thumb" src="static/img/help/gs_1.png" alt="OFraMP welcome screen" />
+      </p>
+      <p>
+        Depending on whether you want to take a short tour or just use the system,
+        you should now click either the 'Start demo' or the 'New molecule'
+        button respectively.
+      </p>
+      <p>
+        In some cases, the welcome screen might also look like either one of the following:<br />
+        <img class="thumb" src="static/img/help/gs_2.png" alt="OFraMP welcome screen (warning)" />
+        <img class="thumb" src="static/img/help/gs_3.png" alt="OFraMP welcome screen (error)" />
+      </p>
+      <p>
+        In cases where the site matches the first of these screenshots (with yellow
+        background), there is not necessarily a problem. It does mean, however,
+        that the system will be functioning less smooth and, depending on your
+        browser, some functionality may not be available.
+      </p>
+      <p>
+        When you see a screen matching the second screenshot (red background),
+        you need to use a different browser if you want to use OFraMP. In this
+        case, you are using a browser of over five years old, which cannot
+        possibly be supported.
+      </p>
+      <p>
+        In either of these two cases, it is advisable to upgrade your browser
+        to the latest version of Google Chrome, which can be downloaded
+        <a href="http://chrome.google.com/" target="_blank">here</a>. OFraMP has
+        been implemented on and optimised for Chrome, as this is currently the
+        best performing browser for canvas drawing (which is used to display the
+        molecules).
       </p>
       <h3 id="submitting">Entering a molecule into OFraMP</h3>
       <hr />
       <p>
-        Coming soon!
+        The window for entering a molecule into OFraMP should look like the following:<br />
+        <img class="thumb" src="static/img/help/em_1.png" alt="Enter molecule" />
       </p>
       <h3 id="selecting">Selecting atoms to parameterise</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/sa_1.png" alt="" />
+        <img class="thumb" src="static/img/help/sa_2.png" alt="" />
       </p>
       <h3 id="finding">Finding matching fragments</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/ff_1.png" alt="" />
+        <img class="thumb" src="static/img/help/ff_2.png" alt="" />
       </p>
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/cc_1.png" alt="" />
+        <img class="thumb" src="static/img/help/cc_2.png" alt="" />
+        <img class="thumb" src="static/img/help/cc_3.png" alt="" />
+        <img class="thumb" src="static/img/help/cc_4.png" alt="" />
       </p>
 
       <h2 id="advanced">OFraMP's advanced features</h2>
@@ -151,25 +230,39 @@
       <p>
         Coming soon!
       </p>
+      <h3 id="repository">Using a different repository</h3>
+      <hr />
+      <p>
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/cr_1.png" alt="" />
+      </p>
       <h3 id="shell">Using a different shell size</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/cs_1.png" alt="" />
       </p>
       <h3 id="editing">Manually editing atom charges</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/ec_1.png" alt="" />
+        <img class="thumb" src="static/img/help/ec_2.png" alt="" />
       </p>
       <h3 id="saving">Making and loading checkpoints</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/mc_1.png" alt="" />
+        <img class="thumb" src="static/img/help/mc_2.png" alt="" />
       </p>
       <h3 id="settings">Changing visualisation settings</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/es_1.png" alt="" />
+        <img class="thumb" src="static/img/help/es_2.png" alt="" />
+        <img class="thumb" src="static/img/help/es_3.png" alt="" />
       </p>
       <h3 id="shortcuts">Keyboard shortcuts</h3>
       <hr />
@@ -185,22 +278,33 @@
       <h3 id="oapocerror">Online Atom Position Calculator (OAPoC) errors</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/oa_1.png" alt="" />
+        <img class="thumb" src="static/img/help/oa_2.png" alt="" />
       </p>
       <h3 id="omfraferror">Online Molecule Fragment Finder (OMFraF) errors</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/om_1.png" alt="" />
+        <img class="thumb" src="static/img/help/om_2.png" alt="" />
+        <img class="thumb" src="static/img/help/om_3.png" alt="" />
       </p>
       <h3 id="miscerror">Miscellaneous errors</h3>
       <hr />
       <p>
-        Coming soon!
+        Coming soon!<br />
+        <img class="thumb" src="static/img/help/me_1.png" alt="" />
       </p>
     </div>
 
     <div id="copyright">
       &copy; jimivdw 2013-2014
+    </div>
+
+    <div id="imgnifier">
+      <div id="in_bg"></div>
+      <div id="in_cont"></div>
     </div>
   </body>
 </html>
