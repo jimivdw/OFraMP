@@ -318,11 +318,50 @@
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
       <p>
-        Coming soon!<br />
+        Upon continuing to parameterise a molecule, it is possible that you run
+        into fragments that contain atoms to which a charge has already been
+        assigned. These fragments will be marked with an orange background in
+        the list of fragments; the atoms in question are given a yellow background.
+        Upon clicking 'Select fragment', a popup will be shown that asks you to
+        pick a solution to the conflicting charges:<br />
         <img class="thumb" src="static/img/help/cc_1.png" alt="" />
         <img class="thumb" src="static/img/help/cc_2.png" alt="" />
+      </p>
+      <p>
+        There are three different ways of solving the charge conflicts:
+        <ol>
+          <li><b>Current charge:</b> keep the charge the atom currently has in the molecule;</li>
+          <li><b>Fragment charge:</b> take the charge the atom has in the fragment;</li>
+          <li><b>Average charge:</b> use the average of the current and fragment charges.</li>
+        </ol>
+        What solution is best depends on the situation.
+      </p>
+      <p>
+        When a charge has been assigned to all <em>parameterisable</em> atoms,
+        one of the following two popups will be shown:<br />
         <img class="thumb" src="static/img/help/cc_3.png" alt="" />
         <img class="thumb" src="static/img/help/cc_4.png" alt="" />
+      </p>
+      <p>
+        If the title of the popup says 'Fully parameterised', <em>all</em> a charge
+        has been assigned to all atoms of the molecule. Generally, you are done
+        now and you can download an LGF file containing the results. If you wish
+        to manually adjust some charges, you can do so by closing the popup and
+        selecting the atoms that you want to adjust the charges of. More information
+        on this can be found <a href="#editing">below</a>.
+      </p>
+      <p>
+        Otherwise, when the popup says 'No more options available', there are
+        still some atoms remaining for which no fragments are available. You can
+        download the LGF file, but the charges for those atoms will be set to 0.
+        It might be better to manually assign charges to the atoms, which can be
+        done by closing the popup and selecting the atoms you wish to parameterise.
+        More information on this can be found <a href="#editing">below</a>.
+      </p>
+      <p>
+        Once you feel like you are completely done (or at any point in the meantime),
+        you can download an LGF file containing the results by clicking the
+        'Download' button in the menu bar.
       </p>
 
       <h2 id="advanced">OFraMP's advanced features</h2>
