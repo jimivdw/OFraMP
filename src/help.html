@@ -395,18 +395,59 @@
         value for the 'Shell size':<br />
         <img class="thumb" src="static/img/help/cs_1.png" alt="" />
       </p>
-      <h3 id="editing">Manually editing atom charges</h3>
+      <h3 id="editing">Manually adding / editing atom charges</h3>
       <hr />
       <p>
-        Coming soon!<br />
+        If you wish to manually add or edit an atom's charge, you first need to
+        select that atom. In the 'Selection details' window, there will be a row
+        in the table that says 'Selected atoms', with a 'Show' button next to it
+        (where it says 'Hide' in the screenshot below). Clicking that button will
+        expand another table containing detailed information about all atoms that
+        are part of the current selection:<br />
         <img class="thumb" src="static/img/help/ec_1.png" alt="" />
+      </p>
+      <p>
+        <i>
+          <strong>Tip:</strong><br />
+          Hovering your mouse over the 'Selected atoms' table rows will highlight
+          the atom which' row your mouse cursor is currently over. This way you
+          can easily determine which row corresponds to which atom.
+        </i>
+      </p>
+      <p>
+        The 'Elem' column contains the element of the atom and its IACM number
+        (between parentheses). The 'Charge' column contains the atom's charge or,
+        when the 'Edit' button is clicked, a text input field using which you
+        can change the charge. After you have changed a charge, make sure to click
+        the 'Apply' button in the 'Edit' column, to make sure the charges are
+        also assigned properly.
+      </p>
+      <p>
+        Finally, the 'Show' button in the 'Frags' column will show the fragment(s)
+        that have been used to get to the charge the atom currently has:<br />
         <img class="thumb" src="static/img/help/ec_2.png" alt="" />
+      </p>
+      <p>
+        The molecules from which these fragments came can be displayed once again
+        by clicking the 'Show molecule' button in that fragment (see the
+        <a href="#finding">Finding fragments</a> section above). These fragments
+        may be useful to determine the charge of the atom.
       </p>
       <h3 id="saving">Making and loading checkpoints</h3>
       <hr />
       <p>
-        Coming soon!<br />
+        As parameterising molecules may take some time, OFraMP has the ability
+        to store the current state and load this at at a later stage. In order to
+        make such checkpoint, you should click the 'Checkpoint' button in the
+        menu at the top of the page. An OFraMP Structure Storage (.oss) file
+        should automatically be downloaded to your computer:<br />
         <img class="thumb" src="static/img/help/mc_1.png" alt="" />
+      </p>
+      <p>
+        In order to load a checkpoint at a later stage, you should use the
+        'Load from OSS file' button in the 'Insert molecule' popup. This will
+        open a file prompt that lets you select the OSS file, after which it
+        will be loaded:
         <img class="thumb" src="static/img/help/mc_2.png" alt="" />
       </p>
       <h3 id="settings">Changing visualisation settings</h3>
