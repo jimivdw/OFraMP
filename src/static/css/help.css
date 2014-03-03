@@ -62,6 +62,10 @@ hr {
     border-bottom: 1px solid #333;
 }
 
+kbd {
+    font-family: "Courier New", Courier, monospace;
+}
+
 .sidebar {
     top: 50px;
     width: 220px;
