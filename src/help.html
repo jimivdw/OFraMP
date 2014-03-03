@@ -12,13 +12,16 @@
     <script type="text/javascript">
       var IN_BORDER = 20;
       window.onload = function() {
-        var wr = false;
+        $ext.each(document.getElementsByTagName("p"), function(p) {
+          p.style.width = "640px";
+        });
+        var wr = true;
         var wrb = document.getElementById("wr");
         wrb.onclick = function() {
           wr = !wr;
           $ext.dom.clear(wrb);
           if (wr) {
-            $ext.dom.addText(wrb, "Unrestrict width");
+            $ext.dom.addText(wrb, "Free width");
             $ext.each(document.getElementsByTagName("p"), function(p) {
               p.style.width = "640px";
             });
@@ -86,7 +89,7 @@
 
         <div class="bgroup">
           <button id="wr" class="border_box">
-            Restrict width
+            Free width
           </button>
         </div>
 
@@ -113,6 +116,7 @@
           <a href="#gettingstarted">Getting started</a>
           <ol>
             <li><a href="#submitting">Entering a molecule</a></li>
+            <li><a href="#viewing">Viewing the molecule</a></li>
             <li><a href="#selecting">Selecting atoms</a></li>
             <li><a href="#finding">Finding fragments</a></li>
             <li><a href="#completing">Completing a molecule</a></li>
@@ -201,19 +205,106 @@
         The window for entering a molecule into OFraMP should look like the following:<br />
         <img class="thumb" src="static/img/help/em_1.png" alt="Enter molecule" />
       </p>
-      <h3 id="selecting">Selecting atoms to parameterise</h3>
+      <p>
+        Here, you can enter a molecule into the system using the PDB, SMILES or
+        InChI format. Support for other formats may be added later, but is
+        currently limited to these formats as they are the most used ones.
+      </p>
+      <p>
+        When you want to use a molecule that is present in the
+        <a href="http://compbio.biosci.uq.edu.au/atb/index.py?tab=home_tab">Automated Topology Builder (ATB)</a>,
+        it is also possible to enter this molecule's Molecule ID
+        directly into OFraMP. This will automatically retrieve the molecule's
+        PDB file from the ATB, such that you do not need to do this yourself.
+      </p>
+      <p>
+        In this window, it is also possible to <a href="#repository">change the repository</a>
+        that will be used for finding molecule fragments and to
+        <a href="#shell">modify the shell size</a> of the fragments that need
+        to match. More information on these subjects can be found in the
+        <a href="#advanced">Advanced features</a> section below.
+      </p>
+      <h3 id="viewing">Viewing the molecule</h3>
       <hr />
       <p>
         Coming soon!<br />
+      </p>
+      <h3 id="selecting">Selecting atoms to parameterise</h3>
+      <hr />
+      <p>
+        Once the molecule has been displayed and the fragments have been generated
+        you can start to parameterise the molecule. In order to do so, you need
+        to select one or more atoms that you want to find fragments for. There are
+        multiple ways of doing this. The first and easiest of these is to make
+        a single-atom selection, which can be done by simply clicking on that atom:<br />
         <img class="thumb" src="static/img/help/sa_1.png" alt="" />
+      </p>
+      <p>
+        In order to select multiple atoms at once, one can best hold the <em>right</em>
+        mouse button and drag to draw a selection rectangle in which all atoms
+        will be selected (see left image below). Alternatively, one could also
+        hold down the Ctrl key while clicking atoms, to add these to the selection.
+        Finally, if both the Ctrl key and right mouse button are unavailable
+        on your device, multi-atom selections can be made by activating the
+        'Selection modification mode'. This can be done by clicking the
+        'Modify selection' button in the 'Selection details' window (see right
+        image below). Now, every atom you click will be added to the selection.
+        This mode can be exited again by clicking the 'Stop modifying selection'
+        button that will appear in the 'Selection details' window.
         <img class="thumb" src="static/img/help/sa_2.png" alt="" />
+        <img class="thumb" src="static/img/help/sa_3.png" alt="" />
+      </p>
+      <p>
+        An important thing to note here is that, in some cases, for some atoms
+        no fragments may have been found. This will be indicated by marking them
+        with a red/pink background, as can be seen in the rightmost CH<sub>2</sub>
+        group of the molecule above. You can still assign charges to these atoms
+        <a href="#editing">manually</a>, which is discussed below.
       </p>
       <h3 id="finding">Finding matching fragments</h3>
       <hr />
       <p>
-        Coming soon!<br />
+        Once a selection (containing non-parameterised atoms) has been made,
+        fragments for that selection will automatically be loaded. They will be
+        displayed in a bar at the right side of the screen, ordered on descending
+        likeliness of being the best match:<br />
         <img class="thumb" src="static/img/help/ff_1.png" alt="" />
+      </p>
+      <p>
+        Hovering your mouse over the fragments and clicking them will preview
+        their charges on the molecule. The fragment's atoms will be indicated
+        using a green background; their charges will be displayed below their element
+        names. Upon clicking a fragment, two buttons will become visible:
+        a 'Show molecule' button and a 'Select fragment' button. Upon clicking
+        the 'Select fragment' button, the fragment charges will be copied to the
+        molecule, after which you can continue parameterising by selecting new
+        atoms. The 'Show molecule' button will show the molecule from which
+        the fragment originates:
         <img class="thumb" src="static/img/help/ff_2.png" alt="" />
+      </p>
+      <p>
+        The image above shows the original molecule for the selected fragment
+        in the previous image. The green atoms here indicate the atoms that are
+        part of the fragment, which corresponds to the atoms that are marked in
+        green in the molecule. The atom(s) that are marked in a darker green
+        are the atoms that are part of the shell. In this case, that shell consists
+        of just the leftmost C atom.
+      </p>
+      <p>
+        <i>
+          <strong>Tip:</strong><br />
+          The 'Fragment molecule' popup can be dragged around by holding the <em>left</em>
+          mouse button on the title bar (that contains the 'Fragment molecule...' text)
+          and dragging the mouse. This way, you can easily compare the fragment molecule
+          with the other molecule by dragging them such that both are visible.
+        </i>
+      </p>
+      <p>
+        In case you want to find fragments again for a set of atoms that have
+        already been parameterised, fragments will not automatically be loaded.
+        You can however still force the system to start looking for fragments by
+        clicking the 'Find matching fragments' button in the 'Selection details'
+        window (see first image of this section).
       </p>
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
