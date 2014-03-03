@@ -526,14 +526,47 @@
       <h2 id="errors">Solving OFraMP problems</h2>
       <hr />
       <p>
-        Coming soon!
+        Even though a lot of time has been invested into making OFraMP fault-proof,
+        some problems might still occur. The most common problems are discussed
+        below.
+      </p>
+      <p>
+        In case you encounter any problems that are not listed here, please
+        report them as detailed as possible to the
+        <a href="https://github.com/jimivdw/OFraMP/issues/new">OFraMP issue tracker</a>.
       </p>
       <h3 id="oapocerror">Online Atom Position Calculator (OAPoC) errors</h3>
       <hr />
       <p>
-        Coming soon!<br />
+        OAPoC is the system that is used to get the positions of a molecule's atoms, in order
+        to be able to visualise the molecule. There are three problems you may encounter:
+        connection errors, version errors and generic errors. The connection and
+        version errors will look like the following images:<br />
         <img class="thumb" src="static/img/help/oa_1.png" alt="" />
         <img class="thumb" src="static/img/help/oa_2.png" alt="" />
+      </p>
+      <p>
+        If you get a connection error, the best you can do is checking your
+        internet connection and trying again. If this does not work, the OAPoC
+        server is probably down for maintenance and should be up shortly afterwards.
+        The best you can do then is wait for a while and then trying again to see
+        if the server is back up.
+      </p>
+      <p>
+        Version errors should generally not occur at all. The only time you may
+        see such error is just around a system update, when only half of the
+        system has been updated. Again, these errors can only be resolved by
+        waiting for a bit and trying again.
+      </p>
+      <p>
+        Generic errors all have to do with the molecule data you enter into the
+        system, and may look like the following:
+        <img class="thumb" src="static/img/help/oa_3.png" alt="" />
+      </p>
+      <p>
+        If you get an error like this, you have probably inserted some wrong
+        data into the system. Please make sure the data is either in PDB, SMILES
+        or InChI format, or is an ATB Molecule ID, and then try again.
       </p>
       <h3 id="omfraferror">Online Molecule Fragment Finder (OMFraF) errors</h3>
       <hr />
