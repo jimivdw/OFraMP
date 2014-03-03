@@ -121,3 +121,12 @@ kbd {
 .thumb:hover {
     border-color: #999;
 }
+
+#kbd_shortcuts {
+    width: 640px;
+    margin-bottom: 20px;
+}
+
+#kbd_shortcuts td:first-child {
+    font-family: "Courier New", Courier, monospace;
+}
