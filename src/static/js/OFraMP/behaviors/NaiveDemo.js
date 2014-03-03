@@ -22,7 +22,7 @@ NaiveDemo.prototype = {
     var cbs = $ext.dom.onMouseClick(mi, function() {
       log("user.click.molecule_input", "Clicked molecule input textarea");
       mi.disabled = "disabled";
-      mi.value = "NCC(=O)CCO";
+      mi.value = "OCC(=O)CC";
       $ext.dom.removeClass(mi, "highlighted");
       $ext.dom.removeEventListeners(mi, cbs);
       _this.nextStep();

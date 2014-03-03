@@ -60,10 +60,14 @@ NaiveBehavior.prototype = {
     var uas = $ext.array.filter(selection, function(atom) {
       return !atom.isCharged();
     });
-    // Get the charge of all atoms
+    // Get the charge of all selection atoms
     var cs = $ext.array.map(selection, function(atom) {
       return atom.charge;
     });
+    // Get the total charge of all atoms in the molecule
+    var tc = $ext.array.sum(this.oframp.mv.molecule.atoms.map(function(atom) {
+      return atom.charge;
+    }));
     var charge = $ext.number.format($ext.array.sum(cs), 1, 3, 9);
     var cc = document.createElement("span");
     $ext.dom.addText(cc, charge || "unknown");
@@ -73,6 +77,8 @@ NaiveBehavior.prototype = {
     $ext.dom.addTableRow(dt, "" + (selection.length - uas.length),
         "Parameterised");
     $ext.dom.addTableRow(dt, cc, "Total charge");
+    $ext.dom.addTableRow(dt, $ext.number.format(tc, 1, 3, 9) || "unknown",
+        "Molecule charge");
 
     var sadlc = document.createElement("table");
     var sadl = document.createElement('tbody');
@@ -317,7 +323,7 @@ NaiveBehavior.prototype = {
       }
 
       $ext.dom.onMouseOver(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
+        if(!fv.molecule) {
           return;
         }
 
@@ -331,11 +337,13 @@ NaiveBehavior.prototype = {
       });
 
       $ext.dom.onMouseOut(fv.canvas, function() {
-        if(!fv.molecule || !_this.activeFragment) {
+        if(!fv.molecule) {
           return;
         }
 
-        if(_this.activeFragment !== fv) {
+        if(!_this.activeFragment) {
+          _this.oframp.mv.previewCharges({});
+        } else if(_this.activeFragment !== fv) {
           var charges = {};
           _this.activeFragment.molecule.atoms.each(function(atom) {
             charges[atom.id] = atom.charge;
@@ -419,6 +427,7 @@ NaiveBehavior.prototype = {
 
     if(this.oframp.off) {
       this.oframp.mv.previewCharges({});
+      this.activeFragment = undefined;
 
       var cas = $ext.array.filter(selection, function(atom) {
         return !atom.isCharged();
@@ -571,7 +580,8 @@ NaiveBehavior.prototype = {
       var needsFix = false;
       rem.each(function(atom, i) {
         if(charges[atom.id]) {
-          if(atom.isCharged()) {
+          if(atom.isCharged()
+              && !$ext.number.approx(atom.getPreviewCharge(), atom.charge)) {
             if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
               this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
               needsFix = true;
@@ -586,6 +596,9 @@ NaiveBehavior.prototype = {
 
       var unpar = _this.oframp.mv.molecule.getUnparameterized();
       if(!needsFix) {
+        _this.oframp.mv.molecule.atoms.each(function(atom) {
+          atom.previewCharge = undefined;
+        });
         _this.oframp.checkpoint();
         _this.oframp.selectionChanged();
         if(unpar.length === 0) {

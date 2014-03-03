@@ -265,7 +265,8 @@ SmartBehavior.prototype = {
     var needsFix = false;
     rem.each(function(atom, i) {
       if(charges[atom.id]) {
-        if(atom.isCharged()) {
+        if(atom.isCharged()
+            && !$ext.number.approx(atom.getPreviewCharge(), atom.charge)) {
           if(this.oframp.settings.atom.showHAtoms || atom.element !== "H") {
             this.showChargeFixer(atom, rem.slice(i + 1), charges, fragment);
             needsFix = true;
@@ -280,6 +281,9 @@ SmartBehavior.prototype = {
 
     var unpar = this.oframp.getUnparameterizedAtoms();
     if(!needsFix) {
+      this.oframp.mv.molecule.atoms.each(function(atom) {
+        atom.previewCharge = undefined;
+      });
       if(unpar.length === 0) {
         this.oframp.parameterizationFinished();
       } else {

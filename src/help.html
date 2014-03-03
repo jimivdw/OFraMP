@@ -8,17 +8,22 @@
     <script type="text/javascript" src="static/js/lib/BrowserDetect.js"></script>
     <script type="text/javascript" src="static/js/extensions/extensions.js"></script>
     <script type="text/javascript" src="static/js/extensions/DOM.js"></script>
+    <script type="text/javascript" src="static/js/extensions/MouseEvent.js"></script>
     <script type="text/javascript">
+      var IN_BORDER = 20;
       window.onload = function() {
-        var wr = false;
+        $ext.each(document.getElementsByTagName("p"), function(p) {
+          p.style.width = "640px";
+        });
+        var wr = true;
         var wrb = document.getElementById("wr");
         wrb.onclick = function() {
           wr = !wr;
           $ext.dom.clear(wrb);
           if (wr) {
-            $ext.dom.addText(wrb, "Unrestrict width");
+            $ext.dom.addText(wrb, "Free width");
             $ext.each(document.getElementsByTagName("p"), function(p) {
-              p.style.width = "600px";
+              p.style.width = "640px";
             });
           } else {
             $ext.dom.addText(wrb, "Restrict width");
@@ -27,6 +32,42 @@
             });
           }
         };
+
+        var imgnifier = document.getElementById("imgnifier");
+        $ext.dom.onMouseClick(imgnifier, function() {
+          imgnifier.style.display = "none";
+        }, $ext.mouse.LEFT);
+
+        var in_cont = document.getElementById("in_cont");
+        $ext.each(document.getElementsByTagName("img"), function(img) {
+          $ext.dom.onMouseClick(img, function() {
+            $ext.dom.clear(in_cont);
+            var mi = document.createElement("img");
+            mi.onload = function() {
+              in_cont.appendChild(mi);
+
+              var sw = document.documentElement.clientWidth;
+              var sh = document.documentElement.clientHeight;
+              var wd = sw - mi.width;
+              var hd = sh - mi.height;
+              if(wd < IN_BORDER || hd < IN_BORDER) {
+                if(wd < hd) {
+                  var f = (sw - IN_BORDER) / mi.width;
+                } else {
+                  var f = (sh - IN_BORDER) / mi.height;
+                }
+                mi.width *= f;
+                mi.height *= f;
+              }
+
+              in_cont.style.marginTop = -mi.height / 2 + "px";
+              in_cont.style.marginLeft = -mi.width / 2 + "px";
+
+              imgnifier.style.display = "block";
+            };
+            mi.src = img.src;
+          }, $ext.mouse.LEFT);
+        });
       };
     </script>
   </head>
@@ -48,7 +89,7 @@
 
         <div class="bgroup">
           <button id="wr" class="border_box">
-            Restrict width
+            Free width
           </button>
         </div>
 
@@ -75,6 +116,7 @@
           <a href="#gettingstarted">Getting started</a>
           <ol>
             <li><a href="#submitting">Entering a molecule</a></li>
+            <li><a href="#viewing">Viewing the molecule</a></li>
             <li><a href="#selecting">Selecting atoms</a></li>
             <li><a href="#finding">Finding fragments</a></li>
             <li><a href="#completing">Completing a molecule</a></li>
@@ -83,6 +125,7 @@
         <li>
           <a href="#advanced">Advanced Features</a>
           <ol>
+            <li><a href="#repository">Changing repository</a></li>
             <li><a href="#shell">Modifying shell size</a></li>
             <li><a href="#editing">Editing atom charges</a></li>
             <li><a href="#saving">Making and loading checkpoints</a></li>
@@ -117,90 +160,501 @@
       <h2 id="about">About OFraMP</h2>
       <hr />
       <p>
-        Coming soon!
+        OFraMP is an Online tool for Fragment-based Molecule Parameterisation.
+        The 'Online' part we all get, but what about the fragment-based molecule
+        parameterisation? Well, it is as follows:
+      </p>
+      <p>
+        Every molecule has a charge, consisting of the sum of the charges of all
+        atoms inside that molecule. Finding the total charge of a molecule is
+        relatively easy, but finding the charges for the individual atoms is a
+        hard and mathematically complex problem. It is theorised though, that common
+        fragments of similar molecules should have roughly the same charges, allowing
+        for a new way of parameterising a molecule: based on fragments.
+      </p>
+      <p>
+        OFraMP is the first tool to implement this concept. Combined with its
+        supporting systems OAPoC (Online tool for Atom Position Calculation) and
+        OMFraF (Online tool for Molecule Fragment Finding), OFraMP allows the user
+        to insert a molecule and then present him with matching fragments of similar
+        molecules, such that he can select the best matches and completely
+        parameterise the molecule he inserted.
+      </p>
+      <p>
+        OFraMP has originally been created as a graduation project for the Master
+        Software Engineering at the University of Amsterdam, carried out at Centrum
+        Wiskunde &amp; Informatica (CWI). The project was aimed at interaction
+        design, and not too focused on chemical correctness. Nevertheless, it is
+        believed that the foundation has been laid for a system that is of great
+        value in chemistry research.
+      </p>
+      <p>
+        I hope you have a good time using the system and that it can help you to
+        parameterise a lot of molecules.
+      </p>
+      <p>
+        Kind regards,<br />
+        Jimi van der Woning, creator of OFraMP
       </p>
 
       <h2 id="gettingstarted">Getting started with OFraMP</h2>
       <hr />
       <p>
-        Coming soon!
+        Upon loading OFraMP for the first time, you should see something like the following screen:<br />
+        <img class="thumb" src="static/img/help/gs_1.png" alt="OFraMP welcome screen" />
+      </p>
+      <p>
+        Depending on whether you want to take a short tour or just use the system,
+        you should now click either the 'Start demo' or the 'New molecule'
+        button respectively.
+      </p>
+      <p>
+        In some cases, the welcome screen might also look like either one of the following:<br />
+        <img class="thumb" src="static/img/help/gs_2.png" alt="OFraMP welcome screen (warning)" />
+        <img class="thumb" src="static/img/help/gs_3.png" alt="OFraMP welcome screen (error)" />
+      </p>
+      <p>
+        In cases where the site matches the first of these screenshots (with yellow
+        background), there is not necessarily a problem. It does mean, however,
+        that the system will be functioning less smooth and, depending on your
+        browser, some functionality may not be available.
+      </p>
+      <p>
+        When you see a screen matching the second screenshot (red background),
+        you need to use a different browser if you want to use OFraMP. In this
+        case, you are using a browser of over five years old, which cannot
+        possibly be supported.
+      </p>
+      <p>
+        In either of these two cases, it is advisable to upgrade your browser
+        to the latest version of Google Chrome, which can be downloaded
+        <a href="http://chrome.google.com/" target="_blank">here</a>. OFraMP has
+        been implemented on and optimised for Chrome, as this is currently the
+        best performing browser for canvas drawing (which is used to display the
+        molecules).
       </p>
       <h3 id="submitting">Entering a molecule into OFraMP</h3>
       <hr />
       <p>
-        Coming soon!
+        The window for entering a molecule into OFraMP should look like the following:<br />
+        <img class="thumb" src="static/img/help/em_1.png" alt="Enter molecule" />
+      </p>
+      <p>
+        Here, you can enter a molecule into the system using the PDB, SMILES or
+        InChI format. Support for other formats may be added later, but is
+        currently limited to these formats as they are the most used ones.
+      </p>
+      <p>
+        When you want to use a molecule that is present in the
+        <a href="http://compbio.biosci.uq.edu.au/atb/index.py?tab=home_tab">Automated Topology Builder (ATB)</a>,
+        it is also possible to enter this molecule's Molecule ID
+        directly into OFraMP. This will automatically retrieve the molecule's
+        PDB file from the ATB, such that you do not need to do this yourself.
+      </p>
+      <p>
+        In this window, it is also possible to <a href="#repository">change the repository</a>
+        that will be used for finding molecule fragments and to
+        <a href="#shell">modify the shell size</a> of the fragments that need
+        to match. More information on these subjects can be found in the
+        <a href="#advanced">Advanced features</a> section below.
+      </p>
+      <h3 id="viewing">Viewing the molecule</h3>
+      <hr />
+      <p>
+        In case you enter the SMILES string <kbd>NCC(=O)CCO</kbd> into the system,
+        you should initially see something like the following:<br />
+        <img class="thumb" src="static/img/help/vm_1.png" alt="" />
+      </p>
+      <p>
+        As the 'Loading fragments...' text indicates, the fragments matching this
+        molecule are now being loaded, so fragment finding is not yet possible at
+        this stage. What you <em>can</em> already do is view the molecule. You can
+        drag it around by holding down your <em>left</em> mouse button and dragging
+        your mouse. You can also zoom in or out using your mouse's scrollwheel.
       </p>
       <h3 id="selecting">Selecting atoms to parameterise</h3>
       <hr />
       <p>
-        Coming soon!
+        Once the molecule has been displayed and the fragments have been generated
+        you can start to parameterise the molecule. In order to do so, you need
+        to select one or more atoms that you want to find fragments for. There are
+        multiple ways of doing this. The first and easiest of these is to make
+        a single-atom selection, which can be done by simply clicking on that atom:<br />
+        <img class="thumb" src="static/img/help/sa_1.png" alt="" />
+      </p>
+      <p>
+        In order to select multiple atoms at once, one can best hold the <em>right</em>
+        mouse button and drag to draw a selection rectangle in which all atoms
+        will be selected (see left image below). Alternatively, one could also
+        hold down the Ctrl key while clicking atoms, to add these to the selection.
+        Finally, if both the Ctrl key and right mouse button are unavailable
+        on your device, multi-atom selections can be made by activating the
+        'Selection modification mode'. This can be done by clicking the
+        'Modify selection' button in the 'Selection details' window (see right
+        image below). Now, every atom you click will be added to the selection.
+        This mode can be exited again by clicking the 'Stop modifying selection'
+        button that will appear in the 'Selection details' window.
+        <img class="thumb" src="static/img/help/sa_2.png" alt="" />
+        <img class="thumb" src="static/img/help/sa_3.png" alt="" />
+      </p>
+      <p>
+        An important thing to note here is that, in some cases, for some atoms
+        no fragments may have been found. This will be indicated by marking them
+        with a red/pink background, as can be seen in the rightmost CH<sub>2</sub>
+        group of the molecule above. You can still assign charges to these atoms
+        <a href="#editing">manually</a>, which is discussed below.
       </p>
       <h3 id="finding">Finding matching fragments</h3>
       <hr />
       <p>
-        Coming soon!
+        Once a selection (containing non-parameterised atoms) has been made,
+        fragments for that selection will automatically be loaded. They will be
+        displayed in a bar at the right side of the screen, ordered on descending
+        likeliness of being the best match:<br />
+        <img class="thumb" src="static/img/help/ff_1.png" alt="" />
+      </p>
+      <p>
+        Hovering your mouse over the fragments and clicking them will preview
+        their charges on the molecule. The fragment's atoms will be indicated
+        using a green background; their charges will be displayed below their element
+        names. Upon clicking a fragment, two buttons will become visible:
+        a 'Show molecule' button and a 'Select fragment' button. Upon clicking
+        the 'Select fragment' button, the fragment charges will be copied to the
+        molecule, after which you can continue parameterising by selecting new
+        atoms. The 'Show molecule' button will show the molecule from which
+        the fragment originates:
+        <img class="thumb" src="static/img/help/ff_2.png" alt="" />
+      </p>
+      <p>
+        The image above shows the original molecule for the selected fragment
+        in the previous image. The green atoms here indicate the atoms that are
+        part of the fragment, which corresponds to the atoms that are marked in
+        green in the molecule. The atom(s) that are marked in a darker green
+        are the atoms that are part of the shell. In this case, that shell consists
+        of just the leftmost C atom.
+      </p>
+      <p>
+        <i>
+          <strong>Tip:</strong><br />
+          The 'Fragment molecule' popup can be dragged around by holding the <em>left</em>
+          mouse button on the title bar (that contains the 'Fragment molecule...' text)
+          and dragging the mouse. This way, you can easily compare the fragment molecule
+          with the other molecule by dragging them such that both are visible.
+        </i>
+      </p>
+      <p>
+        In case you want to find fragments again for a set of atoms that have
+        already been parameterised, fragments will not automatically be loaded.
+        You can however still force the system to start looking for fragments by
+        clicking the 'Find matching fragments' button in the 'Selection details'
+        window (see first image of this section).
       </p>
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
       <p>
-        Coming soon!
+        Upon continuing to parameterise a molecule, it is possible that you run
+        into fragments that contain atoms to which a charge has already been
+        assigned. These fragments will be marked with an orange background in
+        the list of fragments; the atoms in question are given a yellow background.
+        Upon clicking 'Select fragment', a popup will be shown that asks you to
+        pick a solution to the conflicting charges:<br />
+        <img class="thumb" src="static/img/help/cc_1.png" alt="" />
+        <img class="thumb" src="static/img/help/cc_2.png" alt="" />
+      </p>
+      <p>
+        There are three different ways of solving the charge conflicts:
+        <ol>
+          <li><b>Current charge:</b> keep the charge the atom currently has in the molecule;</li>
+          <li><b>Fragment charge:</b> take the charge the atom has in the fragment;</li>
+          <li><b>Average charge:</b> use the average of the current and fragment charges.</li>
+        </ol>
+        What solution is best depends on the situation.
+      </p>
+      <p>
+        When a charge has been assigned to all <em>parameterisable</em> atoms,
+        one of the following two popups will be shown:<br />
+        <img class="thumb" src="static/img/help/cc_3.png" alt="" />
+        <img class="thumb" src="static/img/help/cc_4.png" alt="" />
+      </p>
+      <p>
+        If the title of the popup says 'Fully parameterised', <em>all</em> a charge
+        has been assigned to all atoms of the molecule. Generally, you are done
+        now and you can download an LGF file containing the results. If you wish
+        to manually adjust some charges, you can do so by closing the popup and
+        selecting the atoms that you want to adjust the charges of. More information
+        on this can be found <a href="#editing">below</a>.
+      </p>
+      <p>
+        Otherwise, when the popup says 'No more options available', there are
+        still some atoms remaining for which no fragments are available. You can
+        download the LGF file, but the charges for those atoms will be set to 0.
+        It might be better to manually assign charges to the atoms, which can be
+        done by closing the popup and selecting the atoms you wish to parameterise.
+        More information on this can be found <a href="#editing">below</a>.
+      </p>
+      <p>
+        Once you feel like you are completely done (or at any point in the meantime),
+        you can download an LGF file containing the results by clicking the
+        'Download' button in the menu bar.
       </p>
 
       <h2 id="advanced">OFraMP's advanced features</h2>
       <hr />
       <p>
-        Coming soon!
+        Besides just the basic functionality, OFraMP also has some features for
+        the more advanced users. These features will be discussed in this section.
+      </p>
+      <h3 id="repository">Using a different repository</h3>
+      <hr />
+      <p>
+        For finding the fragments of other molecules, OFraMP uses a repository
+        of molecules that will be compared to the molecule you enter into the
+        system. What fragments will be found, depends on what repository you select.
+        It may be interesting to experiment with selecting different repositories,
+        to see what repository results in the best parameterisation of the molecule.
+        This can be done at the time you enter your molecule into the system, by
+        changing the selection of the 'Fragment repository':<br />
+        <img class="thumb" src="static/img/help/cr_1.png" alt="" />
       </p>
       <h3 id="shell">Using a different shell size</h3>
       <hr />
       <p>
-        Coming soon!
+        When finding matching fragments, the atoms around the fragment need to
+        match the original molecule as well. The shell size indicates the distance
+        from the fragment to which all atoms should match the original molecule.
+        By increasing the shell size, fragments will probably match the original
+        molecule better, but less fragments may be found. Decreasing the shell
+        size will have the opposite effect. The shell size can be modified at the
+        time when you enter a molecule into the system, by selecting a different
+        value for the 'Shell size':<br />
+        <img class="thumb" src="static/img/help/cs_1.png" alt="" />
       </p>
-      <h3 id="editing">Manually editing atom charges</h3>
+      <h3 id="editing">Manually adding / editing atom charges</h3>
       <hr />
       <p>
-        Coming soon!
+        If you wish to manually add or edit an atom's charge, you first need to
+        select that atom. In the 'Selection details' window, there will be a row
+        in the table that says 'Selected atoms', with a 'Show' button next to it
+        (where it says 'Hide' in the screenshot below). Clicking that button will
+        expand another table containing detailed information about all atoms that
+        are part of the current selection:<br />
+        <img class="thumb" src="static/img/help/ec_1.png" alt="" />
+      </p>
+      <p>
+        <i>
+          <strong>Tip:</strong><br />
+          Hovering your mouse over the 'Selected atoms' table rows will highlight
+          the atom which' row your mouse cursor is currently over. This way you
+          can easily determine which row corresponds to which atom.
+        </i>
+      </p>
+      <p>
+        The 'Elem' column contains the element of the atom and its IACM number
+        (between parentheses). The 'Charge' column contains the atom's charge or,
+        when the 'Edit' button is clicked, a text input field using which you
+        can change the charge. After you have changed a charge, make sure to click
+        the 'Apply' button in the 'Edit' column, to make sure the charges are
+        also assigned properly.
+      </p>
+      <p>
+        Finally, the 'Show' button in the 'Frags' column will show the fragment(s)
+        that have been used to get to the charge the atom currently has:<br />
+        <img class="thumb" src="static/img/help/ec_2.png" alt="" />
+      </p>
+      <p>
+        The molecules from which these fragments came can be displayed once again
+        by clicking the 'Show molecule' button in that fragment (see the
+        <a href="#finding">Finding fragments</a> section above). These fragments
+        may be useful to determine the charge of the atom.
       </p>
       <h3 id="saving">Making and loading checkpoints</h3>
       <hr />
       <p>
-        Coming soon!
+        As parameterising molecules may take some time, OFraMP has the ability
+        to store the current state and load this at at a later stage. In order to
+        make such checkpoint, you should click the 'Checkpoint' button in the
+        menu at the top of the page. An OFraMP Structure Storage (.oss) file
+        should automatically be downloaded to your computer:<br />
+        <img class="thumb" src="static/img/help/mc_1.png" alt="" />
+      </p>
+      <p>
+        In order to load a checkpoint at a later stage, you should use the
+        'Load from OSS file' button in the 'Insert molecule' popup. This will
+        open a file prompt that lets you select the OSS file, after which it
+        will be loaded:
+        <img class="thumb" src="static/img/help/mc_2.png" alt="" />
       </p>
       <h3 id="settings">Changing visualisation settings</h3>
       <hr />
       <p>
-        Coming soon!
+        Many parameters of the molecule visualisation part of OFraMP can be
+        modified in the settings menu. To get there, you first need to open up
+        the 'advanced controls' menu by clicking the rigtmost menu button (looks
+        like some sort of downwards arrow, see left image). In that menu, you
+        find a 'Settings' button that will open up the 'OFraMP settings' menu
+        at the right side of the screen.<br />
+        <img class="thumb" src="static/img/help/es_1.png" alt="" />
+        <img class="thumb" src="static/img/help/es_2.png" alt="" />
+      </p>
+      <p>
+        In the settings menu, many things can be changed. The image below shows
+        the effect of turning on the <kbd>atom.showHAtoms</kbd> parameter:<br />
+        <img class="thumb" src="static/img/help/es_3.png" alt="" />
+      </p>
+      <p>
+        Once you are done changing the settings, you can close the menu by either
+        clicking on the 'Settings' button in the 'advanced controls' menu again,
+        or clicking on the 'OFraMP settings' title bar.
       </p>
       <h3 id="shortcuts">Keyboard shortcuts</h3>
       <hr />
       <p>
-        Coming soon!
+        For your convenience, OFraMP has some keyboard shortcuts. Below, you can
+        find a list of them:
+      </p>
+      <table id="kbd_shortcuts">
+        <tr>
+          <th>Key combination</th>
+          <th>Action</th>
+        </tr>
+        <tr>
+          <td>Alt+Z</td>
+          <td>Undo last action</td>
+        </tr>
+        <tr>
+          <td>Alt+Shift+Z</td>
+          <td>Redo last action</td>
+        </tr>
+        <tr>
+          <td>Alt+Y</td>
+          <td>Redo last action</td>
+        </tr>
+        <tr>
+          <td>Alt+N</td>
+          <td>Open 'Insert molecule' popup (New)</td>
+        </tr>
+        <tr>
+          <td>Alt+O</td>
+          <td>Load a checkpoint from an OSS file (Open)</td>
+        </tr>
+        <tr>
+          <td>Alt+S</td>
+          <td>Create an OSS checkpoint (Save)</td>
+        </tr>
+        <tr>
+          <td>Alt+L</td>
+          <td>Download molecule as LGF</td>
+        </tr>
+        <tr>
+          <td>Alt+H</td>
+          <td>Open Help</td>
+        </tr>
+      </table>
+      <p>
+        Note that these shortcuts all use the <kbd>Alt</kbd> key rather that the
+        <kbd>Ctrl</kbd> key that is generally used for keyboard shortcuts. Unfortunately,
+        most browsers use combinations with <kbd>Ctrl</kbd> as their own shortcuts
+        and do not allow you to override them.
       </p>
 
       <h2 id="errors">Solving OFraMP problems</h2>
       <hr />
       <p>
-        Coming soon!
+        Even though a lot of time has been invested into making OFraMP fault-proof,
+        some problems might still occur. The most common problems are discussed
+        below.
+      </p>
+      <p>
+        In case you encounter any problems that are not listed here, please
+        report them as detailed as possible to the
+        <a href="https://github.com/jimivdw/OFraMP/issues/new">OFraMP issue tracker</a>.
       </p>
       <h3 id="oapocerror">Online Atom Position Calculator (OAPoC) errors</h3>
       <hr />
       <p>
-        Coming soon!
+        OAPoC is the system that is used to get the positions of a molecule's atoms, in order
+        to be able to visualise the molecule. There are three problems you may encounter:
+        connection errors, version errors and generic errors. The connection and
+        version errors will look like the following images:<br />
+        <img class="thumb" src="static/img/help/oa_1.png" alt="" />
+        <img class="thumb" src="static/img/help/oa_2.png" alt="" />
+      </p>
+      <p>
+        If you get a connection error, the best you can do is checking your
+        internet connection and trying again. If this does not work, the OAPoC
+        server is probably down for maintenance and should be up shortly afterwards.
+        The best you can do then is wait for a while and then trying again to see
+        if the server is back up.
+      </p>
+      <p>
+        Version errors should generally not occur at all. The only time you may
+        see such error is just around a system update, when only half of the
+        system has been updated. Again, these errors can only be resolved by
+        waiting for a bit and trying again.
+      </p>
+      <p>
+        Generic errors all have to do with the molecule data you enter into the
+        system, and may look like the following:
+        <img class="thumb" src="static/img/help/oa_3.png" alt="" />
+      </p>
+      <p>
+        If you get an error like this, you have probably inserted some wrong
+        data into the system. Please make sure the data is either in PDB, SMILES
+        or InChI format, or is an ATB Molecule ID, and then try again.
       </p>
       <h3 id="omfraferror">Online Molecule Fragment Finder (OMFraF) errors</h3>
       <hr />
       <p>
-        Coming soon!
+        OMFraF is the system responsible for generating and finding fragments
+        that resemble the molecule you enter. Without it, OFraMP can still be
+        used to display a molecule, but fragment finding will not be possible.
+      </p>
+      <p>
+        When OMFraF cannot be reached upon loading OFraMP, the following error
+        message will be shown:<br />
+        <img class="thumb" src="static/img/help/om_1.png" alt="" />
+      </p>
+      <p>
+        You can ignore this, and still enter a molecule into the system, but,
+        as mentioned before, fragment finding will not be possible. The best way
+        to resolve this is to just wait until OMFraF comes back up again, which
+        it should do shortly.
+      </p>
+      <p>
+        OMFraF can also produce errors upon generating fragments (left image)
+        or finding fragments that match the selection (right image):<br />
+        <img class="thumb" src="static/img/help/om_2.png" alt="" />
+        <img class="thumb" src="static/img/help/om_3.png" alt="" />
+      </p>
+      <p>
+        Both of these errors should generally be resolved automatically by just
+        waiting a few minutes and then trying again. Unfortunately, there is not
+        much else you can do, as both of these errors are due to connection
+        problems.
       </p>
       <h3 id="miscerror">Miscellaneous errors</h3>
       <hr />
       <p>
-        Coming soon!
+        One final common error is that the following screen is the only thing
+        that shows, and nothing happens afterwards:<br />
+        <img class="thumb" src="static/img/help/me_1.png" alt="" />
+      </p>
+      <p>
+        If this happens, you probably have disabled JavaScript in your browser.
+        OFraMP is a modern tool that uses the latest web technologies and relies
+        on JavaScript being activated. Please either turn on JavaScript in your
+        browser for all pages (which is recommended), or add an exception
+        for OFraMP. Without JavaScript, the system cannot function, unfortunately.
       </p>
     </div>
 
     <div id="copyright">
       &copy; jimivdw 2013-2014
+    </div>
+
+    <div id="imgnifier">
+      <div id="in_bg"></div>
+      <div id="in_cont"></div>
     </div>
   </body>
 </html>
