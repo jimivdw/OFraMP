@@ -23,8 +23,8 @@ function log(type, desc) {
     msg: desc
   };
   cl.push(lo);
-  $ext.cookie.set("log", encodeURIComponent(JSON.stringify(__log)), 1);
-  $ext.cookie.set("logCSV", encodeURIComponent(getCSVLog()), 1);
+  localStorage.log = JSON.stringify(__log);
+  localStorage.logCSV = getCSVLog();
   console.log(type, desc);
 }
 

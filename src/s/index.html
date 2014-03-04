@@ -55,15 +55,30 @@
     <script type="text/javascript" src="static/js/OFraMP/behaviors/SmartDemo.js"></script>
     <script>
       window.onload = function() {
-        var lc = $ext.cookie.get("log");
+        var lc = localStorage.log;
         if(lc) {
-          __log = JSON.parse(decodeURIComponent(lc));
+          __log = JSON.parse(lc);
           log("system.load.log", "Loaded existing log");
         } else {
-          log("system.load.page", "OFraMP Smart loaded");
           log("user.data.browser", "User browser: " + BrowserDetect.browser + " version " + BrowserDetect.version);
           log("user.data.os", "User OS: " + BrowserDetect.OS);
         }
+        log("system.load.page", "OFraMP Smart loaded");
+
+        var uc = localStorage.uid;
+        if(uc) {
+          log("system.load.uid", "Found UID: " + uc);
+        } else {
+          var uid = $ext.date.format(new Date(), "%Y%m%d%H%M%S%f");
+          localStorage.uid = uid;
+          if(!localStorage.uid) {
+            alert("You need to have localStorage enabled for the user studies. Please enable it and reload the page.");
+            log("system.error.cookie", "User has cookies disabled");
+            return;
+          }
+          log("system.init.uid", "Set UID: " + uid);
+        }
+
         var OAPoC_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/generate/" : "http://127.0.0.1:8000/generate/";
         var OAPoC_LOAD_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OAPoC/loadATB/" : "http://127.0.0.1:8000/loadATB/";
         var OMFraF_URL = document.URL.match(/vps955\.directvps\.nl/) ? "http://vps955.directvps.nl/OMFraF/load/" : "http://127.0.0.1:8001/load/";
