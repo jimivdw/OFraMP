@@ -486,7 +486,6 @@ MoleculeViewer.prototype = {
       this.molecule.atoms.each(function(atom) {
         atom.previewCharge = undefined;
       });
-      this.oframp.checkpoint();
       if(unpar.length === 0) {
         this.oframp.parameterizationFinished();
       } else {
