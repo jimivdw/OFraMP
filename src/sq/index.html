@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT! -->
+    <meta charset="utf-8"/>
+    <title>questionnaire_s</title>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.validate.js"></script>
+    <script type="text/javascript" src="static.min.js"></script>
+    <script type="text/javascript" src="checking.js"></script>
+    <script type="text/javascript" src="styling.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <link rel="stylesheet" media="screen" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script>
+      $(document).ready(function(){
+        validatequestionnaire_s();
+
+        /*** ADDED FOR STORING FROM localStorage ***/
+        $("<input />").attr({type: "hidden", name: "uid", value: localStorage.uid})
+        .appendTo($("#questionnaire_s"));
+        $("<input />").attr({type: "hidden", name: "log", value: localStorage.log})
+        .appendTo($("#questionnaire_s"));
+        $("<input />").attr({type: "hidden", name: "logCSV", value: localStorage.logCSV})
+        .appendTo($("#questionnaire_s"));
+      });
+    </script>
+  </head>
+  <body>
+    <form id="questionnaire_s" method="post" action="form.php">
+
+      <div id="sus1Block">
+        <label for="sus1">I think that I would like to use this system frequently</label>
+        <input type="integer" id="sus1" name="sus1" />
+      </div>
+
+
+      <div id="sus3Block">
+        <label for="sus3">I thought the system was easy to use</label>
+        <input type="integer" id="sus3" name="sus3" />
+      </div>
+
+
+      <div id="sus4Block">
+        <label for="sus4">I think I could use the system without the support of a technical person</label>
+        <input type="integer" id="sus4" name="sus4" />
+      </div>
+
+
+      <div id="sus5Block">
+        <label for="sus5">I found the various functions in the system were well integrated</label>
+        <input type="integer" id="sus5" name="sus5" />
+      </div>
+
+
+      <div id="sus6Block">
+        <label for="sus6">I thought there was a lot of consistency in the system</label>
+        <input type="integer" id="sus6" name="sus6" />
+      </div>
+
+
+      <div id="sus7Block">
+        <label for="sus7">I would imagine that most people would learn to use this system very quickly</label>
+        <input type="integer" id="sus7" name="sus7" />
+      </div>
+
+
+      <div id="sus8Block">
+        <label for="sus8">I found the system very intuitive</label>
+        <input type="integer" id="sus8" name="sus8" />
+      </div>
+
+
+      <div id="sus9Block">
+        <label for="sus9">I felt very confident using the system</label>
+        <input type="integer" id="sus9" name="sus9" />
+      </div>
+
+
+      <div id="sus10Block">
+        <label for="sus10">I could use the system without having to learn anything new</label>
+        <input type="integer" id="sus10" name="sus10" />
+      </div>
+
+
+      <div id="umux1Block">
+        <label for="umux1">I think the system meets up with its requirements</label>
+        <input type="integer" id="umux1" name="umux1" />
+      </div>
+
+
+      <div id="chem_posBlock">
+        <label for="chem_pos">From a chemist's point of view, please describe in a few sentences what was good about the system</label>
+        <input type="string" id="chem_pos" name="chem_pos" />
+      </div>
+
+
+      <div id="chem_negBlock">
+        <label for="chem_neg">From a chemist's point of view, please describe in a few sentences what could be improved</label>
+        <input type="string" id="chem_neg" name="chem_neg" />
+      </div>
+
+
+      <div id="ui_posBlock">
+        <label for="ui_pos">From the perspective of interaction with the system, please describe in a few sentences what was good</label>
+        <input type="string" id="ui_pos" name="ui_pos" />
+      </div>
+
+
+      <div id="ui_negBlock">
+        <label for="ui_neg">From the perspective of interaction with the system, please describe in a few sentences what could be improved</label>
+        <input type="string" id="ui_neg" name="ui_neg" />
+      </div>
+
+
+      <div id="had_errorsBlock">
+        <label for="had_errors">Did you encounter any ploblems with the system during the experiment?</label>
+        <select id="had_errors" name="had_errors" form="questionnaire_s">
+        <option value="">Choose an answer</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+        </select>
+      </div>
+
+
+      <div id="errorsBlock">
+        <label for="errors">Please describe the problems that occured</label>
+        <input type="string" id="errors" name="errors" />
+      </div>
+
+
+      <div id="has_commentsBlock">
+        <label for="has_comments">Do you have any other comments about the system?</label>
+        <select id="has_comments" name="has_comments" form="questionnaire_s">
+        <option value="">Choose an answer</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+        </select>
+      </div>
+
+
+      <div id="commentsBlock">
+        <label for="comments">Please leave your comments here</label>
+        <input type="string" id="comments" name="comments" />
+      </div>
+
+
+      <input id="submit" type="submit" value="Submit questionnaire_s">
+    </form>
+  </body>
+</html>

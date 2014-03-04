@@ -1,0 +1,74 @@
+.error {
+  float: none !important;
+  color: red !important;
+  padding-left: .5em !important;
+  vertical-align: top !important;
+}
+
+label {
+  display: inline;
+}
+
+label:first-child {
+  display: block !important;
+}
+
+input[type=radio] {
+  margin: 0;
+}
+
+input[type=radio] + label {
+  padding: 0 40px 0 10px;
+}
+
+.page > div {
+  padding: 20px;
+}
+
+.page > .question:not(.hidden):nth-of-type(odd) {
+  background-color: #DDD;
+}
+
+.note p {
+  margin: 5px 0;
+}
+
+textarea {
+  width: 600px;
+  height: 100px;
+}
+
+button, #submit {
+  margin: 10px;
+}
+
+body {
+  width: 960px;
+  margin: 20px auto;
+}
+/* Question has_comments */
+
+
+/* Question preference_exp */
+
+
+/* Question wants_additions */
+
+
+/* Question transfer */
+
+
+/* Question preference */
+
+
+/* Question comments */
+
+
+/* Question additions */
+
+
+/* Question wants_transfer */
+
+
+
+    
