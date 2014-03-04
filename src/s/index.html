@@ -223,6 +223,7 @@
             data: data,
             fname: fname
           }, "post", "_blank");
+          log("user.action.download", "Downloaded LGF:\\n" + data.replace(/\n/g, "\\n"));
         }
 
         var ub = document.getElementById("undo");

@@ -668,6 +668,7 @@ NaiveBehavior.prototype = {
         data: data,
         fname: fname
       }, "post", "_blank");
+      log("user.action.download", "Downloaded LGF:\\n" + data.replace(/\n/g, "\\n"));
     }, $ext.mouse.LEFT);
     cd.appendChild(db);
 
