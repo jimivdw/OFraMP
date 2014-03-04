@@ -62,6 +62,32 @@
         } else {
           log("user.data.browser", "User browser: " + BrowserDetect.browser + " version " + BrowserDetect.version);
           log("user.data.os", "User OS: " + BrowserDetect.OS);
+
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            if(xhr.readyState === 4 && xhr.status === 200) {
+              $ext.each(xhr.responseText.split("\n"), function(rl) {
+                var kv = rl.split(": ");
+                var k = kv[0];
+                var v = kv[1];
+                switch(k) {
+                  case "Country":
+                    log("user.data.country", "User country: " + v);
+                    break;
+                  case "City":
+                    log("user.data.city", "User city: " + v);
+                    break;
+                  case "IP":
+                    log("user.data.ip", "User IP: " + v);
+                    break;
+                }
+              });
+            }
+          };
+          xhr.open("GET", "http://api.hostip.info/get_html.php", false);
+          xhr.send();
+
+          log("user.window.size", "User window size: " + document.documentElement.clientWidth + " x " + document.documentElement.clientHeight);
         }
         log("system.load.page", "OFraMP Smart loaded");
 
