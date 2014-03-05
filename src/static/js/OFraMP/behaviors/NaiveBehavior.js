@@ -619,6 +619,9 @@ NaiveBehavior.prototype = {
   },
 
   parameterizationFinished: function(incomplete) {
+    if(this.oframp.finished) {
+      return;
+    }
     var _this = this;
 
     log("system.finish.parameterization", "Finished parameterisation");
