@@ -117,7 +117,8 @@
           <ol>
             <li><a href="#submitting">Entering a molecule</a></li>
             <li><a href="#viewing">Viewing the molecule</a></li>
-            <li><a href="#finding">Finding fragments</a></li>
+            <li><a href="#starting">Starting parameterisation</a></li>
+            <li><a href="#parameterising">Parameterising the molecule</a></li>
             <li><a href="#completing">Completing a molecule</a></li>
           </ol>
         </li>
@@ -275,32 +276,33 @@
       <h3 id="starting">Starting the parameterisation process</h3>
       <hr />
       <p>
-        Coming soon!
+        As soon as the fragments have been loaded, starting the parameterisation
+        process is easy. You just click the 'Start parameterising' button at
+        the bottom of the page:<br />
+        <img class="thumb" src="static/img/help/sp_1.png" alt="" />
       </p>
       <h3 id="parameterising">Parameterising the molecule</h3>
       <hr />
       <p>
-        Coming soon
+        Once the 'Start parameterising' button has been clicked, a matching molecule
+        fragment will automatically loaded and previewed in the molecule (indicated
+        in green, with the thicker border). Three buttons will appear: 'View original',
+        'Accept' and 'Reject': <br />
+        <img class="thumb" src="static/img/help/pm_1.png" alt="" />
       </p>
       <p>
-        An important thing to note here is that, in some cases, for some atoms
-        no fragments may have been found. This will be indicated by marking them
-        with a red/pink background, as can be seen in the rightmost CH<sub>2</sub>
-        group of the molecule above. You can still assign charges to these atoms
-        <a href="#editing">manually</a>, which is discussed below.
-      </p>
-      <p>
-        The 'Show molecule' button will show the molecule from which
-        the fragment originates:
-        <img class="thumb" src="static/img/help/ff_2.png" alt="" />
+        Clicking the 'View original' button will show the molecule from which
+        the fragment originates:<br />
+        <img class="thumb" src="static/img/help/pm_2.png" alt="" />
       </p>
       <p>
         The image above shows the original molecule for the selected fragment
         in the previous image. The green atoms here indicate the atoms that are
         part of the fragment, which corresponds to the atoms that are marked in
-        green in the molecule. The atom(s) that are marked in a darker green
+        green in the molecule. The atom(s) that are marked in a darker green without
+        the thick border
         are the atoms that are part of the shell. In this case, that shell consists
-        of just the leftmost C atom.
+        of just the C atom of the only CH group in the molecule.
       </p>
       <p>
         <i>
@@ -311,14 +313,41 @@
           with the other molecule by dragging them such that both are visible.
         </i>
       </p>
+      <p>
+        After checking the fragment molecule, you need to accept or reject the
+        proposed fragment. Upon accepting the fragment, the charges of the fragment
+        atoms will be copied to the corresponding atoms in the molecule. New
+        fragments will be found for an unparameterised atom that still remains
+        in the molecule, and you can repeat the process.
+      </p>
+      <p>
+        If you do not think a proposed fragment is a proper match with the molecule,
+        you can reject it using the 'Reject' button. The next best match will
+        be shown, which, again, you can view the originating molecule of, and accept
+        or reject it. At some point, you may have seen all possible matching
+        fragments. In that case, the 'Reject' button will be disabled and you
+        will need to either accept the last fragment or go back to a previous one.
+      </p>
+      <p>
+        If you have accidentally rejected or accepted a fragment, you can undo this using the
+        'Undo' button at the top of the page (or using the <kbd>Alt+Z</kbd>
+        keyboard shortcut). This will restore the previous state of the molecule,
+        such that you can fix the mistake you made.
+      </p>
+      <p>
+        A final important thing to note here is that, in some cases,
+        no fragments may have been found for some atoms. This will be indicated by marking them
+        with a red/pink background, as can be seen in the rightmost CH<sub>2</sub>
+        group of the molecule in the first image of this section. You can still
+        assign charges to these atoms <a href="#editing">manually</a>, which is discussed below.
+      </p>
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
       <p>
         Upon continuing to parameterise a molecule, it is possible that you run
         into fragments that contain atoms to which a charge has already been
-        assigned. These fragments will be marked with an orange background in
-        the list of fragments; the atoms in question are given a yellow background:
-        <img class="thumb" src="static/img/help/cc_1.png" alt="" />
+        assigned. The atoms in question are given a yellow background:<br />
+        <img class="thumb" src="static/img/help/cc_5.png" alt="" />
       </p>
       <p>
         The charge that is shown here is the average of the charge the atom currently
@@ -406,7 +435,7 @@
         This mode can be exited again by clicking the 'Stop modifying selection'
         button that will appear in the 'Selection details' window.
         <img class="thumb" src="static/img/help/sa_2.png" alt="" />
-        <img class="thumb" src="static/img/help/sa_3.png" alt="" />
+        <img class="thumb" src="static/img/help/sa_4.png" alt="" />
       </p>
       <p>
         What is probably the most important feature of the atom details window is
