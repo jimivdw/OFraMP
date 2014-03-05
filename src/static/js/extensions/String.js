@@ -47,7 +47,7 @@ var string = {
       }
     }
 
-    if(!checkMinor) {
+    if(checkMinor !== true) {
       return 0;
     } else {
       while(oparts[i] !== undefined) {
