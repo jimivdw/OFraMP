@@ -117,7 +117,6 @@
           <ol>
             <li><a href="#submitting">Entering a molecule</a></li>
             <li><a href="#viewing">Viewing the molecule</a></li>
-            <li><a href="#selecting">Selecting atoms</a></li>
             <li><a href="#finding">Finding fragments</a></li>
             <li><a href="#completing">Completing a molecule</a></li>
           </ol>
@@ -127,6 +126,7 @@
           <ol>
             <li><a href="#repository">Changing repository</a></li>
             <li><a href="#shell">Modifying shell size</a></li>
+            <li><a href="#selecting">Checking atom details</a></li>
             <li><a href="#editing">Editing atom charges</a></li>
             <li><a href="#saving">Making and loading checkpoints</a></li>
             <li><a href="#settings">Modifying settings</a></li>
@@ -272,30 +272,15 @@
         drag it around by holding down your <em>left</em> mouse button and dragging
         your mouse. You can also zoom in or out using your mouse's scrollwheel.
       </p>
-      <h3 id="selecting">Selecting atoms to parameterise</h3>
+      <h3 id="starting">Starting the parameterisation process</h3>
       <hr />
       <p>
-        Once the molecule has been displayed and the fragments have been generated
-        you can start to parameterise the molecule. In order to do so, you need
-        to select one or more atoms that you want to find fragments for. There are
-        multiple ways of doing this. The first and easiest of these is to make
-        a single-atom selection, which can be done by simply clicking on that atom:<br />
-        <img class="thumb" src="static/img/help/sa_1.png" alt="" />
+        Coming soon!
       </p>
+      <h3 id="parameterising">Parameterising the molecule</h3>
+      <hr />
       <p>
-        In order to select multiple atoms at once, one can best hold the <em>right</em>
-        mouse button and drag to draw a selection rectangle in which all atoms
-        will be selected (see left image below). Alternatively, one could also
-        hold down the Ctrl key while clicking atoms, to add these to the selection.
-        Finally, if both the Ctrl key and right mouse button are unavailable
-        on your device, multi-atom selections can be made by activating the
-        'Selection modification mode'. This can be done by clicking the
-        'Modify selection' button in the 'Selection details' window (see right
-        image below). Now, every atom you click will be added to the selection.
-        This mode can be exited again by clicking the 'Stop modifying selection'
-        button that will appear in the 'Selection details' window.
-        <img class="thumb" src="static/img/help/sa_2.png" alt="" />
-        <img class="thumb" src="static/img/help/sa_3.png" alt="" />
+        Coming soon
       </p>
       <p>
         An important thing to note here is that, in some cases, for some atoms
@@ -304,24 +289,8 @@
         group of the molecule above. You can still assign charges to these atoms
         <a href="#editing">manually</a>, which is discussed below.
       </p>
-      <h3 id="finding">Finding matching fragments</h3>
-      <hr />
       <p>
-        Once a selection (containing non-parameterised atoms) has been made,
-        fragments for that selection will automatically be loaded. They will be
-        displayed in a bar at the right side of the screen, ordered on descending
-        likeliness of being the best match:<br />
-        <img class="thumb" src="static/img/help/ff_1.png" alt="" />
-      </p>
-      <p>
-        Hovering your mouse over the fragments and clicking them will preview
-        their charges on the molecule. The fragment's atoms will be indicated
-        using a green background; their charges will be displayed below their element
-        names. Upon clicking a fragment, two buttons will become visible:
-        a 'Show molecule' button and a 'Select fragment' button. Upon clicking
-        the 'Select fragment' button, the fragment charges will be copied to the
-        molecule, after which you can continue parameterising by selecting new
-        atoms. The 'Show molecule' button will show the molecule from which
+        The 'Show molecule' button will show the molecule from which
         the fragment originates:
         <img class="thumb" src="static/img/help/ff_2.png" alt="" />
       </p>
@@ -342,33 +311,19 @@
           with the other molecule by dragging them such that both are visible.
         </i>
       </p>
-      <p>
-        In case you want to find fragments again for a set of atoms that have
-        already been parameterised, fragments will not automatically be loaded.
-        You can however still force the system to start looking for fragments by
-        clicking the 'Find matching fragments' button in the 'Selection details'
-        window (see first image of this section).
-      </p>
       <h3 id="completing">Completing the charges of a molecule</h3>
       <hr />
       <p>
         Upon continuing to parameterise a molecule, it is possible that you run
         into fragments that contain atoms to which a charge has already been
         assigned. These fragments will be marked with an orange background in
-        the list of fragments; the atoms in question are given a yellow background.
-        Upon clicking 'Select fragment', a popup will be shown that asks you to
-        pick a solution to the conflicting charges:<br />
+        the list of fragments; the atoms in question are given a yellow background:
         <img class="thumb" src="static/img/help/cc_1.png" alt="" />
-        <img class="thumb" src="static/img/help/cc_2.png" alt="" />
       </p>
       <p>
-        There are three different ways of solving the charge conflicts:
-        <ol>
-          <li><b>Current charge:</b> keep the charge the atom currently has in the molecule;</li>
-          <li><b>Fragment charge:</b> take the charge the atom has in the fragment;</li>
-          <li><b>Average charge:</b> use the average of the current and fragment charges.</li>
-        </ol>
-        What solution is best depends on the situation.
+        The charge that is shown here is the average of the charge the atom currently
+        has and the charge it has in the proposed fragment. Upon accepting the
+        fragment, this average charge will be assigned to the atom.
       </p>
       <p>
         When a charge has been assigned to all <em>parameterisable</em> atoms,
@@ -428,6 +383,35 @@
         time when you enter a molecule into the system, by selecting a different
         value for the 'Shell size':<br />
         <img class="thumb" src="static/img/help/cs_1.png" alt="" />
+      </p>
+      <h3 id="selecting">Checking atom details</h3>
+      <hr />
+      <p>
+        If you want to see more detailed information about one or multiple atoms, you need
+        to select the atom(s) you want to see de details of. There are
+        multiple ways of doing this. The first and easiest of these is to make
+        a single-atom selection, which can be done by simply clicking on that atom:<br />
+        <img class="thumb" src="static/img/help/sa_1.png" alt="" />
+      </p>
+      <p>
+        In order to select multiple atoms at once, one can best hold the <em>right</em>
+        mouse button and drag to draw a selection rectangle in which all atoms
+        will be selected (see left image below). Alternatively, one could also
+        hold down the Ctrl key while clicking atoms, to add these to the selection.
+        Finally, if both the Ctrl key and right mouse button are unavailable
+        on your device, multi-atom selections can be made by activating the
+        'Selection modification mode'. This can be done by clicking the
+        'Modify selection' button in the 'Selection details' window (see right
+        image below). Now, every atom you click will be added to the selection.
+        This mode can be exited again by clicking the 'Stop modifying selection'
+        button that will appear in the 'Selection details' window.
+        <img class="thumb" src="static/img/help/sa_2.png" alt="" />
+        <img class="thumb" src="static/img/help/sa_3.png" alt="" />
+      </p>
+      <p>
+        What is probably the most important feature of the atom details window is
+        that it provides a way to manually enter or alter atom charges. How this
+        works is discussed in the next section.
       </p>
       <h3 id="editing">Manually adding / editing atom charges</h3>
       <hr />
