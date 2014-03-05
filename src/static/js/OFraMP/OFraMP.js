@@ -749,13 +749,13 @@ OFraMP.prototype = {
           var fd = JSON.parse(xhr.responseText);
           var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
               fd.version);
-          if(vc == -1) {
+          if(vc == 1) {
             var msg = "OMFraF version too old." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
             log("system.error.omfraf_version", msg);
             showError(msg);
-          } else if(vc == 1) {
+          } else if(vc == -1) {
             var msg = "OMFraF version too new." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
@@ -874,13 +874,13 @@ OFraMP.prototype = {
           var fd = JSON.parse(xhr.responseText);
           var vc = $ext.string.versionCompare(_this.settings.omfraf.version,
               fd.version);
-          if(vc == -1) {
+          if(vc == 1) {
             var msg = "OMFraF version too old." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
             log("system.error.omfraf_version", msg);
             showError(msg);
-          } else if(vc == 1) {
+          } else if(vc == -1) {
             var msg = "OMFraF version too new." + "\n\nRequired version: "
                 + _this.settings.omfraf.version + "\nCurrent version: "
                 + fd.version;
