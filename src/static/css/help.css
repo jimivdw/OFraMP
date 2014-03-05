@@ -104,11 +104,17 @@ kbd {
     position: absolute;
     top: 50%;
     left: 50%;
+    -webkit-transition: margin .2s ease-in-out;
+    transition: margin .2s ease-in-out;
 }
 
 #in_cont img {
     border: 2px solid #333;
     border-radius: 5px;
+    width: 0px;
+    height: 0px;
+    -webkit-transition: width .2s ease-in-out, height .2s ease-in-out;
+    transition: width .2s ease-in-out, height .2s ease-in-out;
 }
 
 .thumb {
