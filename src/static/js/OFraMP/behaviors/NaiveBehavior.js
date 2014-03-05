@@ -588,6 +588,9 @@ NaiveBehavior.prototype = {
   },
 
   parameterizationFinished: function(incomplete) {
+    if(this.oframp.finished) {
+      return;
+    }
     var _this = this;
 
     if(incomplete === true) {

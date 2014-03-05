@@ -1074,11 +1074,12 @@ OFraMP.prototype = {
   },
 
   parameterizationFinished: function(incomplete) {
+    this.behavior.parameterizationFinished(incomplete);
+
     if(this.finished) {
       return;
     }
 
-    this.behavior.parameterizationFinished(incomplete);
     $ext.dom.dispatchEvent(this.container, this.parameterizationFinishedEvent);
     this.finished = true;
   },
