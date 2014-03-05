@@ -14,6 +14,13 @@ SmartBehavior.prototype = {
     this.demo = new SmartDemo(oframp);
 
     var _this = this;
+    $ext.dom.addEventListener(oframp.container, 'moleculeentered',
+        function() {
+          _this.__needle = undefined;
+          _this.__fragments = undefined;
+          _this.__currentFragment = undefined;
+        });
+
     $ext.dom.addEventListener(oframp.container, 'moleculedisplayed',
         function() {
           var fcd = document.getElementById("fragment_controls");
