@@ -479,17 +479,6 @@ OFraMP.prototype = {
     }
     cbs.appendChild(sb);
 
-    // Only for debug purposes, TODO: remove
-    var rb = document.createElement('button');
-    rb.id = "random_molecule";
-    rb.className = "border_box";
-    rb.appendChild(document.createTextNode("Random molecule"));
-    rb.onclick = function() {
-      ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
-      log("user.click.random", "Set random molecule: " + ta.value);
-    }
-    cbs.appendChild(rb);
-
     if(BrowserDetect.browser !== "Explorer" || BrowserDetect.version > 9) {
       var ossi = document.createElement("input");
       ossi.type = "file";
