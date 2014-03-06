@@ -145,6 +145,12 @@ SmartBehavior.prototype = {
       if(ua) {
         needle = ua;
       }
+    } else {
+      // Try to find an atom at the edge of the molecule
+      var sbas = $ext.array.filter(unpar, function(atom) {
+        return atom.getBondCount() === 1;
+      });
+      needle = $ext.array.randomElement(sbas) || needle;
     }
     this.__fragments = undefined;
     this.__needle = needle;
