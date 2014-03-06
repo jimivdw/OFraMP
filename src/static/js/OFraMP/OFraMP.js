@@ -281,9 +281,9 @@ OFraMP.prototype = {
     var content = document.createElement("p");
     $ext.dom.addText(content, "The Online tool for Fragment-based Molecule "
         + "Parameterisation has been designed and implemented for use in "
-        + "modern browsers. You appear to be using a very old browser ("
+        + "modern browsers. You appear to be using a browser ("
         + BrowserDetect.browser + ", version " + BrowserDetect.version + ") "
-        + "which, unfortunately, is not supported. For best results, please "
+        + "which, unfortunately, is not supported for the user studies. For best results, please "
         + "upgrade to the latest version of ");
     var cdl = document.createElement('a');
     cdl.href = "http://chrome.google.com/";
