@@ -65,14 +65,14 @@ var DEFAULT_SETTINGS = {
   oapoc: {
     url: "http://vps955.directvps.nl/OAPoC/generate/",
     loadUrl: "http://vps955.directvps.nl/OAPoC/loadATB/",
-    version: "0.5.0"
+    version: "1.0"
   },
 
   omfraf: {
     url: "http://vps955.directvps.nl/OMFraF/load/",
     repoUrl: "http://vps955.directvps.nl/OMFraF/repos/",
     generateUrl: "http://vps955.directvps.nl/OMFraF/generate/",
-    version: "0.7.0"
+    version: "1.0"
   },
 
   zoom: {
