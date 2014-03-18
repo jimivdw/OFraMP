@@ -58,6 +58,16 @@
         var lc = localStorage.log;
         if(lc) {
           __log = JSON.parse(lc);
+          var la = Math.floor((Date.now() - getOrderedLog()[0].time) / (1000 * 60 *60 * 24));
+          if(la >= 7) {
+            localStorage.removeItem("log");
+            __log = new Object();
+            lc = undefined;
+            log("system.reset.log", "Reset existing log (over " + la + " days old)");
+          }
+        }
+
+        if(lc) {
           log("system.load.log", "Loaded existing log");
         } else {
           log("user.data.browser", "User browser: " + BrowserDetect.browser + " version " + BrowserDetect.version);
