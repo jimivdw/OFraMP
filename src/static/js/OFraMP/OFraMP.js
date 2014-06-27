@@ -464,16 +464,6 @@ OFraMP.prototype = {
     }
     cbs.appendChild(sb);
 
-    // Only for debug purposes, TODO: remove
-    var rb = document.createElement('button');
-    rb.id = "random_molecule";
-    rb.className = "border_box";
-    rb.appendChild(document.createTextNode("Random molecule"));
-    rb.onclick = function() {
-      ta.value = $ext.array.randomElement(PREDEFINED_MOLECULES);
-    }
-    cbs.appendChild(rb);
-
     if(BrowserDetect.browser !== "Explorer" || BrowserDetect.version > 9) {
       var ossi = document.createElement("input");
       ossi.type = "file";
@@ -988,12 +978,15 @@ OFraMP.prototype = {
     cb.appendChild(document.createTextNode("Close"));
     cd.appendChild(cb);
 
-    if(!onClose) {
-      onClose = function() {
+    var _this = this;
+    var oc = function() {
+      if(onClose) {
+        onClose.call(_this);
+      } else {
         _this.hidePopup();
       }
-    }
-    $ext.dom.onMouseClick(cb, onClose, $ext.mouse.LEFT);
+    };
+    $ext.dom.onMouseClick(cb, oc, $ext.mouse.LEFT);
 
     this.showPopup(title, content, true);
   },
