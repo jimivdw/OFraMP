@@ -396,18 +396,15 @@ NaiveBehavior.prototype = {
     var _this = this;
 
     var selection = this.oframp.mv.molecule.getSelected();
-
-    var ffb = document.createElement('button');
-    ffb.className = "border_box";
-    this.oframp.atomDetails.appendChild(ffb);
+    if(selection.length === 0) {
+      this.activeFragment = undefined;
+      this.oframp.hideRelatedFragments();
+      return;
+    }
 
     if(this.oframp.off) {
       this.oframp.mv.previewCharges({});
       this.activeFragment = undefined;
-
-      var cas = $ext.array.filter(selection, function(atom) {
-        return !atom.isCharged();
-      });
 
       var selectionIDs = $ext.array.map(selection, function(atom) {
         return atom.id;
@@ -424,25 +421,12 @@ NaiveBehavior.prototype = {
         }
       });
 
-      if(connected !== false && cas.length > 0) {
+      if(connected !== false) {
         this.oframp.getMatchingFragments();
       } else {
         this.activeFragment = undefined;
         this.oframp.hideRelatedFragments();
       }
-
-      $ext.dom.addText(ffb, "Find matching fragments");
-      if(connected === false) {
-        ffb.disabled = "disabled";
-      } else {
-        $ext.dom.onMouseClick(ffb, function() {
-          _this.oframp.getMatchingFragments();
-        }, $ext.mouse.LEFT);
-      }
-
-    } else {
-      ffb.disabled = "disabled";
-      $ext.dom.addText(ffb, "Generating fragments...");
     }
   },
 
